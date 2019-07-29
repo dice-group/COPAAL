@@ -1,0 +1,36 @@
+<div fxLayout="column" fxLayoutGap="10px">
+  <div id="JResultContainer" class="notice-text">
+    COPAAL Confidence Score: <span style="font-weight: bolder;">{{graphData.graphScore | number:'0.6-6'}}</span>,
+    Judgement: <span [ngClass]="factValid?'fact-valid':'fact-invalid'">{{graphData.finalJudgement}}</span>
+  </div>
+  <div class="list-container" fxLayout="column" fxFlex="initial" id="detListContainer" #detListContainer>
+
+    <div fxLayout="column" fxLayoutGap="10px" style="margin: 10px">
+      <mat-expansion-panel *ngFor="let info of infoArr" (click)="detailCardClick(info.id)" (mouseover)="setItemHov(info.id, true)" (mouseleave)="setItemHov(info.id, false)"
+                           [ngClass]="getItemClass(info.id)" [attr.id]="'detcard-'+ info.id">
+        <mat-expansion-panel-header style="margin: 10px;">
+          <mat-panel-title>
+            <span><b>Path Score:</b> {{info.pathScore | number:'0.8-8'}}</span>
+
+          </mat-panel-title>
+
+        </mat-expansion-panel-header>
+        <div fxLayout="column wrap" fxLayoutGap="5px">
+                <span *ngIf="info.pathText && info.pathText.length > 0 && info.pathText !=='Not available'"><b>Path Text:</b>  {{info.pathText}}</span>
+                <span *ngFor="let path of info.path; let i = index">
+                  <b>Triple {{i+1}} : </b>
+                  <span><a [href]="path.subject" target="_blank">{{getUriStr(path.subject)}}</a></span>&nbsp;
+                  <span><a [href]="path.property" target="_blank">{{getUriStr(path.property)}}</a></span>&nbsp;
+                  <span><a [href]="path.object" target="_blank">{{getUriStr(path.object)}}</a> .</span>&nbsp;
+                </span>
+        </div>
+      </mat-expansion-panel>
+      <div *ngIf="infoArr.length == 0">
+        <span class="notice-text">No paths found!</span>
+      </div>
+    </div>
+  </div>
+  <div fxLayoutAlign="center center">
+    <span class="notice-text">Click on paths to highlight the path details or vice versa!</span>
+  </div>
+</div>

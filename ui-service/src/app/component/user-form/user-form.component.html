@@ -1,0 +1,48 @@
+<div fxLayoutAlign="center center" fxFlexFill >
+  <div fxLayout="column" fxLayoutGap="10px">
+    <mat-card style="min-width: 500px;">
+      <form fxLayout="column wrap" fxLayoutGap="10px" [formGroup]="complexForm" (ngSubmit)="complexForm.valid && submitForm(complexForm.value)">
+        <div fxLayout="column wrap" fxLayoutGap="10px">
+          <mat-form-field>
+            <input formControlName="subject" matInput required placeholder="Subject"/>
+            <mat-error *ngIf="subjectFc.hasError('required')">Subject is required.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <input formControlName="property" matInput required placeholder="Property"/>
+            <mat-error *ngIf="propertyFc.hasError('required')">Property is required.</mat-error>
+          </mat-form-field>
+          <mat-form-field>
+            <input formControlName="object" matInput required placeholder="Object"/>
+            <mat-error *ngIf="objectFc.hasError('required')">Object is required.</mat-error>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-checkbox formControlName="verbalize" matTooltip="Enabling verbalization will cause the request to take more time">Verbalized</mat-checkbox>
+        </div>
+        <div style="height: 5px;margin-top: 10px;">
+          <mat-progress-bar mode="indeterminate" *ngIf="showBar"></mat-progress-bar>
+        </div>
+        <div fxFlexAlign="center">
+          <button type="submit" mat-button fxFlex="initial">Submit</button>
+        </div>
+      </form>
+    </mat-card>
+    <div style="text-align: end;">
+      <span class="help-text" (click)="openHelpPopup()" matTooltip="Click to open instructions"><u>Help?</u></span>
+      &nbsp;&nbsp;&nbsp;
+    </div>
+    <div>
+      <mat-form-field fxFlexFill>
+        <mat-label>Examples</mat-label>
+        <mat-select (selectionChange)="selectChange($event)">
+          <mat-option *ngFor="let exTrip of exampleArr; let i = index" [value]="i">
+            {{getUriStr(exTrip.subject) + ' ' + getUriStr(exTrip.property) + ' ' + getUriStr(exTrip.object) + ' .'}}
+          </mat-option>
+        </mat-select>
+        <mat-hint>Select an example to auto-fill form</mat-hint>
+      </mat-form-field>
+    </div>
+  </div>
+</div>
+
