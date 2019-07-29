@@ -1,0 +1,15 @@
+<div fxFlexFill fxLayout="column">
+  <span fxFlexAlign="center"><h3>Graph Information</h3></span>
+  <ul>
+    <li>The paths shown in the graph have been found connecting the input subject and object</li>
+    <li>Click on a path to highlight it's explanation displayed in the right side-panel</li>
+    <li>Path score of each path is displayed as title of it's detail card in the right side-panel </li>
+    <li>Expand the path detail cards to view more details</li>
+    <li>Click on a path detail card to highlight its associated path in graph</li>
+    <li>The path score is obtained by calculating association measure (NPMI) between the path and the input property in a given KG</li>
+  </ul>
+  <div fxFlexAlign="center">
+    <button mat-button (click)="onOkClick()">Ok</button>
+  </div>
+
+</div>

@@ -1,0 +1,84 @@
+/* You can add global styles to this file, and also import other style files */
+html, body {
+  box-sizing: border-box;
+  height: 100%;
+  margin: 0;
+}
+
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: auto;
+  height: auto;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: black;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.text-span {
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  color: white;
+}
+
+.line-sel {
+  stroke: orangered;
+}
+.line-shadow {
+  filter: url('#dropshadow');
+}
+.line-def {
+  stroke: #6f6f6f;
+}
+
+.line-path-sel {
+  stroke: orangered;
+}
+
+
+
+.node-lbl {
+  font-family: sans-serif;
+  fill: #564ac5;
+  stroke: white;
+  stroke-width: 0.5px;
+  stroke-opacity: 0.8;
+  font-size: 25px;
+}
+
+.edge-lbl {
+  font-family: sans-serif;
+  fill: #75a564;
+  font-size: 18px;
+}
+
+html, body { height: 100vh; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.container {
+  border-color: #eaeaea;
+  border-style: solid;
+  height: 98%;
+  width: 98%;
+}
+
+.list-container {
+  border: solid #eaeaea;
+  overflow-y: auto;
+  height: 82vh;
+}
+
+.alert-danger {
+  color: red;
+}
+.alert-success {
+  color: green;
+}
+.alert{
+  font-size: 10px;
+}

@@ -1,0 +1,19 @@
+<div fxFlexFill fxLayout="column" id="result-body" fxLayoutGap="10px">
+  <div class="back-button-container">
+    <button mat-button fxFlex="initial" (click)="showForm()"><mat-icon>arrow_back</mat-icon>Back</button>
+    <div fxFlex></div>
+    <button (click)="openInfoPopup()" color="accent" mat-icon-button fxFlexAlign="end" fxFlex="initial" matTooltip="Click to open instructions">
+      <mat-icon>info</mat-icon>
+    </button>
+  </div>
+  <div fxFlex="auto" fxLayout="row" fxLayoutGap="10px">
+    <div fxFlex="1"></div>
+    <div fxFlex="69">
+      <app-graph-view  [graphData]="graphData"></app-graph-view>
+    </div>
+    <div fxFlex="29">
+      <app-detail-view [graphData]="graphData"></app-detail-view>
+    </div>
+    <div fxFlex="1"></div>
+  </div>
+</div>
