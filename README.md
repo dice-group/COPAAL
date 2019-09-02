@@ -36,3 +36,18 @@ The Spring Boot Maven plugin includes a ``run`` goal that can be used to quickly
 Using one or more options above, COPAAL service will be deployed. The running service can be verified by issuing the following example GET request from a browser
 
 http://localhost:8080/validate?subject=http://dbpedia.org/resource/Barack_Obama&object=http://dbpedia.org/resource/United_States&property=http://dbpedia.org/ontology/nationality&pathlength=2
+
+## Demo (UI-Service)
+
+In addition to the COPAAL service, one can deploy a UI-service in order to query and validate facts using a web interface. The demo was developed using [Angular CLI](https://github.com/angular/angular-cli) version 7.0.3.
+
+
+### Build
+
+To build the demo navigate to the ui-service folder and run `ng build`. The build artifacts will be stored in the `dist/` directory.
+
+### Deploy
+
+Run `ng serve` to deploy the demo. To use the demo navigate to `http://localhost:4200/`. You should see the web-page as shown in the figure below.
+
+![Demo web page.](https://github.com/dice-group/COPAAL/blob/master/service/src/main/resources/Demo.png)
