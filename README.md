@@ -13,17 +13,17 @@ COPAAL uses infomation from a given background knowledge graph *G* hosted on a s
 - Prepare a sparql end-point of your choice and index the following dumps of DBpedia version 10-2016: ``ontology``,``instance types``,``mapping-based objects`` and ``infobox properties``.
 - Clone the repository from https://github.com/dice-group/COPAAL.
 The repository contains two components namely the service and demo (ui-service).
-# Service
+## Service
 To use the service do the following:
 - Update the URL to map to your sparql end-point (from previous step) in https://github.com/dice-group/COPAAL/blob/master/service/src/main/resources/application.properties
 - COPAAL is developed using Spring Boot Maven.
 - Build the project by navigating to service folder and issuing the the command `mvn clean install`
-COPAAL service can be deployed
+####COPAAL service can be deployed
 - using IDE
 - packaged application
 - using maven plugin
 
-# Running from an IDE
+### Running from an IDE
 You can run COPAAL service from your IDE as a simple Java application. To do this simply import the maven project in your IDE of choice and run https://github.com/dice-group/COPAAL/blob/master/service/src/main/java/org/dice/FactCheck/Application.java.
 
 # Running as a Packaged Application
