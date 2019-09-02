@@ -19,7 +19,7 @@ To use the service do the following:
 - COPAAL is developed using Spring Boot Maven.
 - Build the project by navigating to service folder and issuing the the command `mvn clean install`.
 
-####COPAAL service can be deployed
+#### COPAAL service can be deployed
 1. using IDE
 2. packaged application
 3. using maven plugin
