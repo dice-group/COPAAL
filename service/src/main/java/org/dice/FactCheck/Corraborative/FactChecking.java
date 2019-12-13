@@ -12,15 +12,9 @@ import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.dice.FactCheck.Corraborative.Query.SparqlQueryGenerator;
-import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
@@ -28,24 +22,18 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 
-@Component
 public class FactChecking {
 
-    public org.dice.FactCheck.Corraborative.Config.Config Config;
 
     private SparqlQueryGenerator sparqlQueryGenerator;
     private QueryExecutioner queryExecutioner;
-    private CorroborativeGraph corroborativeGraph;
-    @Value("${info.service.url}")
     private String serviceURL;
 
 
 
-    @Autowired
-    public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner, CorroborativeGraph corroborativeGraph){
+    public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner){
         this.sparqlQueryGenerator = sparqlQueryGenerator;
         this.queryExecutioner = queryExecutioner;
-        this.corroborativeGraph = corroborativeGraph;
     }
 
     public Model checkFacts(Model model, Boolean verbalize, int pathLength) throws ParseException {
@@ -150,6 +138,7 @@ public class FactChecking {
             for(Result result : results){
                 score = score * (1 - result.getScore());
             }
+            System.out.println(statementID+" score is "+(1-score));
             outputModel.addLiteral(statementID.asResource(), truthProp, (1-score));
         }
         return outputModel;

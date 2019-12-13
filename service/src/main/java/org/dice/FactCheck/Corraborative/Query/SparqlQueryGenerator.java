@@ -1,26 +1,16 @@
 package org.dice.FactCheck.Corraborative.Query;
 
-import java.util.HashMap;
-import org.apache.jena.arq.querybuilder.SelectBuilder;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.sparql.core.Prologue;
-import org.apache.jena.sparql.core.TriplePath;
-import org.apache.jena.sparql.expr.Expr;
-import org.apache.jena.sparql.expr.ExprAggregator;
-import org.apache.jena.sparql.expr.aggregate.AggregatorFactory;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
-import org.apache.jena.sparql.path.Path;
-import org.apache.jena.sparql.path.PathVisitor;
-import org.apache.jena.sparql.util.NodeIsomorphismMap;
-import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
 
 /*  A class to generate sparql queries to find paths of varying lengths 
  */
 
-@Component
 public class SparqlQueryGenerator {
 
 	public HashMap<String, Integer> sparqlQueries = new HashMap<String, Integer>();

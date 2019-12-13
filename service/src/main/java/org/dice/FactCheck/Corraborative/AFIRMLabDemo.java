@@ -6,24 +6,55 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
+import org.apache.commons.cli.*;
 import org.apache.jena.rdf.model.*;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.dice.FactCheck.Corraborative.Query.SparqlQueryGenerator;
-import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
 
 public class AFIRMLabDemo {
 
 	public static void main(String[] args) {
 
+        Options options = new Options();
+
+        Option host = new Option("h", "host", true, "Host address for sparql end point");
+        host.setRequired(true);
+        options.addOption(host);
+
+        Option port = new Option("p", "port", true, "port number for sparql service");
+        port.setRequired(true);
+        options.addOption(port);
+
+        Option output = new Option("o", "output", true, "output file");
+        output.setRequired(true);
+        options.addOption(output);
+
+        CommandLineParser parser = new DefaultParser();
+        HelpFormatter formatter = new HelpFormatter();
+        CommandLine cmd = null;
+
+        try {
+            cmd = parser.parse(options, args);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            formatter.printHelp("utility-name", options);
+
+            System.exit(1);
+        }
+
+        String outputDirectory = cmd.getOptionValue("output");
+        String hostAddress = cmd.getOptionValue("host");
+        String portNumber = cmd.getOptionValue("port");
+
 		try {
 		    QueryExecutioner queryExecutioner = new QueryExecutioner();
-            queryExecutioner.setServiceRequestURL("http://131.234.29.111:8890/sparql");
-            FactChecking factChecking = new FactChecking(new SparqlQueryGenerator(), queryExecutioner, new CorroborativeGraph());
+            queryExecutioner.setServiceRequestURL("http://"+hostAddress+":"+portNumber+"/sparql");
+            FactChecking factChecking = new FactChecking(new SparqlQueryGenerator(), queryExecutioner);
             System.out.println("Generating result file for US-Vice-President dataset....");
             Model outputModel = factChecking.checkFacts(getModelfromFile(AFIRMLabDemo.class.getResource("/US_Vice_President.nt").getFile()), false, 2);
-            outputModel.write(new FileOutputStream("/home/zafar/Documents/USVP.nt"), "N-TRIPLES");
+            outputModel.write(new FileOutputStream(outputDirectory+"/USVP_Output_1.nt"), "N-TRIPLES");
             System.out.println("Finished generating result file.\n" +
-                    "The result file will be generated at the location you passed.\n"+
+                    "The result file will be generated at the location you specified.\n"+
                     "For generating ROC-AUC score on our benchmarking platform (GERBIL) do as follows:\n" +
                     "1. Go to http://swc2017.aksw.org/gerbil/config.\n" +
                     "2. Select Task: Fact Checking.\n" +
