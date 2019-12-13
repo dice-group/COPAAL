@@ -18,7 +18,8 @@ After the project is build successfully, you can run COPAAL either from an IDE (
 2. -port YYYY (port on the host where the SPARQL service is running)
 3. -output /home/output (path to output directory to generate output file)
 
-AFIRMLabDemo is configured to run the US_Vice-President dataset. When running, you should see the following in your console
+AFIRMLabDemo is configured to run the US_Vice-President dataset. When running, you should see the following message in your console
 
 ``Generating result file for US-Vice-President dataset....``
+
 Note that this run may take 13-15 mins. Once the program is finished, you can will see further instructions on how to submit the results to GERBIL platform
