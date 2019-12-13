@@ -23,31 +23,3 @@ To use the service do the following:
 1. using IDE
 2. packaged application
 3. using maven plugin
-
-### Running from an IDE
-You can run COPAAL service from your IDE as a simple Java application. To do this simply import the maven project in your IDE of choice and run https://github.com/dice-group/COPAAL/blob/master/service/src/main/java/org/dice/FactCheck/Application.java.
-
-### Running as a Packaged Application
-To run COPAAL as packaged application, open a terminal and navigate to the ``target`` sub-directory inside service folder. Issue the command ``java -jar Corraborative-0.0.1-SNAPSHOT.jar``
-
-### Using the Maven Plugin
-The Spring Boot Maven plugin includes a ``run`` goal that can be used to quickly compile and run applications. To run COPAAL service using this option, navigate to the service folder and issue the command `mvn spring-boot:run`.
-
-Using one or more options above, COPAAL service will be deployed. The running service can be verified by issuing the following example GET request from a browser
-
-http://localhost:8080/validate?subject=http://dbpedia.org/resource/Barack_Obama&object=http://dbpedia.org/resource/United_States&property=http://dbpedia.org/ontology/nationality&pathlength=2
-
-## Demo (UI-Service)
-
-In addition to the COPAAL service, one can deploy a UI-service in order to query and validate facts using a web interface. The demo was developed using [Angular CLI](https://github.com/angular/angular-cli) version 7.0.3.
-
-
-### Build
-
-To build the demo navigate to the ui-service folder and run `ng build`. The build artifacts will be stored in the `dist/` directory.
-
-### Deploy
-
-Run `ng serve` to deploy the demo. To use the demo navigate to `http://localhost:4200/`. You should see the web-page as shown in the figure below.
-
-![Demo web page.](https://github.com/dice-group/COPAAL/blob/master/service/src/main/resources/Demo.png)
