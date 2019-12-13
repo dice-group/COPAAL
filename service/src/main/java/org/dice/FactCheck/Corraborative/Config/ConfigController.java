@@ -41,7 +41,6 @@ public class ConfigController {
         Property propertyURI = ResourceFactory.createProperty(property);
         Statement statement = ResourceFactory.createStatement(subjectURI, propertyURI, objectURI);
         model.add(statement);
-
-        return factChecking.checkFacts(model, Boolean.valueOf(verbalize), Integer.parseInt(pathLength));
+        return new CorroborativeGraph();
     }
 }

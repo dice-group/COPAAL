@@ -200,6 +200,7 @@ public class PMICalculator implements Callable<Result>{
 		catch(Exception e)
 		{
 			LOGGER.info("Exception in calculating PMI score"+e.toString());
+			System.out.println("Exception in calculating PMI score"+e.toString());
 			return 0.0;
 
 		}
