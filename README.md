@@ -8,18 +8,17 @@ COPAAL is an unsupervised fact validation approach for RDF knowledge graphs whic
 ![A subgraph of DBpedia version 10-2016.](https://github.com/dice-group/COPAAL/blob/master/service/src/main/resources/Running_Example_DBpedia.png)
 
 # Usage Instructions
-COPAAL uses infomation from a given background knowledge graph *G* hosted on a sparql end-point. Currently, COPAAL supports knowledge graphs that contains ontology information. An example of a KG that defines type information is DBpedia. In our experiments, we used DBpedia and the usage instructions are for the same.
+To run COPAAL, do the following:
+- Clone the respository using the command `git clone --single-branch --branch COPAAL-AFIRM https://github.com/dice-group/COPAAL.git`
+- Navigate to COPAAL folder (cd COPAAL) and run `mvn clean package`
 
-- Prepare a sparql end-point of your choice and index the following dumps of DBpedia version 10-2016: ``ontology``,``instance types``,``mapping-based objects`` and ``infobox properties``.
-- Clone the repository from https://github.com/dice-group/COPAAL.
-The repository contains two components namely the service and demo (ui-service).
-## Service
-To use the service do the following:
-- Update the URL to map to your sparql end-point (from previous step) in https://github.com/dice-group/COPAAL/blob/master/service/src/main/resources/application.properties
-- COPAAL is developed using Spring Boot Maven.
-- Build the project by navigating to service folder and issuing the the command `mvn clean install`.
+After the project is build successfully, you can run COPAAL either from an IDE (IntelliJ or Eclipse)
+- To run in an IDE, load the project in the IDE and run AFIRMLabDemo.java file. Configure the editor to pass the following command line arguments
+1. -host XXX.XXX.XXX.XXX (IP address of the host running SPARQL service)
+2. -port YYYY (port on the host where the SPARQL service is running)
+3. -output /home/output (path to output directory to generate output file)
 
-#### COPAAL service can be deployed
-1. using IDE
-2. packaged application
-3. using maven plugin
+AFIRMLabDemo is configured to run the US_Vice-President dataset. When running, you should see the following in your console
+
+``Generating result file for US-Vice-President dataset....``
+Note that this run may take 13-15 mins. Once the program is finished, you can will see further instructions on how to submit the results to GERBIL platform
