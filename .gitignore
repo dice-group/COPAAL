@@ -1,5 +1,5 @@
-./src/test/*
-./log/*
-./target/*
-./.idea/*
-./Corraborative.imlCorraborative.iml
+src/test/*
+log/*
+target/*
+.idea/*
+Corraborative.iml

@@ -1,5 +1,0 @@
-<http://swc2017.aksw.org/task2/dataset/rw_nationality-1013> <http://swc2017.aksw.org/hasTruthValue> "1.0"^^<http://www.w3.org/2001/XMLSchema#double> .
-<http://swc2017.aksw.org/task2/dataset/rw_nationality-1013> <http://www.w3.org/1999/02/22-rdf-syntax-ns#object> <http://dbpedia.org/resource/France> .
-<http://swc2017.aksw.org/task2/dataset/rw_nationality-1013> <http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate> <http://dbpedia.org/ontology/nationality> .
-<http://swc2017.aksw.org/task2/dataset/rw_nationality-1013> <http://www.w3.org/1999/02/22-rdf-syntax-ns#subject> <http://dbpedia.org/resource/Amanda_Lear> .
-<http://swc2017.aksw.org/task2/dataset/rw_nationality-1013> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement> .

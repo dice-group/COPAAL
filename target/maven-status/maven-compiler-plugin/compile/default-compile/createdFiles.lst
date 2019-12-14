@@ -1,8 +1,0 @@
-org/dice/FactCheck/Corraborative/Path/PathQuery.class
-org/dice/FactCheck/Corraborative/PMI/PMICalculator.class
-org/dice/FactCheck/Corraborative/FactChecking.class
-org/dice/FactCheck/Corraborative/Path/PathGenerator.class
-org/dice/FactCheck/Corraborative/PMI/Result.class
-org/dice/FactCheck/Corraborative/AFIRMLabDemo.class
-org/dice/FactCheck/Corraborative/Query/QueryExecutioner.class
-org/dice/FactCheck/Corraborative/Query/SparqlQueryGenerator.class
