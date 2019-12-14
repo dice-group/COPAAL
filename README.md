@@ -16,7 +16,7 @@ After the project is build successfully, you can run COPAAL from an IDE (Intelli
 - To run in an IDE, load the project in the IDE and run AFIRMLabDemo.java file. Configure the editor to pass the following command line arguments
 1. -host XXX.XXX.XXX.XXX (IP address of the host running SPARQL service)
 2. -port YYYY (port on the host where the SPARQL service is running)
-3. -output /home/output/output.nt (path to output directory to generate output file). Note the out file extension should be `nt`
+3. -output /home/output/output.nt (path and output file name). Note the output file extension should be `nt`
 
 Example: -host 127.0.0.1 -port 8000 -output /home/results/result.nt
 
