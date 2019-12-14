@@ -28,11 +28,11 @@ Note that this run may take 13-15 mins (the dataset has 274 facts). Once the pro
 
 ``Finished generating result file.
 The result file will be generated at the location you specified.
-For generating ROC-AUC score on our benchmarking platform (GERBIL) do as follows:
+For generating ROC-AUC score on our benchmarking platform (GERBIL) do as follows:``
 1. Go to http://swc2017.aksw.org/gerbil/config.
 2. Select Task: Fact Checking.
 3. Type the name of participating system and enter email address.
 4. Submit the generated output file by clicking on Select file... button.
 5. Select the Reference dataset: Synthetic US Vice President.
 6. Check the Disclaimer. Optionally check publish to publish the results on our leaderboard.
-7. Click on Run Experiment. After the experiment is finished click on the generated link to view experiment results.``
+7. Click on Run Experiment. After the experiment is finished click on the generated link to view experiment results.
