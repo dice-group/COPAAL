@@ -21,11 +21,11 @@ public class AFIRMLabDemo {
         host.setRequired(true);
         options.addOption(host);
 
-        Option port = new Option("p", "port", true, "port number for sparql service");
+        Option port = new Option("p", "port", true, "Port number for sparql service");
         port.setRequired(true);
         options.addOption(port);
 
-        Option output = new Option("o", "output", true, "output file");
+        Option output = new Option("o", "output", true, "Output file");
         output.setRequired(true);
         options.addOption(output);
 
@@ -51,7 +51,7 @@ public class AFIRMLabDemo {
             queryExecutioner.setServiceRequestURL("http://"+hostAddress+":"+portNumber+"/sparql");
             FactChecking factChecking = new FactChecking(new SparqlQueryGenerator(), queryExecutioner);
             System.out.println("Generating result file for US-Vice-President dataset....");
-            Model outputModel = factChecking.checkFacts(getModelfromFile(AFIRMLabDemo.class.getResource("/Real_World_Nationality.nt").getFile()), false, 2);
+            Model outputModel = factChecking.checkFacts(getModelfromFile(AFIRMLabDemo.class.getResource("/US_Vice_President.nt").getFile()), false, 2);
             outputModel.write(new FileOutputStream(outputFile), "N-TRIPLES");
             System.out.println("Finished generating result file.\n" +
                     "The result file will be generated at the location you specified.\n"+
@@ -85,7 +85,7 @@ public class AFIRMLabDemo {
             model.read(new FileInputStream(new File(inputFile)), null, "N-TRIPLES");
         } catch (FileNotFoundException e) {
 
-            System.out.println("Exception while reading input file. Please check the input file path.");
+            System.out.println("Exception while reading input file. Make sure to build the project successfully.");
         }
         return model;
     }
