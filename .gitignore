@@ -1,1 +1,5 @@
-./service/src/test/*
+./src/test/*
+./log/*
+./target/*
+./.idea/*
+./Corraborative.imlCorraborative.iml

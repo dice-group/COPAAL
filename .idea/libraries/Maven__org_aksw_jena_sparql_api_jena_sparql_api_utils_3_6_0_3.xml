@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.aksw.jena-sparql-api:jena-sparql-api-utils:3.6.0-3">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/aksw/jena-sparql-api/jena-sparql-api-utils/3.6.0-3/jena-sparql-api-utils-3.6.0-3.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/aksw/jena-sparql-api/jena-sparql-api-utils/3.6.0-3/jena-sparql-api-utils-3.6.0-3-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/aksw/jena-sparql-api/jena-sparql-api-utils/3.6.0-3/jena-sparql-api-utils-3.6.0-3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
