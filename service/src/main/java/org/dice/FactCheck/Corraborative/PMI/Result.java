@@ -1,16 +1,16 @@
-package org.dice.FactCheck.Corraborative;
+package org.dice.FactCheck.Corraborative.PMI;
 
 import org.apache.jena.rdf.model.Property;
 
 public class Result {
 	
-	public String path;
-	public Property predicate;	
-	public double score;
-	public String pathSpecificity;
-	public String pathBuilder;
-	public String intermediateNodes;
-	public int pathLength;
+	private String path;
+	private Property predicate;
+	private double score;
+	private String pathSpecificity;
+	private String pathBuilder;
+	private String intermediateNodes;
+	private int pathLength;
 	
 	public String getPathSpecificity() {
 		return pathSpecificity;

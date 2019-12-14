@@ -1,4 +1,4 @@
-package org.dice.FactCheck.Corraborative;
+package org.dice.FactCheck.Corraborative.PMI;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,16 +16,16 @@ import org.slf4j.LoggerFactory;
 
 public class PMICalculator implements Callable<Result>{
 
-	public String path;
-	public String intermediateNodes;
-	public Statement inputStatement;
-	public int pathLength;
-	public String builder;
-	public int count_predicate_Occurrence;
-	public int count_subject_Triples;
-	public int count_object_Triples;
-	public Set<Node> SubjectType;
-	public Set<Node> ObjectType;
+	private String path;
+	private String intermediateNodes;
+	private Statement inputStatement;
+	private int pathLength;
+	private String builder;
+	private int count_predicate_Occurrence;
+	private int count_subject_Triples;
+	private int count_object_Triples;
+	private Set<Node> SubjectType;
+	private Set<Node> ObjectType;
 	final Logger LOGGER = LoggerFactory.getLogger(PMICalculator.class);
 	private QueryExecutioner queryExecutioner;
 

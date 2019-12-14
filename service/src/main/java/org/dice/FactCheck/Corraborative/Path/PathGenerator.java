@@ -1,23 +1,13 @@
-package org.dice.FactCheck.Corraborative;
+package org.dice.FactCheck.Corraborative.Path;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.apache.jena.arq.querybuilder.SelectBuilder;
-import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.ParameterizedSparqlString;
-import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.rdfconnection.RDFConnection;
-import org.apache.jena.rdfconnection.RDFConnectionFactory;
-import org.apache.jena.rdfconnection.RDFConnectionRemote;
-import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 
@@ -28,13 +18,13 @@ import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 
 public class PathGenerator implements Callable<PathQuery>{
 
-	public String queryBuilder;
-	public Statement input;
-	public int pathLength;
+    private String queryBuilder;
+    private Statement input;
+    private int pathLength;
 	HashMap<String, Integer> paths = new HashMap<String, Integer>();
 	HashMap<String, String> intermediateNodes = new HashMap<String, String>();
-	public PathQuery pathQuery;
-	public String ontology = "\'http://dbpedia.org/ontology\'";
+    private PathQuery pathQuery;
+    private String ontology = "\'http://dbpedia.org/ontology\'";
 	private QueryExecutioner queryExecutioner;
 
 	public PathGenerator(String queryBuilder, Statement input, int pathLength, QueryExecutioner queryExecutioner)

@@ -10,6 +10,10 @@ import org.apache.jena.rdf.model.*;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+import org.dice.FactCheck.Corraborative.PMI.PMICalculator;
+import org.dice.FactCheck.Corraborative.PMI.Result;
+import org.dice.FactCheck.Corraborative.Path.PathGenerator;
+import org.dice.FactCheck.Corraborative.Path.PathQuery;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.dice.FactCheck.Corraborative.Query.SparqlQueryGenerator;
 import org.slf4j.Logger;
@@ -138,7 +142,6 @@ public class FactChecking {
             for(Result result : results){
                 score = score * (1 - result.getScore());
             }
-            System.out.println(statementID+" score is "+(1-score));
             outputModel.addLiteral(statementID.asResource(), truthProp, (1-score));
         }
         return outputModel;

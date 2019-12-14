@@ -42,7 +42,7 @@ public class AFIRMLabDemo {
             System.exit(1);
         }
 
-        String outputDirectory = cmd.getOptionValue("output");
+        String outputFile = cmd.getOptionValue("output");
         String hostAddress = cmd.getOptionValue("host");
         String portNumber = cmd.getOptionValue("port");
 
@@ -51,8 +51,8 @@ public class AFIRMLabDemo {
             queryExecutioner.setServiceRequestURL("http://"+hostAddress+":"+portNumber+"/sparql");
             FactChecking factChecking = new FactChecking(new SparqlQueryGenerator(), queryExecutioner);
             System.out.println("Generating result file for US-Vice-President dataset....");
-            Model outputModel = factChecking.checkFacts(getModelfromFile(AFIRMLabDemo.class.getResource("/US_Vice_President.nt").getFile()), false, 2);
-            outputModel.write(new FileOutputStream(outputDirectory+"/USVP_Output_1.nt"), "N-TRIPLES");
+            Model outputModel = factChecking.checkFacts(getModelfromFile(AFIRMLabDemo.class.getResource("/Real_World_Nationality.nt").getFile()), false, 2);
+            outputModel.write(new FileOutputStream(outputFile), "N-TRIPLES");
             System.out.println("Finished generating result file.\n" +
                     "The result file will be generated at the location you specified.\n"+
                     "For generating ROC-AUC score on our benchmarking platform (GERBIL) do as follows:\n" +
@@ -65,7 +65,7 @@ public class AFIRMLabDemo {
                     "7. Click on Run Experiment. After the experiment is finished click on the generated link to view experiment results.");
 
         }catch (Exception e){
-		    System.out.println(e);
+		    System.out.println("Invalid output file "+e);
         }
 	}
 	

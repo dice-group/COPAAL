@@ -1,4 +1,4 @@
-package org.dice.FactCheck.Corraborative;
+package org.dice.FactCheck.Corraborative.Path;
 
 import java.util.HashMap;
 
@@ -11,9 +11,9 @@ public class PathQuery {
 	
 	
 	// A data structure to generate paths and remember the directions in graph that lead to the path
-	private HashMap<String, HashMap<String, Integer>> pathBuilder = new HashMap<String, HashMap<String, Integer>>();
+	private HashMap<String, HashMap<String, Integer>> pathBuilder;
 	
-	private HashMap<String, String> intermediateNodes = new HashMap<String, String>();
+	private HashMap<String, String> intermediateNodes;
 	
 	public HashMap<String, String> getIntermediateNodes() {
 		return intermediateNodes;
