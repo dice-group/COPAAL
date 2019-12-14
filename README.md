@@ -26,8 +26,8 @@ AFIRMLabDemo is configured to run the US_Vice-President dataset. When running, y
 
 Note that this run may take 13-15 mins (the dataset has 274 facts). Once the program is finished, you will see further instructions on how to submit the results to GERBIL platform as follows
 
-``Finished generating result file.
-The result file will be generated at the location you specified.
+``Finished generating result file.\n
+The result file will be generated at the location you specified.\n
 For generating ROC-AUC score on our benchmarking platform (GERBIL) do as follows:``
 1. Go to http://swc2017.aksw.org/gerbil/config.
 2. Select Task: Fact Checking.
