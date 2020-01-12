@@ -21,10 +21,6 @@ public class AFIRMLabDemo {
         host.setRequired(true);
         options.addOption(host);
 
-        Option port = new Option("p", "port", true, "Port number for sparql service");
-        port.setRequired(true);
-        options.addOption(port);
-
         Option output = new Option("o", "output", true, "Output file");
         output.setRequired(true);
         options.addOption(output);
@@ -44,11 +40,10 @@ public class AFIRMLabDemo {
 
         String outputFile = cmd.getOptionValue("output");
         String hostAddress = cmd.getOptionValue("host");
-        String portNumber = cmd.getOptionValue("port");
 
 		try {
 		    QueryExecutioner queryExecutioner = new QueryExecutioner();
-            queryExecutioner.setServiceRequestURL("http://"+hostAddress+":"+portNumber+"/sparql");
+            queryExecutioner.setServiceRequestURL(hostAddress);
             FactChecking factChecking = new FactChecking(new SparqlQueryGenerator(), queryExecutioner);
             System.out.println("Generating result file for US-Vice-President dataset....");
             Model outputModel = factChecking.checkFacts(getModelfromFile(AFIRMLabDemo.class.getResource("/US_Vice_President.nt").getFile()), false, 2);
