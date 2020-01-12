@@ -14,7 +14,7 @@ To run COPAAL, do the following:
 
 After the project is build successfully, you can run COPAAL from an IDE (IntelliJ or Eclipse)
 - To run in an IDE, load the project in the IDE and run AFIRMLabDemo.java file. Configure the editor to pass the following command line arguments
-1. -host XXX.XXX.XXX.XXX (IP address of the host running SPARQL service)
+1. -host (host running SPARQL service)
 2. -output /home/output/output.nt (path and output file name). Note the output file extension should be `nt`
 
 Example: -host http://dbpedia.org/sparql -output /home/results/result.nt
