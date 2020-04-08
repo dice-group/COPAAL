@@ -19,6 +19,8 @@ import org.dice.FactCheck.Corraborative.Query.SparqlQueryGenerator;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeTriple;
 import org.dice.FactCheck.Corraborative.UIResult.Path;
+import org.dice.FactCheck.Corraborative.sum.NegScoresHandlingSummarist;
+import org.dice.FactCheck.Corraborative.sum.ScoreSummarist;
 import org.dllearner.kb.sparql.SparqlEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +47,7 @@ public class FactChecking {
     @Value("${info.service.url}")
     private String serviceURL;
 
-
+    protected ScoreSummarist summarist = new NegScoresHandlingSummarist();
 
     @Autowired
     public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner, CorroborativeGraph corroborativeGraph){
@@ -100,9 +102,6 @@ public class FactChecking {
         int count_object_Triples = countOccurrances(NodeFactory.createVariable("s"), RDF.type, objectTypes);
 
         LOGGER.info("Checking Fact");
-
-        //because we are combining score in a probablistic equation we have to initialize to 1
-        double score = 1.0;
 
         for (int j = 1; j <= pathLength; j++) {
             try {
@@ -205,15 +204,12 @@ public class FactChecking {
 
 
         corroborativeGraph.setPathList(pathList);
-
+        
         Collections.sort(scoreList);
-        for (int s = scoreList.size() - 1; s >= 0; s--) {
-            if (scoreList.get(s) > 1) continue;
-            score = score * (1 - scoreList.get(s));
-        }
-
-        corroborativeGraph.setGraphScore(1 - score);
-        System.out.println(1 - score);
+        double score = summarist.summarize(scoreList);
+        corroborativeGraph.setGraphScore(score);
+        System.out.println(score);
+        
         return corroborativeGraph;
     }
 
