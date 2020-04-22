@@ -10,14 +10,10 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
-import org.dice.FactCheck.Corraborative.FactChecking;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.dice.FactCheck.Corraborative.Query.SparqlQueryGenerator;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FactCheckingDemo {
 
@@ -28,8 +24,7 @@ public class FactCheckingDemo {
 		org.apache.log4j.PropertyConfigurator.configure(FactChecking.class.getClassLoader().getResource("properties/log4j.properties"));
 		FactChecking factChecking = new FactChecking(new SparqlQueryGenerator(), new QueryExecutioner(), new CorroborativeGraph());
 
-		factChecking.checkFacts(getTestModel(), false, 2);
-
+		factChecking.checkFacts(getTestModel(), 2);
 
 	}
 	

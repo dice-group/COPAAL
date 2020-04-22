@@ -1,7 +1,5 @@
 package org.dice.FactCheck.Corraborative.sum;
 
-import java.util.List;
-
 /**
  * This class implements the original sum strategy of the 2019 paper.
  * 
@@ -11,11 +9,11 @@ import java.util.List;
 public class OriginalSummarist implements ScoreSummarist {
 
     @Override
-    public double summarize(List<Double> scores) {
+    public double summarize(double[] scores) {
         double score = 1.0;
-        for (int s = scores.size() - 1; s >= 0; s--) {
-            if (scores.get(s) > 1) continue;
-            score = score * (1 - scores.get(s));
+        for (int s = scores.length - 1; s >= 0; s--) {
+            if (scores[s] > 1) continue;
+            score = score * (1 - scores[s]);
         }
         return 1 - score;
     }

@@ -1,7 +1,5 @@
 package org.dice.FactCheck.Corraborative.sum;
 
-import java.util.List;
-
 /**
  * An improved handling of scores that takes care of negative scores.
  * 
@@ -11,12 +9,12 @@ import java.util.List;
 public class NegScoresHandlingSummarist implements ScoreSummarist {
 
     @Override
-    public double summarize(List<Double> scores) {
+    public double summarize(double[] scores) {
         double posScore = 1;
         double negScore = 1;
         double score;
-        for (int s = scores.size() - 1; s >= 0; s--) {
-            score = scores.get(s);
+        for (int s = scores.length - 1; s >= 0; s--) {
+            score = scores[s];
             if(score >= 0) {
                 posScore *= 1 - Math.min(score, 1.0);
             } else {

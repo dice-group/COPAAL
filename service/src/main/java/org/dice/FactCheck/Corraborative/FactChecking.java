@@ -1,15 +1,31 @@
 package org.dice.FactCheck.Corraborative;
 
-import org.aksw.gerbil.transfer.nif.Document;
-import org.aksw.simba.bengal.paraphrasing.Paraphrasing;
-import org.aksw.simba.bengal.verbalizer.SemWeb2NLVerbalizer;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+
 import org.apache.jena.arq.querybuilder.SelectBuilder;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.rdf.model.impl.StatementImpl;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.RDF;
@@ -19,22 +35,15 @@ import org.dice.FactCheck.Corraborative.Query.SparqlQueryGenerator;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeTriple;
 import org.dice.FactCheck.Corraborative.UIResult.Path;
+import org.dice.FactCheck.Corraborative.UIResult.create.DefaultPathFactory;
+import org.dice.FactCheck.Corraborative.UIResult.create.PathFactory;
 import org.dice.FactCheck.Corraborative.sum.NegScoresHandlingSummarist;
 import org.dice.FactCheck.Corraborative.sum.ScoreSummarist;
-import org.dllearner.kb.sparql.SparqlEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.io.FileNotFoundException;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
 
 @Component
 public class FactChecking {
@@ -46,20 +55,32 @@ public class FactChecking {
     private CorroborativeGraph corroborativeGraph;
     @Value("${info.service.url}")
     private String serviceURL;
+    private PathFactory defaultPathFactory;
 
     protected ScoreSummarist summarist = new NegScoresHandlingSummarist();
 
     @Autowired
-    public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner, CorroborativeGraph corroborativeGraph){
+    public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner,
+            CorroborativeGraph corroborativeGraph) {
+        this(sparqlQueryGenerator, queryExecutioner, corroborativeGraph, new DefaultPathFactory());
+    }
+
+    @Autowired
+    public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner,
+            CorroborativeGraph corroborativeGraph, PathFactory defaultPathFactory) {
         this.sparqlQueryGenerator = sparqlQueryGenerator;
         this.queryExecutioner = queryExecutioner;
         this.corroborativeGraph = corroborativeGraph;
+        this.defaultPathFactory = defaultPathFactory;
     }
 
+    public CorroborativeGraph checkFacts(Model model, int pathLength)
+            throws InterruptedException, FileNotFoundException, ParseException {
+        return checkFacts(model, pathLength, defaultPathFactory);
+    }
 
-    public static SemWeb2NLVerbalizer verbalizer = new SemWeb2NLVerbalizer(SparqlEndpoint.getEndpointDBpedia(), true, true);
-
-    public CorroborativeGraph checkFacts(Model model, Boolean verbalize, int pathLength) throws InterruptedException, FileNotFoundException, ParseException {
+    public CorroborativeGraph checkFacts(Model model, int pathLength, PathFactory pathFactory)
+            throws InterruptedException, FileNotFoundException, ParseException {
 
         queryExecutioner.setServiceRequestURL(serviceURL);
         final Logger LOGGER = LoggerFactory.getLogger(FactChecking.class);
@@ -71,27 +92,31 @@ public class FactChecking {
         Resource object = inputTriple.getObject().asResource();
         Property property = inputTriple.getPredicate();
 
-        corroborativeGraph.setInputTriple(new CorroborativeTriple(subject.toString(), property.toString(), object.toString()));
+        corroborativeGraph
+                .setInputTriple(new CorroborativeTriple(subject.toString(), property.toString(), object.toString()));
 
         int count_predicate_Triples = countPredicateOccurrances(NodeFactory.createVariable("s"), property,
                 NodeFactory.createVariable("o"));
 
-        //get Domain and Range info
+        // get Domain and Range info
 
         Set<Node> subjectTypes = getTypeInformation(property, RDFS.domain);
         Set<Node> objectTypes = getTypeInformation(property, RDFS.range);
 
-        //Check if the domain information is missing. If yes, then fallback to types of subject
+        // Check if the domain information is missing. If yes, then fallback to types of
+        // subject
         if (subjectTypes.isEmpty()) {
             subjectTypes = getTypeInformation(subject.asResource(), RDF.type);
         }
 
-        //Check if the range information is missing. If yes, then fallback to types of object
+        // Check if the range information is missing. If yes, then fallback to types of
+        // object
         if (objectTypes.isEmpty()) {
             objectTypes = getTypeInformation(object.asResource(), RDF.type);
         }
 
-        // if no type information is available for subject or object, simply return score 0. We cannot verify fact.
+        // if no type information is available for subject or object, simply return
+        // score 0. We cannot verify fact.
         if (subjectTypes.isEmpty() || objectTypes.isEmpty()) {
             corroborativeGraph.setPathList(new ArrayList<Path>());
             corroborativeGraph.setGraphScore(0.0);
@@ -133,8 +158,9 @@ public class FactChecking {
                     String querySequence = entry.getKey();
                     String pathString = path.getKey();
                     String intermediateNodes = pathQuery.getIntermediateNodes().get(pathString);
-                    PMICalculator pc = new PMICalculator(pathString, querySequence, inputTriple, intermediateNodes, path.getValue(),
-                            count_predicate_Triples, count_subject_Triples, count_object_Triples, subjectTypes, objectTypes, queryExecutioner);
+                    PMICalculator pc = new PMICalculator(pathString, querySequence, inputTriple, intermediateNodes,
+                            path.getValue(), count_predicate_Triples, count_subject_Triples, count_object_Triples,
+                            subjectTypes, objectTypes, queryExecutioner);
                     pmiCallables.add(pc);
                 }
             }
@@ -154,62 +180,35 @@ public class FactChecking {
             e.printStackTrace();
         }
 
-			/*for (PMICalculator pmicallable : pmiCallables) {
+        /*
+         * for (PMICalculator pmicallable : pmiCallables) {
+         * 
+         * double pathscore = pmicallable.calculatePMIScore(); Result result = new
+         * Result(pmicallable.path, pmicallable.inputStatement.getPredicate(),
+         * pathscore, pmicallable.builder, pmicallable.intermediateNodes,
+         * pmicallable.pathLength); System.out.println(result.path);
+         * System.out.println(result.getScore()); List<Statement> statements=
+         * generateVerbalizingTriples(result.getPathBuilder(), result.path,
+         * result.intermediateNodes, result.pathLength, subject, object);
+         * 
+         * final Document doc = verbalizer.generateDocument(statements,
+         * Paraphrasing.prop.getProperty("surfaceForms")); System.out.println(doc);
+         * System.out.println(statements); results.add(result);
+         * 
+         * }
+         */
 
-				double pathscore = pmicallable.calculatePMIScore();
-				Result result = new Result(pmicallable.path, pmicallable.inputStatement.getPredicate(), pathscore, pmicallable.builder,
-						pmicallable.intermediateNodes, pmicallable.pathLength);
-				System.out.println(result.path);
-				System.out.println(result.getScore());
-				List<Statement> statements= generateVerbalizingTriples(result.getPathBuilder(), result.path, result.intermediateNodes,
-						result.pathLength, subject, object);
-
-				final Document doc = verbalizer.generateDocument(statements, Paraphrasing.prop.getProperty("surfaceForms"));
-				System.out.println(doc);
-				System.out.println(statements);
-				results.add(result);
-
-			}*/
-
-        List<Path> pathList = new ArrayList<Path>();
-
-        List<Double> scoreList = new ArrayList<Double>();
-
-        results.parallelStream().forEach(result -> {
-
-            List<Statement> statements = generateVerbalizingTriples(result.getPathBuilder(), result.path, result.intermediateNodes,
-                    result.pathLength, subject, object);
-
-            scoreList.add(result.score);
-            //System.out.println(doc.getText());
-            List<CorroborativeTriple> triples = new ArrayList<CorroborativeTriple>();
-
-            for (Statement statement : statements) {
-                triples.add(new CorroborativeTriple(statement.getSubject().toString(), statement.getPredicate().toString(), statement.getObject().toString()));
-            }
-
-
-            if(verbalize) {
-                final Document doc = verbalizer.generateDocument(statements, Paraphrasing.prop.getProperty("surfaceForms"));
-
-                Path path = new Path(triples, result.score, doc.getText());
-                pathList.add(path);
-            }
-
-            else {
-                Path path = new Path(triples, result.score, "Not available");
-                pathList.add(path);
-            }
-        });
-
+        List<Path> pathList = results.parallelStream().map(r -> pathFactory.createPath(subject, object, r))
+                .collect(Collectors.toList());
+        double[] scores = results.parallelStream().mapToDouble(r -> r.score).toArray();
 
         corroborativeGraph.setPathList(pathList);
-        
-        Collections.sort(scoreList);
-        double score = summarist.summarize(scoreList);
+
+        Arrays.sort(scores);
+        double score = summarist.summarize(scores);
         corroborativeGraph.setGraphScore(score);
         System.out.println(score);
-        
+
         return corroborativeGraph;
     }
 
@@ -221,7 +220,8 @@ public class FactChecking {
         return resource;
     }
 
-    public List<Statement> generateVerbalizingTriples(String builder, String path, String intermediateNodes, int pathLength, RDFNode subject, RDFNode object) {
+    public List<Statement> generateVerbalizingTriples(String builder, String path, String intermediateNodes,
+            int pathLength, RDFNode subject, RDFNode object) {
         List<Statement> statementList = new ArrayList<Statement>();
         String[] paths = path.split(";");
         int prop = 1;
@@ -241,7 +241,6 @@ public class FactChecking {
                 res++;
             }
         }
-
 
         builder = builder.replace("?s", subject.toString());
         builder = builder.replace("?o", object.toString());
@@ -299,8 +298,7 @@ public class FactChecking {
         return types;
     }
 
-
-    public int returnCount(SelectBuilder builder){
+    public int returnCount(SelectBuilder builder) {
 
         Query queryOccurrence = builder.build();
         QueryExecution queryExecution = queryExecutioner.getQueryExecution(queryOccurrence);

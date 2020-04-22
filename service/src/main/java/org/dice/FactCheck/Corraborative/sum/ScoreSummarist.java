@@ -1,7 +1,5 @@
 package org.dice.FactCheck.Corraborative.sum;
 
-import java.util.List;
-
 /**
  * An interface of a class that can be used to summarize the given scores and
  * returns a single score.
@@ -17,5 +15,5 @@ public interface ScoreSummarist {
      * @param scores the scores that should be summarized
      * @return the summarized score
      */
-    public double summarize(List<Double> scores);
+    public double summarize(double[] scores);
 }
