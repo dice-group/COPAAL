@@ -89,8 +89,8 @@ public class PathGenerator implements Callable<PathQuery>{
 			String[] querySequence = queryBuilder.split(";");
 			ParameterizedSparqlString paraPathQuery = new ParameterizedSparqlString("SELECT ?p1 ?x1 ?p2 where \n"
 					+ "{ \n "+querySequence[0]+"."+querySequence[1]+"."+"\n"
-					+"FILTER(strstarts(str(?p1),"+ontology+"))"
-					+"FILTER(strstarts(str(?p2),"+ontology+"))"
+					//+"FILTER(strstarts(str(?p1),"+ontology+"))"
+					//+"FILTER(strstarts(str(?p2),"+ontology+"))"
 					+"FILTER(!ISLITERAL(?x1))"+"\n "
 							+ "}");
 			
