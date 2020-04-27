@@ -207,7 +207,7 @@ public class FactChecking {
         Arrays.sort(scores);
         double score = summarist.summarize(scores);
         corroborativeGraph.setGraphScore(score);
-        System.out.println(score);
+        LOGGER.info(score + "");
 
         return corroborativeGraph;
     }
