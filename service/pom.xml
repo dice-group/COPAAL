@@ -116,7 +116,14 @@
 			<groupId>org.aksw.simba</groupId>
 			<artifactId>BENGAL</artifactId>
 			<version>1.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>edu.berkeley.compbio</groupId>
+					<artifactId>jlibsvm</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
