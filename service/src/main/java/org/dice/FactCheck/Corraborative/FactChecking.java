@@ -30,6 +30,10 @@ import org.apache.jena.rdf.model.impl.StatementImpl;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+import org.dice.FactCheck.Corraborative.PathGenerator.DefaultPathGenerator;
+import org.dice.FactCheck.Corraborative.PathGenerator.DefaultPathGeneratorFactory;
+import org.dice.FactCheck.Corraborative.PathGenerator.IPathGenerator;
+import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.dice.FactCheck.Corraborative.Query.SparqlQueryGenerator;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
@@ -56,8 +60,15 @@ public class FactChecking {
     @Value("${info.service.url}")
     private String serviceURL;
     private PathFactory defaultPathFactory;
+    private IPathGeneratorFactory pathGeneratorFactory = new DefaultPathGeneratorFactory();
 
     protected ScoreSummarist summarist = new NegScoresHandlingSummarist();
+
+    public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner,
+                        CorroborativeGraph corroborativeGraph, IPathGeneratorFactory pathGeneratorFactory) {
+        this(sparqlQueryGenerator, queryExecutioner, corroborativeGraph, new DefaultPathFactory());
+        this.pathGeneratorFactory = pathGeneratorFactory;
+    }
 
     @Autowired
     public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner,
@@ -136,16 +147,16 @@ public class FactChecking {
                 LOGGER.info("Exception while generating Sparql queries.");
             }
         }
-        Set<PathGenerator> pathGenerators = new HashSet<PathGenerator>();
+        Set<IPathGenerator> pathGenerators = new HashSet<IPathGenerator>();
         Set<PathQuery> pathQueries = new HashSet<PathQuery>();
 
         for (Entry<String, Integer> entry : sparqlQueryGenerator.sparqlQueries.entrySet()) {
 
-            PathGenerator pg = new PathGenerator(entry.getKey(), inputTriple, entry.getValue(), queryExecutioner);
+            IPathGenerator pg = pathGeneratorFactory.build(entry.getKey(), inputTriple, entry.getValue(), queryExecutioner);
             pathGenerators.add(pg);
         }
 
-        for (PathGenerator pathGenerator : pathGenerators) {
+        for (IPathGenerator pathGenerator : pathGenerators) {
             pathQueries.add(pathGenerator.returnQuery());
         }
 

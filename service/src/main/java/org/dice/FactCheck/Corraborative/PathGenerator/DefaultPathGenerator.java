@@ -1,4 +1,4 @@
-package org.dice.FactCheck.Corraborative;
+package org.dice.FactCheck.Corraborative.PathGenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +19,7 @@ import org.apache.jena.rdfconnection.RDFConnectionFactory;
 import org.apache.jena.rdfconnection.RDFConnectionRemote;
 import org.apache.jena.rdfconnection.RDFConnectionRemoteBuilder;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
+import org.dice.FactCheck.Corraborative.PathQuery;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 
 /*
@@ -26,7 +27,7 @@ import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
  * a structure for realizing the path
  */
 
-public class PathGenerator implements Callable<PathQuery>{
+public class DefaultPathGenerator implements IPathGenerator{
 
 	public String queryBuilder;
 	public Statement input;
@@ -37,7 +38,7 @@ public class PathGenerator implements Callable<PathQuery>{
 	public String ontology = "\'http://dbpedia.org/ontology\'";
 	private QueryExecutioner queryExecutioner;
 
-	public PathGenerator(String queryBuilder, Statement input, int pathLength, QueryExecutioner queryExecutioner)
+	public DefaultPathGenerator(String queryBuilder, Statement input, int pathLength, QueryExecutioner queryExecutioner)
 	{
 		this.queryBuilder = queryBuilder;
 		this.input = input;
@@ -49,7 +50,7 @@ public class PathGenerator implements Callable<PathQuery>{
 		return returnQuery();
 	}
 
-	public PathQuery returnQuery() throws ParseException
+	public PathQuery returnQuery()
 	{
 
 		if(pathLength == 1)
@@ -89,8 +90,8 @@ public class PathGenerator implements Callable<PathQuery>{
 			String[] querySequence = queryBuilder.split(";");
 			ParameterizedSparqlString paraPathQuery = new ParameterizedSparqlString("SELECT ?p1 ?x1 ?p2 where \n"
 					+ "{ \n "+querySequence[0]+"."+querySequence[1]+"."+"\n"
-					//+"FILTER(strstarts(str(?p1),"+ontology+"))"
-					//+"FILTER(strstarts(str(?p2),"+ontology+"))"
+					+"FILTER(strstarts(str(?p1),"+ontology+"))"
+					+"FILTER(strstarts(str(?p2),"+ontology+"))"
 					+"FILTER(!ISLITERAL(?x1))"+"\n "
 							+ "}");
 			
