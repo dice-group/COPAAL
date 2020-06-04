@@ -61,6 +61,7 @@ public class FactChecking {
     private String serviceURL;
     private PathFactory defaultPathFactory;
     private IPathGeneratorFactory pathGeneratorFactory = new DefaultPathGeneratorFactory();
+    private int maxThreads = 100;
 
     protected ScoreSummarist summarist = new NegScoresHandlingSummarist();
 
@@ -180,7 +181,7 @@ public class FactChecking {
         // for experiments, use run in parallel
 
         try {
-            ExecutorService executor = Executors.newFixedThreadPool(100);
+            ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
 
             for (Future<Result> result : executor.invokeAll(pmiCallables)) {
                 results.add(result.get());
@@ -320,4 +321,9 @@ public class FactChecking {
         queryExecution.close();
         return count_Occurrence;
     }
+
+    public void setMaxThreads(int maxThreads) {
+        this.maxThreads = maxThreads;
+    }
+
 }
