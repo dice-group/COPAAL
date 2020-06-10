@@ -217,6 +217,19 @@ public class NPMICalculator implements Callable<Result> {
                 logSubObjTriples);
     }
 
+    /**
+     * Calculates the NPMI value for an event A, an event B and their common
+     * occurrence AB based on the given <b>logarithmic</b> count values.
+     * 
+     * @param logCountAB the number of common occurrences of A and B.
+     * @param logNormAB  the theoretical maximum of the common occurrence of A and
+     *                   B.
+     * @param logCountA  the occurrence count of A.
+     * @param logNormA   the theoretical maximum of the occurrence count of A.
+     * @param logCountB  the occurrence count of B.
+     * @param logNormB   the theoretical maximum of the occurrence count of B.
+     * @return the NPMI value
+     */
     public static double calculateNPMI(double logCountAB, double logNormAB, double logCountA, double logNormA,
             double logCountB, double logNormB) {
         // Calculate probabilities
