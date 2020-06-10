@@ -14,7 +14,7 @@ import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PMICalculator implements Callable<Result>{
+public class NPMICalculator implements Callable<Result>{
 
 	public String path;
 	public String intermediateNodes;
@@ -26,11 +26,11 @@ public class PMICalculator implements Callable<Result>{
 	public int count_object_Triples;
 	public Set<Node> SubjectType;
 	public Set<Node> ObjectType;
-	final Logger LOGGER = LoggerFactory.getLogger(PMICalculator.class);
+	final Logger LOGGER = LoggerFactory.getLogger(NPMICalculator.class);
 	private QueryExecutioner queryExecutioner;
 
 
-	public PMICalculator(String path, String builder, Statement inputStatement, String intermediateNodes, int pathLength, int count_predicate_Occurrence,
+	public NPMICalculator(String path, String builder, Statement inputStatement, String intermediateNodes, int pathLength, int count_predicate_Occurrence,
 						 int count_subject_Triples, int count_object_Triples, Set<Node> SubjectType, Set<Node> ObjectType, QueryExecutioner queryExecutioner) {
 		this.path = path;
 		this.builder = builder;
