@@ -161,7 +161,7 @@ public class FactChecking {
             pathQueries.add(pathGenerator.returnQuery());
         }
 
-        Set<PMICalculator> pmiCallables = new HashSet<PMICalculator>();
+        Set<NPMICalculator> pmiCallables = new HashSet<NPMICalculator>();
         Set<Result> results = new HashSet<Result>();
         for (PathQuery pathQuery : pathQueries) {
             for (Entry<String, java.util.HashMap<String, Integer>> entry : pathQuery.getPathBuilder().entrySet()) {
@@ -170,7 +170,7 @@ public class FactChecking {
                     String querySequence = entry.getKey();
                     String pathString = path.getKey();
                     String intermediateNodes = pathQuery.getIntermediateNodes().get(pathString);
-                    PMICalculator pc = new PMICalculator(pathString, querySequence, inputTriple, intermediateNodes,
+                    NPMICalculator pc = new NPMICalculator(pathString, querySequence, inputTriple, intermediateNodes,
                             path.getValue(), count_predicate_Triples, count_subject_Triples, count_object_Triples,
                             subjectTypes, objectTypes, queryExecutioner);
                     pmiCallables.add(pc);
