@@ -103,7 +103,7 @@ public class NPMICalculator implements Callable<Result> {
                         .asLiteral().getDouble();
                 predicatePathQueryExecution.close();
 
-                return pmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
+                return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
             } else if (pathLength == 2) {
                 String[] querySequence = builder.split(";");
 
@@ -133,7 +133,7 @@ public class NPMICalculator implements Callable<Result> {
                         .asLiteral().getDouble();
                 pathPredicateQueryExecution.close();
 
-                return pmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
+                return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
 
             } else {
 
@@ -159,7 +159,7 @@ public class NPMICalculator implements Callable<Result> {
                         .asLiteral().getDouble();
                 pathPredicateQueryExecution.close();
 
-                return pmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
+                return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
             }
 
         } catch (Exception e) {
@@ -168,26 +168,25 @@ public class NPMICalculator implements Callable<Result> {
         }
     }
 
-    public double pmiValue(double count_Path_Occurrence, double count_path_Predicate_Occurrence)
+    /**
+     * Method calculating the NPMI value of for the given path and path-predicate
+     * counts based on the counts stored in the attributes of this class. The NPMI
+     * is not calculated if the common occurrence of path and predicate is 0. In
+     * that case, {@code -1.0} is returned.
+     * 
+     * @param count_Path_Occurrence           the occurrence of the path within the
+     *                                        graph
+     * @param count_path_Predicate_Occurrence common occurrence of the path and the
+     *                                        predicate within the graph
+     * @return the NPMI value for the given path and the predicate
+     * @throws IllegalArgumentException thrown if one of the following counts is 0:
+     *                                  the given {@code count_Path_Occurrence}, the
+     *                                  {@link #count_predicate_Occurrence}, the
+     *                                  {@link #count_subject_Triples} or the
+     *                                  {@link #count_object_Triples}
+     */
+    public double npmiValue(double count_Path_Occurrence, double count_path_Predicate_Occurrence)
             throws IllegalArgumentException {
-//        BigDecimal NO_OF_SUBJECT_TRIPLES = new BigDecimal(Integer.toString(count_subject_Triples));
-//        BigDecimal NO_OF_OBJECT_TRIPLES = new BigDecimal(Integer.toString(count_object_Triples));
-//        BigDecimal NO_PATH_PREDICATE_TRIPLES = new BigDecimal(Double.toString(count_path_Predicate_Occurrence));
-//        BigDecimal SUBJECT_OBJECT_TRIPLES = NO_OF_SUBJECT_TRIPLES.multiply(NO_OF_OBJECT_TRIPLES);
-//
-//        // add a small epsilon = 10 power -18 to avoid zero in logarithm
-//        double PROBABILITY_PATH_PREDICATE = NO_PATH_PREDICATE_TRIPLES
-//                .divide(SUBJECT_OBJECT_TRIPLES, 20, RoundingMode.HALF_EVEN).doubleValue() + 0.000000000000000001;
-//        BigDecimal NO_PATH_TRIPLES = new BigDecimal(Double.toString(count_Path_Occurrence));
-//        BigDecimal NO_OF_PREDICATE_TRIPLES = new BigDecimal(Integer.toString(count_predicate_Occurrence));
-//        double PROBABILITY_PATH = NO_PATH_TRIPLES.divide(SUBJECT_OBJECT_TRIPLES, 20, RoundingMode.HALF_EVEN)
-//                .doubleValue();
-//        double PROBABILITY_PREDICATE = NO_OF_PREDICATE_TRIPLES
-//                .divide(SUBJECT_OBJECT_TRIPLES, 20, RoundingMode.HALF_EVEN).doubleValue();
-//
-//        return Math.log(PROBABILITY_PATH_PREDICATE / (PROBABILITY_PATH * PROBABILITY_PREDICATE))
-//                / -Math.log(PROBABILITY_PATH_PREDICATE);
-
         // If the predicate never occurs
         if (count_predicate_Occurrence == 0) {
             throw new IllegalArgumentException(

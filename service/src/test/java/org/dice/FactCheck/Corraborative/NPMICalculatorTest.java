@@ -22,7 +22,7 @@ public class NPMICalculatorTest {
             int count_Path_Occurrence, int count_path_Predicate_Occurrence) {
         NPMICalculator calculator = new NPMICalculator(null, null, null, null, 0, count_predicate_Occurrence,
                 count_subject_Triples, count_object_Triples, null, null, null);
-        return calculator.pmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
+        return calculator.npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
     }
 
     @Test
