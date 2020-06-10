@@ -1,7 +1,5 @@
 package org.dice.FactCheck.Corraborative;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -106,7 +104,7 @@ public class NPMICalculator implements Callable<Result> {
                 predicatePathQueryExecution.close();
 
                 return pmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
-            }  else if (pathLength == 2) {
+            } else if (pathLength == 2) {
                 String[] querySequence = builder.split(";");
 
                 String firstPath = querySequence[0].split(" ")[0].trim() + " <" + path.split(";")[0] + "> "
@@ -170,30 +168,68 @@ public class NPMICalculator implements Callable<Result> {
         }
     }
 
-    public double pmiValue(double count_Path_Occurrence, double count_path_Predicate_Occurrence) {
-        try {
-            BigDecimal NO_OF_SUBJECT_TRIPLES = new BigDecimal(Integer.toString(count_subject_Triples));
-            BigDecimal NO_OF_OBJECT_TRIPLES = new BigDecimal(Integer.toString(count_object_Triples));
-            BigDecimal NO_PATH_PREDICATE_TRIPLES = new BigDecimal(Double.toString(count_path_Predicate_Occurrence));
-            BigDecimal SUBJECT_OBJECT_TRIPLES = NO_OF_SUBJECT_TRIPLES.multiply(NO_OF_OBJECT_TRIPLES);
+    public double pmiValue(double count_Path_Occurrence, double count_path_Predicate_Occurrence)
+            throws IllegalArgumentException {
+//        BigDecimal NO_OF_SUBJECT_TRIPLES = new BigDecimal(Integer.toString(count_subject_Triples));
+//        BigDecimal NO_OF_OBJECT_TRIPLES = new BigDecimal(Integer.toString(count_object_Triples));
+//        BigDecimal NO_PATH_PREDICATE_TRIPLES = new BigDecimal(Double.toString(count_path_Predicate_Occurrence));
+//        BigDecimal SUBJECT_OBJECT_TRIPLES = NO_OF_SUBJECT_TRIPLES.multiply(NO_OF_OBJECT_TRIPLES);
+//
+//        // add a small epsilon = 10 power -18 to avoid zero in logarithm
+//        double PROBABILITY_PATH_PREDICATE = NO_PATH_PREDICATE_TRIPLES
+//                .divide(SUBJECT_OBJECT_TRIPLES, 20, RoundingMode.HALF_EVEN).doubleValue() + 0.000000000000000001;
+//        BigDecimal NO_PATH_TRIPLES = new BigDecimal(Double.toString(count_Path_Occurrence));
+//        BigDecimal NO_OF_PREDICATE_TRIPLES = new BigDecimal(Integer.toString(count_predicate_Occurrence));
+//        double PROBABILITY_PATH = NO_PATH_TRIPLES.divide(SUBJECT_OBJECT_TRIPLES, 20, RoundingMode.HALF_EVEN)
+//                .doubleValue();
+//        double PROBABILITY_PREDICATE = NO_OF_PREDICATE_TRIPLES
+//                .divide(SUBJECT_OBJECT_TRIPLES, 20, RoundingMode.HALF_EVEN).doubleValue();
+//
+//        return Math.log(PROBABILITY_PATH_PREDICATE / (PROBABILITY_PATH * PROBABILITY_PREDICATE))
+//                / -Math.log(PROBABILITY_PATH_PREDICATE);
 
-            // add a small epsilon = 10 power -18 to avoid zero in logarithm
-            double PROBABILITY_PATH_PREDICATE = NO_PATH_PREDICATE_TRIPLES
-                    .divide(SUBJECT_OBJECT_TRIPLES, 20, RoundingMode.HALF_EVEN).doubleValue() + 0.000000000000000001;
-            BigDecimal NO_PATH_TRIPLES = new BigDecimal(Double.toString(count_Path_Occurrence));
-            BigDecimal NO_OF_PREDICATE_TRIPLES = new BigDecimal(Integer.toString(count_predicate_Occurrence));
-            double PROBABILITY_PATH = NO_PATH_TRIPLES.divide(SUBJECT_OBJECT_TRIPLES, 20, RoundingMode.HALF_EVEN)
-                    .doubleValue();
-            double PROBABILITY_PREDICATE = NO_OF_PREDICATE_TRIPLES
-                    .divide(SUBJECT_OBJECT_TRIPLES, 20, RoundingMode.HALF_EVEN).doubleValue();
-
-            return Math.log(PROBABILITY_PATH_PREDICATE / (PROBABILITY_PATH * PROBABILITY_PREDICATE))
-                    / -Math.log(PROBABILITY_PATH_PREDICATE);
+        // If the predicate never occurs
+        if (count_predicate_Occurrence == 0) {
+            throw new IllegalArgumentException(
+                    "The given predicate does never occur. The NPMI is not defined for this case.");
+        }
+        // If the path never occurs
+        if (count_Path_Occurrence == 0) {
+            throw new IllegalArgumentException(
+                    "The given path does never occur. The NPMI is not defined for this case.");
+        }
+        // If subject or object types never occur
+        if ((count_subject_Triples == 0) || (count_object_Triples == 0)) {
+            throw new IllegalArgumentException(
+                    "The given number of triples for the subject or object type is 0. The NPMI is not defined for this case. Given occurrences is subject="
+                            + count_subject_Triples + " and object=" + count_object_Triples);
+        }
+        // Path and predicate never occur together
+        if (count_path_Predicate_Occurrence == 0) {
+            // Since we know that A and B exist, there is a chance that they should occur
+            // together. Since it never happens, we have to return -1
+            return -1;
         }
 
-        catch (Exception ex) {
-            LOGGER.info("Exception in calculating PMI value " + ex.toString());
-            return 0.0;
+        double logSubObjTriples = Math.log(count_subject_Triples) + Math.log(count_object_Triples);
+
+        return calculateNPMI(Math.log(count_path_Predicate_Occurrence), logSubObjTriples,
+                Math.log(count_Path_Occurrence), logSubObjTriples, Math.log(count_predicate_Occurrence),
+                logSubObjTriples);
+    }
+
+    public static double calculateNPMI(double logCountAB, double logNormAB, double logCountA, double logNormA,
+            double logCountB, double logNormB) {
+        // Calculate probabilities
+        double logProbA = logCountA - logNormA;
+        double logProbB = logCountB - logNormB;
+        double logProbAB = logCountAB - logNormAB;
+
+        // If the probability of AB is 1.0 (i.e., its log is 0.0)
+        if (logProbAB == 0) {
+            return 1.0;
+        } else {
+            return (logProbAB - logProbA - logProbB) / -logProbAB;
         }
     }
 
