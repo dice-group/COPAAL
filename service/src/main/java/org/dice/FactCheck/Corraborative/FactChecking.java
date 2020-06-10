@@ -184,7 +184,9 @@ public class FactChecking {
             ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
 
             for (Future<Result> result : executor.invokeAll(pmiCallables)) {
-                results.add(result.get());
+                if(result.get().hasLegalScore){
+                    results.add(result.get());
+                }
             }
 
             executor.shutdown();

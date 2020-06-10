@@ -11,6 +11,7 @@ public class Result {
 	public String pathBuilder;
 	public String intermediateNodes;
 	public int pathLength;
+	public boolean hasLegalScore = false;
 	
 	public String getPathSpecificity() {
 		return pathSpecificity;
@@ -21,6 +22,15 @@ public class Result {
 		this.pathSpecificity = pathSpecificity;
 	}
 
+
+	public Result(String path, Property predicate, String pathBuilder, String intermediateNodes, int pathLength) {
+		this.path = path;
+		this.predicate = predicate;
+		this.score = score;
+		this.pathBuilder = pathBuilder;
+		this.intermediateNodes = intermediateNodes;
+		this.pathLength = pathLength;
+	}
 
 	public Result(String path, Property predicate, double score, String pathBuilder, String intermediateNodes, int pathLength) {
 		this.path = path;

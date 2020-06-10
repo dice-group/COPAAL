@@ -68,104 +68,99 @@ public class NPMICalculator implements Callable<Result> {
 
         String predicateTriple = "?s <" + inputStatement.getPredicate() + "> ?o .";
 
-        try {
-            if (pathLength == 3) {
-                String[] querySequence = builder.split(";");
+        if (pathLength == 3) {
+            String[] querySequence = builder.split(";");
 
-                String firstPath = querySequence[0].split(" ")[0].trim() + " <" + path.split(";")[0] + "> "
-                        + querySequence[0].split(" ")[2].trim();
-                String secondPath = querySequence[1].split(" ")[0].trim() + " <" + path.split(";")[1] + "> "
-                        + querySequence[1].split(" ")[2].trim();
-                String thirdPath = querySequence[2].split(" ")[0].trim() + " <" + path.split(";")[2] + "> "
-                        + querySequence[2].split(" ")[2].trim();
+            String firstPath = querySequence[0].split(" ")[0].trim() + " <" + path.split(";")[0] + "> "
+                    + querySequence[0].split(" ")[2].trim();
+            String secondPath = querySequence[1].split(" ")[0].trim() + " <" + path.split(";")[1] + "> "
+                    + querySequence[1].split(" ")[2].trim();
+            String thirdPath = querySequence[2].split(" ")[0].trim() + " <" + path.split(";")[2] + "> "
+                    + querySequence[2].split(" ")[2].trim();
 
-                String pathQueryString = "select (sum(?b3*?k) as ?sum) where { \n"
-                        + "select (count(*) as ?b3) (?b2*?b1 as ?k) ?x1 where { \n" + firstPath + " .\n"
-                        + subTypeTriples + "{ \n" + "Select (count(*) as ?b2) ?x1 ?b1 where { \n" + secondPath + "{ \n"
-                        + "select (count(*) as ?b1) ?x2 where { \n" + thirdPath + ". \n" + objTypeTriples
-                        + "} group by ?x2\n" + "}\n" + "} group by ?b1 ?x1\n" + "}\n" + "} group by ?x1 ?b2 ?b1\n"
-                        + "}\n";
+            String pathQueryString = "select (sum(?b3*?k) as ?sum) where { \n"
+                    + "select (count(*) as ?b3) (?b2*?b1 as ?k) ?x1 where { \n" + firstPath + " .\n"
+                    + subTypeTriples + "{ \n" + "Select (count(*) as ?b2) ?x1 ?b1 where { \n" + secondPath + "{ \n"
+                    + "select (count(*) as ?b1) ?x2 where { \n" + thirdPath + ". \n" + objTypeTriples
+                    + "} group by ?x2\n" + "}\n" + "} group by ?b1 ?x1\n" + "}\n" + "} group by ?x1 ?b2 ?b1\n"
+                    + "}\n";
 
-                Query pathQuery = QueryFactory.create(pathQueryString);
-                QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
-                double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?sum").asLiteral()
-                        .getDouble();
-                pathQueryExecution.close();
+            Query pathQuery = QueryFactory.create(pathQueryString);
+            QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
+            double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?sum").asLiteral()
+                    .getDouble();
+            pathQueryExecution.close();
 
-                String pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n"
-                        + subTypeTriples + secondPath + " .\n" + thirdPath + " .\n" + objTypeTriples + predicateTriple
-                        + "\n" + "}\n";
+            String pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n"
+                    + subTypeTriples + secondPath + " .\n" + thirdPath + " .\n" + objTypeTriples + predicateTriple
+                    + "\n" + "}\n";
 
-                Query pathPredicateQuery = QueryFactory.create(pathPredicateQueryString);
-                QueryExecution predicatePathQueryExecution = queryExecutioner.getQueryExecution(pathPredicateQuery);
+            Query pathPredicateQuery = QueryFactory.create(pathPredicateQueryString);
+            QueryExecution predicatePathQueryExecution = queryExecutioner.getQueryExecution(pathPredicateQuery);
 
-                double count_path_Predicate_Occurrence = predicatePathQueryExecution.execSelect().next().get("?c")
-                        .asLiteral().getDouble();
-                predicatePathQueryExecution.close();
+            double count_path_Predicate_Occurrence = predicatePathQueryExecution.execSelect().next().get("?c")
+                    .asLiteral().getDouble();
+            predicatePathQueryExecution.close();
 
-                return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
-            } else if (pathLength == 2) {
-                String[] querySequence = builder.split(";");
+            return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
+        } else if (pathLength == 2) {
+            String[] querySequence = builder.split(";");
 
-                String firstPath = querySequence[0].split(" ")[0].trim() + " <" + path.split(";")[0] + "> "
-                        + querySequence[0].split(" ")[2].trim();
-                String secondPath = querySequence[1].split(" ")[0].trim() + " <" + path.split(";")[1] + "> "
-                        + querySequence[1].split(" ")[2].trim();
+            String firstPath = querySequence[0].split(" ")[0].trim() + " <" + path.split(";")[0] + "> "
+                    + querySequence[0].split(" ")[2].trim();
+            String secondPath = querySequence[1].split(" ")[0].trim() + " <" + path.split(";")[1] + "> "
+                    + querySequence[1].split(" ")[2].trim();
 
-                String pathQueryString = "Select (sum(?b1*?b2) as ?sum) where {\n"
-                        + "select (count(*) as ?b2) ?b1 where { \n" + firstPath + " .\n" + subTypeTriples + "{ \n"
-                        + "select (count(*) as ?b1) ?x1 where { \n" + secondPath + " .\n" + objTypeTriples
-                        + "} group by ?x1\n" + "}\n" + "} group by ?b1\n" + "}\n";
+            String pathQueryString = "Select (sum(?b1*?b2) as ?sum) where {\n"
+                    + "select (count(*) as ?b2) ?b1 where { \n" + firstPath + " .\n" + subTypeTriples + "{ \n"
+                    + "select (count(*) as ?b1) ?x1 where { \n" + secondPath + " .\n" + objTypeTriples
+                    + "} group by ?x1\n" + "}\n" + "} group by ?b1\n" + "}\n";
 
-                Query pathQuery = QueryFactory.create(pathQueryString);
-                QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
-                double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?sum").asLiteral()
-                        .getDouble();
-                pathQueryExecution.close();
+            Query pathQuery = QueryFactory.create(pathQueryString);
+            QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
+            double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?sum").asLiteral()
+                    .getDouble();
+            pathQueryExecution.close();
 
-                String pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n"
-                        + subTypeTriples + secondPath + " .\n" + objTypeTriples + predicateTriple + "\n" + "}\n";
+            String pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n"
+                    + subTypeTriples + secondPath + " .\n" + objTypeTriples + predicateTriple + "\n" + "}\n";
 
-                Query pathPredicateQuery = QueryFactory.create(pathPredicateQueryString);
+            Query pathPredicateQuery = QueryFactory.create(pathPredicateQueryString);
 
-                QueryExecution pathPredicateQueryExecution = queryExecutioner.getQueryExecution(pathPredicateQuery);
-                double count_path_Predicate_Occurrence = pathPredicateQueryExecution.execSelect().next().get("?c")
-                        .asLiteral().getDouble();
-                pathPredicateQueryExecution.close();
+            QueryExecution pathPredicateQueryExecution = queryExecutioner.getQueryExecution(pathPredicateQuery);
+            double count_path_Predicate_Occurrence = pathPredicateQueryExecution.execSelect().next().get("?c")
+                    .asLiteral().getDouble();
+            pathPredicateQueryExecution.close();
 
-                return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
+            return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
 
-            } else {
+        } else {
 
-                String firstPath = builder.split(" ")[0].trim() + " <" + path.split(";")[0] + "> "
-                        + builder.split(" ")[2].trim();
+            String firstPath = builder.split(" ")[0].trim() + " <" + path.split(";")[0] + "> "
+                    + builder.split(" ")[2].trim();
 
-                String pathQueryString = "Select (count(*) as ?sum) where {\n" + firstPath + " .\n" + subTypeTriples
-                        + objTypeTriples + "}\n";
+            String pathQueryString = "Select (count(*) as ?sum) where {\n" + firstPath + " .\n" + subTypeTriples
+                    + objTypeTriples + "}\n";
 
-                Query pathQuery = QueryFactory.create(pathQueryString);
-                QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
-                double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?sum").asLiteral()
-                        .getDouble();
-                pathQueryExecution.close();
+            Query pathQuery = QueryFactory.create(pathQueryString);
+            QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
+            double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?sum").asLiteral()
+                    .getDouble();
+            pathQueryExecution.close();
 
-                String pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n"
-                        + subTypeTriples + objTypeTriples + predicateTriple + "\n" + "}\n";
+            String pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n"
+                    + subTypeTriples + objTypeTriples + predicateTriple + "\n" + "}\n";
 
-                Query pathPredicateQuery = QueryFactory.create(pathPredicateQueryString);
-                QueryExecution pathPredicateQueryExecution = queryExecutioner.getQueryExecution(pathPredicateQuery);
+            Query pathPredicateQuery = QueryFactory.create(pathPredicateQueryString);
+            QueryExecution pathPredicateQueryExecution = queryExecutioner.getQueryExecution(pathPredicateQuery);
 
-                double count_path_Predicate_Occurrence = pathPredicateQueryExecution.execSelect().next().get("?c")
-                        .asLiteral().getDouble();
-                pathPredicateQueryExecution.close();
+            double count_path_Predicate_Occurrence = pathPredicateQueryExecution.execSelect().next().get("?c")
+                    .asLiteral().getDouble();
+            pathPredicateQueryExecution.close();
 
-                return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
-            }
-
-        } catch (Exception e) {
-            LOGGER.info("Exception in calculating PMI score" + e.toString());
-            return 0.0;
+            return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
         }
+
     }
 
     /**
@@ -246,9 +241,14 @@ public class NPMICalculator implements Callable<Result> {
     }
 
     public Result call() throws Exception {
-        double score = calculatePMIScore();
-        Result result = new Result(this.path, this.inputStatement.getPredicate(), score, this.builder,
+        Result result = new Result(this.path, this.inputStatement.getPredicate(), this.builder,
                 this.intermediateNodes, this.pathLength);
+        try {
+            result.score = calculatePMIScore();
+            result.hasLegalScore = true;
+        }catch (IllegalArgumentException scoreCalcFailed){
+            result.hasLegalScore = false;
+        }
         return result;
     }
 
