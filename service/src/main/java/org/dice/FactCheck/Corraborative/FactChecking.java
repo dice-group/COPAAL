@@ -30,7 +30,6 @@ import org.apache.jena.rdf.model.impl.StatementImpl;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
-import org.dice.FactCheck.Corraborative.PathGenerator.DefaultPathGenerator;
 import org.dice.FactCheck.Corraborative.PathGenerator.DefaultPathGeneratorFactory;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGenerator;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory;
@@ -41,7 +40,7 @@ import org.dice.FactCheck.Corraborative.UIResult.CorroborativeTriple;
 import org.dice.FactCheck.Corraborative.UIResult.Path;
 import org.dice.FactCheck.Corraborative.UIResult.create.DefaultPathFactory;
 import org.dice.FactCheck.Corraborative.UIResult.create.PathFactory;
-import org.dice.FactCheck.Corraborative.sum.NegScoresHandlingSummarist;
+import org.dice.FactCheck.Corraborative.sum.FixedSummarist;
 import org.dice.FactCheck.Corraborative.sum.ScoreSummarist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +62,7 @@ public class FactChecking {
     private IPathGeneratorFactory pathGeneratorFactory = new DefaultPathGeneratorFactory();
     private int maxThreads = 100;
 
-    protected ScoreSummarist summarist = new NegScoresHandlingSummarist();
+    protected ScoreSummarist summarist = new FixedSummarist();
 
     public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner,
                         CorroborativeGraph corroborativeGraph, IPathGeneratorFactory pathGeneratorFactory) {
