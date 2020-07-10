@@ -40,6 +40,7 @@ import org.dice.FactCheck.Corraborative.UIResult.CorroborativeTriple;
 import org.dice.FactCheck.Corraborative.UIResult.Path;
 import org.dice.FactCheck.Corraborative.UIResult.create.DefaultPathFactory;
 import org.dice.FactCheck.Corraborative.UIResult.create.PathFactory;
+import org.dice.FactCheck.Corraborative.filter.npmi.LowCountBasedNPMIFilter;
 import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilter;
 import org.dice.FactCheck.Corraborative.sum.FixedSummarist;
 import org.dice.FactCheck.Corraborative.sum.ScoreSummarist;
@@ -70,6 +71,8 @@ public class FactChecking {
                         CorroborativeGraph corroborativeGraph, IPathGeneratorFactory pathGeneratorFactory) {
         this(sparqlQueryGenerator, queryExecutioner, corroborativeGraph, new DefaultPathFactory());
         this.pathGeneratorFactory = pathGeneratorFactory;
+        // Add minimum counts for paths; length 1 >= 1; length 2 >= 1; length 3 >= 3
+        this.filter = new LowCountBasedNPMIFilter(new int[] {1,1,3}); 
     }
 
     @Autowired

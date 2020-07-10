@@ -105,7 +105,7 @@ public class NPMICalculator implements Callable<Result> {
             double count_path_Predicate_Occurrence = predicatePathQueryExecution.execSelect().next().get("?c")
                     .asLiteral().getDouble();
             predicatePathQueryExecution.close();
-            
+
             return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
         } else if (pathLength == 2) {
             String[] querySequence = builder.split(";");
@@ -202,20 +202,21 @@ public class NPMICalculator implements Callable<Result> {
                     "The given number of triples for the subject or object type is 0. The NPMI is not defined for this case. Given occurrences is subject="
                             + count_subject_Triples + " and object=" + count_object_Triples);
         }
+        double logSubObjTriples = Math.log(count_subject_Triples) + Math.log(count_object_Triples);
+        double npmi;
+
         // Path and predicate never occur together
         if (count_path_Predicate_Occurrence == 0) {
             // Since we know that A and B exist, there is a chance that they should occur
             // together. Since it never happens, we have to return -1
-            return -1;
+            npmi = -1;
+        } else {
+            npmi = calculateNPMI(Math.log(count_path_Predicate_Occurrence), logSubObjTriples,
+                    Math.log(count_Path_Occurrence), logSubObjTriples, Math.log(count_predicate_Occurrence),
+                    logSubObjTriples);
         }
-
-        double logSubObjTriples = Math.log(count_subject_Triples) + Math.log(count_object_Triples);
-
-        double npmi = calculateNPMI(Math.log(count_path_Predicate_Occurrence), logSubObjTriples,
-                Math.log(count_Path_Occurrence), logSubObjTriples, Math.log(count_predicate_Occurrence),
-                logSubObjTriples);
-        if ((filter != null) && (!filter.npmiIsOk(npmi, pathLength, count_path_Predicate_Occurrence, count_Path_Occurrence,
-                count_predicate_Occurrence))) {
+        if ((filter != null) && (!filter.npmiIsOk(npmi, pathLength, count_path_Predicate_Occurrence,
+                count_Path_Occurrence, count_predicate_Occurrence))) {
             throw new NPMIFilterException("The NPMI filter rejected the calculated NPMI.");
         }
         return npmi;
