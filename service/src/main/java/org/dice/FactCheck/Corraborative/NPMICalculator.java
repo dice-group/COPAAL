@@ -11,8 +11,8 @@ import org.apache.jena.query.QueryFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilter;
+import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilterException;
 
 /**
  * An implementation of the approximation of the NPMI.
@@ -21,8 +21,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class NPMICalculator implements Callable<Result> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(NPMICalculator.class);
 
     public String path;
     public String intermediateNodes;
@@ -35,10 +33,18 @@ public class NPMICalculator implements Callable<Result> {
     public Set<Node> SubjectType;
     public Set<Node> ObjectType;
     private QueryExecutioner queryExecutioner;
+    private NPMIFilter filter;
 
     public NPMICalculator(String path, String builder, Statement inputStatement, String intermediateNodes,
             int pathLength, int count_predicate_Occurrence, int count_subject_Triples, int count_object_Triples,
             Set<Node> SubjectType, Set<Node> ObjectType, QueryExecutioner queryExecutioner) {
+        this(path, builder, inputStatement, intermediateNodes, pathLength, count_predicate_Occurrence,
+                count_subject_Triples, count_object_Triples, SubjectType, ObjectType, queryExecutioner, null);
+    }
+
+    public NPMICalculator(String path, String builder, Statement inputStatement, String intermediateNodes,
+            int pathLength, int count_predicate_Occurrence, int count_subject_Triples, int count_object_Triples,
+            Set<Node> SubjectType, Set<Node> ObjectType, QueryExecutioner queryExecutioner, NPMIFilter filter) {
         this.path = path;
         this.builder = builder;
         this.inputStatement = inputStatement;
@@ -50,9 +56,10 @@ public class NPMICalculator implements Callable<Result> {
         this.ObjectType = ObjectType;
         this.intermediateNodes = intermediateNodes;
         this.queryExecutioner = queryExecutioner;
+        this.filter = filter;
     }
 
-    public double calculatePMIScore() throws ParseException {
+    public double calculatePMIScore() throws ParseException, NPMIFilterException {
         // Find all subject and object types, we need them in query
         Iterator<Node> subTypeIterator = SubjectType.iterator();
         String subTypeTriples = "";
@@ -79,21 +86,18 @@ public class NPMICalculator implements Callable<Result> {
                     + querySequence[2].split(" ")[2].trim();
 
             String pathQueryString = "select (sum(?b3*?k) as ?sum) where { \n"
-                    + "select (count(*) as ?b3) (?b2*?b1 as ?k) ?x1 where { \n" + firstPath + " .\n"
-                    + subTypeTriples + "{ \n" + "Select (count(*) as ?b2) ?x1 ?b1 where { \n" + secondPath + "{ \n"
+                    + "select (count(*) as ?b3) (?b2*?b1 as ?k) ?x1 where { \n" + firstPath + " .\n" + subTypeTriples
+                    + "{ \n" + "Select (count(*) as ?b2) ?x1 ?b1 where { \n" + secondPath + "{ \n"
                     + "select (count(*) as ?b1) ?x2 where { \n" + thirdPath + ". \n" + objTypeTriples
-                    + "} group by ?x2\n" + "}\n" + "} group by ?b1 ?x1\n" + "}\n" + "} group by ?x1 ?b2 ?b1\n"
-                    + "}\n";
+                    + "} group by ?x2\n" + "}\n" + "} group by ?b1 ?x1\n" + "}\n" + "} group by ?x1 ?b2 ?b1\n" + "}\n";
 
             Query pathQuery = QueryFactory.create(pathQueryString);
             QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
-            double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?sum").asLiteral()
-                    .getDouble();
+            double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?sum").asLiteral().getDouble();
             pathQueryExecution.close();
 
-            String pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n"
-                    + subTypeTriples + secondPath + " .\n" + thirdPath + " .\n" + objTypeTriples + predicateTriple
-                    + "\n" + "}\n";
+            String pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n" + subTypeTriples
+                    + secondPath + " .\n" + thirdPath + " .\n" + objTypeTriples + predicateTriple + "\n" + "}\n";
 
             Query pathPredicateQuery = QueryFactory.create(pathPredicateQueryString);
             QueryExecution predicatePathQueryExecution = queryExecutioner.getQueryExecution(pathPredicateQuery);
@@ -118,12 +122,11 @@ public class NPMICalculator implements Callable<Result> {
 
             Query pathQuery = QueryFactory.create(pathQueryString);
             QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
-            double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?sum").asLiteral()
-                    .getDouble();
+            double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?sum").asLiteral().getDouble();
             pathQueryExecution.close();
 
-            String pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n"
-                    + subTypeTriples + secondPath + " .\n" + objTypeTriples + predicateTriple + "\n" + "}\n";
+            String pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n" + subTypeTriples
+                    + secondPath + " .\n" + objTypeTriples + predicateTriple + "\n" + "}\n";
 
             Query pathPredicateQuery = QueryFactory.create(pathPredicateQueryString);
 
@@ -144,12 +147,11 @@ public class NPMICalculator implements Callable<Result> {
 
             Query pathQuery = QueryFactory.create(pathQueryString);
             QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
-            double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?sum").asLiteral()
-                    .getDouble();
+            double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?sum").asLiteral().getDouble();
             pathQueryExecution.close();
 
-            String pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n"
-                    + subTypeTriples + objTypeTriples + predicateTriple + "\n" + "}\n";
+            String pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n" + subTypeTriples
+                    + objTypeTriples + predicateTriple + "\n" + "}\n";
 
             Query pathPredicateQuery = QueryFactory.create(pathPredicateQueryString);
             QueryExecution pathPredicateQueryExecution = queryExecutioner.getQueryExecution(pathPredicateQuery);
@@ -179,9 +181,11 @@ public class NPMICalculator implements Callable<Result> {
      *                                  {@link #count_predicate_Occurrence}, the
      *                                  {@link #count_subject_Triples} or the
      *                                  {@link #count_object_Triples}
+     * @throws NPMIFilterException      if the {@link NPMIFilter} rejects the
+     *                                  calculated value.
      */
     public double npmiValue(double count_Path_Occurrence, double count_path_Predicate_Occurrence)
-            throws IllegalArgumentException {
+            throws IllegalArgumentException, NPMIFilterException {
         // If the predicate never occurs
         if (count_predicate_Occurrence == 0) {
             throw new IllegalArgumentException(
@@ -198,18 +202,24 @@ public class NPMICalculator implements Callable<Result> {
                     "The given number of triples for the subject or object type is 0. The NPMI is not defined for this case. Given occurrences is subject="
                             + count_subject_Triples + " and object=" + count_object_Triples);
         }
+        double logSubObjTriples = Math.log(count_subject_Triples) + Math.log(count_object_Triples);
+        double npmi;
+
         // Path and predicate never occur together
         if (count_path_Predicate_Occurrence == 0) {
             // Since we know that A and B exist, there is a chance that they should occur
             // together. Since it never happens, we have to return -1
-            return -1;
+            npmi = -1;
+        } else {
+            npmi = calculateNPMI(Math.log(count_path_Predicate_Occurrence), logSubObjTriples,
+                    Math.log(count_Path_Occurrence), logSubObjTriples, Math.log(count_predicate_Occurrence),
+                    logSubObjTriples);
         }
-
-        double logSubObjTriples = Math.log(count_subject_Triples) + Math.log(count_object_Triples);
-
-        return calculateNPMI(Math.log(count_path_Predicate_Occurrence), logSubObjTriples,
-                Math.log(count_Path_Occurrence), logSubObjTriples, Math.log(count_predicate_Occurrence),
-                logSubObjTriples);
+        if ((filter != null) && (!filter.npmiIsOk(npmi, pathLength, count_path_Predicate_Occurrence,
+                count_Path_Occurrence, count_predicate_Occurrence))) {
+            throw new NPMIFilterException("The NPMI filter rejected the calculated NPMI.");
+        }
+        return npmi;
     }
 
     /**
@@ -241,12 +251,12 @@ public class NPMICalculator implements Callable<Result> {
     }
 
     public Result call() throws Exception {
-        Result result = new Result(this.path, this.inputStatement.getPredicate(), this.builder,
-                this.intermediateNodes, this.pathLength);
+        Result result = new Result(this.path, this.inputStatement.getPredicate(), this.builder, this.intermediateNodes,
+                this.pathLength);
         try {
             result.score = calculatePMIScore();
             result.hasLegalScore = true;
-        }catch (IllegalArgumentException scoreCalcFailed){
+        } catch (Exception scoreCalcFailed) {
             result.hasLegalScore = false;
         }
         return result;

@@ -40,6 +40,8 @@ import org.dice.FactCheck.Corraborative.UIResult.CorroborativeTriple;
 import org.dice.FactCheck.Corraborative.UIResult.Path;
 import org.dice.FactCheck.Corraborative.UIResult.create.DefaultPathFactory;
 import org.dice.FactCheck.Corraborative.UIResult.create.PathFactory;
+import org.dice.FactCheck.Corraborative.filter.npmi.LowCountBasedNPMIFilter;
+import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilter;
 import org.dice.FactCheck.Corraborative.sum.FixedSummarist;
 import org.dice.FactCheck.Corraborative.sum.ScoreSummarist;
 import org.slf4j.Logger;
@@ -61,6 +63,7 @@ public class FactChecking {
     private PathFactory defaultPathFactory;
     private IPathGeneratorFactory pathGeneratorFactory = new DefaultPathGeneratorFactory();
     private int maxThreads = 100;
+    private NPMIFilter filter = null;
 
     protected ScoreSummarist summarist = new FixedSummarist();
 
@@ -68,6 +71,8 @@ public class FactChecking {
                         CorroborativeGraph corroborativeGraph, IPathGeneratorFactory pathGeneratorFactory) {
         this(sparqlQueryGenerator, queryExecutioner, corroborativeGraph, new DefaultPathFactory());
         this.pathGeneratorFactory = pathGeneratorFactory;
+        // Add minimum counts for paths; length 1 >= 1; length 2 >= 1; length 3 >= 3
+        this.filter = new LowCountBasedNPMIFilter(new int[] {1,1,3}); 
     }
 
     @Autowired
@@ -91,7 +96,7 @@ public class FactChecking {
     }
 
     public CorroborativeGraph checkFacts(Model model, int pathLength, PathFactory pathFactory)
-            throws InterruptedException, FileNotFoundException, ParseException {
+            throws InterruptedException, FileNotFoundException, ParseException { 
 
         queryExecutioner.setServiceRequestURL(serviceURL);
         final Logger LOGGER = LoggerFactory.getLogger(FactChecking.class);
@@ -171,7 +176,7 @@ public class FactChecking {
                     String intermediateNodes = pathQuery.getIntermediateNodes().get(pathString);
                     NPMICalculator pc = new NPMICalculator(pathString, querySequence, inputTriple, intermediateNodes,
                             path.getValue(), count_predicate_Triples, count_subject_Triples, count_object_Triples,
-                            subjectTypes, objectTypes, queryExecutioner);
+                            subjectTypes, objectTypes, queryExecutioner, filter);
                     pmiCallables.add(pc);
                 }
             }

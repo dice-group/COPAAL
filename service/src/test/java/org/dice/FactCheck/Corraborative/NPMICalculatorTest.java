@@ -1,5 +1,6 @@
 package org.dice.FactCheck.Corraborative;
 
+import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilterException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -19,40 +20,40 @@ public class NPMICalculatorTest {
      * @return
      */
     protected double calculateNPMI(int count_predicate_Occurrence, int count_subject_Triples, int count_object_Triples,
-            int count_Path_Occurrence, int count_path_Predicate_Occurrence) {
+            int count_Path_Occurrence, int count_path_Predicate_Occurrence) throws NPMIFilterException {
         NPMICalculator calculator = new NPMICalculator(null, null, null, null, 0, count_predicate_Occurrence,
                 count_subject_Triples, count_object_Triples, null, null, null);
         return calculator.npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
     }
 
     @Test
-    public void testForIndependence() {
+    public void testForIndependence() throws NPMIFilterException {
         // The path and predicate are independent of each other
         Assert.assertEquals(0.0, calculateNPMI(2, 2, 2, 2, 1), DELTA);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testPathDoesNotExist() {
+    public void testPathDoesNotExist() throws NPMIFilterException {
         calculateNPMI(2, 2, 2, 0, 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testPredicateDoesNotExist() {
+    public void testPredicateDoesNotExist() throws NPMIFilterException {
         calculateNPMI(0, 2, 2, 2, 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testSubjectTypeDoesNotExist() {
+    public void testSubjectTypeDoesNotExist() throws NPMIFilterException {
         calculateNPMI(2, 0, 2, 2, 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testObjectTypeDoesNotExist() {
+    public void testObjectTypeDoesNotExist() throws NPMIFilterException {
         calculateNPMI(2, 2, 0, 2, 1);
     }
 
     @Test
-    public void testPathNeverOccursWithPredicate() {
+    public void testPathNeverOccursWithPredicate() throws NPMIFilterException {
         Assert.assertEquals(-1.0, calculateNPMI(2, 2, 2, 2, 0), DELTA);
     }
 
