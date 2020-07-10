@@ -1,4 +1,4 @@
-package org.dice.FactCheck.Corraborative;
+package org.dice.FactCheck.Corraborative.filter;
 
 import java.util.ArrayList;
 import java.util.List;

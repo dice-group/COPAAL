@@ -210,6 +210,8 @@ public class FactChecking {
          * 
          * }
          */
+        
+        // TODO Filter the Results using some filter (if a filter has been defined)
 
         List<Path> pathList = results.parallelStream().map(r -> pathFactory.createPath(subject, object, r))
                 .collect(Collectors.toList());

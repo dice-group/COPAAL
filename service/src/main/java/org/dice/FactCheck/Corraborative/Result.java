@@ -26,7 +26,7 @@ public class Result {
 	public Result(String path, Property predicate, String pathBuilder, String intermediateNodes, int pathLength) {
 		this.path = path;
 		this.predicate = predicate;
-		this.score = score;
+		this.score = 0;
 		this.pathBuilder = pathBuilder;
 		this.intermediateNodes = intermediateNodes;
 		this.pathLength = pathLength;
