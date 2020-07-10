@@ -40,6 +40,7 @@ import org.dice.FactCheck.Corraborative.UIResult.CorroborativeTriple;
 import org.dice.FactCheck.Corraborative.UIResult.Path;
 import org.dice.FactCheck.Corraborative.UIResult.create.DefaultPathFactory;
 import org.dice.FactCheck.Corraborative.UIResult.create.PathFactory;
+import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilter;
 import org.dice.FactCheck.Corraborative.sum.FixedSummarist;
 import org.dice.FactCheck.Corraborative.sum.ScoreSummarist;
 import org.slf4j.Logger;
@@ -61,6 +62,7 @@ public class FactChecking {
     private PathFactory defaultPathFactory;
     private IPathGeneratorFactory pathGeneratorFactory = new DefaultPathGeneratorFactory();
     private int maxThreads = 100;
+    private NPMIFilter filter = null;
 
     protected ScoreSummarist summarist = new FixedSummarist();
 
@@ -91,7 +93,7 @@ public class FactChecking {
     }
 
     public CorroborativeGraph checkFacts(Model model, int pathLength, PathFactory pathFactory)
-            throws InterruptedException, FileNotFoundException, ParseException {
+            throws InterruptedException, FileNotFoundException, ParseException { 
 
         queryExecutioner.setServiceRequestURL(serviceURL);
         final Logger LOGGER = LoggerFactory.getLogger(FactChecking.class);
@@ -171,7 +173,7 @@ public class FactChecking {
                     String intermediateNodes = pathQuery.getIntermediateNodes().get(pathString);
                     NPMICalculator pc = new NPMICalculator(pathString, querySequence, inputTriple, intermediateNodes,
                             path.getValue(), count_predicate_Triples, count_subject_Triples, count_object_Triples,
-                            subjectTypes, objectTypes, queryExecutioner);
+                            subjectTypes, objectTypes, queryExecutioner, filter);
                     pmiCallables.add(pc);
                 }
             }
@@ -210,8 +212,6 @@ public class FactChecking {
          * 
          * }
          */
-        
-        // TODO Filter the Results using some filter (if a filter has been defined)
 
         List<Path> pathList = results.parallelStream().map(r -> pathFactory.createPath(subject, object, r))
                 .collect(Collectors.toList());
