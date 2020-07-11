@@ -97,6 +97,11 @@ public class FactChecking {
 
     public CorroborativeGraph checkFacts(Model model, int pathLength, PathFactory pathFactory)
             throws InterruptedException, FileNotFoundException, ParseException { 
+            return checkFacts(model, pathLength, defaultPathFactory,false);
+            }
+            
+    public CorroborativeGraph checkFacts(Model model, int pathLength, PathFactory pathFactory,boolean vTy)
+            throws InterruptedException, FileNotFoundException, ParseException { 
 
         queryExecutioner.setServiceRequestURL(serviceURL);
         final Logger LOGGER = LoggerFactory.getLogger(FactChecking.class);
@@ -115,33 +120,41 @@ public class FactChecking {
                 NodeFactory.createVariable("o"));
 
         // get Domain and Range info
+        Set<Node> subjectTypes, objectTypes;
+        if(!vTy){
+            subjectTypes = getTypeInformation(property, RDFS.domain);
+            objectTypes = getTypeInformation(property, RDFS.range);
 
-        Set<Node> subjectTypes = getTypeInformation(property, RDFS.domain);
-        Set<Node> objectTypes = getTypeInformation(property, RDFS.range);
+            // Check if the domain information is missing. If yes, then fallback to types of
+            // subject
+            if (subjectTypes.isEmpty()) {
+                subjectTypes = getTypeInformation(subject.asResource(), RDF.type);
+            }
 
-        // Check if the domain information is missing. If yes, then fallback to types of
-        // subject
-        if (subjectTypes.isEmpty()) {
-            subjectTypes = getTypeInformation(subject.asResource(), RDF.type);
+            // Check if the range information is missing. If yes, then fallback to types of
+            // object
+            if (objectTypes.isEmpty()) {
+                objectTypes = getTypeInformation(object.asResource(), RDF.type);
+            }
+
+            // if no type information is available for subject or object, simply return
+            // score 0. We cannot verify fact.
+            if (subjectTypes.isEmpty() || objectTypes.isEmpty()) {
+                corroborativeGraph.setPathList(new ArrayList<Path>());
+                corroborativeGraph.setGraphScore(0.0);
+                return corroborativeGraph;
+            }
         }
-
-        // Check if the range information is missing. If yes, then fallback to types of
-        // object
-        if (objectTypes.isEmpty()) {
-            objectTypes = getTypeInformation(object.asResource(), RDF.type);
+        
+        int count_subject_Triples,count_object_Triples;
+        if(!vTy){
+             count_subject_Triples = countOccurrances(NodeFactory.createVariable("s"), RDF.type, subjectTypes);
+             count_object_Triples = countOccurrances(NodeFactory.createVariable("s"), RDF.type, objectTypes);
+        }else{
+             count_subject_Triples = countSOOccurrances("count(distinct ?s)", property);
+             count_object_Triples = countSOOccurrances("count(distinct ?o)", property);               
         }
-
-        // if no type information is available for subject or object, simply return
-        // score 0. We cannot verify fact.
-        if (subjectTypes.isEmpty() || objectTypes.isEmpty()) {
-            corroborativeGraph.setPathList(new ArrayList<Path>());
-            corroborativeGraph.setGraphScore(0.0);
-            return corroborativeGraph;
-        }
-
-        int count_subject_Triples = countOccurrances(NodeFactory.createVariable("s"), RDF.type, subjectTypes);
-        int count_object_Triples = countOccurrances(NodeFactory.createVariable("s"), RDF.type, objectTypes);
-
+        
         LOGGER.info("Checking Fact");
 
         for (int j = 1; j <= pathLength; j++) {
@@ -286,12 +299,27 @@ public class FactChecking {
 
         return returnCount(occurrenceBuilder);
     }
-
-    public int countPredicateOccurrances(Node subject, Property property, Node objectType) {
+    
+    public int countOccurrances(Node subject, Property property, Set<Node> objectTypes) {
         SelectBuilder occurrenceBuilder = new SelectBuilder();
+        Iterator<Node> typeIterator = objectTypes.iterator();
         try {
             occurrenceBuilder.addVar("count(*)", "?c");
-            occurrenceBuilder.addWhere(subject, property, objectType);
+            while (typeIterator.hasNext())
+                occurrenceBuilder.addWhere(subject, property, typeIterator.next());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return returnCount(occurrenceBuilder);
+    }
+
+    
+    public int countSOOccurrances( String var, Property property) {
+        SelectBuilder occurrenceBuilder = new SelectBuilder();
+        try {
+            occurrenceBuilder.addVar(var, "?c");
+            occurrenceBuilder.addWhere(NodeFactory.createVariable("s"), property, NodeFactory.createVariable("o"));
         } catch (ParseException e) {
             e.printStackTrace();
         }
