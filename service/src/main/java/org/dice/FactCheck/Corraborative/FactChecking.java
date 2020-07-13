@@ -95,6 +95,11 @@ public class FactChecking {
         return checkFacts(model, pathLength, defaultPathFactory);
     }
 
+    public CorroborativeGraph checkFacts(Model model, int pathLength,boolean vTy)
+            throws InterruptedException, FileNotFoundException, ParseException {
+        return checkFacts(model, pathLength, defaultPathFactory,vTy);
+    }
+
     public CorroborativeGraph checkFacts(Model model, int pathLength, PathFactory pathFactory)
             throws InterruptedException, FileNotFoundException, ParseException { 
             return checkFacts(model, pathLength, defaultPathFactory,false);
@@ -103,7 +108,7 @@ public class FactChecking {
     public CorroborativeGraph checkFacts(Model model, int pathLength, PathFactory pathFactory,boolean vTy)
             throws InterruptedException, FileNotFoundException, ParseException { 
 
-        queryExecutioner.setServiceRequestURL(serviceURL);
+        //queryExecutioner.setServiceRequestURL(serviceURL);
         final Logger LOGGER = LoggerFactory.getLogger(FactChecking.class);
 
         StmtIterator iterator = model.listStatements();
@@ -120,7 +125,7 @@ public class FactChecking {
                 NodeFactory.createVariable("o"));
 
         // get Domain and Range info
-        Set<Node> subjectTypes, objectTypes;
+        Set<Node> subjectTypes= null, objectTypes = null;
         if(!vTy){
             subjectTypes = getTypeInformation(property, RDFS.domain);
             objectTypes = getTypeInformation(property, RDFS.range);
@@ -189,7 +194,7 @@ public class FactChecking {
                     String intermediateNodes = pathQuery.getIntermediateNodes().get(pathString);
                     NPMICalculator pc = new NPMICalculator(pathString, querySequence, inputTriple, intermediateNodes,
                             path.getValue(), count_predicate_Triples, count_subject_Triples, count_object_Triples,
-                            subjectTypes, objectTypes, queryExecutioner, filter);
+                            subjectTypes, objectTypes, queryExecutioner, filter, vTy);
                     pmiCallables.add(pc);
                 }
             }
@@ -300,20 +305,17 @@ public class FactChecking {
         return returnCount(occurrenceBuilder);
     }
     
-    public int countOccurrances(Node subject, Property property, Set<Node> objectTypes) {
+    public int countPredicateOccurrances(Node subject, Property property, Node objectType) {
         SelectBuilder occurrenceBuilder = new SelectBuilder();
-        Iterator<Node> typeIterator = objectTypes.iterator();
         try {
             occurrenceBuilder.addVar("count(*)", "?c");
-            while (typeIterator.hasNext())
-                occurrenceBuilder.addWhere(subject, property, typeIterator.next());
+            occurrenceBuilder.addWhere(subject, property, objectType);
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         return returnCount(occurrenceBuilder);
     }
-
     
     public int countSOOccurrances( String var, Property property) {
         SelectBuilder occurrenceBuilder = new SelectBuilder();

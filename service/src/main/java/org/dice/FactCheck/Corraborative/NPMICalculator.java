@@ -70,42 +70,55 @@ public class NPMICalculator implements Callable<Result> {
 
     public double calculatePMIScore_vTy() throws ParseException, NPMIFilterException {
         // ignore types, consider subjects/objects of input-triple-predicate as virtual types
-        // !!! Note>NBMICalc without rev_ state of p1, p2,.. how to get path orientation?
 
-        String predicateTriple = "?s <" + inputStatement.getPredicate() + "> ?o .";
-        String pathQueryString, pathPredicateQueryString;
-        String[] querySequence = builder.split(";");
-    
-        String firstPath = builder.split(" ")[0].trim() + " <" + path.split(";")[0] + "> "
-                + builder.split(" ")[2].trim();
-            if (pathLength == 3) {
+	        String predicateTriple = "?s <" + inputStatement.getPredicate() + "> ?o .";
+	        String pathQueryString, pathPredicateQueryString;
+	        String[] querySequence = builder.split(";");
+	        String subjType =" filter(exists {?s <" + inputStatement.getPredicate()+ ">  []}).";
+	        String objType =" filter(exists {[] <" + inputStatement.getPredicate()+ ">  ?o}).";
+	        String firstPath = querySequence[0].split(" ")[0].trim() + " <" + path.split(";")[0] + "> "
+	                                  + querySequence[0].split(" ")[2].trim();
+	        if (pathLength == 3) {
                 String secondPath = querySequence[1].split(" ")[0].trim() + " <" + path.split(";")[1] + "> "
                         + querySequence[1].split(" ")[2].trim();
                 String thirdPath = querySequence[2].split(" ")[0].trim() + " <" + path.split(";")[2] + "> "
                         + querySequence[2].split(" ")[2].trim();
 
-                 pathQueryString = !!!!
-                 pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n" 
-                        + secondPath + " .\n" + thirdPath + " .\n" + predicateTriple + "\n" + "}\n";
+                 pathQueryString = "Select (count(*) as ?cnt) where {select distinct ?s ?o { "
+						+ firstPath + " . "
+						+ subjType  +
+                     "{select distinct ?o1 ?o{"		+ secondPath + " . "
+						+ thirdPath  + " . "
+						+ objType   +
+						" } }"
+						+ "}} ";
+                 pathPredicateQueryString = "Select (count(*) as ?c) where {select distinct ?s ?o {\n" + firstPath + " .\n" 
+                 + secondPath + " .\n" + thirdPath + " .\n" + predicateTriple + "\n" + "}}\n";
             } else if (pathLength == 2) {
                 String secondPath = querySequence[1].split(" ")[0].trim() + " <" + path.split(";")[1] + "> "
                         + querySequence[1].split(" ")[2].trim();
 
-                 pathQueryString = !!!!
+                 pathQueryString = "Select (count(*) as ?cnt) where {select distinct ?s ?o { "
+                                        + firstPath +" . "
+                                        + subjType
+                                        + secondPath + " . "
+                                        + objType
+                                        + "}} ";
                 
-                 pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n" 
-                        + secondPath + " .\n" + predicateTriple + "\n" + "}\n";
+                 pathPredicateQueryString = "Select (count(*) as ?c) where {select distinct ?s ?o {\n" + firstPath + " .\n" 
+                 + secondPath + " .\n" + predicateTriple + "\n" + "}}\n";
             } else {
-                 pathQueryString = "Select (count(*) as ?sum) where {\n" + firstPath + " .\n" + subTypeTriples
-                        + objTypeTriples + "}\n";
+                 pathQueryString = "Select (count(*) as ?sum) where {\n" + firstPath + " .\n" + subjType
+                        + objType + "}\n";
 
                  pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n" 
                          + predicateTriple + "\n" + "}\n";
 
             }
+//            System.out.println(pathPredicateQueryString);
             Query pathQuery = QueryFactory.create(pathQueryString);
             QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
-            double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?sum").asLiteral().getDouble();
+            double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?cnt").asLiteral().getDouble();
             pathQueryExecution.close();
 
 
@@ -179,7 +192,6 @@ public class NPMICalculator implements Callable<Result> {
                     + querySequence[0].split(" ")[2].trim();
             String secondPath = querySequence[1].split(" ")[0].trim() + " <" + path.split(";")[1] + "> "
                     + querySequence[1].split(" ")[2].trim();
-
             String pathQueryString = "Select (sum(?b1*?b2) as ?sum) where {\n"
                     + "select (count(*) as ?b2) ?b1 where { \n" + firstPath + " .\n" + subTypeTriples + "{ \n"
                     + "select (count(*) as ?b1) ?x1 where { \n" + secondPath + " .\n" + objTypeTriples
