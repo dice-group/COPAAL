@@ -34,17 +34,25 @@ public class NPMICalculator implements Callable<Result> {
     public Set<Node> ObjectType;
     private QueryExecutioner queryExecutioner;
     private NPMIFilter filter;
+    private boolean vTy;
 
     public NPMICalculator(String path, String builder, Statement inputStatement, String intermediateNodes,
             int pathLength, int count_predicate_Occurrence, int count_subject_Triples, int count_object_Triples,
             Set<Node> SubjectType, Set<Node> ObjectType, QueryExecutioner queryExecutioner) {
         this(path, builder, inputStatement, intermediateNodes, pathLength, count_predicate_Occurrence,
-                count_subject_Triples, count_object_Triples, SubjectType, ObjectType, queryExecutioner, null);
+                count_subject_Triples, count_object_Triples, SubjectType, ObjectType, queryExecutioner, null,false);
+    }
+    
+    public NPMICalculator(String path, String builder, Statement inputStatement, String intermediateNodes,
+            int pathLength, int count_predicate_Occurrence, int count_subject_Triples, int count_object_Triples,
+            Set<Node> SubjectType, Set<Node> ObjectType, QueryExecutioner queryExecutioner, NPMIFilter filter) {
+        this(path, builder, inputStatement, intermediateNodes, pathLength, count_predicate_Occurrence,
+                count_subject_Triples, count_object_Triples, SubjectType, ObjectType, queryExecutioner, filter,false);
     }
 
     public NPMICalculator(String path, String builder, Statement inputStatement, String intermediateNodes,
             int pathLength, int count_predicate_Occurrence, int count_subject_Triples, int count_object_Triples,
-            Set<Node> SubjectType, Set<Node> ObjectType, QueryExecutioner queryExecutioner, NPMIFilter filter) {
+            Set<Node> SubjectType, Set<Node> ObjectType, QueryExecutioner queryExecutioner, NPMIFilter filter,boolean vTy) {
         this.path = path;
         this.builder = builder;
         this.inputStatement = inputStatement;
@@ -57,10 +65,80 @@ public class NPMICalculator implements Callable<Result> {
         this.intermediateNodes = intermediateNodes;
         this.queryExecutioner = queryExecutioner;
         this.filter = filter;
+        this.vTy = vTy;
     }
 
+    public double calculatePMIScore_vTy() throws ParseException, NPMIFilterException {
+        // ignore types, consider subjects/objects of input-triple-predicate as virtual types
+
+	        String predicateTriple = "?s <" + inputStatement.getPredicate() + "> ?o .";
+	        String pathQueryString, pathPredicateQueryString;
+	        String[] querySequence = builder.split(";");
+	        String subjType =" filter(exists {?s <" + inputStatement.getPredicate()+ ">  []}).";
+	        String objType =" filter(exists {[] <" + inputStatement.getPredicate()+ ">  ?o}).";
+	        String firstPath = querySequence[0].split(" ")[0].trim() + " <" + path.split(";")[0] + "> "
+	                                  + querySequence[0].split(" ")[2].trim();
+	        if (pathLength == 3) {
+                String secondPath = querySequence[1].split(" ")[0].trim() + " <" + path.split(";")[1] + "> "
+                        + querySequence[1].split(" ")[2].trim();
+                String thirdPath = querySequence[2].split(" ")[0].trim() + " <" + path.split(";")[2] + "> "
+                        + querySequence[2].split(" ")[2].trim();
+
+                 pathQueryString = "Select (count(*) as ?cnt) where {select distinct ?s ?o { "
+						+ firstPath + " . "
+						+ subjType  +
+                     "{select distinct ?o1 ?o{"		+ secondPath + " . "
+						+ thirdPath  + " . "
+						+ objType   +
+						" } }"
+						+ "}} ";
+                 pathPredicateQueryString = "Select (count(*) as ?c) where {select distinct ?s ?o {\n" + firstPath + " .\n" 
+                 + secondPath + " .\n" + thirdPath + " .\n" + predicateTriple + "\n" + "}}\n";
+            } else if (pathLength == 2) {
+                String secondPath = querySequence[1].split(" ")[0].trim() + " <" + path.split(";")[1] + "> "
+                        + querySequence[1].split(" ")[2].trim();
+
+                 pathQueryString = "Select (count(*) as ?cnt) where {select distinct ?s ?o { "
+                                        + firstPath +" . "
+                                        + subjType
+                                        + secondPath + " . "
+                                        + objType
+                                        + "}} ";
+                
+                 pathPredicateQueryString = "Select (count(*) as ?c) where {select distinct ?s ?o {\n" + firstPath + " .\n" 
+                 + secondPath + " .\n" + predicateTriple + "\n" + "}}\n";
+            } else {
+                 pathQueryString = "Select (count(*) as ?sum) where {\n" + firstPath + " .\n" + subjType
+                        + objType + "}\n";
+
+                 pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n" 
+                         + predicateTriple + "\n" + "}\n";
+
+            }
+//            System.out.println(pathPredicateQueryString);
+            Query pathQuery = QueryFactory.create(pathQueryString);
+            QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
+            double count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?cnt").asLiteral().getDouble();
+            pathQueryExecution.close();
+
+
+            Query pathPredicateQuery = QueryFactory.create(pathPredicateQueryString);
+            QueryExecution predicatePathQueryExecution = queryExecutioner.getQueryExecution(pathPredicateQuery);
+
+            double count_path_Predicate_Occurrence = predicatePathQueryExecution.execSelect().next().get("?c")
+                    .asLiteral().getDouble();
+            predicatePathQueryExecution.close();
+
+            return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
+        
+    }
+    
     public double calculatePMIScore() throws ParseException, NPMIFilterException {
+        
+        if(this.vTy) return calculatePMIScore_vTy();
+        
         // Find all subject and object types, we need them in query
+        
         Iterator<Node> subTypeIterator = SubjectType.iterator();
         String subTypeTriples = "";
         while (subTypeIterator.hasNext()) {
@@ -84,7 +162,7 @@ public class NPMICalculator implements Callable<Result> {
                     + querySequence[1].split(" ")[2].trim();
             String thirdPath = querySequence[2].split(" ")[0].trim() + " <" + path.split(";")[2] + "> "
                     + querySequence[2].split(" ")[2].trim();
-
+            
             String pathQueryString = "select (sum(?b3*?k) as ?sum) where { \n"
                     + "select (count(*) as ?b3) (?b2*?b1 as ?k) ?x1 where { \n" + firstPath + " .\n" + subTypeTriples
                     + "{ \n" + "Select (count(*) as ?b2) ?x1 ?b1 where { \n" + secondPath + "{ \n"
@@ -114,7 +192,6 @@ public class NPMICalculator implements Callable<Result> {
                     + querySequence[0].split(" ")[2].trim();
             String secondPath = querySequence[1].split(" ")[0].trim() + " <" + path.split(";")[1] + "> "
                     + querySequence[1].split(" ")[2].trim();
-
             String pathQueryString = "Select (sum(?b1*?b2) as ?sum) where {\n"
                     + "select (count(*) as ?b2) ?b1 where { \n" + firstPath + " .\n" + subTypeTriples + "{ \n"
                     + "select (count(*) as ?b1) ?x1 where { \n" + secondPath + " .\n" + objTypeTriples
