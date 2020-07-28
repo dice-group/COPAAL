@@ -17,6 +17,7 @@ import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.dice.FactCheck.Corraborative.Query.SparqlQueryGenerator;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
+import org.dice.FactCheck.Corraborative.UIResult.CorroborativeTriple;
 import org.dice.FactCheck.Corraborative.UIResult.Path;
 import org.junit.Test;
 
@@ -65,25 +66,38 @@ public class FactCheckingTest {
 		System.out.println("Property: " + statement.getPredicate());
 		System.out.println("Object: " + statement.getObject());
 		System.out.println("Count paths: " + cg.getPathList().toArray().length);
+		for(Path p: cg.getPathList()) {
+			System.out.println("============= pth len:"+p.getPath().toArray().length+' '+p.getPathScore());
+			for(CorroborativeTriple trp:p.getPath()) 
+				System.out.println(trp.getSubject()+' '+trp.getProperty()+' '+trp.getObject());
+		}
 		System.out.println("virtual Types: "+vTy+" Score:"+cg.getGraphScore());     
 		
 	}
 
 	@Test
 	public void FC_EducationTest() throws FileNotFoundException, InterruptedException, ParseException {
-		    final Model model = ModelFactory.createDefaultModel();
-
-	        Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Nia_Gill");
-	        Resource object = ResourceFactory.createResource("http://dbpedia.org/resource/Bachelor_of_Arts");
-	        Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/education");
+	    final Model model = ModelFactory.createDefaultModel();
+//		    Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Nia_Gill");
+		//    Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Theodore_McKee");
+//	    Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Nahum_Tate");
+	    
+	   String sstr="http://dbpedia.org/resource/John_Kemeny_(film_producer)",
+			   ostr="http://dbpedia.org/resource/Canada";
+	   Resource subject = ResourceFactory.createResource(sstr);
+	   Resource object = ResourceFactory.createResource(ostr);
+//	    Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/deathPlace");
+//	    Resource object = ResourceFactory.createResource("http://dbpedia.org/resource/Southwark");
+//	        Resource object = ResourceFactory.createResource("http://dbpedia.org/resource/Bachelor_of_Arts");
+//	        Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/education");
 //			Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Bill_Gates");
 //	        Resource object = ResourceFactory.createResource("http://dbpedia.org/resource/United_States");
-//	        Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/nationality");
+	        Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/nationality");
 //	//Statement statement = ResourceFactory.createStatement(subject, property, object);
 
 	        Statement statement = ResourceFactory.createStatement(subject, property, object);
-	        FCTest(statement,2,true);     
-	       FCTest(statement,2,false);     
+	        FCTest(statement,3,true);     
+	       FCTest(statement,3,false);     
 
 	}
 }

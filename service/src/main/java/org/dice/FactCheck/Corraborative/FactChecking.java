@@ -30,6 +30,7 @@ import org.apache.jena.rdf.model.impl.StatementImpl;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
+import org.dice.FactCheck.Corraborative.PathGenerator.DefaultPathGenerator;
 import org.dice.FactCheck.Corraborative.PathGenerator.DefaultPathGeneratorFactory;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGenerator;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory;
@@ -174,13 +175,14 @@ public class FactChecking {
         Set<PathQuery> pathQueries = new HashSet<PathQuery>();
 
         for (Entry<String, Integer> entry : sparqlQueryGenerator.sparqlQueries.entrySet()) {
-
             IPathGenerator pg = pathGeneratorFactory.build(entry.getKey(), inputTriple, entry.getValue(), queryExecutioner);
+         
             pathGenerators.add(pg);
         }
 
         for (IPathGenerator pathGenerator : pathGenerators) {
-            pathQueries.add(pathGenerator.returnQuery());
+//        	System.out.println(((DefaultPathGenerator)pathGenerator).queryBuilder);
+               pathQueries.add(pathGenerator.returnQuery());
         }
 
         Set<NPMICalculator> pmiCallables = new HashSet<NPMICalculator>();
@@ -188,7 +190,7 @@ public class FactChecking {
         for (PathQuery pathQuery : pathQueries) {
             for (Entry<String, java.util.HashMap<String, Integer>> entry : pathQuery.getPathBuilder().entrySet()) {
 
-                for (Entry<String, Integer> path : entry.getValue().entrySet()) {
+            	for (Entry<String, Integer> path : entry.getValue().entrySet()) {
                     String querySequence = entry.getKey();
                     String pathString = path.getKey();
                     String intermediateNodes = pathQuery.getIntermediateNodes().get(pathString);

@@ -88,6 +88,8 @@ public class SparqlQueryGenerator {
 			Triple INPUTSUBJECT_AS_OBJECT = new Triple(firstIntermediateNode, subjectPredicate, this.subjectNode);
 			Triple INPUTOBJECT_AS_SUBJECT = new Triple(this.objectNode, objectPredicate, secondIntermediateNode);
 			Triple INPUTOBJECT_AS_OBJECT = new Triple(secondIntermediateNode,objectPredicate, this.objectNode);
+//			Triple MIDPREDICATE_BY_SUBJECT = new Triple(firstIntermediateNode,intermediatePredicate, secondIntermediateNode);
+//			Triple MIDPREDICATE_BY_OBJECT = new Triple(secondIntermediateNode,intermediatePredicate,firstIntermediateNode);
 
 			// Intermediate nodes combinations
 			Triple SUBJECT_OBJECT = new Triple(firstIntermediateNode, intermediatePredicate, secondIntermediateNode);
@@ -97,7 +99,7 @@ public class SparqlQueryGenerator {
 					SUBJECT_OBJECT.toString().replace("@", "")+";"+INPUTOBJECT_AS_SUBJECT.toString().replace("@", ""), path_Length);
 			sparqlQueries.put(INPUTSUBJECT_AS_SUBJECT.toString().replace("@", "")+";"+
 					SUBJECT_OBJECT.toString().replace("@", "")+";"+INPUTOBJECT_AS_OBJECT.toString().replace("@", ""), path_Length);
-/*			sparqlQueries.put(INPUTSUBJECT_AS_OBJECT.toString().replace("@", "")+";"+
+			sparqlQueries.put(INPUTSUBJECT_AS_OBJECT.toString().replace("@", "")+";"+
 					SUBJECT_OBJECT.toString().replace("@", "")+";"+INPUTOBJECT_AS_SUBJECT.toString().replace("@", ""), path_Length);
 			sparqlQueries.put(INPUTSUBJECT_AS_OBJECT.toString().replace("@", "")+";"+
 					SUBJECT_OBJECT.toString().replace("@", "")+";"+INPUTOBJECT_AS_OBJECT.toString().replace("@", ""), path_Length);
@@ -108,7 +110,7 @@ public class SparqlQueryGenerator {
 			sparqlQueries.put(INPUTSUBJECT_AS_OBJECT.toString().replace("@", "")+";"+
 					OBJECT_SUBJECT.toString().replace("@", "")+";"+INPUTOBJECT_AS_SUBJECT.toString().replace("@", ""), path_Length);
 			sparqlQueries.put(INPUTSUBJECT_AS_OBJECT.toString().replace("@", "")+";"+
-					OBJECT_SUBJECT.toString().replace("@", "")+";"+INPUTOBJECT_AS_OBJECT.toString().replace("@", ""), path_Length); */
+					OBJECT_SUBJECT.toString().replace("@", "")+";"+INPUTOBJECT_AS_OBJECT.toString().replace("@", ""), path_Length); 
 		}
 	}
 

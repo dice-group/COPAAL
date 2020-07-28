@@ -146,7 +146,7 @@ public class DefaultPathGenerator implements IPathGenerator{
 					
 				}
 
-				break;
+				//break; ABD: forces reading only one row??!!
 
 			}
 			HashMap<String, HashMap<String, Integer>> pathBuilder = new HashMap<String, HashMap<String, Integer>>();

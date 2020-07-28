@@ -87,7 +87,7 @@ public class NPMICalculator implements Callable<Result> {
                  pathQueryString = "Select (count(*) as ?cnt) where {select distinct ?s ?o { "
 						+ firstPath + " . "
 						+ subjType  +
-                     "{select distinct ?o1 ?o{"		+ secondPath + " . "
+                     "{select distinct ?x1 ?o{"		+ secondPath + " . "
 						+ thirdPath  + " . "
 						+ objType   +
 						" } }"
@@ -108,7 +108,7 @@ public class NPMICalculator implements Callable<Result> {
                  pathPredicateQueryString = "Select (count(*) as ?c) where {select distinct ?s ?o {\n" + firstPath + " .\n" 
                  + secondPath + " .\n" + predicateTriple + "\n" + "}}\n";
             } else {
-                 pathQueryString = "Select (count(*) as ?sum) where {\n" + firstPath + " .\n" + subjType
+                 pathQueryString = "Select (count(*) as ?cnt) where {\n" + firstPath + " .\n" + subjType
                         + objType + "}\n";
 
                  pathPredicateQueryString = "Select (count(*) as ?c) where {\n" + firstPath + " .\n" 
