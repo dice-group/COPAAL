@@ -81,7 +81,6 @@ public class FactChecking {
         this(sparqlQueryGenerator, queryExecutioner, corroborativeGraph, new DefaultPathFactory());
     }
 
-    @Autowired
     public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner,
             CorroborativeGraph corroborativeGraph, PathFactory defaultPathFactory) {
         this.sparqlQueryGenerator = sparqlQueryGenerator;
