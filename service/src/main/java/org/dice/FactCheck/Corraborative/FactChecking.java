@@ -52,6 +52,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class FactChecking {
+    
+    private final static Logger LOGGER = LoggerFactory.getLogger(FactChecking.class);
 
     public org.dice.FactCheck.Corraborative.Config.Config Config;
 
@@ -107,8 +109,7 @@ public class FactChecking {
     public CorroborativeGraph checkFacts(Model model, int pathLength, PathFactory pathFactory,boolean vTy)
             throws InterruptedException, FileNotFoundException, ParseException { 
 
-        //queryExecutioner.setServiceRequestURL(serviceURL);
-        final Logger LOGGER = LoggerFactory.getLogger(FactChecking.class);
+        queryExecutioner.setServiceRequestURL(serviceURL);
 
         StmtIterator iterator = model.listStatements();
         Statement inputTriple = iterator.next();
