@@ -286,7 +286,8 @@ public class NPMICalculator implements Callable<Result> {
         if (count_path_Predicate_Occurrence == 0) {
             // Since we know that A and B exist, there is a chance that they should occur
             // together. Since it never happens, we have to return -1
-            npmi = -1;
+            //npmi = -1;
+            npmi = 0;
         } else {
             npmi = calculateNPMI(Math.log(count_path_Predicate_Occurrence), logSubObjTriples,
                     Math.log(count_Path_Occurrence), logSubObjTriples, Math.log(count_predicate_Occurrence),
