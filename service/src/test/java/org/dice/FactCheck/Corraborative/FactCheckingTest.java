@@ -77,22 +77,28 @@ public class FactCheckingTest {
 
 	@Test
 	public void FC_EducationTest() throws FileNotFoundException, InterruptedException, ParseException {
-	    final Model model = ModelFactory.createDefaultModel();
+	   // final Model model = ModelFactory.createDefaultModel();
 //		    Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Nia_Gill");
 		//    Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Theodore_McKee");
 //	    Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Nahum_Tate");
+		    
+	  String sstr="http://dbpedia.org/resource/Nia_Gill",pstr="http://dbpedia.org/ontology/education",
+		    		ostr="http://dbpedia.org/resource/Bachelor_of_Arts";
+		    
 	    
-	   String sstr="http://dbpedia.org/resource/John_Kemeny_(film_producer)",
-			   ostr="http://dbpedia.org/resource/Canada";
+//	   String sstr="http://dbpedia.org/resource/John_Kemeny_(film_producer)",pstr="http://dbpedia.org/ontology/nationality",
+//			   ostr="http://dbpedia.org/resource/Canada";
+	   
 	   Resource subject = ResourceFactory.createResource(sstr);
 	   Resource object = ResourceFactory.createResource(ostr);
+	   Property property = ResourceFactory.createProperty(pstr);
 //	    Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/deathPlace");
 //	    Resource object = ResourceFactory.createResource("http://dbpedia.org/resource/Southwark");
 //	        Resource object = ResourceFactory.createResource("http://dbpedia.org/resource/Bachelor_of_Arts");
-//	        Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/education");
+	       // Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/education");
 //			Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Bill_Gates");
 //	        Resource object = ResourceFactory.createResource("http://dbpedia.org/resource/United_States");
-	        Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/nationality");
+//	        Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/nationality");
 //	//Statement statement = ResourceFactory.createStatement(subject, property, object);
 
 	        Statement statement = ResourceFactory.createStatement(subject, property, object);

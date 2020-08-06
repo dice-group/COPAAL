@@ -69,7 +69,8 @@ public class DefaultPathGenerator implements IPathGenerator{
 			while(result.hasNext())
 			{
 				QuerySolution qs = result.next();
-				String path = qs.get("?p1").toString();
+//				String path = qs.get("?p1").toString();
+				String path = qs.get("?p1").toString()+";"+queryBuilder;
 				if(!paths.containsKey(path))
 				{
 					paths.put(path, pathLength);
@@ -104,7 +105,8 @@ public class DefaultPathGenerator implements IPathGenerator{
 			while(result.hasNext())
 			{
 				QuerySolution qs = result.next();
-				String path = qs.get("?p1").toString()+";"+qs.get("?p2").toString();
+//				String path = qs.get("?p1").toString()+";"+qs.get("?p2").toString();
+				String path = qs.get("?p1").toString()+";"+qs.get("?p2").toString()	+";"+ querySequence[0] + "." + querySequence[1];
 				if(!paths.containsKey(path))
 				{
 					paths.put(path, pathLength);
@@ -138,7 +140,8 @@ public class DefaultPathGenerator implements IPathGenerator{
 			while(result.hasNext())
 			{
 				QuerySolution qs = result.next();
-				String path = qs.get("?p1").toString()+";"+qs.get("?p2").toString()+";"+qs.get("?p3").toString();
+				String path = qs.get("?p1").toString()+";"+qs.get("?p2").toString()+";"+
+				       qs.get("?p3").toString()+";"+ querySequence[0] + "." + querySequence[1] + "." + querySequence[2];
 				if(!paths.containsKey(path))
 				{
 					paths.put(path, pathLength);
