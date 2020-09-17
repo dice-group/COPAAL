@@ -12,7 +12,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-
 import org.apache.jena.arq.querybuilder.SelectBuilder;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
@@ -33,10 +32,8 @@ import org.apache.jena.vocabulary.RDFS;
 import org.dice.FactCheck.Corraborative.PathGenerator.DefaultPathGeneratorFactory;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGenerator;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory;
-import org.dice.FactCheck.Corraborative.Query.*;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.dice.FactCheck.Corraborative.Query.SparqlQueryGenerator;
-import org.dice.FactCheck.Corraborative.UIResult.*;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeTriple;
 import org.dice.FactCheck.Corraborative.UIResult.Path;
@@ -54,325 +51,349 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class FactChecking {
-    
-    private final static Logger LOGGER = LoggerFactory.getLogger(FactChecking.class);
 
-    public org.dice.FactCheck.Corraborative.Config.Config Config;
+  private static final Logger LOGGER = LoggerFactory.getLogger(FactChecking.class);
 
-    private SparqlQueryGenerator sparqlQueryGenerator;
-    private QueryExecutioner queryExecutioner;
-    private CorroborativeGraph corroborativeGraph;
-    @Value("${info.service.url}")
-    private String serviceURL;
-    private PathFactory defaultPathFactory;
-    private IPathGeneratorFactory pathGeneratorFactory = new DefaultPathGeneratorFactory();
-    private int maxThreads = 100;
-    private NPMIFilter filter = null;
+  public org.dice.FactCheck.Corraborative.Config.Config Config;
 
-    protected ScoreSummarist summarist = new FixedSummarist();
+  private SparqlQueryGenerator sparqlQueryGenerator;
+  private QueryExecutioner queryExecutioner;
+  private CorroborativeGraph corroborativeGraph;
 
-    public FactChecking(
-    		SparqlQueryGenerator sparqlQueryGenerator, 
-    		QueryExecutioner queryExecutioner,
-            CorroborativeGraph corroborativeGraph,
-            IPathGeneratorFactory pathGeneratorFactory) 
-    {
-        this(sparqlQueryGenerator, queryExecutioner, corroborativeGraph, new DefaultPathFactory());
-        this.pathGeneratorFactory = pathGeneratorFactory;
-        // Add minimum counts for paths; length 1 >= 1; length 2 >= 1; length 3 >= 3
-        this.filter = new LowCountBasedNPMIFilter(new int[] {1,1,3}); 
-    }
+  @Value("${info.service.url}")
+  private String serviceURL;
 
-    @Autowired
-    public FactChecking(
-    		SparqlQueryGenerator sparqlQueryGenerator,
-    		QueryExecutioner queryExecutioner,
-            CorroborativeGraph corroborativeGraph) 
-    {
-        this(sparqlQueryGenerator, queryExecutioner, corroborativeGraph, new DefaultPathFactory());
-    }
+  private PathFactory defaultPathFactory;
+  private IPathGeneratorFactory pathGeneratorFactory = new DefaultPathGeneratorFactory();
+  private int maxThreads = 100;
+  private NPMIFilter filter = null;
 
-    public FactChecking(
-    		SparqlQueryGenerator sparqlQueryGenerator, 
-    		QueryExecutioner queryExecutioner,
-            CorroborativeGraph corroborativeGraph,
-            PathFactory defaultPathFactory) 
-    {
-        this.sparqlQueryGenerator = sparqlQueryGenerator;
-        this.queryExecutioner = queryExecutioner;
-        this.corroborativeGraph = corroborativeGraph;
-        this.defaultPathFactory = defaultPathFactory;
-    }
+  protected ScoreSummarist summarist = new FixedSummarist();
 
-    public CorroborativeGraph checkFacts(Model model, int pathLength)
-            throws InterruptedException, FileNotFoundException, ParseException {
-        return checkFacts(model, pathLength, defaultPathFactory);
-    }
+  public FactChecking(
+      SparqlQueryGenerator sparqlQueryGenerator,
+      QueryExecutioner queryExecutioner,
+      CorroborativeGraph corroborativeGraph,
+      IPathGeneratorFactory pathGeneratorFactory) {
+    this(sparqlQueryGenerator, queryExecutioner, corroborativeGraph, new DefaultPathFactory());
+    this.pathGeneratorFactory = pathGeneratorFactory;
+    // Add minimum counts for paths; length 1 >= 1; length 2 >= 1; length 3 >= 3
+    this.filter = new LowCountBasedNPMIFilter(new int[] {1, 1, 3});
+  }
 
-    public CorroborativeGraph checkFacts(Model model, int pathLength,boolean vTy)
-            throws InterruptedException, FileNotFoundException, ParseException {
-        return checkFacts(model, pathLength, defaultPathFactory,vTy);
-    }
+  @Autowired
+  public FactChecking(
+      SparqlQueryGenerator sparqlQueryGenerator,
+      QueryExecutioner queryExecutioner,
+      CorroborativeGraph corroborativeGraph) {
+    this(sparqlQueryGenerator, queryExecutioner, corroborativeGraph, new DefaultPathFactory());
+  }
 
-    public CorroborativeGraph checkFacts(Model model, int pathLength, PathFactory pathFactory)
-            throws InterruptedException, FileNotFoundException, ParseException { 
-            return checkFacts(model, pathLength, defaultPathFactory,false);
-            }
-            
-    public CorroborativeGraph checkFacts(Model model, int pathLength, PathFactory pathFactory,boolean vTy)
-            throws InterruptedException, FileNotFoundException, ParseException {      	
-    	    	
-        queryExecutioner.setServiceRequestURL(serviceURL);
+  public FactChecking(
+      SparqlQueryGenerator sparqlQueryGenerator,
+      QueryExecutioner queryExecutioner,
+      CorroborativeGraph corroborativeGraph,
+      PathFactory defaultPathFactory) {
+    this.sparqlQueryGenerator = sparqlQueryGenerator;
+    this.queryExecutioner = queryExecutioner;
+    this.corroborativeGraph = corroborativeGraph;
+    this.defaultPathFactory = defaultPathFactory;
+  }
 
-        StmtIterator iterator = model.listStatements();
-        Statement inputTriple = iterator.next();
+  public CorroborativeGraph checkFacts(Model model, int pathLength)
+      throws InterruptedException, FileNotFoundException, ParseException {
+    return checkFacts(model, pathLength, defaultPathFactory);
+  }
 
-        Resource subject = inputTriple.getSubject();
-        Resource object = inputTriple.getObject().asResource();
-        Property property = inputTriple.getPredicate();
+  public CorroborativeGraph checkFacts(Model model, int pathLength, boolean vTy)
+      throws InterruptedException, FileNotFoundException, ParseException {
+    return checkFacts(model, pathLength, defaultPathFactory, vTy);
+  }
 
-        corroborativeGraph
-                .setInputTriple(new CorroborativeTriple(subject.toString(), property.toString(), object.toString()));
+  public CorroborativeGraph checkFacts(Model model, int pathLength, PathFactory pathFactory)
+      throws InterruptedException, FileNotFoundException, ParseException {
+    return checkFacts(model, pathLength, defaultPathFactory, false);
+  }
 
-        int count_predicate_Triples = countPredicateOccurrances(NodeFactory.createVariable("s"), property,
-                NodeFactory.createVariable("o"));
+  public CorroborativeGraph checkFacts(
+      Model model, int pathLength, PathFactory pathFactory, boolean vTy)
+      throws InterruptedException, FileNotFoundException, ParseException {
 
-        // get Domain and Range info
-        Set<Node> subjectTypes= null, objectTypes = null;
-        if(!vTy){
-            subjectTypes = getTypeInformation(property, RDFS.domain);
-            objectTypes = getTypeInformation(property, RDFS.range);
+    queryExecutioner.setServiceRequestURL(serviceURL);
 
-            // Check if the domain information is missing. If yes, then fallback to types of
-            // subject
-            if (subjectTypes.isEmpty()) {
-                subjectTypes = getTypeInformation(subject.asResource(), RDF.type);
-            }
+    StmtIterator iterator = model.listStatements();
+    Statement inputTriple = iterator.next();
 
-            // Check if the range information is missing. If yes, then fallback to types of
-            // object
-            if (objectTypes.isEmpty()) {
-                objectTypes = getTypeInformation(object.asResource(), RDF.type);
-            }
+    Resource subject = inputTriple.getSubject();
+    Resource object = inputTriple.getObject().asResource();
+    Property property = inputTriple.getPredicate();
 
-            // if no type information is available for subject or object, simply return
-            // score 0. We cannot verify fact.
-            if (subjectTypes.isEmpty() || objectTypes.isEmpty()) {
-                corroborativeGraph.setPathList(new ArrayList<Path>());
-                corroborativeGraph.setGraphScore(0.0);
-                return corroborativeGraph;
-            }
-        }
-        
-        int count_subject_Triples,count_object_Triples;
-        if(!vTy){
-             count_subject_Triples = countOccurrances(NodeFactory.createVariable("s"), RDF.type, subjectTypes);
-             count_object_Triples = countOccurrances(NodeFactory.createVariable("s"), RDF.type, objectTypes);
-        }else{
-             count_subject_Triples = countSOOccurrances("count(distinct ?s)", property);
-             count_object_Triples = countSOOccurrances("count(distinct ?o)", property);               
-        }
-        
-        LOGGER.info("Checking Fact");
+    corroborativeGraph.setInputTriple(
+        new CorroborativeTriple(subject.toString(), property.toString(), object.toString()));
 
-        for (int j = 1; j <= pathLength; j++) {
-            try {
+    int count_predicate_Triples =
+        countPredicateOccurrances(
+            NodeFactory.createVariable("s"), property, NodeFactory.createVariable("o"));
 
-                sparqlQueryGenerator.generatorSparqlQueries(inputTriple, j);
-            } catch (ParseException e) {
-                LOGGER.info("Exception while generating Sparql queries.");
-            }
-        }
-        Set<IPathGenerator> pathGenerators = new HashSet<IPathGenerator>();
-        Set<PathQuery> pathQueries = new HashSet<PathQuery>();
+    // get Domain and Range info
+    Set<Node> subjectTypes = null, objectTypes = null;
+    if (!vTy) {
+      subjectTypes = getTypeInformation(property, RDFS.domain);
+      objectTypes = getTypeInformation(property, RDFS.range);
 
-        for (Entry<String, Integer> entry : sparqlQueryGenerator.sparqlQueries.entrySet()) {
+      // Check if the domain information is missing. If yes, then fallback to types of
+      // subject
+      if (subjectTypes.isEmpty()) {
+        subjectTypes = getTypeInformation(subject.asResource(), RDF.type);
+      }
 
-            IPathGenerator pg = pathGeneratorFactory.build(entry.getKey(), inputTriple, entry.getValue(), queryExecutioner);
-            pathGenerators.add(pg);
-        }
+      // Check if the range information is missing. If yes, then fallback to types of
+      // object
+      if (objectTypes.isEmpty()) {
+        objectTypes = getTypeInformation(object.asResource(), RDF.type);
+      }
 
-        for (IPathGenerator pathGenerator : pathGenerators) {
-            pathQueries.add(pathGenerator.returnQuery());
-        }
-
-        Set<NPMICalculator> pmiCallables = new HashSet<NPMICalculator>();
-        Set<Result> results = new HashSet<Result>();
-        for (PathQuery pathQuery : pathQueries) {
-            for (Entry<String, java.util.HashMap<String, Integer>> entry : pathQuery.getPathBuilder().entrySet()) {
-
-                for (Entry<String, Integer> path : entry.getValue().entrySet()) {
-                    String querySequence = entry.getKey();
-                    String pathString = path.getKey();
-                    String intermediateNodes = pathQuery.getIntermediateNodes().get(pathString);
-                    NPMICalculator pc = new NPMICalculator(pathString, querySequence, inputTriple, intermediateNodes,
-                            path.getValue(), count_predicate_Triples, count_subject_Triples, count_object_Triples,
-                            subjectTypes, objectTypes, queryExecutioner, filter, vTy);
-                    pmiCallables.add(pc);
-                }
-            }
-        }
-
-        // for experiments, use run in parallel
-
-        try {
-            ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
-
-            for (Future<Result> result : executor.invokeAll(pmiCallables)) {
-                if(result.get().hasLegalScore){
-                    results.add(result.get());
-                }
-            }
-
-            executor.shutdown();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        /*
-         * for (PMICalculator pmicallable : pmiCallables) {
-         * 
-         * double pathscore = pmicallable.calculatePMIScore(); Result result = new
-         * Result(pmicallable.path, pmicallable.inputStatement.getPredicate(),
-         * pathscore, pmicallable.builder, pmicallable.intermediateNodes,
-         * pmicallable.pathLength); System.out.println(result.path);
-         * System.out.println(result.getScore()); List<Statement> statements=
-         * generateVerbalizingTriples(result.getPathBuilder(), result.path,
-         * result.intermediateNodes, result.pathLength, subject, object);
-         * 
-         * final Document doc = verbalizer.generateDocument(statements,
-         * Paraphrasing.prop.getProperty("surfaceForms")); System.out.println(doc);
-         * System.out.println(statements); results.add(result);
-         * 
-         * }
-         */
-
-        List<Path> pathList = results.parallelStream().map(r -> pathFactory.createPath(subject, object, r))
-                .collect(Collectors.toList());
-        double[] scores = results.parallelStream().mapToDouble(r -> r.score).toArray();
-
-        corroborativeGraph.setPathList(pathList);
-
-        Arrays.sort(scores);
-        double score = summarist.summarize(scores);
-        corroborativeGraph.setGraphScore(score);
-        LOGGER.info(score + "");
-
+      // if no type information is available for subject or object, simply return
+      // score 0. We cannot verify fact.
+      if (subjectTypes.isEmpty() || objectTypes.isEmpty()) {
+        corroborativeGraph.setPathList(new ArrayList<Path>());
+        corroborativeGraph.setGraphScore(0.0);
         return corroborativeGraph;
+      }
     }
 
-    public RDFNode getResource(Model model, Property property, Resource statement) {
-        StmtIterator subjectIterator = model.listStatements(statement, property, (RDFNode) null);
-        RDFNode resource = null;
-        if (subjectIterator.hasNext())
-            resource = subjectIterator.next().getObject();
-        return resource;
+    int count_subject_Triples, count_object_Triples;
+    if (!vTy) {
+      count_subject_Triples =
+          countOccurrances(NodeFactory.createVariable("s"), RDF.type, subjectTypes);
+      count_object_Triples =
+          countOccurrances(NodeFactory.createVariable("s"), RDF.type, objectTypes);
+    } else {
+      count_subject_Triples = countSOOccurrances("count(distinct ?s)", property);
+      count_object_Triples = countSOOccurrances("count(distinct ?o)", property);
     }
 
-    public List<Statement> generateVerbalizingTriples(String builder, String path, String intermediateNodes,
-            int pathLength, RDFNode subject, RDFNode object) {
-        List<Statement> statementList = new ArrayList<Statement>();
-        String[] paths = path.split(";");
-        int prop = 1;
-        int res = 1;
-        for (int i = 0; i < paths.length; i++) {
+    LOGGER.info("Checking Fact");
 
-            String property = "?p" + (prop);
-            builder = builder.replace(property, paths[i]);
-            prop++;
+    for (int j = 1; j <= pathLength; j++) {
+      try {
+        sparqlQueryGenerator.generatorSparqlQueries(inputTriple, j);
+      } catch (ParseException e) {
+        LOGGER.info("Exception while generating Sparql queries.");
+      }
+    }
+
+    Set<IPathGenerator> pathGenerators = new HashSet<IPathGenerator>();
+    Set<PathQuery> pathQueries = new HashSet<PathQuery>();
+
+    for (Entry<String, Integer> entry : sparqlQueryGenerator.sparqlQueries.entrySet()) {
+
+      IPathGenerator pg =
+          pathGeneratorFactory.build(
+              entry.getKey(), inputTriple, entry.getValue(), queryExecutioner);
+      pathGenerators.add(pg);
+    }
+
+    for (IPathGenerator pathGenerator : pathGenerators) {
+      pathQueries.add(pathGenerator.returnQuery());
+    }
+
+    Set<NPMICalculator> pmiCallables = new HashSet<NPMICalculator>();
+    Set<Result> results = new HashSet<Result>();
+    for (PathQuery pathQuery : pathQueries) {
+      for (Entry<String, java.util.HashMap<String, Integer>> entry :
+          pathQuery.getPathBuilder().entrySet()) {
+
+        for (Entry<String, Integer> path : entry.getValue().entrySet()) {
+          String querySequence = entry.getKey();
+          String pathString = path.getKey();
+          String intermediateNodes = pathQuery.getIntermediateNodes().get(pathString);
+          NPMICalculator pc =
+              new NPMICalculator(
+                  pathString,
+                  querySequence,
+                  inputTriple,
+                  intermediateNodes,
+                  path.getValue(),
+                  count_predicate_Triples,
+                  count_subject_Triples,
+                  count_object_Triples,
+                  subjectTypes,
+                  objectTypes,
+                  queryExecutioner,
+                  filter,
+                  vTy);
+          pmiCallables.add(pc);
         }
-        if (pathLength > 1) {
-            String[] intermediateResources = intermediateNodes.split(";");
-            for (int i = 0; i < intermediateResources.length; i++) {
+      }
+    }
 
-                String resource = "?x" + (res);
-                builder = builder.replace(resource, intermediateResources[i]);
-                res++;
-            }
+    // for experiments, use run in parallel
+
+    try {
+      ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
+
+      for (Future<Result> result : executor.invokeAll(pmiCallables)) {
+        if (result.get().hasLegalScore) {
+          results.add(result.get());
         }
+      }
 
-        builder = builder.replace("?s", subject.toString());
-        builder = builder.replace("?o", object.toString());
-
-        String[] triples = builder.split(";");
-        for (int i = 0; i < triples.length; i++) {
-            Resource resourceSubject = ResourceFactory.createResource(triples[i].split(" ")[0].trim());
-            Property property = ResourceFactory.createProperty(triples[i].split(" ")[1].trim());
-            Resource resourceObject = ResourceFactory.createResource(triples[i].split(" ")[2].trim());
-            statementList.add(new StatementImpl(resourceSubject, property, resourceObject));
-        }
-        return statementList;
+      executor.shutdown();
+    } catch (Exception e) {
+      e.printStackTrace();
     }
 
-    public int countOccurrances(Node subject, Property property, Set<Node> objectTypes) {
-        SelectBuilder occurrenceBuilder = new SelectBuilder();
-        Iterator<Node> typeIterator = objectTypes.iterator();
-        try {
-            occurrenceBuilder.addVar("count(*)", "?c");
-            while (typeIterator.hasNext())
-                occurrenceBuilder.addWhere(subject, property, typeIterator.next());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+    /*
+     * for (PMICalculator pmicallable : pmiCallables) {
+     *
+     * double pathscore = pmicallable.calculatePMIScore(); Result result = new
+     * Result(pmicallable.path, pmicallable.inputStatement.getPredicate(),
+     * pathscore, pmicallable.builder, pmicallable.intermediateNodes,
+     * pmicallable.pathLength); System.out.println(result.path);
+     * System.out.println(result.getScore()); List<Statement> statements=
+     * generateVerbalizingTriples(result.getPathBuilder(), result.path,
+     * result.intermediateNodes, result.pathLength, subject, object);
+     *
+     * final Document doc = verbalizer.generateDocument(statements,
+     * Paraphrasing.prop.getProperty("surfaceForms")); System.out.println(doc);
+     * System.out.println(statements); results.add(result);
+     *
+     * }
+     */
 
-        return returnCount(occurrenceBuilder);
+    List<Path> pathList =
+        results
+            .parallelStream()
+            .map(r -> pathFactory.createPath(subject, object, r))
+            .collect(Collectors.toList());
+    double[] scores = results.parallelStream().mapToDouble(r -> r.score).toArray();
+
+    corroborativeGraph.setPathList(pathList);
+
+    Arrays.sort(scores);
+    double score = summarist.summarize(scores);
+    corroborativeGraph.setGraphScore(score);
+    LOGGER.info(score + "");
+
+    return corroborativeGraph;
+  }
+
+  public RDFNode getResource(Model model, Property property, Resource statement) {
+    StmtIterator subjectIterator = model.listStatements(statement, property, (RDFNode) null);
+    RDFNode resource = null;
+    if (subjectIterator.hasNext()) resource = subjectIterator.next().getObject();
+    return resource;
+  }
+
+  public List<Statement> generateVerbalizingTriples(
+      String builder,
+      String path,
+      String intermediateNodes,
+      int pathLength,
+      RDFNode subject,
+      RDFNode object) {
+    List<Statement> statementList = new ArrayList<Statement>();
+    String[] paths = path.split(";");
+    int prop = 1;
+    int res = 1;
+    for (int i = 0; i < paths.length; i++) {
+
+      String property = "?p" + (prop);
+      builder = builder.replace(property, paths[i]);
+      prop++;
     }
-    
-    public int countPredicateOccurrances(Node subject, Property property, Node objectType) {
-        SelectBuilder occurrenceBuilder = new SelectBuilder();
-        try {
-            occurrenceBuilder.addVar("count(*)", "?c");
-            occurrenceBuilder.addWhere(subject, property, objectType);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+    if (pathLength > 1) {
+      String[] intermediateResources = intermediateNodes.split(";");
+      for (int i = 0; i < intermediateResources.length; i++) {
 
-        return returnCount(occurrenceBuilder);
-    }
-    
-    public int countSOOccurrances( String var, Property property) {
-        SelectBuilder occurrenceBuilder = new SelectBuilder();
-        try {
-            occurrenceBuilder.addVar(var, "?c");
-            occurrenceBuilder.addWhere(NodeFactory.createVariable("s"), property, NodeFactory.createVariable("o"));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return returnCount(occurrenceBuilder);
-    }
-
-    public Set<Node> getTypeInformation(Resource subject, Property property) {
-        Set<Node> types = new HashSet<Node>();
-        SelectBuilder typeBuilder = new SelectBuilder().addPrefix("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-        typeBuilder.addPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
-        typeBuilder.addWhere(subject, property, NodeFactory.createVariable("x"));
-
-        Query typeQuery = typeBuilder.build();
-        QueryExecution queryExecution = queryExecutioner.getQueryExecution(typeQuery);
-
-        ResultSet resultSet = queryExecution.execSelect();
-
-        while (resultSet.hasNext())
-            types.add(resultSet.next().get("x").asNode());
-        queryExecution.close();
-        return types;
-    }
-
-    public int returnCount(SelectBuilder builder) {
-
-        Query queryOccurrence = builder.build();
-        QueryExecution queryExecution = queryExecutioner.getQueryExecution(queryOccurrence);
-        int count_Occurrence = 0;
-        ResultSet resultSet = queryExecution.execSelect();
-        if (resultSet.hasNext())
-            count_Occurrence = resultSet.next().get("?c").asLiteral().getInt();
-        queryExecution.close();
-        return count_Occurrence;
-    }
-
-    public void setMaxThreads(int maxThreads) {
-        this.maxThreads = maxThreads;
+        String resource = "?x" + (res);
+        builder = builder.replace(resource, intermediateResources[i]);
+        res++;
+      }
     }
 
+    builder = builder.replace("?s", subject.toString());
+    builder = builder.replace("?o", object.toString());
+
+    String[] triples = builder.split(";");
+    for (int i = 0; i < triples.length; i++) {
+      Resource resourceSubject = ResourceFactory.createResource(triples[i].split(" ")[0].trim());
+      Property property = ResourceFactory.createProperty(triples[i].split(" ")[1].trim());
+      Resource resourceObject = ResourceFactory.createResource(triples[i].split(" ")[2].trim());
+      statementList.add(new StatementImpl(resourceSubject, property, resourceObject));
+    }
+    return statementList;
+  }
+
+  public int countOccurrances(Node subject, Property property, Set<Node> objectTypes) {
+    SelectBuilder occurrenceBuilder = new SelectBuilder();
+    Iterator<Node> typeIterator = objectTypes.iterator();
+    try {
+      occurrenceBuilder.addVar("count(*)", "?c");
+      while (typeIterator.hasNext())
+        occurrenceBuilder.addWhere(subject, property, typeIterator.next());
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    return returnCount(occurrenceBuilder);
+  }
+
+  public int countPredicateOccurrances(Node subject, Property property, Node objectType) {
+    SelectBuilder occurrenceBuilder = new SelectBuilder();
+    try {
+      occurrenceBuilder.addVar("count(*)", "?c");
+      occurrenceBuilder.addWhere(subject, property, objectType);
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    return returnCount(occurrenceBuilder);
+  }
+
+  public int countSOOccurrances(String var, Property property) {
+    SelectBuilder occurrenceBuilder = new SelectBuilder();
+    try {
+      occurrenceBuilder.addVar(var, "?c");
+      occurrenceBuilder.addWhere(
+          NodeFactory.createVariable("s"), property, NodeFactory.createVariable("o"));
+    } catch (ParseException e) {
+      e.printStackTrace();
+    }
+
+    return returnCount(occurrenceBuilder);
+  }
+
+  public Set<Node> getTypeInformation(Resource subject, Property property) {
+    Set<Node> types = new HashSet<Node>();
+    SelectBuilder typeBuilder =
+        new SelectBuilder().addPrefix("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+    typeBuilder.addPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+    typeBuilder.addWhere(subject, property, NodeFactory.createVariable("x"));
+
+    Query typeQuery = typeBuilder.build();
+    QueryExecution queryExecution = queryExecutioner.getQueryExecution(typeQuery);
+
+    ResultSet resultSet = queryExecution.execSelect();
+
+    while (resultSet.hasNext()) types.add(resultSet.next().get("x").asNode());
+    queryExecution.close();
+    return types;
+  }
+
+  public int returnCount(SelectBuilder builder) {
+
+    Query queryOccurrence = builder.build();
+    QueryExecution queryExecution = queryExecutioner.getQueryExecution(queryOccurrence);
+    int count_Occurrence = 0;
+    ResultSet resultSet = queryExecution.execSelect();
+    if (resultSet.hasNext()) count_Occurrence = resultSet.next().get("?c").asLiteral().getInt();
+    queryExecution.close();
+    return count_Occurrence;
+  }
+
+  public void setMaxThreads(int maxThreads) {
+    this.maxThreads = maxThreads;
+  }
 }
