@@ -33,8 +33,10 @@ import org.apache.jena.vocabulary.RDFS;
 import org.dice.FactCheck.Corraborative.PathGenerator.DefaultPathGeneratorFactory;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGenerator;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory;
+import org.dice.FactCheck.Corraborative.Query.*;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.dice.FactCheck.Corraborative.Query.SparqlQueryGenerator;
+import org.dice.FactCheck.Corraborative.UIResult.*;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeTriple;
 import org.dice.FactCheck.Corraborative.UIResult.Path;
@@ -69,8 +71,12 @@ public class FactChecking {
 
     protected ScoreSummarist summarist = new FixedSummarist();
 
-    public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner,
-                        CorroborativeGraph corroborativeGraph, IPathGeneratorFactory pathGeneratorFactory) {
+    public FactChecking(
+    		SparqlQueryGenerator sparqlQueryGenerator, 
+    		QueryExecutioner queryExecutioner,
+            CorroborativeGraph corroborativeGraph,
+            IPathGeneratorFactory pathGeneratorFactory) 
+    {
         this(sparqlQueryGenerator, queryExecutioner, corroborativeGraph, new DefaultPathFactory());
         this.pathGeneratorFactory = pathGeneratorFactory;
         // Add minimum counts for paths; length 1 >= 1; length 2 >= 1; length 3 >= 3
@@ -78,13 +84,20 @@ public class FactChecking {
     }
 
     @Autowired
-    public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner,
-            CorroborativeGraph corroborativeGraph) {
+    public FactChecking(
+    		SparqlQueryGenerator sparqlQueryGenerator,
+    		QueryExecutioner queryExecutioner,
+            CorroborativeGraph corroborativeGraph) 
+    {
         this(sparqlQueryGenerator, queryExecutioner, corroborativeGraph, new DefaultPathFactory());
     }
 
-    public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner,
-            CorroborativeGraph corroborativeGraph, PathFactory defaultPathFactory) {
+    public FactChecking(
+    		SparqlQueryGenerator sparqlQueryGenerator, 
+    		QueryExecutioner queryExecutioner,
+            CorroborativeGraph corroborativeGraph,
+            PathFactory defaultPathFactory) 
+    {
         this.sparqlQueryGenerator = sparqlQueryGenerator;
         this.queryExecutioner = queryExecutioner;
         this.corroborativeGraph = corroborativeGraph;
@@ -107,8 +120,8 @@ public class FactChecking {
             }
             
     public CorroborativeGraph checkFacts(Model model, int pathLength, PathFactory pathFactory,boolean vTy)
-            throws InterruptedException, FileNotFoundException, ParseException { 
-
+            throws InterruptedException, FileNotFoundException, ParseException {      	
+    	    	
         queryExecutioner.setServiceRequestURL(serviceURL);
 
         StmtIterator iterator = model.listStatements();
