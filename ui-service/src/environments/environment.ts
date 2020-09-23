@@ -4,7 +4,8 @@
 
 export const environment = {
   production: true,
-  apiBase: 'http://131.234.29.111:8080/'
+   apiBase: 'http://131.234.29.111:8080/'
+  // apiBase: 'http://127.0.0.1:8080/'
 };
 
 /*

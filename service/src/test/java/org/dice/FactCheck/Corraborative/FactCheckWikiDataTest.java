@@ -3,7 +3,6 @@ package org.dice.FactCheck.Corraborative;
 import static org.junit.Assert.assertTrue;
 import java.io.FileNotFoundException;
 import org.apache.jena.arq.querybuilder.SelectBuilder;
-import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.Model;
@@ -25,7 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class FactCheckingTest {
+public class FactCheckWikiDataTest {
 
   @Autowired private QueryExecutioner queryExecutioner;
 
@@ -34,69 +33,54 @@ public class FactCheckingTest {
   @Autowired private Config config;
 
   @Test
-  public void QryTest() throws ParseException {
+  public void ShouldRunQueryFromWikiData() throws ParseException {
     queryExecutioner.setServiceRequestURL(
-        config.serviceURLResolve(PathGeneratorType.defaultPathGenerator));
+        config.serviceURLResolve(PathGeneratorType.wikidataPathGenerator));
 
-    // String cntQuerytxt="SELECT  (count(*) AS ?c) WHERE  { ?s
-    // <http://dbpedia.org/ontology/nationality>  ?o}";
+    /* PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+    PREFIX wd: <http://www.wikidata.org/entity/>
+    SELECT  (count(*) AS ?item)
+    WHERE
+    { ?item  wdt:P31  wd:Q146}*/
+
     SelectBuilder qryBuilder = new SelectBuilder();
-    qryBuilder.addVar("count(*)", "?c");
-    qryBuilder.addWhere(
-        NodeFactory.createVariable("s"),
-        "<http://dbpedia.org/ontology/nationality>",
-        NodeFactory.createVariable("o"));
+    qryBuilder.addPrefix("wdt:", "http://www.wikidata.org/prop/direct/");
+    qryBuilder.addPrefix("wd:", "http://www.wikidata.org/entity/");
+    qryBuilder.addVar("count(*)", "?item").addWhere("?item", "wdt:P31", "wd:Q146");
     Query cntQuery = qryBuilder.build();
     System.out.println(cntQuery.toString());
 
     QueryExecution queryExecution = queryExecutioner.getQueryExecution(cntQuery);
-    double count_Occurrence = queryExecution.execSelect().next().get("?c").asLiteral().getDouble();
+    double count_Occurrence =
+        queryExecution.execSelect().next().get("?item").asLiteral().getDouble();
     queryExecution.close();
     System.out.println("Count: " + count_Occurrence);
 
     assertTrue(count_Occurrence > 0);
   }
 
-  // This test shows that the vTy parameter has a positive effect and show that 'virtual types' can
-  // be helpful
   @Test
-  public void FC_EducationTest()
+  public void ShouldRunFactCheckBasedOnWikiData()
       throws FileNotFoundException, InterruptedException, ParseException {
-
     final Model model = ModelFactory.createDefaultModel();
-
-    Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Nia_Gill");
-    Resource object =
-        ResourceFactory.createResource("http://dbpedia.org/resource/Bachelor_of_Arts");
-    Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/education");
-
-    //			Resource subject =
-    // ResourceFactory.createResource("http://dbpedia.org/resource/Bill_Gates");
-    //	        Resource object =
-    // ResourceFactory.createResource("http://dbpedia.org/resource/United_States");
-    //	        Property property =
-    // ResourceFactory.createProperty("http://dbpedia.org/ontology/nationality");
+    // https://en.wikibooks.org/wiki/SPARQL/Prefixes
+    Resource subject = ResourceFactory.createResource("http://www.wikidata.org/entity/Q76");
+    Resource object = ResourceFactory.createResource("http://www.wikidata.org/entity/Q61");
+    Property property = ResourceFactory.createProperty("http://www.wikidata.org/prop/direct/P551");
 
     Statement statement = ResourceFactory.createStatement(subject, property, object);
 
-    FCTest(statement, 2, true);
-    FCTest(statement, 2, false);
-  }
-
-  protected void FCTest(Statement statement, int pathLen, boolean vTy)
-      throws FileNotFoundException, InterruptedException, ParseException {
-
-    final Model model = ModelFactory.createDefaultModel();
     model.add(statement);
 
     CorroborativeGraph cg =
-        factChecking.checkFacts(
-            model, pathLen, vTy, PathGeneratorType.defaultPathGenerator); // vTy:virtual types
+        factChecking.checkFacts(model, 2, true, PathGeneratorType.wikidataPathGenerator);
 
     System.out.println("Subject: " + statement.getSubject());
     System.out.println("Property: " + statement.getPredicate());
     System.out.println("Object: " + statement.getObject());
     System.out.println("Count paths: " + cg.getPathList().toArray().length);
-    System.out.println("virtual Types: " + vTy + " Score:" + cg.getGraphScore());
+    System.out.println(" Score:" + cg.getGraphScore());
+
+    assertTrue(cg.getGraphScore() > 0);
   }
 }

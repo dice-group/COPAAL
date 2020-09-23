@@ -9,36 +9,32 @@ import org.apache.jena.rdf.model.Statement;
 import org.dice.FactCheck.Corraborative.PathQuery;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 
-/*
- * A class implementing callable to generate paths in parallel and returns PathQuery, a
- * a structure for realizing the path
- */
+public class WIKIDataPathGenerator implements IPathGenerator {
 
-public class DefaultPathGenerator implements IPathGenerator {
-
-  public String queryBuilder;
-  public Statement input;
-  public int pathLength;
-  HashMap<String, Integer> paths = new HashMap<String, Integer>();
-  HashMap<String, String> intermediateNodes = new HashMap<String, String>();
-  public PathQuery pathQuery;
-  public String ontology = "\'http://dbpedia.org/ontology\'";
+  private int pathLength;
+  private String queryBuilder;
+  private Statement input;
   private QueryExecutioner queryExecutioner;
 
-  public DefaultPathGenerator(
+  private HashMap<String, Integer> paths = new HashMap<String, Integer>();
+  private HashMap<String, String> intermediateNodes = new HashMap<String, String>();
+  private PathQuery pathQuery;
+
+  public WIKIDataPathGenerator(
       String queryBuilder, Statement input, int pathLength, QueryExecutioner queryExecutioner) {
+    this.pathLength = pathLength;
     this.queryBuilder = queryBuilder;
     this.input = input;
-    this.pathLength = pathLength;
     this.queryExecutioner = queryExecutioner;
   }
 
+  @Override
   public PathQuery call() throws Exception {
     return returnQuery();
   }
 
+  @Override
   public PathQuery returnQuery() {
-
     if (pathLength == 1) {
       ParameterizedSparqlString paraPathQuery =
           new ParameterizedSparqlString(
@@ -50,9 +46,6 @@ public class DefaultPathGenerator implements IPathGenerator {
                   + input.getPredicate()
                   + ">)"
                   + "\n"
-                  + "FILTER(strstarts(str(?p1),"
-                  + ontology
-                  + ")) \n "
                   + "}");
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());
@@ -85,14 +78,8 @@ public class DefaultPathGenerator implements IPathGenerator {
                   + querySequence[1]
                   + "."
                   + "\n"
-                  + "FILTER(strstarts(str(?p1),"
-                  + ontology
-                  + "))"
-                  + "FILTER(strstarts(str(?p2),"
-                  + ontology
-                  + "))"
-                  + "FILTER(!ISLITERAL(?x1))"
-                  + "\n "
+                  // + "FILTER(!ISLITERAL(?x1))"
+                  // + "\n "
                   + "}");
 
       paraPathQuery.setParam("s", input.getSubject());
@@ -132,15 +119,6 @@ public class DefaultPathGenerator implements IPathGenerator {
                   + "FILTER(?x2 != <"
                   + input.getSubject().asNode()
                   + ">) \n"
-                  + "FILTER(strstarts(str(?p1),"
-                  + ontology
-                  + "))"
-                  + "FILTER(strstarts(str(?p2),"
-                  + ontology
-                  + "))"
-                  + "FILTER(strstarts(str(?p3),"
-                  + ontology
-                  + "))"
                   + "}");
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());

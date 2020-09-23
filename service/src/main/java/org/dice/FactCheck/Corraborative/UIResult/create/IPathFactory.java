@@ -11,7 +11,7 @@ import org.dice.FactCheck.Corraborative.UIResult.Path;
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
-public interface PathFactory {
+public interface IPathFactory {
 
     /**
      * Creates a {@link Path} object based on the given {@link Result} object.

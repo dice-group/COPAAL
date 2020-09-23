@@ -29,16 +29,16 @@ import org.apache.jena.rdf.model.impl.StatementImpl;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
-import org.dice.FactCheck.Corraborative.PathGenerator.DefaultPathGeneratorFactory;
+import org.dice.FactCheck.Corraborative.Config.Config;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGenerator;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory;
+import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory.PathGeneratorType;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.dice.FactCheck.Corraborative.Query.SparqlQueryGenerator;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeTriple;
 import org.dice.FactCheck.Corraborative.UIResult.Path;
-import org.dice.FactCheck.Corraborative.UIResult.create.DefaultPathFactory;
-import org.dice.FactCheck.Corraborative.UIResult.create.PathFactory;
+import org.dice.FactCheck.Corraborative.UIResult.create.IPathFactory;
 import org.dice.FactCheck.Corraborative.filter.npmi.LowCountBasedNPMIFilter;
 import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilter;
 import org.dice.FactCheck.Corraborative.sum.FixedSummarist;
@@ -46,7 +46,6 @@ import org.dice.FactCheck.Corraborative.sum.ScoreSummarist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -54,72 +53,56 @@ public class FactChecking {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(FactChecking.class);
 
-  public org.dice.FactCheck.Corraborative.Config.Config Config;
-
   private SparqlQueryGenerator sparqlQueryGenerator;
   private QueryExecutioner queryExecutioner;
   private CorroborativeGraph corroborativeGraph;
 
-  @Value("${info.service.url}")
-  private String serviceURL;
-
-  private PathFactory defaultPathFactory;
-  private IPathGeneratorFactory pathGeneratorFactory = new DefaultPathGeneratorFactory();
-  private int maxThreads = 100;
+  private IPathFactory defaultPathFactory;
+  private IPathGeneratorFactory pathGeneratorFactory; // = new DefaultPathGeneratorFactory();
+  private int maxThreads = 20;
   private NPMIFilter filter = null;
 
   protected ScoreSummarist summarist = new FixedSummarist();
 
-  public FactChecking(
-      SparqlQueryGenerator sparqlQueryGenerator,
-      QueryExecutioner queryExecutioner,
-      CorroborativeGraph corroborativeGraph,
-      IPathGeneratorFactory pathGeneratorFactory) {
-    this(sparqlQueryGenerator, queryExecutioner, corroborativeGraph, new DefaultPathFactory());
-    this.pathGeneratorFactory = pathGeneratorFactory;
-    // Add minimum counts for paths; length 1 >= 1; length 2 >= 1; length 3 >= 3
-    this.filter = new LowCountBasedNPMIFilter(new int[] {1, 1, 3});
-  }
+  @Autowired private Config config;
 
   @Autowired
   public FactChecking(
       SparqlQueryGenerator sparqlQueryGenerator,
       QueryExecutioner queryExecutioner,
-      CorroborativeGraph corroborativeGraph) {
-    this(sparqlQueryGenerator, queryExecutioner, corroborativeGraph, new DefaultPathFactory());
-  }
-
-  public FactChecking(
-      SparqlQueryGenerator sparqlQueryGenerator,
-      QueryExecutioner queryExecutioner,
       CorroborativeGraph corroborativeGraph,
-      PathFactory defaultPathFactory) {
+      IPathFactory defaultPathFactory,
+      IPathGeneratorFactory pathGeneratorFactory) {
     this.sparqlQueryGenerator = sparqlQueryGenerator;
     this.queryExecutioner = queryExecutioner;
     this.corroborativeGraph = corroborativeGraph;
     this.defaultPathFactory = defaultPathFactory;
+    this.pathGeneratorFactory = pathGeneratorFactory;
+    this.filter = new LowCountBasedNPMIFilter(new int[] {1, 1, 3});
   }
 
-  public CorroborativeGraph checkFacts(Model model, int pathLength)
-      throws InterruptedException, FileNotFoundException, ParseException {
-    return checkFacts(model, pathLength, defaultPathFactory);
+  public void setPathGeneratorFactory(IPathGeneratorFactory pathGeneratorFactory) {
+    this.pathGeneratorFactory = pathGeneratorFactory;
   }
 
-  public CorroborativeGraph checkFacts(Model model, int pathLength, boolean vTy)
+  /*  public CorroborativeGraph checkFacts(
+      Model model, int pathLength, PathGeneratorType pathGeneratorType)
       throws InterruptedException, FileNotFoundException, ParseException {
-    return checkFacts(model, pathLength, defaultPathFactory, vTy);
-  }
+    return checkFacts(model, pathLength, true, pathGeneratorType);
+  }*/
 
-  public CorroborativeGraph checkFacts(Model model, int pathLength, PathFactory pathFactory)
+  /*public CorroborativeGraph checkFacts(
+      Model model, int pathLength, IPathFactory pathFactory, PathGeneratorType pathGeneratorType)
       throws InterruptedException, FileNotFoundException, ParseException {
-    return checkFacts(model, pathLength, defaultPathFactory, false);
-  }
+    return checkFacts(model, pathLength, false, pathGeneratorType);
+  }*/
 
   public CorroborativeGraph checkFacts(
-      Model model, int pathLength, PathFactory pathFactory, boolean vTy)
+      Model model, int pathLength, boolean vTy, PathGeneratorType pathGeneratorType)
       throws InterruptedException, FileNotFoundException, ParseException {
 
-    queryExecutioner.setServiceRequestURL(serviceURL);
+    // Initialization
+    queryExecutioner.setServiceRequestURL(config.serviceURLResolve(pathGeneratorType));
 
     StmtIterator iterator = model.listStatements();
     Statement inputTriple = iterator.next();
@@ -172,14 +155,14 @@ public class FactChecking {
       count_subject_Triples = countSOOccurrances("count(distinct ?s)", property);
       count_object_Triples = countSOOccurrances("count(distinct ?o)", property);
     }
-
+    // Path Discovery
     LOGGER.info("Checking Fact");
 
     for (int j = 1; j <= pathLength; j++) {
       try {
         sparqlQueryGenerator.generatorSparqlQueries(inputTriple, j);
       } catch (ParseException e) {
-        LOGGER.info("Exception while generating Sparql queries.");
+        LOGGER.error("Exception while generating Sparql queries." + e.getMessage());
       }
     }
 
@@ -190,20 +173,20 @@ public class FactChecking {
 
       IPathGenerator pg =
           pathGeneratorFactory.build(
-              entry.getKey(), inputTriple, entry.getValue(), queryExecutioner);
+              entry.getKey(), inputTriple, entry.getValue(), queryExecutioner, pathGeneratorType);
       pathGenerators.add(pg);
     }
 
     for (IPathGenerator pathGenerator : pathGenerators) {
       pathQueries.add(pathGenerator.returnQuery());
     }
-
+    // Path scoring
     Set<NPMICalculator> pmiCallables = new HashSet<NPMICalculator>();
     Set<Result> results = new HashSet<Result>();
+
     for (PathQuery pathQuery : pathQueries) {
       for (Entry<String, java.util.HashMap<String, Integer>> entry :
           pathQuery.getPathBuilder().entrySet()) {
-
         for (Entry<String, Integer> path : entry.getValue().entrySet()) {
           String querySequence = entry.getKey();
           String pathString = path.getKey();
@@ -265,7 +248,7 @@ public class FactChecking {
     List<Path> pathList =
         results
             .parallelStream()
-            .map(r -> pathFactory.createPath(subject, object, r))
+            .map(r -> defaultPathFactory.createPath(subject, object, r))
             .collect(Collectors.toList());
     double[] scores = results.parallelStream().mapToDouble(r -> r.score).toArray();
 
