@@ -16,14 +16,14 @@ import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 
 public class DefaultPathGenerator implements IPathGenerator {
 
-  public String queryBuilder;
-  public Statement input;
-  public int pathLength;
+  private final String queryBuilder;
+  private final Statement input;
+  private final int pathLength;
+  private final QueryExecutioner queryExecutioner;
   HashMap<String, Integer> paths = new HashMap<String, Integer>();
   HashMap<String, String> intermediateNodes = new HashMap<String, String>();
   public PathQuery pathQuery;
   public String ontology = "\'http://dbpedia.org/ontology\'";
-  private QueryExecutioner queryExecutioner;
 
   public DefaultPathGenerator(
       String queryBuilder, Statement input, int pathLength, QueryExecutioner queryExecutioner) {

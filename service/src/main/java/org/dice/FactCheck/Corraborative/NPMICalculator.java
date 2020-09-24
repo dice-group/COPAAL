@@ -128,7 +128,13 @@ public class NPMICalculator implements Callable<Result> {
     String[] querySequence = builder.split(";");
     String subjType = " filter(exists {?s <" + inputStatement.getPredicate() + ">  []}).";
     String objType = " filter(exists {[] <" + inputStatement.getPredicate() + ">  ?o}).";
-    String firstPath =
+
+    pathQueryString = generatePathQueryString_vTy(subjType, objType, querySequence, pathLength);
+    pathPredicateQueryString =
+        generatePathPredicateQueryString_vTy(
+            subjType, objType, querySequence, predicateTriple, pathLength);
+
+    /*    String firstPath =
         querySequence[0].split(" ")[0].trim()
             + " <"
             + path.split(";")[0]
@@ -205,7 +211,7 @@ public class NPMICalculator implements Callable<Result> {
 
       pathPredicateQueryString =
           "Select (count(*) as ?c) where {\n" + firstPath + " .\n" + predicateTriple + "\n" + "}\n";
-    }
+    }*/
     //            System.out.println(pathPredicateQueryString);
     Query pathQuery = QueryFactory.create(pathQueryString);
     QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
@@ -222,6 +228,112 @@ public class NPMICalculator implements Callable<Result> {
     predicatePathQueryExecution.close();
 
     return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
+  }
+
+  private String generatePathPredicateQueryString_vTy(
+      String subjType,
+      String objType,
+      String[] querySequence,
+      String predicateTriple,
+      int pathLength) {
+
+    String firstPath = generatePath(querySequence, 0);
+
+    if (pathLength == 1) {
+      return "Select (count(*) as ?c) where {\n"
+          + firstPath
+          + " .\n"
+          + predicateTriple
+          + "\n"
+          + "}\n";
+    }
+
+    if (pathLength == 2) {
+      String secondPath = generatePath(querySequence, 1);
+
+      return "Select (count(*) as ?c) where {select distinct ?s ?o {\n"
+          + firstPath
+          + " .\n"
+          + secondPath
+          + " .\n"
+          + predicateTriple
+          + "\n"
+          + "}}\n";
+    }
+
+    if (pathLength == 3) {
+      String secondPath = generatePath(querySequence, 1);
+      String thirdPath = generatePath(querySequence, 2);
+
+      return "Select (count(*) as ?c) where {select distinct ?s ?o {\n"
+          + firstPath
+          + " .\n"
+          + secondPath
+          + " .\n"
+          + thirdPath
+          + " .\n"
+          + predicateTriple
+          + "\n"
+          + "}}\n";
+    }
+    // TODO: throw Exception for unsupported pathLength
+    return "";
+  }
+
+  private String generatePathQueryString_vTy(
+      String subjType, String objType, String[] querySequence, int pathLength) {
+
+    String firstPath = generatePath(querySequence, 0);
+
+    if (pathLength == 1) {
+      return "Select (count(*) as ?sum) where {\n"
+          + firstPath
+          + " .\n"
+          + subjType
+          + objType
+          + "}\n";
+    }
+
+    if (pathLength == 2) {
+      String secondPath = generatePath(querySequence, 1);
+
+      return "Select (count(*) as ?cnt) where {select distinct ?s ?o { "
+          + firstPath
+          + " . "
+          + subjType
+          + secondPath
+          + " . "
+          + objType
+          + "}} ";
+    }
+
+    if (pathLength == 3) {
+      String secondPath = generatePath(querySequence, 1);
+      String thirdPath = generatePath(querySequence, 2);
+
+      return "Select (count(*) as ?cnt) where {select distinct ?s ?o { "
+          + firstPath
+          + " . "
+          + subjType
+          + "{select distinct ?o1 ?o{"
+          + secondPath
+          + " . "
+          + thirdPath
+          + " . "
+          + objType
+          + " } }"
+          + "}} ";
+    }
+    // TODO: throw Exception for unsupported pathLength
+    return "";
+  }
+
+  private String generatePath(String[] querySequence, int order) {
+    return querySequence[order].split(" ")[0].trim()
+        + " <"
+        + path.split(";")[order]
+        + "> "
+        + querySequence[order].split(" ")[2].trim();
   }
 
   public double calculatePMIScore() throws ParseException, NPMIFilterException {
