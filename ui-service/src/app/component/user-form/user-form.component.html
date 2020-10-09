@@ -16,9 +16,16 @@
             <input formControlName="object" matInput required placeholder="Object"/>
             <mat-error *ngIf="objectFc.hasError('required')">Object is required.</mat-error>
           </mat-form-field>
+          <mat-form-field>
+            <mat-label>Path length</mat-label>
+            <mat-select formControlName="pathlength">
+              <mat-option value="2">2</mat-option>
+              <mat-option value="3">3</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
         <div>
-          <mat-checkbox formControlName="verbalize" matTooltip="Enabling verbalization will cause the request to take more time">Verbalized</mat-checkbox>
+          <mat-checkbox formControlName="virtualType" matTooltip="Enabling virtualType">Use Virtual Type</mat-checkbox>
         </div>
         <div style="height: 5px;margin-top: 10px;">
           <mat-progress-bar mode="indeterminate" *ngIf="showBar"></mat-progress-bar>

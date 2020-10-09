@@ -17,7 +17,8 @@ export class UserFormComponent implements OnInit {
   subjectFc: FormControl;
   propertyFc: FormControl;
   objectFc: FormControl;
-  verbalizeFc: FormControl;
+  virtualtypFc: FormControl;
+  pathlengthFc: FormControl;
 
   public showBar = false;
 
@@ -36,12 +37,14 @@ export class UserFormComponent implements OnInit {
     this.subjectFc = new FormControl(this.exampleArr[0].subject, Validators.required);
     this.propertyFc = new FormControl(this.exampleArr[0].property, Validators.required);
     this.objectFc = new FormControl(this.exampleArr[0].object, Validators.required);
-    this.verbalizeFc =  new FormControl(false);
+    this.virtualtypFc =  new FormControl(false);
+    this.pathlengthFc = new FormControl(2);
     this.complexForm = fb.group({
       'subject' : this.subjectFc,
       'property': this.propertyFc,
       'object' : this.objectFc,
-      'verbalize' : this.verbalizeFc
+      'virtualType' : this.virtualtypFc,
+      'pathlength': this.pathlengthFc
     });
   }
 
