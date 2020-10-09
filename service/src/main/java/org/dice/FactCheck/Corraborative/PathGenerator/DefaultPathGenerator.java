@@ -8,6 +8,8 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Statement;
 import org.dice.FactCheck.Corraborative.PathQuery;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /*
  * A class implementing callable to generate paths in parallel and returns PathQuery, a
@@ -15,6 +17,8 @@ import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
  */
 
 public class DefaultPathGenerator implements IPathGenerator {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPathGenerator.class);
 
   private final String queryBuilder;
   private final Statement input;
@@ -38,7 +42,6 @@ public class DefaultPathGenerator implements IPathGenerator {
   }
 
   public PathQuery returnQuery() {
-
     if (pathLength == 1) {
       ParameterizedSparqlString paraPathQuery =
           new ParameterizedSparqlString(
@@ -145,27 +148,33 @@ public class DefaultPathGenerator implements IPathGenerator {
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());
       QueryExecution qe = queryExecutioner.getQueryExecution(paraPathQuery.asQuery());
-      ResultSet result = qe.execSelect();
-      while (result.hasNext()) {
-        QuerySolution qs = result.next();
-        String path =
-            qs.get("?p1").toString()
-                + ";"
-                + qs.get("?p2").toString()
-                + ";"
-                + qs.get("?p3").toString();
-        if (!paths.containsKey(path)) {
-          paths.put(path, pathLength);
-          intermediateNodes.put(path, qs.get("?x1").toString() + ";" + qs.get("?x2").toString());
-        }
+      try {
+        ResultSet result = qe.execSelect();
+        while (result.hasNext()) {
+          QuerySolution qs = result.next();
+          String path =
+              qs.get("?p1").toString()
+                  + ";"
+                  + qs.get("?p2").toString()
+                  + ";"
+                  + qs.get("?p3").toString();
+          if (!paths.containsKey(path)) {
+            paths.put(path, pathLength);
+            intermediateNodes.put(path, qs.get("?x1").toString() + ";" + qs.get("?x2").toString());
+          }
 
-        break;
+          break;
+        }
+        HashMap<String, HashMap<String, Integer>> pathBuilder =
+            new HashMap<String, HashMap<String, Integer>>();
+        pathBuilder.put(queryBuilder, paths);
+        this.pathQuery = new PathQuery(pathBuilder, intermediateNodes);
+        qe.close();
+
+      } catch (Exception ex) {
+        LOGGER.error("error in run this query" + qe.toString());
+        LOGGER.error(ex.getMessage());
       }
-      HashMap<String, HashMap<String, Integer>> pathBuilder =
-          new HashMap<String, HashMap<String, Integer>>();
-      pathBuilder.put(queryBuilder, paths);
-      this.pathQuery = new PathQuery(pathBuilder, intermediateNodes);
-      qe.close();
     }
 
     return this.pathQuery;

@@ -59,7 +59,7 @@ public class FactChecking {
 
   private IPathFactory defaultPathFactory;
   private IPathGeneratorFactory pathGeneratorFactory; // = new DefaultPathGeneratorFactory();
-  private int maxThreads = 20;
+  private int maxThreads = 100;
   private NPMIFilter filter = null;
 
   protected ScoreSummarist summarist = new FixedSummarist();
@@ -102,6 +102,8 @@ public class FactChecking {
       throws InterruptedException, FileNotFoundException, ParseException {
 
     // Initialization
+    long startTime = System.nanoTime();
+    long stepTime = System.nanoTime();
     queryExecutioner.setServiceRequestURL(config.serviceURLResolve(pathGeneratorType));
 
     StmtIterator iterator = model.listStatements();
@@ -141,6 +143,7 @@ public class FactChecking {
       if (subjectTypes.isEmpty() || objectTypes.isEmpty()) {
         corroborativeGraph.setPathList(new ArrayList<Path>());
         corroborativeGraph.setGraphScore(0.0);
+        LOGGER.info("subjectTypes is Empty or object Types is Empty");
         return corroborativeGraph;
       }
     }
@@ -155,6 +158,9 @@ public class FactChecking {
       count_subject_Triples = countSOOccurrances("count(distinct ?s)", property);
       count_object_Triples = countSOOccurrances("count(distinct ?o)", property);
     }
+
+    stepTime = logElapsedTimeThisStep("initiate", stepTime);
+
     // Path Discovery
     LOGGER.info("Checking Fact");
 
@@ -177,9 +183,23 @@ public class FactChecking {
       pathGenerators.add(pg);
     }
 
-    for (IPathGenerator pathGenerator : pathGenerators) {
-      pathQueries.add(pathGenerator.returnQuery());
+    try {
+      ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
+
+      for (Future<PathQuery> result : executor.invokeAll(pathGenerators)) {
+        if (result.get() != null) {
+          pathQueries.add(result.get());
+        }
+      }
+
+      executor.shutdown();
+    } catch (Exception e) {
+      LOGGER.error(e.getMessage());
+      e.printStackTrace();
     }
+
+    stepTime = logElapsedTimeThisStep("path discovery", stepTime);
+
     // Path scoring
     Set<NPMICalculator> pmiCallables = new HashSet<NPMICalculator>();
     Set<Result> results = new HashSet<Result>();
@@ -211,8 +231,9 @@ public class FactChecking {
       }
     }
 
-    // for experiments, use run in parallel
+    stepTime = logElapsedTimeThisStep("path scorring", stepTime);
 
+    // for experiments, use run in parallel
     try {
       ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
 
@@ -226,6 +247,8 @@ public class FactChecking {
     } catch (Exception e) {
       e.printStackTrace();
     }
+
+    stepTime = logElapsedTimeThisStep("path PMICalculation", stepTime);
 
     /*
      * for (PMICalculator pmicallable : pmiCallables) {
@@ -252,14 +275,27 @@ public class FactChecking {
             .collect(Collectors.toList());
     double[] scores = results.parallelStream().mapToDouble(r -> r.score).toArray();
 
+    stepTime = logElapsedTimeThisStep("path lists", stepTime);
+
     corroborativeGraph.setPathList(pathList);
 
     Arrays.sort(scores);
     double score = summarist.summarize(scores);
     corroborativeGraph.setGraphScore(score);
-    LOGGER.info(score + "");
-
+    LOGGER.info("score is " + score + "");
+    logElapsedTimeThisStep("all steps", startTime);
     return corroborativeGraph;
+  }
+
+  private long logElapsedTimeThisStep(String stepName, long time) {
+    LOGGER.info(
+        "time elapsed for "
+            + stepName
+            + " :"
+            + (double) (System.nanoTime() - time) / 1_000_000_000
+            + " seconds");
+    time = System.nanoTime();
+    return time;
   }
 
   public RDFNode getResource(Model model, Property property, Resource statement) {

@@ -15,11 +15,13 @@ import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin(origins = "*", allowCredentials = "true")
+@RequestMapping("/api/v1/")
 public class ConfigController {
 
   private final FactChecking factChecking;
@@ -29,6 +31,12 @@ public class ConfigController {
   public ConfigController(FactChecking factChecking, SparqlQueryGenerator sparqlQueryGenerator) {
     this.factChecking = factChecking;
     this.sparqlQueryGenerator = sparqlQueryGenerator;
+  }
+
+  // To verify status of server
+  @RequestMapping("/test")
+  public String defaultpage() {
+    return "OK!";
   }
 
   @GetMapping("/validate")
@@ -53,7 +61,8 @@ public class ConfigController {
     // call
 
     // TODO: in future if we add more KB this section should change
-    if (pathgeneratortype.toLowerCase().equals("wikidata")) {
+    if (pathgeneratortype.toLowerCase().equals("wikidata")
+        || property.toLowerCase().contains("wikidata")) {
       return factChecking.checkFacts(
           model,
           Integer.parseInt(pathLength),
