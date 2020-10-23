@@ -85,18 +85,6 @@ public class FactChecking {
     this.pathGeneratorFactory = pathGeneratorFactory;
   }
 
-  /*  public CorroborativeGraph checkFacts(
-      Model model, int pathLength, PathGeneratorType pathGeneratorType)
-      throws InterruptedException, FileNotFoundException, ParseException {
-    return checkFacts(model, pathLength, true, pathGeneratorType);
-  }*/
-
-  /*public CorroborativeGraph checkFacts(
-      Model model, int pathLength, IPathFactory pathFactory, PathGeneratorType pathGeneratorType)
-      throws InterruptedException, FileNotFoundException, ParseException {
-    return checkFacts(model, pathLength, false, pathGeneratorType);
-  }*/
-
   public CorroborativeGraph checkFacts(
       Model model, int pathLength, boolean vTy, PathGeneratorType pathGeneratorType)
       throws InterruptedException, FileNotFoundException, ParseException {
@@ -238,6 +226,13 @@ public class FactChecking {
       ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
 
       for (Future<Result> result : executor.invokeAll(pmiCallables)) {
+        if (result != null) {
+          LOGGER.debug(
+              "elapsed time for "
+                  + result.get().path
+                  + " is "
+                  + result.get().elapsedTime / 1_000_000_000);
+        }
         if (result.get().hasLegalScore) {
           results.add(result.get());
         }
@@ -250,29 +245,12 @@ public class FactChecking {
 
     stepTime = logElapsedTimeThisStep("path PMICalculation", stepTime);
 
-    /*
-     * for (PMICalculator pmicallable : pmiCallables) {
-     *
-     * double pathscore = pmicallable.calculatePMIScore(); Result result = new
-     * Result(pmicallable.path, pmicallable.inputStatement.getPredicate(),
-     * pathscore, pmicallable.builder, pmicallable.intermediateNodes,
-     * pmicallable.pathLength); System.out.println(result.path);
-     * System.out.println(result.getScore()); List<Statement> statements=
-     * generateVerbalizingTriples(result.getPathBuilder(), result.path,
-     * result.intermediateNodes, result.pathLength, subject, object);
-     *
-     * final Document doc = verbalizer.generateDocument(statements,
-     * Paraphrasing.prop.getProperty("surfaceForms")); System.out.println(doc);
-     * System.out.println(statements); results.add(result);
-     *
-     * }
-     */
-
     List<Path> pathList =
         results
             .parallelStream()
             .map(r -> defaultPathFactory.createPath(subject, object, r))
             .collect(Collectors.toList());
+
     double[] scores = results.parallelStream().mapToDouble(r -> r.score).toArray();
 
     stepTime = logElapsedTimeThisStep("path lists", stepTime);
@@ -288,7 +266,7 @@ public class FactChecking {
   }
 
   private long logElapsedTimeThisStep(String stepName, long time) {
-    LOGGER.info(
+    LOGGER.debug(
         "time elapsed for "
             + stepName
             + " :"

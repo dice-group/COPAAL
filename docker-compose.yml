@@ -1,0 +1,15 @@
+version: '3'
+services:
+  copaal-demo:
+    image: dicegroup/copaal-demo-ui:latest
+    restart: always
+    labels:
+      - "traefik.frontend.rule=Host:copaal.dice-research.org;PathPrefix:/demo,PathPrefixStrip:/demo"
+      - "traefik.port=80"
+  api:
+    image: "dicegroup/copaal-demo-service:latest"
+    restart: always
+    labels:
+      - "traefik.frontend.rule=Host:copaal.dice-research.org;PathPrefix:/demo/api/v1/,PathPrefixStrip:/demo/api/v1/"
+      - "traefik.port=8080"
+

@@ -12,6 +12,8 @@ import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilter;
 import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilterException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the approximation of the NPMI.
@@ -19,6 +21,8 @@ import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilterException;
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  */
 public class NPMICalculator implements Callable<Result> {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(NPMICalculator.class);
 
   private final String path;
   private final String intermediateNodes;
@@ -360,6 +364,8 @@ public class NPMICalculator implements Callable<Result> {
     String pathQueryString =
         generatePathQueryString(subTypeTriples, objTypeTriples, querySequence, pathLength);
 
+    long queryElapseTime = System.nanoTime();
+
     Query pathQuery = QueryFactory.create(pathQueryString);
 
     QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
@@ -368,6 +374,16 @@ public class NPMICalculator implements Callable<Result> {
         pathQueryExecution.execSelect().next().get("?c").asLiteral().getDouble();
 
     pathQueryExecution.close();
+
+    LOGGER.info(
+        "---Query is : "
+            + pathQueryString
+            + " it tooks "
+            + (double) (System.nanoTime() - queryElapseTime) / 1_000_000_000
+            + " seconds count_Path_Occurrence is : "
+            + count_Path_Occurrence
+            + " ---------");
+    queryElapseTime = System.nanoTime();
 
     String pathPredicateQueryString =
         generatePathPredicateQueryString(
@@ -382,6 +398,15 @@ public class NPMICalculator implements Callable<Result> {
         predicatePathQueryExecution.execSelect().next().get("?c").asLiteral().getDouble();
 
     predicatePathQueryExecution.close();
+
+    LOGGER.info(
+        "---Query is : "
+            + pathPredicateQuery
+            + " it tooks "
+            + (double) (System.nanoTime() - queryElapseTime) / 1_000_000_000
+            + " seconds count_path_Predicate_Occurrence is : "
+            + count_path_Predicate_Occurrence
+            + " ---------");
 
     return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
   }
