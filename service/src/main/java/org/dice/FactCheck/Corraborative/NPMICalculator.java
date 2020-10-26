@@ -375,7 +375,7 @@ public class NPMICalculator implements Callable<Result> {
 
     pathQueryExecution.close();
 
-    LOGGER.info(
+    LOGGER.debug(
         "---Query is : "
             + pathQueryString
             + " it tooks "
