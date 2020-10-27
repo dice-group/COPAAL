@@ -399,7 +399,7 @@ public class NPMICalculator implements Callable<Result> {
 
     predicatePathQueryExecution.close();
 
-    LOGGER.info(
+    LOGGER.debug(
         "---Query is : "
             + pathPredicateQuery
             + " it tooks "

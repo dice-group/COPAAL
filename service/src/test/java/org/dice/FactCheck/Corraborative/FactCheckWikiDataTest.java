@@ -73,7 +73,7 @@ public class FactCheckWikiDataTest {
     model.add(statement);
 
     CorroborativeGraph cg =
-        factChecking.checkFacts(model, 2, true, PathGeneratorType.wikidataPathGenerator);
+        factChecking.checkFacts(model, 2, true, PathGeneratorType.wikidataPathGenerator, false);
 
     System.out.println("Subject: " + statement.getSubject());
     System.out.println("Property: " + statement.getPredicate());

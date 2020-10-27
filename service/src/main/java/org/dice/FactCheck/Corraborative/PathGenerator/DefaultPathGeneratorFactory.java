@@ -17,7 +17,7 @@ public class DefaultPathGeneratorFactory implements IPathGeneratorFactory {
       case defaultPathGenerator:
         return new DefaultPathGenerator(queryBuilder, input, pathLength, queryExecutioner);
       case wikidataPathGenerator:
-        return new WIKIDataPathGenerator(queryBuilder, input, pathLength, queryExecutioner);
+        return new WikiDataPathGenerator(queryBuilder, input, pathLength, queryExecutioner);
     }
     return null;
   }

@@ -9,7 +9,7 @@ import org.apache.jena.rdf.model.Statement;
 import org.dice.FactCheck.Corraborative.PathQuery;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 
-public class WIKIDataPathGenerator implements IPathGenerator {
+public class WikiDataPathGenerator implements IPathGenerator {
 
   private int pathLength;
   private String queryBuilder;
@@ -20,7 +20,7 @@ public class WIKIDataPathGenerator implements IPathGenerator {
   private HashMap<String, String> intermediateNodes = new HashMap<String, String>();
   private PathQuery pathQuery;
 
-  public WIKIDataPathGenerator(
+  public WikiDataPathGenerator(
       String queryBuilder, Statement input, int pathLength, QueryExecutioner queryExecutioner) {
     this.pathLength = pathLength;
     this.queryBuilder = queryBuilder;

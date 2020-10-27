@@ -86,7 +86,11 @@ public class FactChecking {
   }
 
   public CorroborativeGraph checkFacts(
-      Model model, int pathLength, boolean vTy, PathGeneratorType pathGeneratorType)
+      Model model,
+      int pathLength,
+      boolean vTy,
+      PathGeneratorType pathGeneratorType,
+      boolean verbalize)
       throws InterruptedException, FileNotFoundException, ParseException {
 
     // Initialization
@@ -248,7 +252,7 @@ public class FactChecking {
     List<Path> pathList =
         results
             .parallelStream()
-            .map(r -> defaultPathFactory.createPath(subject, object, r))
+            .map(r -> defaultPathFactory.ReturnPath(verbalize).createPath(subject, object, r))
             .collect(Collectors.toList());
 
     double[] scores = results.parallelStream().mapToDouble(r -> r.score).toArray();

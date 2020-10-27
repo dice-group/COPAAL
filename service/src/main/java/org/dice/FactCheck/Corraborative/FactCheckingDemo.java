@@ -34,7 +34,7 @@ public class FactCheckingDemo {
             new DefaultPathFactory(),
             new DefaultPathGeneratorFactory());
 
-    factChecking.checkFacts(getTestModel(), 2, true, PathGeneratorType.defaultPathGenerator);
+    factChecking.checkFacts(getTestModel(), 2, true, PathGeneratorType.defaultPathGenerator, false);
   }
 
   public static Model getTestModel() {

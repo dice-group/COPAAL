@@ -41,7 +41,8 @@ public class ConfigController {
 
   @GetMapping("/validate")
   public CorroborativeGraph validate(
-      @RequestParam(value = "verbalize", required = false, defaultValue = "false") String verbalize,
+      @RequestParam(value = "verbalize", required = false, defaultValue = "false")
+          boolean verbalize,
       @RequestParam(value = "pathlength", required = false, defaultValue = "2") String pathLength,
       @RequestParam(value = "subject", required = true) String subject,
       @RequestParam(value = "object", required = true) String object,
@@ -67,10 +68,15 @@ public class ConfigController {
           model,
           Integer.parseInt(pathLength),
           virtualType,
-          PathGeneratorType.wikidataPathGenerator);
+          PathGeneratorType.wikidataPathGenerator,
+          verbalize);
     }
 
     return factChecking.checkFacts(
-        model, Integer.parseInt(pathLength), virtualType, PathGeneratorType.defaultPathGenerator);
+        model,
+        Integer.parseInt(pathLength),
+        virtualType,
+        PathGeneratorType.defaultPathGenerator,
+        verbalize);
   }
 }

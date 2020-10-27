@@ -79,11 +79,11 @@ public class FactCheckingTest {
 
     Statement statement = ResourceFactory.createStatement(subject, property, object);
 
-    FCTest(statement, 2, true);
-    FCTest(statement, 2, false);
+    FCTest(statement, 2, true, false);
+    FCTest(statement, 2, false, false);
   }
 
-  protected void FCTest(Statement statement, int pathLen, boolean vTy)
+  protected void FCTest(Statement statement, int pathLen, boolean vTy, boolean verbalization)
       throws FileNotFoundException, InterruptedException, ParseException {
 
     final Model model = ModelFactory.createDefaultModel();
@@ -91,7 +91,11 @@ public class FactCheckingTest {
 
     CorroborativeGraph cg =
         factChecking.checkFacts(
-            model, pathLen, vTy, PathGeneratorType.defaultPathGenerator); // vTy:virtual types
+            model,
+            pathLen,
+            vTy,
+            PathGeneratorType.defaultPathGenerator,
+            verbalization); // vTy:virtual types
 
     System.out.println("Subject: " + statement.getSubject());
     System.out.println("Property: " + statement.getPredicate());
