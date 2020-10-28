@@ -124,6 +124,21 @@ public class NPMICalculator implements Callable<Result> {
     this.vTy = vTy;
   }
 
+  private String ConcatToString(String... input) {
+    StringBuilder sb = new StringBuilder();
+    for (String s : input) {
+      sb.append(sb);
+    }
+    return sb.toString();
+  }
+
+  private long logElapsedTimeThisStep(String stepName, long time) {
+    LOGGER.info(
+        "time elapsed for " + stepName + " :" + (double) (System.nanoTime() - time) + " ticks");
+    time = System.nanoTime();
+    return time;
+  }
+
   private String generatePathPredicateQueryString(
       String subTypeTriples,
       String objTypeTriples,
@@ -133,6 +148,30 @@ public class NPMICalculator implements Callable<Result> {
 
     if (pathLength == 1) {
       String firstPath = generatePath(querySequence, 0);
+
+      long sTime = System.nanoTime();
+      String s1 =
+          "Select (count(*) as ?c) where {\n"
+              + firstPath
+              + " .\n"
+              + subTypeTriples
+              + objTypeTriples
+              + predicateTriple
+              + "\n"
+              + "}\n";
+      sTime = logElapsedTimeThisStep("With +  ", sTime);
+      String s2 =
+          ConcatToString(
+              "Select (count(*) as ?c) where {\n",
+              firstPath,
+              " .\n",
+              subTypeTriples,
+              objTypeTriples,
+              predicateTriple,
+              "\n",
+              "}\n");
+      sTime = logElapsedTimeThisStep("With sb ", sTime);
+
       return "Select (count(*) as ?c) where {\n"
           + firstPath
           + " .\n"
@@ -146,6 +185,34 @@ public class NPMICalculator implements Callable<Result> {
     if (pathLength == 2) {
       String firstPath = generatePath(querySequence, 0);
       String secondPath = generatePath(querySequence, 1);
+
+      long sTime = System.nanoTime();
+      String s1 =
+          "Select (count(*) as ?c) where {\n"
+              + firstPath
+              + " .\n"
+              + subTypeTriples
+              + secondPath
+              + " .\n"
+              + objTypeTriples
+              + predicateTriple
+              + "\n"
+              + "}\n";
+      sTime = logElapsedTimeThisStep("With +  ", sTime);
+      String s2 =
+          ConcatToString(
+              "Select (count(*) as ?c) where {\n",
+              firstPath,
+              " .\n",
+              subTypeTriples,
+              secondPath,
+              " .\n",
+              objTypeTriples,
+              predicateTriple,
+              "\n",
+              "}\n");
+      sTime = logElapsedTimeThisStep("With sb ", sTime);
+
       return "Select (count(*) as ?c) where {\n"
           + firstPath
           + " .\n"
@@ -162,6 +229,37 @@ public class NPMICalculator implements Callable<Result> {
       String firstPath = generatePath(querySequence, 0);
       String secondPath = generatePath(querySequence, 1);
       String thirdPath = generatePath(querySequence, 2);
+
+      long sTime = System.nanoTime();
+      String s1 =
+          "Select (count(*) as ?c) where {\n"
+              + firstPath
+              + " .\n"
+              + subTypeTriples
+              + secondPath
+              + " .\n"
+              + thirdPath
+              + " .\n"
+              + objTypeTriples
+              + predicateTriple
+              + "\n"
+              + "}\n";
+      sTime = logElapsedTimeThisStep("With +  ", sTime);
+      String s2 =
+          ConcatToString(
+              "Select (count(*) as ?c) where {\n",
+              firstPath,
+              " .\n",
+              subTypeTriples,
+              secondPath,
+              " .\n",
+              thirdPath,
+              " .\n",
+              objTypeTriples,
+              predicateTriple,
+              "\n",
+              "}\n");
+      sTime = logElapsedTimeThisStep("With sb ", sTime);
 
       return "Select (count(*) as ?c) where {\n"
           + firstPath
@@ -188,6 +286,7 @@ public class NPMICalculator implements Callable<Result> {
 
     if (pathLength == 1) {
       String firstPath = generatePath(querySequence, 0);
+
       return "Select (count(*) as ?c) where {\n"
           + firstPath
           + " .\n"
@@ -235,6 +334,26 @@ public class NPMICalculator implements Callable<Result> {
 
     if (pathLength == 1) {
       String firstPath = generatePath(querySequence, 0);
+
+      long sTime = System.nanoTime();
+      String s1 =
+          "Select (count(*) as ?sum) where {\n"
+              + firstPath
+              + " .\n"
+              + subTypeTriples
+              + objTypeTriples
+              + "}\n";
+      sTime = logElapsedTimeThisStep("With +  ", sTime);
+      String s2 =
+          ConcatToString(
+              "Select (count(*) as ?sum) where {\n",
+              firstPath,
+              " .\n",
+              subTypeTriples,
+              objTypeTriples,
+              "}\n");
+      sTime = logElapsedTimeThisStep("With sb ", sTime);
+
       return "Select (count(*) as ?sum) where {\n"
           + firstPath
           + " .\n"
@@ -246,6 +365,41 @@ public class NPMICalculator implements Callable<Result> {
     if (pathLength == 2) {
       String firstPath = generatePath(querySequence, 0);
       String secondPath = generatePath(querySequence, 1);
+
+      long sTime = System.nanoTime();
+      String s1 =
+          "Select (sum(?b1*?b2) as ?c) where {\n"
+              + "select (count(*) as ?b2) ?b1 where { \n"
+              + firstPath
+              + " .\n"
+              + subTypeTriples
+              + "{ \n"
+              + "select (count(*) as ?b1) ?x1 where { \n"
+              + secondPath
+              + " .\n"
+              + objTypeTriples
+              + "} group by ?x1\n"
+              + "}\n"
+              + "} group by ?b1\n"
+              + "}\n";
+      sTime = logElapsedTimeThisStep("With +  ", sTime);
+      String s2 =
+          ConcatToString(
+              "Select (sum(?b1*?b2) as ?c) where {\n",
+              "select (count(*) as ?b2) ?b1 where { \n",
+              firstPath,
+              " .\n",
+              subTypeTriples,
+              "{ \n",
+              "select (count(*) as ?b1) ?x1 where { \n",
+              secondPath,
+              " .\n",
+              objTypeTriples,
+              "} group by ?x1\n",
+              "}\n",
+              "} group by ?b1\n",
+              "}\n");
+      sTime = logElapsedTimeThisStep("With sb ", sTime);
 
       return "Select (sum(?b1*?b2) as ?c) where {\n"
           + "select (count(*) as ?b2) ?b1 where { \n"
@@ -267,6 +421,51 @@ public class NPMICalculator implements Callable<Result> {
       String firstPath = generatePath(querySequence, 0);
       String secondPath = generatePath(querySequence, 1);
       String thirdPath = generatePath(querySequence, 2);
+
+      long sTime = System.nanoTime();
+      String s1 =
+          "select (sum(?b3*?k) as ?c) where { \n"
+              + "select (count(*) as ?b3) (?b2*?b1 as ?k) ?x1 where { \n"
+              + firstPath
+              + " .\n"
+              + subTypeTriples
+              + "{ \n"
+              + "Select (count(*) as ?b2) ?x1 ?b1 where { \n"
+              + secondPath
+              + "{ \n"
+              + "select (count(*) as ?b1) ?x2 where { \n"
+              + thirdPath
+              + ". \n"
+              + objTypeTriples
+              + "} group by ?x2\n"
+              + "}\n"
+              + "} group by ?b1 ?x1\n"
+              + "}\n"
+              + "} group by ?x1 ?b2 ?b1\n"
+              + "}\n";
+      sTime = logElapsedTimeThisStep("With +  ", sTime);
+      String s2 =
+          ConcatToString(
+              "select (sum(?b3*?k) as ?c) where { \n",
+              "select (count(*) as ?b3) (?b2*?b1 as ?k) ?x1 where { \n",
+              firstPath,
+              " .\n",
+              subTypeTriples,
+              "{ \n",
+              "Select (count(*) as ?b2) ?x1 ?b1 where { \n",
+              secondPath,
+              "{ \n",
+              "select (count(*) as ?b1) ?x2 where { \n",
+              thirdPath,
+              ". \n",
+              objTypeTriples,
+              "} group by ?x2\n",
+              "}\n",
+              "} group by ?b1 ?x1\n",
+              "}\n",
+              "} group by ?x1 ?b2 ?b1\n",
+              "}\n");
+      sTime = logElapsedTimeThisStep("With sb ", sTime);
 
       return "select (sum(?b3*?k) as ?c) where { \n"
           + "select (count(*) as ?b3) (?b2*?b1 as ?k) ?x1 where { \n"
