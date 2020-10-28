@@ -231,7 +231,7 @@ public class FactChecking {
 
       for (Future<Result> result : executor.invokeAll(pmiCallables)) {
         if (result != null) {
-          LOGGER.info(
+          LOGGER.debug(
               "elapsed time for "
                   + result.get().path
                   + " is "
