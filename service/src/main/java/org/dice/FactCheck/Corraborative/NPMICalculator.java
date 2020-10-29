@@ -165,18 +165,20 @@ public class NPMICalculator implements Callable<Result> {
       String secondPath = generatePath(querySequence, 1);
       String thirdPath = generatePath(querySequence, 2);
 
-      return "Select (count(*) as ?c) where {\n"
-          + firstPath
-          + " .\n"
-          + subTypeTriples
-          + secondPath
-          + " .\n"
-          + thirdPath
-          + " .\n"
-          + objTypeTriples
-          + predicateTriple
-          + "\n"
-          + "}\n";
+      return new StringBuilder()
+          .append("Select (count(*) as ?c) where {\n")
+          .append(firstPath)
+          .append(" .\n")
+          .append(subTypeTriples)
+          .append(secondPath)
+          .append(" .\n")
+          .append(thirdPath)
+          .append(" .\n")
+          .append(objTypeTriples)
+          .append(predicateTriple)
+          .append("\n")
+          .append("}\n")
+          .toString();
     }
     return null;
   }
@@ -218,16 +220,18 @@ public class NPMICalculator implements Callable<Result> {
       String secondPath = generatePath(querySequence, 1);
       String thirdPath = generatePath(querySequence, 2);
 
-      return "Select (count(*) as ?c) where {select distinct ?s ?o {\n"
-          + firstPath
-          + " .\n"
-          + secondPath
-          + " .\n"
-          + thirdPath
-          + " .\n"
-          + predicateTriple
-          + "\n"
-          + "}}\n";
+      return new StringBuilder()
+          .append("Select (count(*) as ?c) where {select distinct ?s ?o {\n")
+          .append(firstPath)
+          .append(" .\n")
+          .append(secondPath)
+          .append(" .\n")
+          .append(thirdPath)
+          .append(" .\n")
+          .append(predicateTriple)
+          .append("\n")
+          .append("}}\n")
+          .toString();
     }
     // TODO: throw Exception for unsupported pathLength
     return "";
@@ -251,20 +255,22 @@ public class NPMICalculator implements Callable<Result> {
       String firstPath = generatePath(querySequence, 0);
       String secondPath = generatePath(querySequence, 1);
 
-      return "Select (sum(?b1*?b2) as ?c) where {\n"
-          + "select (count(*) as ?b2) ?b1 where { \n"
-          + firstPath
-          + " .\n"
-          + subTypeTriples
-          + "{ \n"
-          + "select (count(*) as ?b1) ?x1 where { \n"
-          + secondPath
-          + " .\n"
-          + objTypeTriples
-          + "} group by ?x1\n"
-          + "}\n"
-          + "} group by ?b1\n"
-          + "}\n";
+      return new StringBuilder()
+          .append("Select (sum(?b1*?b2) as ?c) where {\n")
+          .append("select (count(*) as ?b2) ?b1 where { \n")
+          .append(firstPath)
+          .append(" .\n")
+          .append(subTypeTriples)
+          .append("{ \n")
+          .append("select (count(*) as ?b1) ?x1 where { \n")
+          .append(secondPath)
+          .append(" .\n")
+          .append(objTypeTriples)
+          .append("} group by ?x1\n")
+          .append("}\n")
+          .append("} group by ?b1\n")
+          .append("}\n")
+          .toString();
     }
 
     if (pathLength == 3) {
@@ -272,25 +278,27 @@ public class NPMICalculator implements Callable<Result> {
       String secondPath = generatePath(querySequence, 1);
       String thirdPath = generatePath(querySequence, 2);
 
-      return "select (sum(?b3*?k) as ?c) where { \n"
-          + "select (count(*) as ?b3) (?b2*?b1 as ?k) ?x1 where { \n"
-          + firstPath
-          + " .\n"
-          + subTypeTriples
-          + "{ \n"
-          + "Select (count(*) as ?b2) ?x1 ?b1 where { \n"
-          + secondPath
-          + "{ \n"
-          + "select (count(*) as ?b1) ?x2 where { \n"
-          + thirdPath
-          + ". \n"
-          + objTypeTriples
-          + "} group by ?x2\n"
-          + "}\n"
-          + "} group by ?b1 ?x1\n"
-          + "}\n"
-          + "} group by ?x1 ?b2 ?b1\n"
-          + "}\n";
+      return new StringBuilder()
+          .append("select (sum(?b3*?k) as ?c) where { \n")
+          .append("select (count(*) as ?b3) (?b2*?b1 as ?k) ?x1 where { \n")
+          .append(firstPath)
+          .append(" .\n")
+          .append(subTypeTriples)
+          .append("{ \n")
+          .append("Select (count(*) as ?b2) ?x1 ?b1 where { \n")
+          .append(secondPath)
+          .append("{ \n")
+          .append("select (count(*) as ?b1) ?x2 where { \n")
+          .append(thirdPath)
+          .append(". \n")
+          .append(objTypeTriples)
+          .append("} group by ?x2\n")
+          .append("}\n")
+          .append("} group by ?b1 ?x1\n")
+          .append("}\n")
+          .append("} group by ?x1 ?b2 ?b1\n")
+          .append("}\n")
+          .toString();
     }
 
     return null;
@@ -323,18 +331,20 @@ public class NPMICalculator implements Callable<Result> {
       String secondPath = generatePath(querySequence, 1);
       String thirdPath = generatePath(querySequence, 2);
 
-      return "Select (count(*) as ?c) where {select distinct ?s ?o { "
-          + firstPath
-          + " . "
-          + subjType
-          + "{select distinct ?o1 ?o{"
-          + secondPath
-          + " . "
-          + thirdPath
-          + " . "
-          + objType
-          + " } }"
-          + "}} ";
+      return new StringBuilder()
+          .append("Select (count(*) as ?c) where {select distinct ?s ?o { ")
+          .append(firstPath)
+          .append(" . ")
+          .append(subjType)
+          .append("{select distinct ?o1 ?o{")
+          .append(secondPath)
+          .append(" . ")
+          .append(thirdPath)
+          .append(" . ")
+          .append(objType)
+          .append(" } }")
+          .append("}} ")
+          .toString();
     }
     // TODO: throw Exception for unsupported pathLength
     return "";
