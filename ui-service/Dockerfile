@@ -4,8 +4,7 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
-RUN npm install -g @angular/cli
-RUN ng build --configuration production --output-path=/dist
+RUN npm run build
 
 ### STAGE 2: Run ###
 FROM nginx:1.17.1-alpine
@@ -13,9 +12,9 @@ FROM nginx:1.17.1-alpine
 RUN rm -rf /usr/share/nginx/html/*
 
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY --from=build /dist /usr/share/nginx/html
+COPY --from=build /usr/src/app/dist/cg-ui  /usr/share/nginx/html
 RUN echo "mainFileName=\"\$(ls /usr/share/nginx/html/main*.js)\" && \
-          envsubst '\$BACKEND_API_URL < \${mainFileName} > main.tmp && \
+          envsubst '\$BACKEND_API_URL' < \${mainFileName} > main.tmp && \
           mv main.tmp  \${mainFileName} && nginx -g 'daemon off;'" > run.sh
 
 ENTRYPOINT ["sh", "run.sh"]
