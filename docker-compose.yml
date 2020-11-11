@@ -1,0 +1,12 @@
+version: '2'
+services:
+  api:
+    image: "dicegroup/copaal-demo-service:latest"
+    restart: always
+    labels:
+      - "traefik.frontend.rule=Host:copaal.dice-research.org;PathPrefixStrip:/service/"
+  ui:
+    image: "dicegroup/copaal-demo-ui:latest"
+    restart: always
+    labels:
+      - "traefik.frontend.rule=Host:copaal.dice-research.org;PathPrefixStrip:/"

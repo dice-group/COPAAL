@@ -1,84 +1,31 @@
 package org.dice.FactCheck.Corraborative.Config;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.ini4j.Ini;
-
+import org.apache.jena.sparql.lang.sparql_11.ParseException;
+import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory.PathGeneratorType;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Daniel Gerber <dgerber@informatik.uni-leipzig.de>
- *
+ * @author Farshad Afshari farshad.afshari@uni-paderborn.de
+ *     <p>SEP2020 Farshad remove redundant methods and add serviceURLResolve
  */
+@Component
 public class Config {
 
-	private Ini Config;
-    
-    public static String DEFACTO_DATA_DIR;
+  @Value("${info.service.url.default}")
+  private String serviceURLDefault;
 
-    public Config(Ini config) {
-        
-        this.Config =  config;
-        DEFACTO_DATA_DIR = this.Config.get("eval", "data-directory");
+  @Value("${info.service.url.wikidata}")
+  private String serviceURLWikiData;
+
+  public String serviceURLResolve(PathGeneratorType pathGeneratorType) throws ParseException {
+    switch (pathGeneratorType) {
+      case defaultPathGenerator:
+        return serviceURLDefault;
+      case wikidataPathGenerator:
+        return serviceURLWikiData;
     }
-    
-    /**
-     * returns boolean values from the config file
-     * 
-     * @param section
-     * @param key
-     * @return
-     */
-    public boolean getBooleanSetting(String section, String key) {
-        
-        return Boolean.valueOf(Config.get(section, key));
-    }
-    
-    /**
-     * returns string values from defacto config
-     * 
-     * @param section
-     * @param key
-     * @return
-     */
-    public String getStringSetting(String section, String key) {
-        
-        return Config.get(section, key);
-    }
-
-    /**
-     * this should overwrite a config setting, TODO make sure that it does
-     * 
-     * @param string
-     * @param string2
-     */
-    public void setStringSetting(String section, String key, String value) {
-
-        this.Config.put(section, key, value);
-    }
-
-    /**
-     * returns integer values for defacto setting
-     * 
-     * @param section
-     * @param key
-     * @return
-     */
-    public Integer getIntegerSetting(String section, String key) {
-
-        return Integer.valueOf(this.Config.get(section, key));
-    }
-
-    /**
-     * returns double values from the config
-     * 
-     * @param section
-     * @param key
-     * @return
-     */
-    public Double getDoubleSetting(String section, String key) {
-
-        return Double.valueOf(this.Config.get(section, key));
-    }
+    throw new ParseException("Can not resolve the SPARQL server");
+  }
 }
