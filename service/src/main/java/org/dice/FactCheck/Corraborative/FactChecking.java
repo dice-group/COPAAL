@@ -92,19 +92,27 @@ public class FactChecking {
       PathGeneratorType pathGeneratorType,
       boolean verbalize)
       throws InterruptedException, FileNotFoundException, ParseException {
-
-    // Initialization
-    long startTime = System.nanoTime();
-    long stepTime = System.nanoTime();
-    queryExecutioner.setServiceRequestURL(config.serviceURLResolve(pathGeneratorType));
-
     StmtIterator iterator = model.listStatements();
     Statement inputTriple = iterator.next();
 
-    Resource subject = inputTriple.getSubject();
-    Resource object = inputTriple.getObject().asResource();
-    Property property = inputTriple.getPredicate();
+    return checkFacts(inputTriple, pathLength, vTy, pathGeneratorType, verbalize);
+  }
 
+  public CorroborativeGraph checkFacts(
+        Statement inputTriple,
+        int pathLength,
+        boolean vTy,
+        PathGeneratorType pathGeneratorType,
+        boolean verbalize)
+            throws InterruptedException, FileNotFoundException, ParseException {
+      // Initialization
+      long startTime = System.nanoTime();
+      long stepTime = System.nanoTime();
+      queryExecutioner.setServiceRequestURL(config.serviceURLResolve(pathGeneratorType));
+
+      Resource subject = inputTriple.getSubject();
+      Resource object = inputTriple.getObject().asResource();
+      Property property = inputTriple.getPredicate();
     corroborativeGraph.setInputTriple(
         new CorroborativeTriple(subject.toString(), property.toString(), object.toString()));
 
@@ -396,5 +404,9 @@ public class FactChecking {
 
   public void setMaxThreads(int maxThreads) {
     this.maxThreads = maxThreads;
+  }
+  
+  public void setConfig(Config config) {
+    this.config = config;
   }
 }
