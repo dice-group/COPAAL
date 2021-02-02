@@ -41,6 +41,7 @@ import org.dice.FactCheck.Corraborative.UIResult.Path;
 import org.dice.FactCheck.Corraborative.UIResult.create.IPathFactory;
 import org.dice.FactCheck.Corraborative.filter.npmi.LowCountBasedNPMIFilter;
 import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilter;
+import org.dice.FactCheck.Corraborative.sum.CubicMeanSummarist;
 import org.dice.FactCheck.Corraborative.sum.FixedSummarist;
 import org.dice.FactCheck.Corraborative.sum.ScoreSummarist;
 import org.slf4j.Logger;
@@ -62,7 +63,7 @@ public class FactChecking {
   private int maxThreads = 100;
   private NPMIFilter filter = null;
 
-  protected ScoreSummarist summarist = new FixedSummarist();
+  protected ScoreSummarist summarist = new CubicMeanSummarist();
 
   @Autowired private Config config;
 
@@ -108,7 +109,8 @@ public class FactChecking {
       // Initialization
       long startTime = System.nanoTime();
       long stepTime = System.nanoTime();
-      queryExecutioner.setServiceRequestURL(config.serviceURLResolve(pathGeneratorType));
+      //queryExecutioner.setServiceRequestURL(config.serviceURLResolve(pathGeneratorType));
+     
 
       Resource subject = inputTriple.getSubject();
       Resource object = inputTriple.getObject().asResource();
@@ -142,7 +144,7 @@ public class FactChecking {
       // score 0. We cannot verify fact.
       if (subjectTypes.isEmpty() || objectTypes.isEmpty()) {
         corroborativeGraph.setPathList(new ArrayList<Path>());
-        corroborativeGraph.setGraphScore(0.0);
+        corroborativeGraph.setGraphScore(-0.1);
         LOGGER.info("subjectTypes is Empty or object Types is Empty");
         return corroborativeGraph;
       }
@@ -162,7 +164,7 @@ public class FactChecking {
     stepTime = logElapsedTimeThisStep("initiate", stepTime);
 
     // Path Discovery
-    LOGGER.info("Checking Fact");
+    LOGGER.info("Checking Fact " + inputTriple);
 
     for (int j = 1; j <= pathLength; j++) {
       try {
@@ -231,7 +233,7 @@ public class FactChecking {
       }
     }
 
-    stepTime = logElapsedTimeThisStep("path scorring", stepTime);
+    stepTime = logElapsedTimeThisStep("path scoring", stepTime);
 
     // for experiments, use run in parallel
     try {
@@ -262,6 +264,13 @@ public class FactChecking {
             .parallelStream()
             .map(r -> defaultPathFactory.ReturnPath(verbalize).createPath(subject, object, r))
             .collect(Collectors.toList());
+    
+    if (pathList.isEmpty() ) {
+        corroborativeGraph.setPathList(new ArrayList<Path>());
+        corroborativeGraph.setGraphScore(-0.1);
+        LOGGER.info("pathList is Empty");
+        return corroborativeGraph;
+      }
 
     double[] scores = results.parallelStream().mapToDouble(r -> r.score).toArray();
 
@@ -272,6 +281,7 @@ public class FactChecking {
     Arrays.sort(scores);
     double score = summarist.summarize(scores);
     corroborativeGraph.setGraphScore(score);
+    
     LOGGER.info("score is " + score + "");
     logElapsedTimeThisStep("all steps", startTime);
     return corroborativeGraph;
@@ -382,23 +392,26 @@ public class FactChecking {
     typeBuilder.addWhere(subject, property, NodeFactory.createVariable("x"));
 
     Query typeQuery = typeBuilder.build();
-    QueryExecution queryExecution = queryExecutioner.getQueryExecution(typeQuery);
-
-    ResultSet resultSet = queryExecution.execSelect();
-
-    while (resultSet.hasNext()) types.add(resultSet.next().get("x").asNode());
-    queryExecution.close();
+    try(QueryExecution queryExecution = queryExecutioner.getQueryExecution(typeQuery)){
+    	 ResultSet resultSet = queryExecution.execSelect();
+    	 while (resultSet.hasNext()) 
+    		 types.add(resultSet.next().get("x").asNode());
+    }
+ 
     return types;
   }
 
   public int returnCount(SelectBuilder builder) {
 
     Query queryOccurrence = builder.build();
-    QueryExecution queryExecution = queryExecutioner.getQueryExecution(queryOccurrence);
+    //QueryExecution queryExecution = queryExecutioner.getQueryExecution(queryOccurrence);
     int count_Occurrence = 0;
-    ResultSet resultSet = queryExecution.execSelect();
-    if (resultSet.hasNext()) count_Occurrence = resultSet.next().get("?c").asLiteral().getInt();
-    queryExecution.close();
+    //ResultSet resultSet = queryExecution.execSelect();
+    try(QueryExecution queryExecution = queryExecutioner.getQueryExecution(queryOccurrence)){
+    	ResultSet resultSet = queryExecution.execSelect();
+    	if (resultSet.hasNext()) count_Occurrence = resultSet.next().get("?c").asLiteral().getInt();
+    }
+
     return count_Occurrence;
   }
 

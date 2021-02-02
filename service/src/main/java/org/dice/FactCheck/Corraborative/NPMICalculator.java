@@ -382,12 +382,11 @@ public class NPMICalculator implements Callable<Result> {
 
     Query pathQuery = QueryFactory.create(pathQueryString);
 
-    QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);
+    double count_Path_Occurrence = 0;
+    try(QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery)){
+    	count_Path_Occurrence = pathQueryExecution.execSelect().next().get("?c").asLiteral().getDouble();
+    };
 
-    double count_Path_Occurrence =
-        pathQueryExecution.execSelect().next().get("?c").asLiteral().getDouble();
-
-    pathQueryExecution.close();
 
     LOGGER.debug(
         "---Query is : "
@@ -405,13 +404,12 @@ public class NPMICalculator implements Callable<Result> {
 
     Query pathPredicateQuery = QueryFactory.create(pathPredicateQueryString);
 
-    QueryExecution predicatePathQueryExecution =
-        queryExecutioner.getQueryExecution(pathPredicateQuery);
-
-    double count_path_Predicate_Occurrence =
-        predicatePathQueryExecution.execSelect().next().get("?c").asLiteral().getDouble();
-
-    predicatePathQueryExecution.close();
+    double count_path_Predicate_Occurrence = 0;
+    try(QueryExecution predicatePathQueryExecution =
+        queryExecutioner.getQueryExecution(pathPredicateQuery)){
+    	 count_path_Predicate_Occurrence =
+    		        predicatePathQueryExecution.execSelect().next().get("?c").asLiteral().getDouble();
+    };
 
     LOGGER.debug(
         "---Query is : "
@@ -523,7 +521,13 @@ public class NPMICalculator implements Callable<Result> {
             count_predicate_Occurrence))) {
       throw new NPMIFilterException("The NPMI filter rejected the calculated NPMI.");
     }
-    return npmi;
+    if(npmi>0) {
+    	return npmi;
+    } else {
+    	return 0;
+    }
+    	
+    //return npmi;
   }
 
   /**

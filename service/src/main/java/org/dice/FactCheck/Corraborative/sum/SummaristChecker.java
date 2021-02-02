@@ -1,5 +1,8 @@
 package org.dice.FactCheck.Corraborative.sum;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A simple main method that takes one of the {@link ScoreSummarist}
  * implementations and prints the results for combinations of two scores to the
@@ -9,6 +12,8 @@ package org.dice.FactCheck.Corraborative.sum;
  *
  */
 public class SummaristChecker {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SummaristChecker.class);
 
     public static void main(String[] args) {
         ScoreSummarist summarist;
@@ -28,8 +33,7 @@ public class SummaristChecker {
             stepy = 0;
             scores[1] = start;
             while (scores[1] <= end) {
-                System.out
-                        .println(String.format("%1.2f,%1.2f,%1.2f", scores[0], scores[1], summarist.summarize(scores)));
+                LOGGER.info(String.format("%1.2f,%1.2f,%1.2f", scores[0], scores[1], summarist.summarize(scores)));
                 ++stepy;
                 scores[1] = start + (stepy * stepSize);
             }
