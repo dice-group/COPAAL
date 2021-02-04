@@ -382,23 +382,22 @@ public class FactChecking {
     typeBuilder.addWhere(subject, property, NodeFactory.createVariable("x"));
 
     Query typeQuery = typeBuilder.build();
-    QueryExecution queryExecution = queryExecutioner.getQueryExecution(typeQuery);
-
-    ResultSet resultSet = queryExecution.execSelect();
-
-    while (resultSet.hasNext()) types.add(resultSet.next().get("x").asNode());
-    queryExecution.close();
+    try(QueryExecution queryExecution = queryExecutioner.getQueryExecution(typeQuery);){
+	    ResultSet resultSet = queryExecution.execSelect();
+	    while (resultSet.hasNext()) 
+	    	types.add(resultSet.next().get("x").asNode());
+    }
     return types;
   }
 
   public int returnCount(SelectBuilder builder) {
-
     Query queryOccurrence = builder.build();
-    QueryExecution queryExecution = queryExecutioner.getQueryExecution(queryOccurrence);
     int count_Occurrence = 0;
-    ResultSet resultSet = queryExecution.execSelect();
-    if (resultSet.hasNext()) count_Occurrence = resultSet.next().get("?c").asLiteral().getInt();
-    queryExecution.close();
+    try(QueryExecution queryExecution = queryExecutioner.getQueryExecution(queryOccurrence);){
+	    ResultSet resultSet = queryExecution.execSelect();
+	    if (resultSet.hasNext()) 
+	    	count_Occurrence = resultSet.next().get("?c").asLiteral().getInt();
+    }
     return count_Occurrence;
   }
 

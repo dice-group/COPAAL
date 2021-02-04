@@ -49,23 +49,20 @@ public class WikiDataPathGenerator implements IPathGenerator {
                   + "}");
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());
-      QueryExecution qe = queryExecutioner.getQueryExecution(paraPathQuery.asQuery());
-      ResultSet result = qe.execSelect();
-
-      while (result.hasNext()) {
-        QuerySolution qs = result.next();
-        String path = qs.get("?p1").toString();
-        if (!paths.containsKey(path)) {
-          paths.put(path, pathLength);
-          intermediateNodes.put(path, "");
-        }
+      try(QueryExecution qe = queryExecutioner.getQueryExecution(paraPathQuery.asQuery());){
+	      ResultSet result = qe.execSelect();
+	
+	      while (result.hasNext()) {
+	        QuerySolution qs = result.next();
+	        String path = qs.get("?p1").toString();
+	        if (!paths.containsKey(path)) {
+	          paths.put(path, pathLength);
+	          intermediateNodes.put(path, "");
+	        }
+	      }
       }
+     
 
-      HashMap<String, HashMap<String, Integer>> pathBuilder =
-          new HashMap<String, HashMap<String, Integer>>();
-      pathBuilder.put(queryBuilder, paths);
-      this.pathQuery = new PathQuery(pathBuilder, intermediateNodes);
-      qe.close();
     } else if (pathLength == 2) {
 
       String[] querySequence = queryBuilder.split(";");
@@ -84,22 +81,18 @@ public class WikiDataPathGenerator implements IPathGenerator {
 
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());
-      QueryExecution qe = queryExecutioner.getQueryExecution(paraPathQuery.asQuery());
-      ResultSet result = qe.execSelect();
-
-      while (result.hasNext()) {
-        QuerySolution qs = result.next();
-        String path = qs.get("?p1").toString() + ";" + qs.get("?p2").toString();
-        if (!paths.containsKey(path)) {
-          paths.put(path, pathLength);
-          intermediateNodes.put(path, qs.get("?x1").toString());
-        }
+      try(QueryExecution qe = queryExecutioner.getQueryExecution(paraPathQuery.asQuery());){
+	      ResultSet result = qe.execSelect();
+	
+	      while (result.hasNext()) {
+	        QuerySolution qs = result.next();
+	        String path = qs.get("?p1").toString() + ";" + qs.get("?p2").toString();
+	        if (!paths.containsKey(path)) {
+	          paths.put(path, pathLength);
+	          intermediateNodes.put(path, qs.get("?x1").toString());
+	        }
+	      }
       }
-      HashMap<String, HashMap<String, Integer>> pathBuilder =
-          new HashMap<String, HashMap<String, Integer>>();
-      pathBuilder.put(queryBuilder, paths);
-      this.pathQuery = new PathQuery(pathBuilder, intermediateNodes);
-      qe.close();
     } else if (pathLength == 3) {
 
       String[] querySequence = queryBuilder.split(";");
@@ -122,29 +115,29 @@ public class WikiDataPathGenerator implements IPathGenerator {
                   + "}");
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());
-      QueryExecution qe = queryExecutioner.getQueryExecution(paraPathQuery.asQuery());
-      ResultSet result = qe.execSelect();
-      while (result.hasNext()) {
-        QuerySolution qs = result.next();
-        String path =
-            qs.get("?p1").toString()
-                + ";"
-                + qs.get("?p2").toString()
-                + ";"
-                + qs.get("?p3").toString();
-        if (!paths.containsKey(path)) {
-          paths.put(path, pathLength);
-          intermediateNodes.put(path, qs.get("?x1").toString() + ";" + qs.get("?x2").toString());
-        }
-
-        break;
+      try(QueryExecution qe = queryExecutioner.getQueryExecution(paraPathQuery.asQuery());){
+	      ResultSet result = qe.execSelect();
+	      while (result.hasNext()) {
+	        QuerySolution qs = result.next();
+	        String path =
+	            qs.get("?p1").toString()
+	                + ";"
+	                + qs.get("?p2").toString()
+	                + ";"
+	                + qs.get("?p3").toString();
+	        if (!paths.containsKey(path)) {
+	          paths.put(path, pathLength);
+	          intermediateNodes.put(path, qs.get("?x1").toString() + ";" + qs.get("?x2").toString());
+	        }
+	
+	        break;
+	      }
       }
-      HashMap<String, HashMap<String, Integer>> pathBuilder =
-          new HashMap<String, HashMap<String, Integer>>();
-      pathBuilder.put(queryBuilder, paths);
-      this.pathQuery = new PathQuery(pathBuilder, intermediateNodes);
-      qe.close();
     }
+    HashMap<String, HashMap<String, Integer>> pathBuilder =
+            new HashMap<String, HashMap<String, Integer>>();
+	pathBuilder.put(queryBuilder, paths);
+	this.pathQuery = new PathQuery(pathBuilder, intermediateNodes);
 
     return this.pathQuery;
   }
