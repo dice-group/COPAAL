@@ -54,7 +54,7 @@ public class NPMICalculatorTest {
 
     @Test
     public void testPathNeverOccursWithPredicate() throws NPMIFilterException {
-        Assert.assertEquals(-1.0, calculateNPMI(2, 2, 2, 2, 0), DELTA);
+        Assert.assertEquals(0, calculateNPMI(2, 2, 2, 2, 0), DELTA);
     }
 
     @Test

@@ -8,39 +8,32 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Statement;
 import org.dice.FactCheck.Corraborative.PathQuery;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/*
- * A class implementing callable to generate paths in parallel and returns PathQuery, a
- * a structure for realizing the path
- */
+public class WikiDataPathGenerator implements IPathGenerator {
 
-public class DefaultPathGenerator implements IPathGenerator {
+  private int pathLength;
+  private String queryBuilder;
+  private Statement input;
+  private QueryExecutioner queryExecutioner;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPathGenerator.class);
+  private HashMap<String, Integer> paths = new HashMap<String, Integer>();
+  private HashMap<String, String> intermediateNodes = new HashMap<String, String>();
+  private PathQuery pathQuery;
 
-  private final String queryBuilder;
-  private final Statement input;
-  private final int pathLength;
-  private final QueryExecutioner queryExecutioner;
-  HashMap<String, Integer> paths = new HashMap<String, Integer>();
-  HashMap<String, String> intermediateNodes = new HashMap<String, String>();
-  public PathQuery pathQuery;
-  public String ontology = "\'http://dbpedia.org/ontology\'";
-
-  public DefaultPathGenerator(
+  public WikiDataPathGenerator(
       String queryBuilder, Statement input, int pathLength, QueryExecutioner queryExecutioner) {
+    this.pathLength = pathLength;
     this.queryBuilder = queryBuilder;
     this.input = input;
-    this.pathLength = pathLength;
     this.queryExecutioner = queryExecutioner;
   }
 
+  @Override
   public PathQuery call() throws Exception {
     return returnQuery();
   }
 
+  @Override
   public PathQuery returnQuery() {
     if (pathLength == 1) {
       ParameterizedSparqlString paraPathQuery =
@@ -53,9 +46,6 @@ public class DefaultPathGenerator implements IPathGenerator {
                   + input.getPredicate()
                   + ">)"
                   + "\n"
-                  + "FILTER(strstarts(str(?p1),"
-                  + ontology
-                  + ")) \n "
                   + "}");
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());
@@ -71,6 +61,7 @@ public class DefaultPathGenerator implements IPathGenerator {
 	        }
 	      }
       }
+     
 
     } else if (pathLength == 2) {
 
@@ -84,14 +75,8 @@ public class DefaultPathGenerator implements IPathGenerator {
                   + querySequence[1]
                   + "."
                   + "\n"
-                  + "FILTER(strstarts(str(?p1),"
-                  + ontology
-                  + "))"
-                  + "FILTER(strstarts(str(?p2),"
-                  + ontology
-                  + "))"
-                  + "FILTER(!ISLITERAL(?x1))"
-                  + "\n "
+                  // + "FILTER(!ISLITERAL(?x1))"
+                  // + "\n "
                   + "}");
 
       paraPathQuery.setParam("s", input.getSubject());
@@ -108,7 +93,6 @@ public class DefaultPathGenerator implements IPathGenerator {
 	        }
 	      }
       }
-
     } else if (pathLength == 3) {
 
       String[] querySequence = queryBuilder.split(";");
@@ -128,48 +112,32 @@ public class DefaultPathGenerator implements IPathGenerator {
                   + "FILTER(?x2 != <"
                   + input.getSubject().asNode()
                   + ">) \n"
-                  + "FILTER(strstarts(str(?p1),"
-                  + ontology
-                  + "))"
-                  + "FILTER(strstarts(str(?p2),"
-                  + ontology
-                  + "))"
-                  + "FILTER(strstarts(str(?p3),"
-                  + ontology
-                  + "))"
                   + "}");
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());
       try(QueryExecution qe = queryExecutioner.getQueryExecution(paraPathQuery.asQuery());){
-	      try {
-	        ResultSet result = qe.execSelect();
-	        while (result.hasNext()) {
-	          QuerySolution qs = result.next();
-	          String path =
-	              qs.get("?p1").toString()
-	                  + ";"
-	                  + qs.get("?p2").toString()
-	                  + ";"
-	                  + qs.get("?p3").toString();
-	          if (!paths.containsKey(path)) {
-	            paths.put(path, pathLength);
-	            intermediateNodes.put(path, qs.get("?x1").toString() + ";" + qs.get("?x2").toString());
-	          }
-	
-	          break;
+	      ResultSet result = qe.execSelect();
+	      while (result.hasNext()) {
+	        QuerySolution qs = result.next();
+	        String path =
+	            qs.get("?p1").toString()
+	                + ";"
+	                + qs.get("?p2").toString()
+	                + ";"
+	                + qs.get("?p3").toString();
+	        if (!paths.containsKey(path)) {
+	          paths.put(path, pathLength);
+	          intermediateNodes.put(path, qs.get("?x1").toString() + ";" + qs.get("?x2").toString());
 	        }
 	
-	      } catch (Exception ex) {
-	        LOGGER.error("error in run this query" + qe.toString());
-	        LOGGER.error(ex.getMessage());
+	        break;
 	      }
       }
     }
-    
     HashMap<String, HashMap<String, Integer>> pathBuilder =
             new HashMap<String, HashMap<String, Integer>>();
-    pathBuilder.put(queryBuilder, paths);
-    this.pathQuery = new PathQuery(pathBuilder, intermediateNodes);
+	pathBuilder.put(queryBuilder, paths);
+	this.pathQuery = new PathQuery(pathBuilder, intermediateNodes);
 
     return this.pathQuery;
   }

@@ -1,9 +1,5 @@
 ./service/src/test/*
 .project
-
-/.metadata/
-/.settings/
-.project
 # ignore all logs
 *.log
 #ignore IDE related files
@@ -22,6 +18,7 @@
 # Maven
 log/
 target/
+<<<<<<< HEAD
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/intellij
