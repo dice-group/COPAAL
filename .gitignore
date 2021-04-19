@@ -128,3 +128,5 @@ fabric.properties
 # End of https://www.toptal.com/developers/gitignore/api/intellij
 
 /cache
+cache.txt
+1cache.txt
