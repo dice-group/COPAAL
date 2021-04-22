@@ -1,4 +1,7 @@
-package org.dice_research.fc.paths;
+package org.dice_research.fc.paths.scorer;
+
+import org.apache.jena.rdf.model.Property;
+import org.dice.FactCheck.Corraborative.UIResult.Path;
 
 /**
  * Classes implementing this interface can derive counts for paths, properties and typed entities.
@@ -22,7 +25,7 @@ public interface ICountRetriever {
    * @param predicate the predicate that should be counted
    * @return the count of the path in the reference graph
    */
-  int countPredicateInstances(String predicate);
+  int countPredicateInstances(Property predicate);
 
   /**
    * Retrieves the count for the co-occurrence of the given path and predicate
@@ -31,7 +34,7 @@ public interface ICountRetriever {
    * @param path the path for which the instances should be counted
    * @return the count of the path in the reference graph
    */
-  int countPredicateInstances(String predicate, Object path);
+  int countPredicateInstances(Property predicate, Path path);
 
   /**
    * Derives a maximum count that can be used to create probabilities from the counts retrieved by
@@ -40,5 +43,5 @@ public interface ICountRetriever {
    * @param predicate the predicate for which the counts should be normalized
    * @return a maximum count
    */
-  int deriveMaxCount(String predicate);
+  int deriveMaxCount(Property predicate);
 }
