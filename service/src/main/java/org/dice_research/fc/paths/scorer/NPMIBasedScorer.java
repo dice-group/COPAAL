@@ -1,9 +1,15 @@
 package org.dice_research.fc.paths.scorer;
 
+import java.util.Set;
+
+import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.dice.FactCheck.Corraborative.UIResult.Path;
 import org.dice_research.fc.paths.IPathScorer;
+import org.dice_research.fc.paths.ITypeEnquirer;
+import org.dice_research.fc.paths.ResourceTypeEnquirer;
 
 /**
  * An NPMI-based path scorer as described in the COPAAL paper.
@@ -34,28 +40,32 @@ public class NPMIBasedScorer implements IPathScorer {
    */
   protected double noCooccurrenceResult = 0.1;
   /**
+   * The score if there are no types for subject or object.
+   */
+  protected double typesAreEmptyResult = 0.1;
+  /**
    * The class used to derive the counts
    */
   protected ICountRetriever countRetriever;
 
   @Override
-  public Path score(Resource subject, Property predicate, Resource Object, Path path) {
-    double score = calculateScore(subject, predicate, Object, path);
+  public Path score(Resource subject, Property predicate, Resource object, Path path) {
+    double score = calculateScore(subject, predicate, object, path);
     path.setPathScore(score);
     return path;
   }
 
-  public double calculateScore(Resource subject, Property predicate, Resource Object, Path path) {
+  public double calculateScore(Resource subject, Property predicate, Resource object, Path path) {	
     int pathCounts = countRetriever.countPathInstances(path);
     if (pathCounts == 0) {
       return pathDoesNotExistResult;
     }
     int predicateCounts = countRetriever.countPredicateInstances(predicate);
-    if (pathCounts == 0) {
+    if (predicateCounts == 0) {
       return propertyDoesNotExistResult;
     }
-    int cooccurrenceCounts = countRetriever.countPathInstances(path);
-    if (pathCounts == 0) {
+    int cooccurrenceCounts = countRetriever.countPredicateInstances(predicate, path);
+    if (cooccurrenceCounts == 0) {
       return noCooccurrenceResult;
     }
     return calculateScore(pathCounts, predicateCounts, cooccurrenceCounts,
