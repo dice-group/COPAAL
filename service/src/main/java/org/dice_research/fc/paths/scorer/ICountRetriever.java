@@ -1,5 +1,7 @@
 package org.dice_research.fc.paths.scorer;
 
+import java.util.Set;
+import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.Property;
 import org.dice.FactCheck.Corraborative.UIResult.Path;
 
@@ -17,7 +19,7 @@ public interface ICountRetriever {
    * @param path the path for which the instances should be counted
    * @return the count of the path in the reference graph
    */
-  int countPathInstances(Object path);
+  int countPathInstances(Path path);
 
   /**
    * Retrieves the count for the given predicate.
@@ -44,4 +46,23 @@ public interface ICountRetriever {
    * @return a maximum count
    */
   int deriveMaxCount(Property predicate);
+
+  /**
+   * Retrieves the count of how many resources share the same types as the subject
+   * 
+   * @param types the set of types we want to check for
+   * @param predicate the predicate of the input triple
+   * @return the count of triples with the same type
+   */
+  int countTriplesSameTypeSubj(Set<Node> types, Property predicate);
+
+  /**
+   * Retrieves the count of how many resources share the same types as the subject
+   * 
+   * @param types the set of types we want to check for
+   * @param predicate the predicate of the input triple
+   * @return the count of triples with the same type
+   */
+  int countTriplesSameTypeObj(Set<Node> types, Property predicate);
+
 }
