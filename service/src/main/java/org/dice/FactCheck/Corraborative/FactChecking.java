@@ -42,10 +42,10 @@ import org.dice.FactCheck.Corraborative.filter.npmi.LowCountBasedNPMIFilter;
 import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilter;
 import org.dice.FactCheck.Corraborative.sum.CubicMeanSummarist;
 import org.dice.FactCheck.Corraborative.sum.ScoreSummarist;
-import org.dice_research.fc.paths.ICountRetriever;
 import org.dice_research.fc.paths.ITypeEnquirer;
 import org.dice_research.fc.paths.InstanceCounter;
 import org.dice_research.fc.paths.ResourceTypeEnquirer;
+import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +107,7 @@ public class FactChecking {
 		corroborativeGraph
 				.setInputTriple(new CorroborativeTriple(subject.toString(), property.toString(), object.toString()));
 
-		ITypeEnquirer typeEnquirer = new ResourceTypeEnquirer(queryExecutioner, vTy);
+		ResourceTypeEnquirer typeEnquirer = new ResourceTypeEnquirer(queryExecutioner, vTy, inputTriple);
 		Set<Node> subjectTypes = typeEnquirer.getSubjectTypes(inputTriple);
 		Set<Node> objectTypes = typeEnquirer.getObjectTypes(inputTriple);
 
@@ -122,7 +122,7 @@ public class FactChecking {
 		}
 
 		//TODO counts inside npmi should also be handled by instance counter
-		ICountRetriever instanceCounter = new InstanceCounter(queryExecutioner, vTy);
+		ICountRetriever instanceCounter = new InstanceCounter(queryExecutioner, vTy, inputTriple);
 		int subjectTriplesCount = instanceCounter.countTriplesSameTypeSubj(subjectTypes, property);
 		int objectTriplesCount = instanceCounter.countTriplesSameTypeObj(objectTypes, property);
 		int predicateTripleCount = instanceCounter.countPredicateInstances(property);

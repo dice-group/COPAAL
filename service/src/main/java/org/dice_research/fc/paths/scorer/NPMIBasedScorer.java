@@ -34,6 +34,10 @@ public class NPMIBasedScorer implements IPathScorer {
    */
   protected double noCooccurrenceResult = -0.1;
   /**
+   * The score if there are no types for subject or object.
+   */
+  protected double typesAreEmptyResult = 0.1;
+  /**
    * The class used to derive the counts
    */
   protected ICountRetriever countRetriever;
@@ -53,11 +57,11 @@ public class NPMIBasedScorer implements IPathScorer {
       return pathDoesNotExistResult;
     }
     int predicateCounts = countRetriever.countPredicateInstances(predicate);
-    if (pathCounts == 0) {
+    if (predicateCounts == 0) {
       return propertyDoesNotExistResult;
     }
     int cooccurrenceCounts = countRetriever.countCooccurrences(predicate, path);
-    if (pathCounts == 0) {
+    if (cooccurrenceCounts == 0) {
       return noCooccurrenceResult;
     }
     int maxCount = countRetriever.deriveMaxCount(subject, predicate, object);
