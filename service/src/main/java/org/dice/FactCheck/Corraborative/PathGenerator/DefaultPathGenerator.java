@@ -42,6 +42,8 @@ public class DefaultPathGenerator implements IPathGenerator {
   }
 
   public PathQuery returnQuery() {
+    String filters = getFilteredPredicates(pathLength);
+    
     if (pathLength == 1) {
       ParameterizedSparqlString paraPathQuery =
           new ParameterizedSparqlString(
@@ -56,6 +58,7 @@ public class DefaultPathGenerator implements IPathGenerator {
                   + "FILTER(strstarts(str(?p1),"
                   + ontology
                   + ")) \n "
+                  + filters
                   + "}");
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());
@@ -92,6 +95,7 @@ public class DefaultPathGenerator implements IPathGenerator {
                   + "))"
                   + "FILTER(!ISLITERAL(?x1))"
                   + "\n "
+                  + filters
                   + "}");
 
       paraPathQuery.setParam("s", input.getSubject());
@@ -137,6 +141,7 @@ public class DefaultPathGenerator implements IPathGenerator {
                   + "FILTER(strstarts(str(?p3),"
                   + ontology
                   + "))"
+                  + filters
                   + "}");
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());
@@ -172,5 +177,31 @@ public class DefaultPathGenerator implements IPathGenerator {
     this.pathQuery = new PathQuery(pathBuilder, intermediateNodes);
 
     return this.pathQuery;
+  }
+
+  /**
+   * Returns a string of a filter with unwanted predicates dependent on the path's length<p>
+   * FILTER ( ?p1 != &lthttp://example.org/unwanted_Predicate&gt && <p> 
+   * ?p2 != &lthttp://example.org/unwanted_Predicate&gt)
+   * 
+   * @param pathLength the path's length
+   * @return the filter as a string
+   */
+  private String getFilteredPredicates(int pathLength) {
+    String unwanted = "<http://dbpedia.org/ontology/wikiPageWikiLink>";
+    StringBuilder builder = new StringBuilder();
+    builder.append("FILTER ( ");  
+    
+    for(int j = 1; j<pathLength+1; j++) {
+      String pVar = "?p"+j;
+      builder.append(pVar).append(" != ").append(unwanted);
+      
+      if(j==pathLength) {
+        builder.append(") ");
+      } else {
+        builder.append(" && ");
+      }
+    }
+    return builder.toString();
   }
 }
