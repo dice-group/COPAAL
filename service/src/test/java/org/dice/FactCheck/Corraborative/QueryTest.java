@@ -15,14 +15,23 @@ public class QueryTest {
     queryExecutioner.setServiceRequestURL("https://dbpedia.org/sparql");
 
     String queryString =
-        "SELECT  (SUM(( ?b1 * ?b2 )) AS ?c)\n" + "WHERE\n" + "  { SELECT  (count(*) AS ?b2) ?b1\n"
-            + "    WHERE\n" + "      { ?s  <http://dbpedia.org/ontology/wikiPageWikiLink>  ?x1 ;\n"
-            + "            a                     <http://dbpedia.org/ontology/Film>\n"
-            + "        { SELECT  (count(*) AS ?b1) ?x1\n" + "          WHERE\n"
-            + "            { ?o  <http://dbpedia.org/ontology/wikiPageWikiLink>  ?x1 ;\n"
-            + "                  a                     <http://dbpedia.org/ontology/Person>\n"
-            + "            }\n" + "          GROUP BY ?x1\n" + "        }\n" + "      }\n"
-            + "    GROUP BY ?b1\n" + "  }\n" + "";
+        "SELECT  (SUM(( ?b1 * ?b2 )) AS ?c)\n" + 
+        "WHERE\n" + 
+        "  { SELECT  (count(*) AS ?b2) ?b1\n" + 
+        "    WHERE\n" + 
+        "      { ?s  <http://dbpedia.org/ontology/wikiPageWikiLink>  ?x1 ;\n" + 
+        "            a                     <http://dbpedia.org/ontology/Film>\n" + 
+        "        { SELECT  (count(*) AS ?b1) ?x1\n" + 
+        "          WHERE\n" + 
+        "            { ?o  <http://dbpedia.org/ontology/wikiPageWikiLink>  ?x1 ;\n" + 
+        "                  a                     <http://dbpedia.org/ontology/Person>\n" + 
+        "            }\n" + 
+        "          GROUP BY ?x1\n" + 
+        "        }\n" + 
+        "      }\n" + 
+        "    GROUP BY ?b1\n" + 
+        "  }\n" + 
+        "";
 
     Query query = QueryFactory.create(queryString);
     try (QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(query);) {
