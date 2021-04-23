@@ -1,8 +1,5 @@
 package org.dice_research.fc.paths.scorer;
 
-import java.util.Set;
-import org.apache.jena.graph.Node;
-import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
@@ -51,29 +48,5 @@ public interface ICountRetriever {
    * @return a maximum count
    */
   int deriveMaxCount(Resource subject, Predicate predicate, Resource Object);
-
-  /**
-   * Retrieves the count of how many resources share the same types as the subject
-   * 
-   * @param types the set of types we want to check for
-   * @param predicate the predicate of the input triple
-   * @return the count of triples with the same type
-   * 
-   * @deprecated The counter decides internally how he handles deriving the maximum count in {@link #deriveMaxCount(Property)}
-   */
-  @Deprecated
-  int countTriplesSameTypeSubj(Set<Node> types, Property predicate);
-
-  /**
-   * Retrieves the count of how many resources share the same types as the subject
-   * 
-   * @param types the set of types we want to check for
-   * @param predicate the predicate of the input triple
-   * @return the count of triples with the same type
-   * 
-   * @deprecated The counter decides internally how he handles deriving the maximum count in {@link #deriveMaxCount(Property)}
-   */
-  @Deprecated
-  int countTriplesSameTypeObj(Set<Node> types, Property predicate);
 
 }

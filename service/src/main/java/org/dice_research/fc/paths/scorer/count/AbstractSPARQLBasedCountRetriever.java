@@ -1,9 +1,7 @@
 package org.dice_research.fc.paths.scorer.count;
 
-import java.util.Set;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.commons.math3.util.Pair;
-import org.apache.jena.graph.Node;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
@@ -33,7 +31,7 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
   @Override
   public int countPredicateInstances(Predicate predicate) {
     StringBuilder queryBuilder = new StringBuilder();
-    queryBuilder.append("SELECT count(DISTINCT ?s ?o) AS ?");
+    queryBuilder.append("SELECT count(DISTINCT *) AS ?");
     queryBuilder.append(COUNT_VARIABLE_NAME);
     queryBuilder.append(" WHERE { ?s <");
     queryBuilder.append(predicate.getProperty().getURI());
@@ -44,18 +42,6 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
   @Override
   public int deriveMaxCount(Resource subject, Predicate predicate, Resource Object) {
     return countTypeInstances(predicate.getDomain()) * countTypeInstances(predicate.getRange());
-  }
-
-  @Override
-  @Deprecated
-  public int countTriplesSameTypeSubj(Set<Node> types, Property predicate) {
-    return 0;
-  }
-
-  @Override
-  @Deprecated
-  public int countTriplesSameTypeObj(Set<Node> types, Property predicate) {
-    return 0;
   }
 
   /**
