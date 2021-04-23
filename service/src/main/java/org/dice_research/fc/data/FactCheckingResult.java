@@ -18,7 +18,7 @@ public class FactCheckingResult {
   /**
    * The pieces of evidence that have been used to come to the veracity value
    */
-  private Collection<IPieceOfEvidence> piecesOfEvidence;
+  private Collection<? extends IPieceOfEvidence> piecesOfEvidence;
 
   // TODO Add fact that has been checked
 
@@ -39,14 +39,14 @@ public class FactCheckingResult {
   /**
    * @return the piecesOfEvidence
    */
-  public Collection<IPieceOfEvidence> getPiecesOfEvidence() {
+  public Collection<? extends IPieceOfEvidence> getPiecesOfEvidence() {
     return piecesOfEvidence;
   }
 
   /**
    * @param piecesOfEvidence the piecesOfEvidence to set
    */
-  public void setPiecesOfEvidence(Collection<IPieceOfEvidence> piecesOfEvidence) {
+  public void setPiecesOfEvidence(Collection<? extends IPieceOfEvidence> piecesOfEvidence) {
     this.piecesOfEvidence = piecesOfEvidence;
   }
   

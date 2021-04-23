@@ -1,8 +1,8 @@
 package org.dice_research.fc.paths.scorer;
 
-import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
-import org.dice.FactCheck.Corraborative.UIResult.Path;
+import org.dice_research.fc.data.Predicate;
+import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.IPathScorer;
 
 /**
@@ -32,21 +32,23 @@ public class NPMIBasedScorer implements IPathScorer {
   /**
    * The score if a path and a property do not co-occur in the reference knowledge graph.
    */
-  protected double noCooccurrenceResult = 0.1;
+  protected double noCooccurrenceResult = -0.1;
   /**
    * The class used to derive the counts
    */
   protected ICountRetriever countRetriever;
 
   @Override
-  public Path score(Resource subject, Property predicate, Resource Object, Path path) {
+  public QRestrictedPath score(Resource subject, Predicate predicate, Resource Object,
+      QRestrictedPath path) {
     double score = calculateScore(subject, predicate, Object, path);
-    path.setPathScore(score);
+    path.setScore(score);
     return path;
   }
 
-  public double calculateScore(Resource subject, Property predicate, Resource Object, Path path) {
-    int pathCounts = countRetriever.countPathInstances(path);
+  public double calculateScore(Resource subject, Predicate predicate, Resource object,
+      QRestrictedPath path) {
+    int pathCounts = countRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     if (pathCounts == 0) {
       return pathDoesNotExistResult;
     }
@@ -54,12 +56,15 @@ public class NPMIBasedScorer implements IPathScorer {
     if (pathCounts == 0) {
       return propertyDoesNotExistResult;
     }
-    int cooccurrenceCounts = countRetriever.countPathInstances(path);
+    int cooccurrenceCounts = countRetriever.countCooccurrences(predicate, path);
     if (pathCounts == 0) {
       return noCooccurrenceResult;
     }
-    return calculateScore(pathCounts, predicateCounts, cooccurrenceCounts,
-        countRetriever.deriveMaxCount(predicate));
+    int maxCount = countRetriever.deriveMaxCount(subject, predicate, object);
+    if (pathCounts == 0) {
+      throw new IllegalStateException("The maximum count is 0. That is not supported.");
+    }
+    return calculateScore(pathCounts, predicateCounts, cooccurrenceCounts, maxCount);
   }
 
   protected double calculateScore(double pathCounts, double predicateCounts,

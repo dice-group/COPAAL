@@ -4,10 +4,11 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
-import org.dice.FactCheck.Corraborative.UIResult.Path;
 import org.dice.FactCheck.Corraborative.sum.ScoreSummarist;
 import org.dice_research.fc.IFactChecker;
 import org.dice_research.fc.data.FactCheckingResult;
+import org.dice_research.fc.data.Predicate;
+import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.filter.AlwaysTruePathFilter;
 import org.dice_research.fc.paths.filter.AlwaysTrueScoreFilter;
 import org.dice_research.fc.paths.filter.IPathFilter;
@@ -21,6 +22,10 @@ import org.dice_research.fc.paths.filter.IScoreFilter;
  */
 public class PathBasedFactChecker implements IFactChecker {
 
+  /**
+   * The preprocessor used to prepare the given fact.
+   */
+  protected FactPreprocessor factPreprocessor;
   /**
    * The class that is used to search for (corroborative) paths.
    */
@@ -41,7 +46,7 @@ public class PathBasedFactChecker implements IFactChecker {
    * The class that is used to summarize the scores of the single paths to create a final score.
    */
   protected ScoreSummarist summarist;
-  
+
   /**
    * Checks the given fact.
    * 
@@ -52,22 +57,28 @@ public class PathBasedFactChecker implements IFactChecker {
    */
   @Override
   public FactCheckingResult check(Resource subject, Property predicate, Resource object) {
+    // Preprocess the data
+    Predicate preparedPredicate = factPreprocessor.generatePredicate(predicate);
+
     // Get a list of potential paths
-    Collection<Path> paths = pathSearcher.search(subject, predicate, object);
+    Collection<QRestrictedPath> paths = pathSearcher.search(subject, preparedPredicate, object);
 
     // Filter paths, score the paths with respect to the given triple and filter them again based on
     // the score
     paths = paths.parallelStream().filter(pathFilter)
-        .map(p -> pathScorer.score(subject, predicate, object, p))
-        .filter(p -> scoreFilter.test(p.getPathScore())).collect(Collectors.toList());
+        .map(p -> pathScorer.score(subject, preparedPredicate, object, p))
+        .filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());
 
     // Get the scores
-    double[] scores = paths.stream().mapToDouble(p -> p.getPathScore()).toArray();
+    double[] scores = paths.stream().mapToDouble(p -> p.getScore()).toArray();
 
     // Summarize the scores
     double veracity = summarist.summarize(scores);
 
     // FIXME Add veracity score and evidences (i.e., paths)
-    return new FactCheckingResult();
+    FactCheckingResult result = new FactCheckingResult();
+    result.setVeracityValue(veracity);
+    result.setPiecesOfEvidence(paths);
+    return result;
   }
 }

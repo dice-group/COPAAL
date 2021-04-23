@@ -5,10 +5,15 @@ import java.util.Set;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.vocabulary.RDF;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
+import org.dice_research.fc.data.Predicate;
+import org.dice_research.fc.data.QRestrictedPath;
+import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.dice_research.util.SPARQLUtil;
 
+@Deprecated
 public class InstanceCounter implements ICountRetriever {
 
 	private QueryExecutioner executioner;
@@ -46,27 +51,27 @@ public class InstanceCounter implements ICountRetriever {
 	}
 
 	@Override
-	public int countPathInstances(Object path) {
+	public int countPathInstances(QRestrictedPath path) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
-	public int countPredicateInstances(Property predicate) {
-		return SPARQLUtil.countPredicateOccurrances(executioner, NodeFactory.createVariable("s"), predicate,
-				NodeFactory.createVariable("o"));
-	}
+  @Override
+  public int countPredicateInstances(Predicate predicate) {
+    // TODO Auto-generated method stub
+    return 0;
+  }
 
-	@Override
-	public int countPredicateInstances(String predicate, Object path) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+  @Override
+  public int countCooccurrences(Predicate predicate, QRestrictedPath path) {
+    // TODO Auto-generated method stub
+    return 0;
+  }
 
-	@Override
-	public int deriveMaxCount(String predicate) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+  @Override
+  public int deriveMaxCount(Resource subject, Predicate predicate, Resource Object) {
+    // TODO Auto-generated method stub
+    return 0;
+  }
 
 }

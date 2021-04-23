@@ -1,6 +1,6 @@
 package org.dice_research.fc.paths.filter;
 
-import org.dice.FactCheck.Corraborative.UIResult.Path;
+import org.dice_research.fc.data.QRestrictedPath;
 
 /**
  * A simple filter that always returns {@code true}.
@@ -11,7 +11,7 @@ import org.dice.FactCheck.Corraborative.UIResult.Path;
 public class AlwaysTruePathFilter implements IPathFilter {
 
   @Override
-  public boolean test(Path t) {
+  public boolean test(QRestrictedPath path) {
     return true;
   }
 

@@ -1,8 +1,8 @@
 package org.dice_research.fc.paths;
 
-import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
-import org.dice.FactCheck.Corraborative.UIResult.Path;
+import org.dice_research.fc.data.Predicate;
+import org.dice_research.fc.data.QRestrictedPath;
 
 /**
  * Classes implementing this interface can calculate the score for a given path with respect to its
@@ -22,5 +22,5 @@ public interface IPathScorer {
    * @param path the path that should be scored
    * @return the path with the score assigned (might be the same object as the given path)
    */
-  Path score(Resource subject, Property predicate, Resource Object, Path path);
+  QRestrictedPath score(Resource subject, Predicate predicate, Resource Object, QRestrictedPath path);
 }

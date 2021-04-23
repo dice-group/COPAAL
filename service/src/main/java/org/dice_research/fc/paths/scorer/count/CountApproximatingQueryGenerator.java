@@ -2,14 +2,14 @@ package org.dice_research.fc.paths.scorer.count;
 
 import java.util.List;
 import java.util.Set;
-
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.jena.graph.Node;
 import org.apache.jena.vocabulary.RDFS;
 import org.dice_group.path.property.Property;
 import org.dice_group.util.QueryExecutioner;
 import org.dice_group.util.SparqlHelper;
 
-public class CountApproximatingQueryGenerator implements QueryGenerator {
+public class CountApproximatingQueryGenerator {
 
     protected static final String COUNT_VARIABLE_NAME = "?sum";
     protected static final String INTERMEDIATE_COUNT_VARIABLE_NAME = "?c";
@@ -18,10 +18,10 @@ public class CountApproximatingQueryGenerator implements QueryGenerator {
     protected static final String SUBJECT_VARIABLE_NAME = INTERMEDIATE_NODE_VARIABLE_NAME + "0";
     protected static final String OBJECT_VARIABLE_NAME = "?o";
     
-    private QueryExecutioner sparqlExec;
+    private QueryExecutionFactory queryExecFactory;
     
-    public CountApproximatingQueryGenerator(QueryExecutioner sparqlExec) {
-		this.sparqlExec = sparqlExec;
+    public CountApproximatingQueryGenerator(QueryExecutionFactory queryExecFactory) {
+		this.queryExecFactory = queryExecFactory;
 	}
 
     @Override

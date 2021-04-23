@@ -1,9 +1,9 @@
 package org.dice_research.fc.paths;
 
 import java.util.Collection;
-import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
-import org.dice.FactCheck.Corraborative.UIResult.Path;
+import org.dice_research.fc.data.Predicate;
+import org.dice_research.fc.data.QRestrictedPath;
 
 /**
  * Instances of this class can derive (potential) corroborative paths for a given triple.
@@ -21,5 +21,5 @@ public interface IPathSearcher {
    * @param object the object of the triple
    * @return an array of (potential) corroborative paths
    */
-  Collection<Path> search(Resource subject, Property predicate, Resource object);
+  Collection<QRestrictedPath> search(Resource subject, Predicate predicate, Resource object);
 }
