@@ -6,10 +6,12 @@ public class SearchQueryBuilder {
 
   private StringBuilder queryBuilder;
   private BitSet directions;
+  private int length;
 
   public SearchQueryBuilder(int maxLength) {
     directions = new BitSet(maxLength);
     queryBuilder = new StringBuilder();
+    this.length = maxLength;
   }
 
   public SearchQueryBuilder(SearchQueryBuilder other) {
@@ -18,7 +20,7 @@ public class SearchQueryBuilder {
   }
 
   public SearchQuery build() {
-    return new SearchQuery(queryBuilder.toString(), directions);
+    return new SearchQuery(queryBuilder.toString(), directions, length);
   }
 
   /**

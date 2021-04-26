@@ -6,10 +6,12 @@ public class SearchQuery {
 
   private String query;
   private BitSet directions;
+  private int length;
 
-  public SearchQuery(String query, BitSet directions) {
+  public SearchQuery(String query, BitSet directions, int length) {
     this.query = query;
     this.directions = directions;
+    this.length = length;
   }
 
   /**
@@ -38,6 +40,20 @@ public class SearchQuery {
    */
   public void setDirections(BitSet directions) {
     this.directions = directions;
+  }
+
+  /**
+   * @return the length
+   */
+  public int getLength() {
+    return length;
+  }
+
+  /**
+   * @param length the length to set
+   */
+  public void setLength(int length) {
+    this.length = length;
   }
 
 }
