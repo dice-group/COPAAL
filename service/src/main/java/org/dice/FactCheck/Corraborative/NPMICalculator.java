@@ -119,7 +119,6 @@ public class NPMICalculator implements Callable<Result> {
     if (pathLength == 2) {
       String firstPath = generatePath(querySequence, 0);
       String secondPath = generatePath(querySequence, 1);
-
       return "Select (count(*) as ?c) where {select distinct ?s ?o {\n" + firstPath + " .\n"
           + secondPath + " .\n" + predicateTriple + "\n" + "}}\n";
     }

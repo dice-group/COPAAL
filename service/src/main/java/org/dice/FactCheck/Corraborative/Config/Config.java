@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 /**
  * @author Daniel Gerber <dgerber@informatik.uni-leipzig.de>
  * @author Farshad Afshari farshad.afshari@uni-paderborn.de
- *     <p>SEP2020 Farshad remove redundant methods and add serviceURLResolve
+ *         <p>
+ *         SEP2020 Farshad remove redundant methods and add serviceURLResolve
  */
 @Component
 public class Config {
@@ -19,6 +20,9 @@ public class Config {
   @Value("${info.service.url.wikidata}")
   private String serviceURLWikiData;
 
+  @Value("${ontology.uri}")
+  private String ontologyURI;
+
   public String serviceURLResolve(PathGeneratorType pathGeneratorType) throws ParseException {
     switch (pathGeneratorType) {
       case defaultPathGenerator:
@@ -27,5 +31,9 @@ public class Config {
         return serviceURLWikiData;
     }
     throw new ParseException("Can not resolve the SPARQL server");
+  }
+
+  public String GetOntologyURI() {
+    return ontologyURI;
   }
 }
