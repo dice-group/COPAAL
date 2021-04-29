@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
 import org.dice.FactCheck.Corraborative.sum.ScoreSummarist;
 import org.dice_research.fc.IFactChecker;
 import org.dice_research.fc.data.FactCheckingResult;
@@ -58,7 +60,8 @@ public class PathBasedFactChecker implements IFactChecker {
   @Override
   public FactCheckingResult check(Resource subject, Property predicate, Resource object) {
     // Preprocess the data
-    Predicate preparedPredicate = factPreprocessor.generatePredicate(predicate);
+    Statement fact = ResourceFactory.createStatement(subject, predicate, object);
+    Predicate preparedPredicate = factPreprocessor.generatePredicate(fact);
 
     // Get a list of potential paths
     Collection<QRestrictedPath> paths = pathSearcher.search(subject, preparedPredicate, object);

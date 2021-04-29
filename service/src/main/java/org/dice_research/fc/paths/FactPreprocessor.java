@@ -1,6 +1,6 @@
 package org.dice_research.fc.paths;
 
-import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Statement;
 import org.dice_research.fc.data.Predicate;
 
 /**
@@ -16,9 +16,9 @@ public interface FactPreprocessor {
    * Generates an internal representation of the given predicate, i.e., a {@link Predicate}
    * instance.
    * 
-   * @param predicate the predicate as {@link Property}
+   * @param triple the fact we want to generate the predicate for
    * @return the prepared {@link Predicate} instance
    */
-  Predicate generatePredicate(Property predicate);
+  Predicate generatePredicate(Statement triple);
 
 }

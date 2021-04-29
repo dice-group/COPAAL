@@ -20,12 +20,12 @@ public class CountRetrieverTest {
     QueryExecutionFactory qef = new LocalQueryExecutioner(model);
     Property property = ResourceFactory.createProperty("");
     
-    FactPreprocessor predFactory = new PredicateFactory(qef, false);
-    Predicate predicate = predFactory.generatePredicate(property);
+    FactPreprocessor predFactory = new PredicateFactory(qef);
+    //Predicate predicate = predFactory.generatePredicate(property);
 
     
     ICountRetriever countRetriever = new ApproximatingCountRetriever(qef);
-    countRetriever.countPredicateInstances(predicate);
+    //countRetriever.countPredicateInstances(predicate);
 
   }
 

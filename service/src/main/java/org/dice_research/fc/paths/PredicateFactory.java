@@ -10,6 +10,8 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
@@ -18,47 +20,48 @@ import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
 public class PredicateFactory implements FactPreprocessor {
 
   private QueryExecutionFactory executioner;
-  private boolean vTy;
 
-  public PredicateFactory(QueryExecutionFactory qef, boolean vTy) {
+  public PredicateFactory(QueryExecutionFactory qef) {
     this.executioner = qef;
-    this.vTy = vTy;
   }
 
   @Override
-  public Predicate generatePredicate(Property predicate) {
-    Set<String> dTypes = getDomain(predicate);
-    Set<String> rTypes = getRange(predicate);
+  public Predicate generatePredicate(Statement triple) {
+    Set<String> dTypes = getDomain(triple);
+    Set<String> rTypes = getRange(triple);
 
     ITypeRestriction domain = new TypeBasedRestriction(dTypes);
     ITypeRestriction range = new TypeBasedRestriction(rTypes);
-    return new Predicate(predicate, domain, range);
+
+    return new Predicate(triple.getPredicate(), domain, range);
   }
 
   /**
-   * Retrieves the domain of a given predicate
+   * Retrieves the domain of a given predicate or the subject types if empty
    * 
-   * @param predicate
+   * @param triple
    * @return the domain as a set of URIs
    */
-  public Set<String> getDomain(Property predicate) {
-    if (vTy) {
-      return new HashSet<String>();
+  public Set<String> getDomain(Statement triple) {
+    Set<String> sTypes = getObjects(triple.getPredicate(), RDFS.domain);
+    if (sTypes.isEmpty()) {
+      sTypes = getObjects(triple.getSubject(), RDF.type);
     }
-    return getObjects(predicate, RDFS.domain);
+    return sTypes;
   }
 
   /**
-   * Retrieves the range of a given predicate
+   * Retrieves the range of a given predicate or the object types if empty
    * 
-   * @param predicate
+   * @param triple
    * @return the range as a set of URIs
    */
-  public Set<String> getRange(Property predicate) {
-    if (vTy) {
-      return new HashSet<String>();
+  public Set<String> getRange(Statement triple) {
+    Set<String> oTypes = getObjects(triple.getPredicate(), RDFS.domain);
+    if (oTypes.isEmpty()) {
+      oTypes = getObjects(triple.getSubject(), RDF.type);
     }
-    return getObjects(predicate, RDFS.range);
+    return oTypes;
   }
 
   /**
@@ -72,7 +75,7 @@ public class PredicateFactory implements FactPreprocessor {
     Set<String> types = new HashSet<String>();
     SelectBuilder selectBuilder = new SelectBuilder();
     selectBuilder.addWhere(subject, predicate, NodeFactory.createVariable("x"));
-    
+
     Query query = selectBuilder.build();
     try (QueryExecution queryExecution = executioner.createQueryExecution(query)) {
       ResultSet resultSet = queryExecution.execSelect();
