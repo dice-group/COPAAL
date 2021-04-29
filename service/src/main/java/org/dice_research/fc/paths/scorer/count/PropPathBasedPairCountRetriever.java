@@ -28,9 +28,9 @@ public class PropPathBasedPairCountRetriever extends AbstractSPARQLBasedCountRet
     queryBuilder.append(") WHERE { ");
     domainRestriction.addRestrictionToQuery("s", queryBuilder);
     rangeRestriction.addRestrictionToQuery("o", queryBuilder);
-    queryBuilder.append(" ?s <");
+    queryBuilder.append(" ?s ");
     addAsPropertyPath(path, queryBuilder);
-    queryBuilder.append("> ?o }");
+    queryBuilder.append(" ?o }");
     return executeCountQuery(queryBuilder);
   }
 

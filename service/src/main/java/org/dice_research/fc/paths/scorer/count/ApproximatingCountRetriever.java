@@ -31,7 +31,7 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
     predicate.getRange().addRestrictionToQuery(OBJECT_VARIABLE_NAME, queryBuilder);
     queryBuilder.append(" ?" + SUBJECT_VARIABLE_NAME + " ");
     addAsPropertyPath(path, queryBuilder);
-    queryBuilder.append("> ?" + OBJECT_VARIABLE_NAME + " }");
+    queryBuilder.append(" ?" + OBJECT_VARIABLE_NAME + " }");
     return executeCountQuery(queryBuilder);
   }
 
@@ -57,11 +57,11 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
       object = firstVariable;
       subject = secondVariable;
     }
-    builder.append(subject);
+    builder.append("?").append(subject);
     builder.append(" <");
     builder.append(pathElement.getFirst().getURI());
     builder.append("> ");
-    builder.append(object);
+    builder.append("?").append(object);
     builder.append(" .\n");
   }
 
@@ -82,7 +82,7 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
       ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction) {
     StringBuilder queryBuilder = new StringBuilder();
     // This is the first property in the list
-    queryBuilder.append("SELECT (coalesce(sum( ?" + INTERMEDIATE_COUNT_VARIABLE_NAME);
+    queryBuilder.append("SELECT (coalesce(sum(?" + INTERMEDIATE_COUNT_VARIABLE_NAME);
     queryBuilder.append("0*");
     if (path.length() > 2) {
       queryBuilder.append("?").append(INTERMEDIATE_COUNT2_VARIABLE_NAME);
