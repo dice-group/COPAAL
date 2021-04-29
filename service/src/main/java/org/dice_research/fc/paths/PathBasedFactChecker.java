@@ -48,6 +48,23 @@ public class PathBasedFactChecker implements IFactChecker {
    * The class that is used to summarize the scores of the single paths to create a final score.
    */
   protected ScoreSummarist summarist;
+  
+  /**
+   * Constructor.
+   * 
+   * @param factPreprocessor The preprocessor used to prepare the given fact.
+   * @param pathSearcher The class that is used to search for (corroborative) paths.
+   * @param pathScorer The path scorer that is used to score the single paths.
+   * @param summarist The class that is used to summarize the scores of the single paths to create a final score.
+   */
+  public PathBasedFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
+      IPathScorer pathScorer, ScoreSummarist summarist) {
+    super();
+    this.factPreprocessor = factPreprocessor;
+    this.pathSearcher = pathSearcher;
+    this.pathScorer = pathScorer;
+    this.summarist = summarist;
+  }
 
   /**
    * Checks the given fact.
@@ -83,5 +100,33 @@ public class PathBasedFactChecker implements IFactChecker {
     result.setVeracityValue(veracity);
     result.setPiecesOfEvidence(paths);
     return result;
+  }
+
+  /**
+   * @return the pathFilter
+   */
+  public IPathFilter getPathFilter() {
+    return pathFilter;
+  }
+
+  /**
+   * @param pathFilter the pathFilter to set
+   */
+  public void setPathFilter(IPathFilter pathFilter) {
+    this.pathFilter = pathFilter;
+  }
+
+  /**
+   * @return the scoreFilter
+   */
+  public IScoreFilter getScoreFilter() {
+    return scoreFilter;
+  }
+
+  /**
+   * @param scoreFilter the scoreFilter to set
+   */
+  public void setScoreFilter(IScoreFilter scoreFilter) {
+    this.scoreFilter = scoreFilter;
   }
 }

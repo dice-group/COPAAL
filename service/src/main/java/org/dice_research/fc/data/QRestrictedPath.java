@@ -1,5 +1,6 @@
 package org.dice_research.fc.data;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.util.Pair;
 import org.apache.jena.rdf.model.Property;
@@ -30,8 +31,16 @@ public class QRestrictedPath implements IPieceOfEvidence {
    */
   private List<Pair<Property, Boolean>> pathElements;
 
+  /**
+   * Constructor.
+   */
   public QRestrictedPath() {}
 
+  /**
+   * Constructor.
+   * 
+   * @param The elements of this path as {@link Pair}s
+   */
   public QRestrictedPath(List<Pair<Property, Boolean>> pathElements) {
     super();
     this.pathElements = pathElements;
@@ -91,5 +100,37 @@ public class QRestrictedPath implements IPieceOfEvidence {
     } else {
       return 0;
     }
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append("[");
+    boolean first = true;
+    for (Pair<Property, Boolean> element : pathElements) {
+      if (first) {
+        first = false;
+      } else {
+        builder.append(",");
+      }
+      if (!element.getSecond()) {
+        builder.append("^");
+      }
+      builder.append(element.getFirst().getURI());
+    }
+    builder.append("]");
+    return builder.toString();
+  }
+
+  public static QRestrictedPath create(Property properties[], boolean direction[]) {
+    if (properties.length != direction.length) {
+      throw new IllegalArgumentException("The length of the properties array (" + properties.length
+          + ") has to match the length of the direction array (" + direction.length + ").");
+    }
+    List<Pair<Property, Boolean>> pathElements = new ArrayList<>(properties.length);
+    for (int i = 0; i < properties.length; ++i) {
+      pathElements.add(new Pair<Property, Boolean>(properties[i], direction[i]));
+    }
+    return new QRestrictedPath(pathElements);
   }
 }

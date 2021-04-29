@@ -41,6 +41,11 @@ public class NPMIBasedScorer implements IPathScorer {
    * The class used to derive the counts
    */
   protected ICountRetriever countRetriever;
+  
+  public NPMIBasedScorer(ICountRetriever countRetriever) {
+    super();
+    this.countRetriever = countRetriever;
+  }
 
   @Override
   public QRestrictedPath score(Resource subject, Predicate predicate, Resource Object,
@@ -86,6 +91,104 @@ public class NPMIBasedScorer implements IPathScorer {
     } else {
       return npmi;
     }
+  }
+
+  /**
+   * @return the maxResult
+   */
+  public double getMaxResult() {
+    return maxResult;
+  }
+
+  /**
+   * @param maxResult the maxResult to set
+   */
+  public void setMaxResult(double maxResult) {
+    this.maxResult = maxResult;
+  }
+
+  /**
+   * @return the minResult
+   */
+  public double getMinResult() {
+    return minResult;
+  }
+
+  /**
+   * @param minResult the minResult to set
+   */
+  public void setMinResult(double minResult) {
+    this.minResult = minResult;
+  }
+
+  /**
+   * @return the pathDoesNotExistResult
+   */
+  public double getPathDoesNotExistResult() {
+    return pathDoesNotExistResult;
+  }
+
+  /**
+   * @param pathDoesNotExistResult the pathDoesNotExistResult to set
+   */
+  public void setPathDoesNotExistResult(double pathDoesNotExistResult) {
+    this.pathDoesNotExistResult = pathDoesNotExistResult;
+  }
+
+  /**
+   * @return the propertyDoesNotExistResult
+   */
+  public double getPropertyDoesNotExistResult() {
+    return propertyDoesNotExistResult;
+  }
+
+  /**
+   * @param propertyDoesNotExistResult the propertyDoesNotExistResult to set
+   */
+  public void setPropertyDoesNotExistResult(double propertyDoesNotExistResult) {
+    this.propertyDoesNotExistResult = propertyDoesNotExistResult;
+  }
+
+  /**
+   * @return the noCooccurrenceResult
+   */
+  public double getNoCooccurrenceResult() {
+    return noCooccurrenceResult;
+  }
+
+  /**
+   * @param noCooccurrenceResult the noCooccurrenceResult to set
+   */
+  public void setNoCooccurrenceResult(double noCooccurrenceResult) {
+    this.noCooccurrenceResult = noCooccurrenceResult;
+  }
+
+  /**
+   * @return the typesAreEmptyResult
+   */
+  public double getTypesAreEmptyResult() {
+    return typesAreEmptyResult;
+  }
+
+  /**
+   * @param typesAreEmptyResult the typesAreEmptyResult to set
+   */
+  public void setTypesAreEmptyResult(double typesAreEmptyResult) {
+    this.typesAreEmptyResult = typesAreEmptyResult;
+  }
+
+  /**
+   * @return the countRetriever
+   */
+  public ICountRetriever getCountRetriever() {
+    return countRetriever;
+  }
+
+  /**
+   * @param countRetriever the countRetriever to set
+   */
+  public void setCountRetriever(ICountRetriever countRetriever) {
+    this.countRetriever = countRetriever;
   }
 
 }

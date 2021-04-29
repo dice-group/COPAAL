@@ -8,7 +8,8 @@ package org.dice_research.fc.paths.scorer;
  */
 public class PNPMIBasedScorer extends NPMIBasedScorer {
 
-  public PNPMIBasedScorer() {
+  public PNPMIBasedScorer(ICountRetriever countRetriever) {
+    super(countRetriever);
     minResult = 0;
   }
   
