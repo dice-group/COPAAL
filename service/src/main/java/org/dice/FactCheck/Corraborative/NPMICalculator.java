@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 public class NPMICalculator implements Callable<Result> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(NPMICalculator.class);
+  int timeOut = 5000;
 
   private final String path;
   private final String intermediateNodes;
@@ -236,8 +237,12 @@ public class NPMICalculator implements Callable<Result> {
 
     double count_Path_Occurrence = 0;
     try (QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);) {
+      pathQueryExecution.setTimeout(timeOut, timeOut);
       count_Path_Occurrence =
           pathQueryExecution.execSelect().next().get("?c").asLiteral().getDouble();
+    } catch (Exception ex) {
+      LOGGER.info(ex.getMessage());
+      count_Path_Occurrence = 0;
     }
 
     LOGGER.debug("---Query is : " + pathQueryString + " it tooks "
@@ -253,9 +258,12 @@ public class NPMICalculator implements Callable<Result> {
     double count_path_Predicate_Occurrence = 0;
     try (QueryExecution predicatePathQueryExecution =
         queryExecutioner.getQueryExecution(pathPredicateQuery);) {
+      predicatePathQueryExecution.setTimeout(timeOut, timeOut);
       count_path_Predicate_Occurrence =
           predicatePathQueryExecution.execSelect().next().get("?c").asLiteral().getDouble();
-
+    } catch (Exception ex) {
+      LOGGER.info(ex.getMessage());
+      count_path_Predicate_Occurrence = 0;
     }
 
     LOGGER.debug("---Query is : " + pathPredicateQuery + " it tooks "
@@ -283,8 +291,14 @@ public class NPMICalculator implements Callable<Result> {
 
     double count_Path_Occurrence = 0;
     try (QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);) {
+      pathQueryExecution.setTimeout(timeOut, timeOut);
+
+      LOGGER.info("timeOut : " + pathQueryExecution.getTimeout2());
       count_Path_Occurrence =
           pathQueryExecution.execSelect().next().get("?c").asLiteral().getDouble();
+    } catch (Exception ex) {
+      LOGGER.info(ex.getMessage());
+      count_Path_Occurrence = 0;
     }
 
     LOGGER.info("count_Path_Occurrence : " + count_Path_Occurrence);
@@ -300,8 +314,12 @@ public class NPMICalculator implements Callable<Result> {
     double count_path_Predicate_Occurrence = 0;
     try (QueryExecution predicatePathQueryExecution =
         queryExecutioner.getQueryExecution(pathPredicateQuery);) {
+      predicatePathQueryExecution.setTimeout(timeOut, timeOut);
       count_path_Predicate_Occurrence =
           predicatePathQueryExecution.execSelect().next().get("?c").asLiteral().getDouble();
+    } catch (Exception ex) {
+      LOGGER.info(ex.getMessage());
+      count_path_Predicate_Occurrence = 0;
     }
 
     LOGGER.info("count_path_Predicate_Occurrence : " + count_path_Predicate_Occurrence);

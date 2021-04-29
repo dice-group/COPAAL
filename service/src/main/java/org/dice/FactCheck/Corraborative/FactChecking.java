@@ -212,23 +212,30 @@ public class FactChecking {
     stepTime = logElapsedTimeThisStep("path scorring", stepTime);
     LOGGER.info("there are " + pmiCallables.size() + " pmiCallables ");
     // for experiments, use run in parallel
-    try {
-      ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
+    /*
+     * try { ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
+     * 
+     * for (Future<Result> result : executor.invokeAll(pmiCallables)) { if (result != null) {
+     * LOGGER.info("elapsed time for " + result.get().path + " is " + result.get().elapsedTime /
+     * 1_000_000_000); } if (result.get().hasLegalScore) { results.add(result.get()); } }
+     * 
+     * executor.shutdown(); } catch (Exception e) { e.printStackTrace(); }
+     */
 
-      for (Future<Result> result : executor.invokeAll(pmiCallables)) {
-        if (result != null) {
-          LOGGER.info("elapsed time for " + result.get().path + " is "
-              + result.get().elapsedTime / 1_000_000_000);
-        }
-        if (result.get().hasLegalScore) {
-          results.add(result.get());
-        }
+    for (NPMICalculator n : pmiCallables) {
+      Result r;
+      try {
+        r = n.call();
+        if (r != null)
+          results.add(r);
+        LOGGER.info(r.toString());
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
-
-      executor.shutdown();
-    } catch (Exception e) {
-      e.printStackTrace();
     }
+
+
 
     stepTime = logElapsedTimeThisStep("path PMICalculation", stepTime);
 
