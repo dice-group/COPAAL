@@ -22,9 +22,9 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
   @Override
   public int countCooccurrences(Predicate predicate, QRestrictedPath path) {
     StringBuilder queryBuilder = new StringBuilder();
-    queryBuilder.append("SELECT count(*) AS ?");
+    queryBuilder.append("SELECT (count(*) AS ?");
     queryBuilder.append(COUNT_VARIABLE_NAME);
-    queryBuilder.append(" WHERE { ?" + SUBJECT_VARIABLE_NAME + " <");
+    queryBuilder.append(") WHERE { ?" + SUBJECT_VARIABLE_NAME + " <");
     queryBuilder.append(predicate.getProperty().getURI());
     queryBuilder.append("> ?" + OBJECT_VARIABLE_NAME + " . ");
     predicate.getDomain().addRestrictionToQuery(SUBJECT_VARIABLE_NAME, queryBuilder);
@@ -68,9 +68,9 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
   private StringBuilder createSinglePropertyQuery(QRestrictedPath path,
       ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction) {
     StringBuilder queryBuilder = new StringBuilder();
-    queryBuilder.append("SELECT count(*) AS ?");
+    queryBuilder.append("SELECT (count(*) AS ?");
     queryBuilder.append(COUNT_VARIABLE_NAME);
-    queryBuilder.append(" WHERE {");
+    queryBuilder.append(") WHERE {");
     addTriplePattern(path.getPathElements().get(0), "s", "o", queryBuilder);
     domainRestriction.addRestrictionToQuery("s", queryBuilder);
     rangeRestriction.addRestrictionToQuery("o", queryBuilder);
@@ -82,14 +82,14 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
       ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction) {
     StringBuilder queryBuilder = new StringBuilder();
     // This is the first property in the list
-    queryBuilder.append("SELECT (coalesce(sum(" + INTERMEDIATE_COUNT_VARIABLE_NAME);
+    queryBuilder.append("SELECT (coalesce(sum( ?" + INTERMEDIATE_COUNT_VARIABLE_NAME);
     queryBuilder.append("0*");
     if (path.length() > 2) {
-      queryBuilder.append(INTERMEDIATE_COUNT2_VARIABLE_NAME);
+      queryBuilder.append("?").append(INTERMEDIATE_COUNT2_VARIABLE_NAME);
     } else {
-      queryBuilder.append(INTERMEDIATE_COUNT_VARIABLE_NAME);
+      queryBuilder.append("?").append(INTERMEDIATE_COUNT_VARIABLE_NAME);
     }
-    queryBuilder.append("1), 0) AS " + COUNT_VARIABLE_NAME + ") WHERE { \n");
+    queryBuilder.append("1), 0) AS ?" + COUNT_VARIABLE_NAME + ") WHERE { \n");
     // Recursion
     createPropertyQuery_Recursion(0, path, domainRestriction, rangeRestriction, queryBuilder);
     queryBuilder.append("}");
@@ -101,9 +101,9 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
       StringBuilder queryBuilder) {
     if (propId == path.length() - 1) {
       // This is the last property in the list --> recursion ends
-      queryBuilder.append("Select (count(*) as " + INTERMEDIATE_COUNT_VARIABLE_NAME);
+      queryBuilder.append("Select (count(*) as ?" + INTERMEDIATE_COUNT_VARIABLE_NAME);
       queryBuilder.append(propId);
-      queryBuilder.append(") " + INTERMEDIATE_NODE_VARIABLE_NAME);
+      queryBuilder.append(") ?" + INTERMEDIATE_NODE_VARIABLE_NAME);
       queryBuilder.append(propId);
       queryBuilder.append(" where { \n");
       // Use the subject variable
@@ -111,32 +111,32 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
           OBJECT_VARIABLE_NAME, queryBuilder);
       // Add subject types
       rangeRestriction.addRestrictionToQuery(OBJECT_VARIABLE_NAME, queryBuilder);
-      queryBuilder.append("} group by " + INTERMEDIATE_NODE_VARIABLE_NAME);
+      queryBuilder.append("} group by ?" + INTERMEDIATE_NODE_VARIABLE_NAME);
       queryBuilder.append(propId);
       queryBuilder.append('\n');
     } else {
       // Create first sub select which selects the subject and it's types
-      queryBuilder.append("Select (count(*) as " + INTERMEDIATE_COUNT_VARIABLE_NAME);
+      queryBuilder.append("Select (count(*) as ?" + INTERMEDIATE_COUNT_VARIABLE_NAME);
       queryBuilder.append(propId);
-      queryBuilder.append(") " + INTERMEDIATE_NODE_VARIABLE_NAME);
+      queryBuilder.append(") ?" + INTERMEDIATE_NODE_VARIABLE_NAME);
       queryBuilder.append(propId);
 
       // If we are at the position before the last position
       if (propId == path.length() - 2) {
         // We simply select the count from the last position
-        queryBuilder.append(" " + INTERMEDIATE_COUNT_VARIABLE_NAME);
+        queryBuilder.append(" ?" + INTERMEDIATE_COUNT_VARIABLE_NAME);
         queryBuilder.append(propId + 1);
       } else {
         // Calculate the product of the previous counts
-        queryBuilder.append(" (" + INTERMEDIATE_COUNT_VARIABLE_NAME);
+        queryBuilder.append(" ( ?" + INTERMEDIATE_COUNT_VARIABLE_NAME);
         queryBuilder.append(propId + 1);
         if (propId == path.length() - 3) {
-          queryBuilder.append("*sum(" + INTERMEDIATE_COUNT_VARIABLE_NAME);
+          queryBuilder.append("*sum( ?" + INTERMEDIATE_COUNT_VARIABLE_NAME);
         } else {
-          queryBuilder.append("*sum(" + INTERMEDIATE_COUNT2_VARIABLE_NAME);
+          queryBuilder.append("*sum( ?" + INTERMEDIATE_COUNT2_VARIABLE_NAME);
         }
         queryBuilder.append(propId + 2);
-        queryBuilder.append(") as " + INTERMEDIATE_COUNT2_VARIABLE_NAME);
+        queryBuilder.append(") as ?" + INTERMEDIATE_COUNT2_VARIABLE_NAME);
         queryBuilder.append(propId + 1);
         queryBuilder.append(")");
       }
@@ -154,9 +154,9 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
           queryBuilder);
       queryBuilder.append("}\n");
       // Finalize sub select of this recursion step
-      queryBuilder.append("} group by " + INTERMEDIATE_NODE_VARIABLE_NAME);
+      queryBuilder.append("} group by ?" + INTERMEDIATE_NODE_VARIABLE_NAME);
       queryBuilder.append(propId);
-      queryBuilder.append(" " + INTERMEDIATE_COUNT_VARIABLE_NAME);
+      queryBuilder.append(" ?" + INTERMEDIATE_COUNT_VARIABLE_NAME);
       queryBuilder.append(propId + 1);
       queryBuilder.append('\n');
     }

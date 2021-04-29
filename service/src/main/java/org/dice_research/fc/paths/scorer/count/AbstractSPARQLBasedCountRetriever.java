@@ -7,7 +7,6 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Resource;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
@@ -31,16 +30,16 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
   @Override
   public int countPredicateInstances(Predicate predicate) {
     StringBuilder queryBuilder = new StringBuilder();
-    queryBuilder.append("SELECT count(DISTINCT *) AS ?");
+    queryBuilder.append("SELECT (count(DISTINCT *) AS ?");
     queryBuilder.append(COUNT_VARIABLE_NAME);
-    queryBuilder.append(" WHERE { ?s <");
+    queryBuilder.append(") WHERE { ?s <");
     queryBuilder.append(predicate.getProperty().getURI());
     queryBuilder.append("> ?o }");
     return executeCountQuery(queryBuilder);
   }
 
   @Override
-  public int deriveMaxCount(Resource subject, Predicate predicate, Resource Object) {
+  public int deriveMaxCount(Predicate predicate) {
     return countTypeInstances(predicate.getDomain()) * countTypeInstances(predicate.getRange());
   }
 
@@ -71,10 +70,10 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
 
   protected int countTypeInstances(ITypeRestriction restriction) {
     StringBuilder queryBuilder = new StringBuilder();
-    queryBuilder.append("SELECT count(DISTINCT ?s) AS ?");
+    queryBuilder.append("SELECT (count(DISTINCT ?s) AS ?");
     queryBuilder.append(COUNT_VARIABLE_NAME);
-    queryBuilder.append(" WHERE { ");
-    restriction.addRestrictionToQuery("?s", queryBuilder);
+    queryBuilder.append(") WHERE { ");
+    restriction.addRestrictionToQuery("s", queryBuilder);
     queryBuilder.append(" }");
     return executeCountQuery(queryBuilder);
   }

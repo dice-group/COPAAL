@@ -64,7 +64,7 @@ public class NPMIBasedScorer implements IPathScorer {
     if (cooccurrenceCounts == 0) {
       return noCooccurrenceResult;
     }
-    int maxCount = countRetriever.deriveMaxCount(subject, predicate, object);
+    int maxCount = countRetriever.deriveMaxCount(predicate);
     if (pathCounts == 0) {
       throw new IllegalStateException("The maximum count is 0. That is not supported.");
     }

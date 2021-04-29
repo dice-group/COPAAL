@@ -1,6 +1,5 @@
 package org.dice_research.fc.paths.scorer;
 
-import org.apache.jena.rdf.model.Resource;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
@@ -47,6 +46,6 @@ public interface ICountRetriever {
    * @param predicate the predicate for which the counts should be normalized
    * @return a maximum count
    */
-  int deriveMaxCount(Resource subject, Predicate predicate, Resource Object);
+  int deriveMaxCount(Predicate predicate);
 
 }
