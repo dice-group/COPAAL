@@ -1,0 +1,154 @@
+{
+	"info": {
+		"_postman_id": "5cd23e09-2c29-4c52-9376-8523f37e733a",
+		"name": "COPAAL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "fact check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/v1/validate?subject=http://dbpedia.org/resource/Bill_Gates&object=http://dbpedia.org/resource/United_States&property=http://dbpedia.org/ontology/nationality",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"validate"
+					],
+					"query": [
+						{
+							"key": "subject",
+							"value": "http://dbpedia.org/resource/Bill_Gates"
+						},
+						{
+							"key": "object",
+							"value": "http://dbpedia.org/resource/United_States"
+						},
+						{
+							"key": "property",
+							"value": "http://dbpedia.org/ontology/nationality"
+						},
+						{
+							"key": "isVirtualType",
+							"value": "False",
+							"disabled": true
+						},
+						{
+							"key": "pathlength",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "verbalize",
+							"value": "False",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "test conection",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/v1/test",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fact check bill",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/v1/validate?subject=http://www.wikidata.org/entity/Q76&object=http://www.wikidata.org/entity/Q61&property=http://www.wikidata.org/prop/direct/P551",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"validate"
+					],
+					"query": [
+						{
+							"key": "subject",
+							"value": "http://www.wikidata.org/entity/Q76"
+						},
+						{
+							"key": "object",
+							"value": "http://www.wikidata.org/entity/Q61"
+						},
+						{
+							"key": "property",
+							"value": "http://www.wikidata.org/prop/direct/P551"
+						},
+						{
+							"key": "isVirtualType",
+							"value": "False",
+							"disabled": true
+						},
+						{
+							"key": "pathlength",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "verbalize",
+							"value": "False",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://copaal.dice-research.org/service"
+		},
+		{
+			"key": "host2",
+			"value": "http://localhost:8080"
+		}
+	]
+}
