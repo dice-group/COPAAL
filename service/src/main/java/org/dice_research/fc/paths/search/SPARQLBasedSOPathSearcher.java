@@ -17,6 +17,8 @@ import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.IPathSearcher;
 import org.dice_research.fc.sparql.filter.IRIFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is the path searcher of COPAAL as described in the paper of Syed et al. (2019). It is
@@ -26,6 +28,8 @@ import org.dice_research.fc.sparql.filter.IRIFilter;
  *
  */
 public class SPARQLBasedSOPathSearcher implements IPathSearcher {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(SPARQLBasedSOPathSearcher.class);
 
   /**
    * The variable name of the properties (an ID will be added to distinguish the properties of the
@@ -92,7 +96,11 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
     for (int i = 2; i <= maximumLength; ++i) {
       generateSearchQueries(i, subject, predicate, object, queries);
     }
+    LOGGER.info("Generated {} queries for the triple ({}, {}, {})", queries.size(), subject.getURI(),
+        predicate.getProperty().getURI(), object.getURI());
     List<QRestrictedPath> paths = searchPaths(queries);
+    LOGGER.info("Found {} paths for the triple ({}, {}, {})", paths.size(), subject.getURI(),
+        predicate.getProperty().getURI(), object.getURI());
     return paths;
   }
 
@@ -199,7 +207,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
         : ("?" + INTERMEDIATE_NODE_VARIABLE_NAME + (step - 1));
     String oVariable = step == length ? ("<" + object.getURI() + ">")
         : ("?" + INTERMEDIATE_NODE_VARIABLE_NAME + step);
-    
+
     // If this is not the first select, we need to start with a bracket
     if (step > 1) {
       localBuilder.append(" { ");
@@ -314,6 +322,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
       qe = qef.createQueryExecution(query.getQuery());
       directions = query.getDirections();
       rs = qe.execSelect();
+      int count = 0;
       while (rs.hasNext()) {
         qs = rs.next();
         // collect the properties of the path and their direction
@@ -324,7 +333,9 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
               directions.get(i)));
         }
         paths.add(new QRestrictedPath(pathElements));
+        ++count;
       }
+      LOGGER.info("Got {} paths from query \"{}\"", count, query.getQuery());
     }
     return paths;
   }
