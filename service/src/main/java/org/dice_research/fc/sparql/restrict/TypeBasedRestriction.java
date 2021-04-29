@@ -27,6 +27,7 @@ public class TypeBasedRestriction implements ITypeRestriction {
 
   public TypeBasedRestriction(Set<String> types, String typeIRI) {
     this.types = types;
+    this.typeIRI = typeIRI;
   }
 
   @Override

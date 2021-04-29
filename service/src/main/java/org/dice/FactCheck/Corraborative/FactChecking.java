@@ -28,6 +28,8 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.rdf.model.impl.StatementImpl;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
+import org.apache.jena.vocabulary.RDF;
+import org.apache.jena.vocabulary.RDFS;
 import org.dice.FactCheck.Corraborative.Config.Config;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGenerator;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory;
@@ -42,10 +44,6 @@ import org.dice.FactCheck.Corraborative.filter.npmi.LowCountBasedNPMIFilter;
 import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilter;
 import org.dice.FactCheck.Corraborative.sum.CubicMeanSummarist;
 import org.dice.FactCheck.Corraborative.sum.ScoreSummarist;
-import org.dice_research.fc.paths.ITypeEnquirer;
-import org.dice_research.fc.paths.InstanceCounter;
-import org.dice_research.fc.paths.ResourceTypeEnquirer;
-import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,25 +105,48 @@ public class FactChecking {
 		corroborativeGraph
 				.setInputTriple(new CorroborativeTriple(subject.toString(), property.toString(), object.toString()));
 
-		ResourceTypeEnquirer typeEnquirer = new ResourceTypeEnquirer(queryExecutioner, vTy, inputTriple);
-		Set<Node> subjectTypes = typeEnquirer.getSubjectTypes(inputTriple);
-		Set<Node> objectTypes = typeEnquirer.getObjectTypes(inputTriple);
+		int count_predicate_Triples =
+		        countPredicateOccurrances(
+		            NodeFactory.createVariable("s"), property, NodeFactory.createVariable("o"));
 
-		// TODO move this control elsewhere
-		if (!vTy) {
-			if (subjectTypes.isEmpty() || objectTypes.isEmpty()) {
-				corroborativeGraph.setPathList(new ArrayList<Path>());
-				corroborativeGraph.setGraphScore(-0.1);
-				LOGGER.info("subjectTypes is Empty or object Types is Empty");
-				return corroborativeGraph;
-			}
-		}
+		    // get Domain and Range info
+		    Set<Node> subjectTypes = null, objectTypes = null;
+		    if (!vTy) {
+		      subjectTypes = getTypeInformation(property, RDFS.domain);
+		      objectTypes = getTypeInformation(property, RDFS.range);
 
-		//TODO counts inside npmi should also be handled by instance counter
-		ICountRetriever instanceCounter = new InstanceCounter(queryExecutioner, vTy, inputTriple);
-		int subjectTriplesCount = instanceCounter.countTriplesSameTypeSubj(subjectTypes, property);
-		int objectTriplesCount = instanceCounter.countTriplesSameTypeObj(objectTypes, property);
-		int predicateTripleCount = instanceCounter.countPredicateInstances(property);
+		      // Check if the domain information is missing. If yes, then fallback to types of
+		      // subject
+		      if (subjectTypes.isEmpty()) {
+		        subjectTypes = getTypeInformation(subject.asResource(), RDF.type);
+		      }
+
+		      // Check if the range information is missing. If yes, then fallback to types of
+		      // object
+		      if (objectTypes.isEmpty()) {
+		        objectTypes = getTypeInformation(object.asResource(), RDF.type);
+		      }
+
+		      // if no type information is available for subject or object, simply return
+		      // score 0. We cannot verify fact.
+		      if (subjectTypes.isEmpty() || objectTypes.isEmpty()) {
+		        corroborativeGraph.setPathList(new ArrayList<Path>());
+		        corroborativeGraph.setGraphScore(0.0);
+		        LOGGER.info("subjectTypes is Empty or object Types is Empty");
+		        return corroborativeGraph;
+		      }
+		    }
+
+		    int count_subject_Triples, count_object_Triples;
+		    if (!vTy) {
+		      count_subject_Triples =
+		          countOccurrances(NodeFactory.createVariable("s"), RDF.type, subjectTypes);
+		      count_object_Triples =
+		          countOccurrances(NodeFactory.createVariable("s"), RDF.type, objectTypes);
+		    } else {
+		      count_subject_Triples = countSOOccurrances("count(distinct ?s)", property);
+		      count_object_Triples = countSOOccurrances("count(distinct ?o)", property);
+		    }
 
 		stepTime = logElapsedTimeThisStep("initiate", stepTime);
 
@@ -178,7 +199,7 @@ public class FactChecking {
 					String pathString = path.getKey();
 					String intermediateNodes = pathQuery.getIntermediateNodes().get(pathString);
 					NPMICalculator pc = new NPMICalculator(pathString, querySequence, inputTriple, intermediateNodes,
-							path.getValue(), predicateTripleCount, subjectTriplesCount, objectTriplesCount,
+							path.getValue(), count_predicate_Triples, count_subject_Triples, count_object_Triples,
 							subjectTypes, objectTypes, queryExecutioner, filter, vTy);
 					pmiCallables.add(pc);
 				}
