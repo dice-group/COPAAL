@@ -279,16 +279,23 @@ public class NPMICalculator implements Callable<Result> {
 
     Query pathQuery = QueryFactory.create(pathQueryString);
 
+    LOGGER.info(pathQuery.toString());
+
     double count_Path_Occurrence = 0;
     try (QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(pathQuery);) {
       count_Path_Occurrence =
           pathQueryExecution.execSelect().next().get("?c").asLiteral().getDouble();
     }
 
+    LOGGER.info("count_Path_Occurrence : " + count_Path_Occurrence);
+
+
     pathPredicateQueryString = generatePathPredicateQueryString_vTy(subjType, objType,
         querySequence, predicateTriple, pathLength);
 
     Query pathPredicateQuery = QueryFactory.create(pathPredicateQueryString);
+
+    LOGGER.info(pathPredicateQueryString.toString());
 
     double count_path_Predicate_Occurrence = 0;
     try (QueryExecution predicatePathQueryExecution =
@@ -296,6 +303,8 @@ public class NPMICalculator implements Callable<Result> {
       count_path_Predicate_Occurrence =
           predicatePathQueryExecution.execSelect().next().get("?c").asLiteral().getDouble();
     }
+
+    LOGGER.info("count_path_Predicate_Occurrence : " + count_path_Predicate_Occurrence);
 
     return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
   }

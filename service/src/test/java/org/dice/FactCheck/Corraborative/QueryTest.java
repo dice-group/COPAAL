@@ -9,6 +9,8 @@ import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.junit.Test;
 
 public class QueryTest {
+  // these tests may not passed
+
 
   @Test
   public void test() {
@@ -37,8 +39,9 @@ public class QueryTest {
   @Test
   public void MultiCalltest() {
 
-    for (int i = 0; i < 10; i++) {
-      double res = simpleCountQuery();
+    for (int i = 0; i < 1; i++) {
+      double res = timeConsumingQuery();
+      // double res = simpleCountQuery();
       assertTrue(res > 0);
     }
   }
@@ -63,5 +66,27 @@ public class QueryTest {
 
   }
 
+
+
+  public double timeConsumingQuery() {
+
+    QueryExecutioner queryExecutioner = new QueryExecutioner();
+    queryExecutioner.setServiceRequestURL("https://dbpedia.org/sparql");
+
+    String queryString = "SELECT  (count(*) AS ?c)\n" + "WHERE\n" + "  { SELECT DISTINCT  ?s ?o\n"
+        + "    WHERE\n" + "      { ?s  <http://dbpedia.org/ontology/birthPlace>  ?x1\n"
+        + "        FILTER EXISTS { ?s  <http://dbpedia.org/ontology/birthPlace>  _:b0 }\n"
+        + "        ?o  <http://dbpedia.org/ontology/country>  ?x1\n"
+        + "        FILTER EXISTS { _:b1  <http://dbpedia.org/ontology/birthPlace>  ?o }\n"
+        + "      }\n" + "  }";
+
+    Query query = QueryFactory.create(queryString);
+    try (QueryExecution pathQueryExecution = queryExecutioner.getQueryExecution(query);) {
+      ResultSet resSet = pathQueryExecution.execSelect();
+      double count_Path_Occurrence = resSet.next().get("?c").asLiteral().getDouble();
+      return count_Path_Occurrence;
+    }
+
+  }
 
 }

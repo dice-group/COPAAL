@@ -41,8 +41,8 @@ public class ConfigController {
 
   @GetMapping("/validate")
   public CorroborativeGraph validate(
-      @RequestParam(value = "verbalize", required = false, defaultValue = "false")
-          boolean verbalize,
+      @RequestParam(value = "verbalize", required = false,
+          defaultValue = "false") boolean verbalize,
       @RequestParam(value = "pathlength", required = false, defaultValue = "2") String pathLength,
       @RequestParam(value = "subject", required = true) String subject,
       @RequestParam(value = "object", required = true) String object,
@@ -51,9 +51,9 @@ public class ConfigController {
       @RequestParam(value = "virtualType", defaultValue = "false") boolean virtualType)
       throws InterruptedException, FileNotFoundException, ParseException {
     final Model model = ModelFactory.createDefaultModel();
-    Resource subjectURI = ResourceFactory.createResource(subject);
-    Resource objectURI = ResourceFactory.createResource(object);
-    Property propertyURI = ResourceFactory.createProperty(property);
+    Resource subjectURI = ResourceFactory.createResource(subject.replace("https", "http"));
+    Resource objectURI = ResourceFactory.createResource(object.replace("https", "http"));
+    Property propertyURI = ResourceFactory.createProperty(property.replace("https", "http"));
     Statement statement = ResourceFactory.createStatement(subjectURI, propertyURI, objectURI);
     model.add(statement);
 
@@ -64,19 +64,11 @@ public class ConfigController {
     // TODO: in future if we add more KB this section should change
     if (pathgeneratortype.toLowerCase().equals("wikidata")
         || property.toLowerCase().contains("wikidata")) {
-      return factChecking.checkFacts(
-          model,
-          Integer.parseInt(pathLength),
-          virtualType,
-          PathGeneratorType.wikidataPathGenerator,
-          verbalize);
+      return factChecking.checkFacts(model, Integer.parseInt(pathLength), virtualType,
+          PathGeneratorType.wikidataPathGenerator, verbalize);
     }
 
-    return factChecking.checkFacts(
-        model,
-        Integer.parseInt(pathLength),
-        virtualType,
-        PathGeneratorType.defaultPathGenerator,
-        verbalize);
+    return factChecking.checkFacts(model, Integer.parseInt(pathLength), virtualType,
+        PathGeneratorType.defaultPathGenerator, verbalize);
   }
 }

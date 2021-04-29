@@ -49,9 +49,8 @@ public class DefaultPathGenerator implements IPathGenerator {
 
     if (pathLength == 1) {
       ParameterizedSparqlString paraPathQuery = new ParameterizedSparqlString(
-          "SELECT ?p1 where " + "\n { \n" + queryBuilder + " . \n" + "FILTER(?p1 != <"
-              + input.getPredicate() + ">)" + "\n" + "FILTER(strstarts(str(?p1)," + "\""
-              + config.GetOntologyURI() + "\"" + ")) \n " + filters + "}");
+          "SELECT ?p1 where " + "\n { \n" + queryBuilder + " . \n" + "FILTER(strstarts(str(?p1),"
+              + "\"" + config.GetOntologyURI() + "\"" + ")) \n " + filters + "}");
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());
       try (QueryExecution qe = queryExecutioner.getQueryExecution(paraPathQuery.asQuery());) {
