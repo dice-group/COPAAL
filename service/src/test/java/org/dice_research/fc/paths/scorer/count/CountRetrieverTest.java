@@ -15,6 +15,7 @@ import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.FactPreprocessor;
 import org.dice_research.fc.paths.PredicateFactory;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class CountRetrieverTest {
@@ -34,24 +35,28 @@ public class CountRetrieverTest {
     Predicate predicate = predFactory.generatePredicate(triple);
 
     List<Pair<Property, Boolean>> pathElements = new ArrayList<Pair<Property, Boolean>>();
-    pathElements.add(new Pair<Property, Boolean>(ResourceFactory.createProperty("P1"), true));
-    pathElements.add(new Pair<Property, Boolean>(ResourceFactory.createProperty("P1"), true));
+    pathElements.add(new Pair<Property, Boolean>(ResourceFactory.createProperty("http://www.example.org/P1"), true));
+    pathElements.add(new Pair<Property, Boolean>(ResourceFactory.createProperty("http://www.example.org/P1"), true));
     QRestrictedPath path = new QRestrictedPath(pathElements);
 
     ICountRetriever appCountRetriever = new ApproximatingCountRetriever(qef);
     int predCount = appCountRetriever.countPredicateInstances(predicate);
     int maxCount = appCountRetriever.deriveMaxCount(predicate);
 
-    // ApproximatingCountRetriever implemented method
-    int pathCount =
-        appCountRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
+    int pathCount = appCountRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     int predPathCount = appCountRetriever.countCooccurrences(predicate, path);
 
+    // 
     ICountRetriever propPathRetriever = new PropPathBasedPairCountRetriever(qef);
-    int pathCount2 =
-        propPathRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
+    int pathCount2 = propPathRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     int predPathCount2 = propPathRetriever.countCooccurrences(predicate, path);
-
+    
+    Assert.assertEquals(predCount, 2);
+    Assert.assertEquals(maxCount, 9);// 3*3
+    Assert.assertEquals(pathCount, 1);
+    Assert.assertEquals(predPathCount, 0);
+    Assert.assertEquals(pathCount2, 1);
+    Assert.assertEquals(predPathCount2, 0);
 
   }
 }

@@ -11,3 +11,7 @@
 <http://www.example.org/P2> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.example.org/C2> .
 <http://www.example.org/P3> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.example.org/C2> .
 <http://www.example.org/P4> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.example.org/C1> .
+<http://www.example.org/A> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.example.org/C1> .
+<http://www.example.org/B> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.example.org/C1> .
+<http://www.example.org/C> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.example.org/C2> .
+<http://www.example.org/D> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.example.org/C1> .
