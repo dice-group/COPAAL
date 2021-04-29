@@ -189,7 +189,7 @@ public class FactChecking {
     }
 
     stepTime = logElapsedTimeThisStep("path discovery", stepTime);
-
+    LOGGER.info("there are " + pathQueries.size() + " path queries generate");
     // Path scoring
     Set<NPMICalculator> pmiCallables = new HashSet<NPMICalculator>();
     Set<Result> results = new HashSet<Result>();
@@ -210,7 +210,7 @@ public class FactChecking {
     }
 
     stepTime = logElapsedTimeThisStep("path scorring", stepTime);
-
+    LOGGER.info("there are " + pmiCallables.size() + " pmiCallables ");
     // for experiments, use run in parallel
     try {
       ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
@@ -231,6 +231,8 @@ public class FactChecking {
     }
 
     stepTime = logElapsedTimeThisStep("path PMICalculation", stepTime);
+
+    LOGGER.info("there are " + results.size() + " Path ");
 
     List<Path> pathList = results.parallelStream()
         .map(r -> defaultPathFactory.ReturnPath(verbalize).createPath(subject, object, r))
