@@ -319,6 +319,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
     BitSet directions;
     List<Pair<Property, Boolean>> pathElements;
     for (SearchQuery query : queries) {
+      LOGGER.info("Executing query \"{}\"", query.getQuery());
       qe = qef.createQueryExecution(query.getQuery());
       directions = query.getDirections();
       rs = qe.execSelect();
@@ -335,7 +336,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
         paths.add(new QRestrictedPath(pathElements));
         ++count;
       }
-      LOGGER.info("Got {} paths from query \"{}\"", count, query.getQuery());
+      LOGGER.info("Got {} paths from the query", count);
     }
     return paths;
   }

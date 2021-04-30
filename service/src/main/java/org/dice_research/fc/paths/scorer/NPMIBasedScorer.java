@@ -57,19 +57,19 @@ public class NPMIBasedScorer implements IPathScorer {
 
   public double calculateScore(Resource subject, Predicate predicate, Resource object,
       QRestrictedPath path) {
-    int pathCounts = countRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
+    long pathCounts = countRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     if (pathCounts == 0) {
       return pathDoesNotExistResult;
     }
-    int predicateCounts = countRetriever.countPredicateInstances(predicate);
+    long predicateCounts = countRetriever.countPredicateInstances(predicate);
     if (predicateCounts == 0) {
       return propertyDoesNotExistResult;
     }
-    int cooccurrenceCounts = countRetriever.countCooccurrences(predicate, path);
+    long cooccurrenceCounts = countRetriever.countCooccurrences(predicate, path);
     if (cooccurrenceCounts == 0) {
       return noCooccurrenceResult;
     }
-    int maxCount = countRetriever.deriveMaxCount(predicate);
+    long maxCount = countRetriever.deriveMaxCount(predicate);
     if (pathCounts == 0) {
       throw new IllegalStateException("The maximum count is 0. That is not supported.");
     }

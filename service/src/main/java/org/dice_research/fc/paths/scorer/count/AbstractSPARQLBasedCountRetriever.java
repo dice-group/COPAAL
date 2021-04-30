@@ -28,7 +28,7 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
   }
 
   @Override
-  public int countPredicateInstances(Predicate predicate) {
+  public long countPredicateInstances(Predicate predicate) {
     StringBuilder queryBuilder = new StringBuilder();
     queryBuilder.append("SELECT (count(DISTINCT *) AS ?");
     queryBuilder.append(COUNT_VARIABLE_NAME);
@@ -39,7 +39,7 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
   }
 
   @Override
-  public int deriveMaxCount(Predicate predicate) {
+  public long deriveMaxCount(Predicate predicate) {
     return countTypeInstances(predicate.getDomain()) * countTypeInstances(predicate.getRange());
   }
 
@@ -68,7 +68,7 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
     }
   }
 
-  protected int countTypeInstances(ITypeRestriction restriction) {
+  protected long countTypeInstances(ITypeRestriction restriction) {
     StringBuilder queryBuilder = new StringBuilder();
     queryBuilder.append("SELECT (count(DISTINCT ?s) AS ?");
     queryBuilder.append(COUNT_VARIABLE_NAME);
@@ -78,7 +78,7 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
     return executeCountQuery(queryBuilder);
   }
 
-  protected int executeCountQuery(StringBuilder queryBuilder) {
+  protected long executeCountQuery(StringBuilder queryBuilder) {
     QueryExecution qe = qef.createQueryExecution(queryBuilder.toString());
     ResultSet result = qe.execSelect();
     if (!result.hasNext()) {
@@ -91,6 +91,6 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
           "Got a query with more than 1 result line (\"{}\"). The remaining lines will be ignored.",
           queryBuilder);
     }
-    return count.getInt();
+    return count.getLong();
   }
 }

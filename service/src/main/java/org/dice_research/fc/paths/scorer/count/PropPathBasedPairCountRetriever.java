@@ -20,7 +20,7 @@ public class PropPathBasedPairCountRetriever extends AbstractSPARQLBasedCountRet
   }
 
   @Override
-  public int countPathInstances(QRestrictedPath path, ITypeRestriction domainRestriction,
+  public long countPathInstances(QRestrictedPath path, ITypeRestriction domainRestriction,
       ITypeRestriction rangeRestriction) {
     StringBuilder queryBuilder = new StringBuilder();
     queryBuilder.append("SELECT (count(DISTINCT *) AS ?");
@@ -35,7 +35,7 @@ public class PropPathBasedPairCountRetriever extends AbstractSPARQLBasedCountRet
   }
 
   @Override
-  public int countCooccurrences(Predicate predicate, QRestrictedPath path) {
+  public long countCooccurrences(Predicate predicate, QRestrictedPath path) {
     StringBuilder queryBuilder = new StringBuilder();
     queryBuilder.append("SELECT (count(DISTINCT *) AS ?");
     queryBuilder.append(COUNT_VARIABLE_NAME);

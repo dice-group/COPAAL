@@ -20,7 +20,7 @@ public interface ICountRetriever {
    * @param rangeRestriction the restriction for the range of the path
    * @return the count of the path in the reference graph
    */
-  int countPathInstances(QRestrictedPath path, ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction);
+  long countPathInstances(QRestrictedPath path, ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction);
 
   /**
    * Retrieves the count for the given predicate.
@@ -28,7 +28,7 @@ public interface ICountRetriever {
    * @param predicate the predicate that should be counted
    * @return the count of the path in the reference graph
    */
-  int countPredicateInstances(Predicate predicate);
+  long countPredicateInstances(Predicate predicate);
 
   /**
    * Retrieves the count for the co-occurrence of the given path and predicate
@@ -37,7 +37,7 @@ public interface ICountRetriever {
    * @param path the path for which the instances should be counted
    * @return the count of the path in the reference graph
    */
-  int countCooccurrences(Predicate predicate, QRestrictedPath path);
+  long countCooccurrences(Predicate predicate, QRestrictedPath path);
 
   /**
    * Derives a maximum count that can be used to create probabilities from the counts retrieved by
@@ -46,6 +46,6 @@ public interface ICountRetriever {
    * @param predicate the predicate for which the counts should be normalized
    * @return a maximum count
    */
-  int deriveMaxCount(Predicate predicate);
+  long deriveMaxCount(Predicate predicate);
 
 }

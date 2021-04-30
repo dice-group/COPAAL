@@ -20,7 +20,7 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
   }
 
   @Override
-  public int countCooccurrences(Predicate predicate, QRestrictedPath path) {
+  public long countCooccurrences(Predicate predicate, QRestrictedPath path) {
     StringBuilder queryBuilder = new StringBuilder();
     queryBuilder.append("SELECT (count(*) AS ?");
     queryBuilder.append(COUNT_VARIABLE_NAME);
@@ -36,7 +36,7 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
   }
 
   @Override
-  public int countPathInstances(QRestrictedPath path, ITypeRestriction domainRestriction,
+  public long countPathInstances(QRestrictedPath path, ITypeRestriction domainRestriction,
       ITypeRestriction rangeRestriction) {
     StringBuilder queryBuilder;
     if (path.length() == 1) {

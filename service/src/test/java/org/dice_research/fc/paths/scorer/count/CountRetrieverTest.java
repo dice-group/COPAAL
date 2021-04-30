@@ -40,15 +40,15 @@ public class CountRetrieverTest {
     QRestrictedPath path = new QRestrictedPath(pathElements);
 
     ICountRetriever appCountRetriever = new ApproximatingCountRetriever(qef);
-    int predCount = appCountRetriever.countPredicateInstances(predicate);
-    int maxCount = appCountRetriever.deriveMaxCount(predicate);
+    long predCount = appCountRetriever.countPredicateInstances(predicate);
+    long maxCount = appCountRetriever.deriveMaxCount(predicate);
 
-    int pathCount = appCountRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
-    int predPathCount = appCountRetriever.countCooccurrences(predicate, path);
+    long pathCount = appCountRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
+    long predPathCount = appCountRetriever.countCooccurrences(predicate, path);
 
     ICountRetriever propPathRetriever = new PropPathBasedPairCountRetriever(qef);
-    int pathCount2 = propPathRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
-    int predPathCount2 = propPathRetriever.countCooccurrences(predicate, path);
+    long pathCount2 = propPathRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
+    long predPathCount2 = propPathRetriever.countCooccurrences(predicate, path);
     
     Assert.assertEquals(predCount, 5);
     Assert.assertEquals(maxCount, 25);// 5*5
