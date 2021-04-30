@@ -96,8 +96,8 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
     for (int i = 2; i <= maximumLength; ++i) {
       generateSearchQueries(i, subject, predicate, object, queries);
     }
-    LOGGER.info("Generated {} queries for the triple ({}, {}, {})", queries.size(), subject.getURI(),
-        predicate.getProperty().getURI(), object.getURI());
+    LOGGER.info("Generated {} queries for the triple ({}, {}, {})", queries.size(),
+        subject.getURI(), predicate.getProperty().getURI(), object.getURI());
     List<QRestrictedPath> paths = searchPaths(queries);
     LOGGER.info("Found {} paths for the triple ({}, {}, {})", paths.size(), subject.getURI(),
         predicate.getProperty().getURI(), object.getURI());
@@ -313,30 +313,33 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
    */
   protected List<QRestrictedPath> searchPaths(List<SearchQuery> queries) {
     List<QRestrictedPath> paths = new ArrayList<QRestrictedPath>();
-    QueryExecution qe;
     QuerySolution qs;
     ResultSet rs;
     BitSet directions;
     List<Pair<Property, Boolean>> pathElements;
     for (SearchQuery query : queries) {
       LOGGER.info("Executing query \"{}\"", query.getQuery());
-      qe = qef.createQueryExecution(query.getQuery());
-      directions = query.getDirections();
-      rs = qe.execSelect();
-      int count = 0;
-      while (rs.hasNext()) {
-        qs = rs.next();
-        // collect the properties of the path and their direction
-        pathElements = new ArrayList<>(query.getLength());
-        for (int i = 0; i < query.getLength(); ++i) {
-          pathElements.add(new Pair<Property, Boolean>(
-              ResourceFactory.createProperty(qs.getResource(propertyVariables[i]).getURI()),
-              directions.get(i)));
+      try (QueryExecution qe = qef.createQueryExecution(query.getQuery())) {
+        directions = query.getDirections();
+        rs = qe.execSelect();
+        int count = 0;
+        while (rs.hasNext()) {
+          qs = rs.next();
+          // collect the properties of the path and their direction
+          pathElements = new ArrayList<>(query.getLength());
+          for (int i = 0; i < query.getLength(); ++i) {
+            pathElements.add(new Pair<Property, Boolean>(
+                ResourceFactory.createProperty(qs.getResource(propertyVariables[i]).getURI()),
+                directions.get(i)));
+          }
+          paths.add(new QRestrictedPath(pathElements));
+          ++count;
         }
-        paths.add(new QRestrictedPath(pathElements));
-        ++count;
+        LOGGER.info("Got {} paths from the query", count);
+      } catch (Exception e) {
+        LOGGER.error("Got an exception while executing query \"" + query.getQuery()
+            + "\". The query will be ignored.", e);
       }
-      LOGGER.info("Got {} paths from the query", count);
     }
     return paths;
   }

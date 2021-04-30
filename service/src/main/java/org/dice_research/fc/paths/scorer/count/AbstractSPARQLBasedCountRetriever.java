@@ -79,18 +79,28 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
   }
 
   protected long executeCountQuery(StringBuilder queryBuilder) {
-    QueryExecution qe = qef.createQueryExecution(queryBuilder.toString());
-    ResultSet result = qe.execSelect();
-    if (!result.hasNext()) {
-      LOGGER.warn("Got a query without a single result line (\"{}\"). Returning 0.", queryBuilder);
+    String query = queryBuilder.toString();
+    long time = System.currentTimeMillis();
+    LOGGER.debug("Starting count query {}", query);
+    try (QueryExecution qe = qef.createQueryExecution(query)) {
+      ResultSet result = qe.execSelect();
+      if (!result.hasNext()) {
+        LOGGER.warn("Got a query without a single result line (\"{}\"). Returning 0.", query);
+        return 0L;
+      }
+      QuerySolution qs = result.next();
+      Literal count = qs.getLiteral(COUNT_VARIABLE_NAME);
+      if (result.hasNext()) {
+        LOGGER.info(
+            "Got a query with more than 1 result line (\"{}\"). The remaining lines will be ignored.",
+            query);
+      }
+      long n = count.getLong();
+      LOGGER.debug("Got a query result ({}) after {}ms.", n, System.currentTimeMillis() - time);
+      return n;
+    } catch (Exception e) {
+      LOGGER.error("Got an exception while running count query \"" + query + "\". Returning 0.", e);
+      return 0L;
     }
-    QuerySolution qs = result.next();
-    Literal count = qs.getLiteral(COUNT_VARIABLE_NAME);
-    if (result.hasNext()) {
-      LOGGER.info(
-          "Got a query with more than 1 result line (\"{}\"). The remaining lines will be ignored.",
-          queryBuilder);
-    }
-    return count.getLong();
   }
 }
