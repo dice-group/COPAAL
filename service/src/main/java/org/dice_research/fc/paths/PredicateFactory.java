@@ -57,9 +57,9 @@ public class PredicateFactory implements FactPreprocessor {
    * @return the range as a set of URIs
    */
   public Set<String> getRange(Statement triple) {
-    Set<String> oTypes = getObjects(triple.getPredicate(), RDFS.domain);
+    Set<String> oTypes = getObjects(triple.getPredicate(), RDFS.range);
     if (oTypes.isEmpty()) {
-      oTypes = getObjects(triple.getSubject(), RDF.type);
+      oTypes = getObjects(triple.getObject().asResource(), RDF.type);
     }
     return oTypes;
   }
