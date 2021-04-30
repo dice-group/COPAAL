@@ -1,6 +1,7 @@
 package org.dice_research.fc.data;
 
 import java.util.Collection;
+import org.apache.jena.rdf.model.Statement;
 
 /**
  * The result of a fact checker.
@@ -20,7 +21,18 @@ public class FactCheckingResult {
    */
   private Collection<? extends IPieceOfEvidence> piecesOfEvidence;
 
-  // TODO Add fact that has been checked
+  /**
+   * The fact we just checked
+   */
+  private Statement fact;
+
+  public FactCheckingResult(double veracityValue,
+      Collection<? extends IPieceOfEvidence> piecesOfEvidence, Statement fact) {
+    super();
+    this.veracityValue = veracityValue;
+    this.piecesOfEvidence = piecesOfEvidence;
+    this.fact = fact;
+  }
 
   /**
    * @return the veracityValue
@@ -49,6 +61,19 @@ public class FactCheckingResult {
   public void setPiecesOfEvidence(Collection<? extends IPieceOfEvidence> piecesOfEvidence) {
     this.piecesOfEvidence = piecesOfEvidence;
   }
-  
+
+  /**
+   * @return the fact
+   */
+  public Statement getFact() {
+    return fact;
+  }
+
+  /**
+   * @param fact the fact we just checked
+   */
+  public void setFact(Statement fact) {
+    this.fact = fact;
+  }
   
 }

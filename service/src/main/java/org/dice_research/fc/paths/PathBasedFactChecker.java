@@ -48,6 +48,10 @@ public class PathBasedFactChecker implements IFactChecker {
    * The class that is used to summarize the scores of the single paths to create a final score.
    */
   protected ScoreSummarist summarist;
+  /**
+   * The score if no paths were found.
+   */
+  protected double pathsNotFoundResult = 0;
   
   /**
    * Constructor.
@@ -82,6 +86,10 @@ public class PathBasedFactChecker implements IFactChecker {
 
     // Get a list of potential paths
     Collection<QRestrictedPath> paths = pathSearcher.search(subject, preparedPredicate, object);
+    
+    if(paths.isEmpty()) {
+      return new FactCheckingResult(pathsNotFoundResult, paths, fact);
+    }
 
     // Filter paths, score the paths with respect to the given triple and filter them again based on
     // the score
@@ -95,11 +103,7 @@ public class PathBasedFactChecker implements IFactChecker {
     // Summarize the scores
     double veracity = summarist.summarize(scores);
 
-    // FIXME Add veracity score and evidences (i.e., paths)
-    FactCheckingResult result = new FactCheckingResult();
-    result.setVeracityValue(veracity);
-    result.setPiecesOfEvidence(paths);
-    return result;
+    return new FactCheckingResult(veracity, paths, fact);
   }
 
   /**

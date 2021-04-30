@@ -46,17 +46,16 @@ public class CountRetrieverTest {
     int pathCount = appCountRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     int predPathCount = appCountRetriever.countCooccurrences(predicate, path);
 
-    // 
     ICountRetriever propPathRetriever = new PropPathBasedPairCountRetriever(qef);
     int pathCount2 = propPathRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     int predPathCount2 = propPathRetriever.countCooccurrences(predicate, path);
     
-    Assert.assertEquals(predCount, 2);
-    Assert.assertEquals(maxCount, 9);// 3*3
-    Assert.assertEquals(pathCount, 1);
-    Assert.assertEquals(predPathCount, 0);
-    Assert.assertEquals(pathCount2, 1);
-    Assert.assertEquals(predPathCount2, 0);
+    Assert.assertEquals(predCount, 5);
+    Assert.assertEquals(maxCount, 25);// 5*5
+    Assert.assertEquals(pathCount, 2);
+    Assert.assertEquals(predPathCount, 1);
+    Assert.assertEquals(pathCount2, 2);
+    Assert.assertEquals(predPathCount2, 1);
 
   }
 }
