@@ -1,5 +1,7 @@
 package org.dice.FactCheck.Corraborative.sum;
 
+import org.springframework.stereotype.Component;
+
 /**
  * This is a fixed version of the {@link OriginalSummarist} used in the paper.
  * It has been suggested by Sven Kuhlmann. It distinguishes between positive and
@@ -15,6 +17,7 @@ package org.dice.FactCheck.Corraborative.sum;
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
+@Component
 public class FixedSummarist implements ScoreSummarist {
 
     @Override

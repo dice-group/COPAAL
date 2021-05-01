@@ -4,6 +4,8 @@ import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * This extension of the {@link AbstractSPARQLBasedCountRetriever} counts the exact number of
@@ -13,8 +15,10 @@ import org.dice_research.fc.sparql.restrict.ITypeRestriction;
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
+@Component
 public class PropPathBasedPairCountRetriever extends AbstractSPARQLBasedCountRetriever {
 
+  @Autowired
   public PropPathBasedPairCountRetriever(QueryExecutionFactory qef) {
     super(qef);
   }

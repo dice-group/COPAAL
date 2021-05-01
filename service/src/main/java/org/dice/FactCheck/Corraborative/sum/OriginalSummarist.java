@@ -1,11 +1,14 @@
 package org.dice.FactCheck.Corraborative.sum;
 
+import org.springframework.stereotype.Component;
+
 /**
  * This class implements the original sum strategy of the 2019 paper.
  * 
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
+@Component
 public class OriginalSummarist implements ScoreSummarist {
 
     @Override

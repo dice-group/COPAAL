@@ -24,14 +24,14 @@ public class FactCheckingResult {
   /**
    * The fact we just checked
    */
-  private Statement fact;
+  private String fact;
 
   public FactCheckingResult(double veracityValue,
       Collection<? extends IPieceOfEvidence> piecesOfEvidence, Statement fact) {
     super();
     this.veracityValue = veracityValue;
     this.piecesOfEvidence = piecesOfEvidence;
-    this.fact = fact;
+    this.fact = fact.toString();
   }
 
   /**
@@ -65,14 +65,14 @@ public class FactCheckingResult {
   /**
    * @return the fact
    */
-  public Statement getFact() {
+  public String getFact() {
     return fact;
   }
 
   /**
    * @param fact the fact we just checked
    */
-  public void setFact(Statement fact) {
+  public void setFact(String fact) {
     this.fact = fact;
   }
   

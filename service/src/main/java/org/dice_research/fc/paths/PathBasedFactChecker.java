@@ -15,6 +15,8 @@ import org.dice_research.fc.paths.filter.AlwaysTruePathFilter;
 import org.dice_research.fc.paths.filter.AlwaysTrueScoreFilter;
 import org.dice_research.fc.paths.filter.IPathFilter;
 import org.dice_research.fc.paths.filter.IScoreFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * This class implements the typical process for checking a given fact.
@@ -22,6 +24,7 @@ import org.dice_research.fc.paths.filter.IScoreFilter;
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
+@Component
 public class PathBasedFactChecker implements IFactChecker {
 
   /**
@@ -61,6 +64,7 @@ public class PathBasedFactChecker implements IFactChecker {
    * @param pathScorer The path scorer that is used to score the single paths.
    * @param summarist The class that is used to summarize the scores of the single paths to create a final score.
    */
+  @Autowired
   public PathBasedFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
       IPathScorer pathScorer, ScoreSummarist summarist) {
     super();

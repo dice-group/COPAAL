@@ -6,11 +6,13 @@ import org.apache.jena.rdf.model.Statement;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
+import org.springframework.stereotype.Component;
 
 /**
  * This class returns a {@link Predicate} object without type restrictions
  *
  */
+@Component
 public class EmptyPredicateFactory implements FactPreprocessor {
 
   @Override

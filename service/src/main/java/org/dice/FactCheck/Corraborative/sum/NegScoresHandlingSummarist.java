@@ -1,11 +1,14 @@
 package org.dice.FactCheck.Corraborative.sum;
 
+import org.springframework.stereotype.Component;
+
 /**
  * An improved handling of scores that takes care of negative scores.
  * 
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
+@Component
 public class NegScoresHandlingSummarist implements ScoreSummarist {
 
     @Override

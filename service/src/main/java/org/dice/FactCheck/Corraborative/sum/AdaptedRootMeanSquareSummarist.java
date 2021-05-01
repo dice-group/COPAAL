@@ -1,10 +1,13 @@
 package org.dice.FactCheck.Corraborative.sum;
 
+import org.springframework.stereotype.Component;
+
 /**
  * 
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
+@Component
 public class AdaptedRootMeanSquareSummarist implements ScoreSummarist {
 
     @Override

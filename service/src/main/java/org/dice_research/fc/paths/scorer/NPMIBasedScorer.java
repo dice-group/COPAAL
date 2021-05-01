@@ -4,6 +4,8 @@ import org.apache.jena.rdf.model.Resource;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.IPathScorer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * An NPMI-based path scorer as described in the COPAAL paper.
@@ -11,6 +13,7 @@ import org.dice_research.fc.paths.IPathScorer;
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
+@Component
 public class NPMIBasedScorer implements IPathScorer {
 
   /**
@@ -42,6 +45,7 @@ public class NPMIBasedScorer implements IPathScorer {
    */
   protected ICountRetriever countRetriever;
   
+  @Autowired
   public NPMIBasedScorer(ICountRetriever countRetriever) {
     super();
     this.countRetriever = countRetriever;

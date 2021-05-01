@@ -16,11 +16,15 @@ import org.apache.jena.vocabulary.RDFS;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PredicateFactory implements FactPreprocessor {
 
   private QueryExecutionFactory executioner;
 
+  @Autowired
   public PredicateFactory(QueryExecutionFactory qef) {
     this.executioner = qef;
   }

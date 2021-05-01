@@ -19,6 +19,8 @@ import org.dice_research.fc.paths.IPathSearcher;
 import org.dice_research.fc.sparql.filter.IRIFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * This class is the path searcher of COPAAL as described in the paper of Syed et al. (2019). It is
@@ -27,6 +29,7 @@ import org.slf4j.LoggerFactory;
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
+@Component
 public class SPARQLBasedSOPathSearcher implements IPathSearcher {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SPARQLBasedSOPathSearcher.class);
@@ -59,6 +62,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
    */
   protected String[] propertyVariables;
 
+  @Autowired
   public SPARQLBasedSOPathSearcher(QueryExecutionFactory qef, int maximumLength,
       Collection<IRIFilter> propertyFilter) {
     super();
