@@ -1,4 +1,4 @@
-package org.dice.FactCheck.Corraborative.sum;
+package org.dice_research.fc.sum;
 
 /**
  * An interface of a class that can be used to summarize the given scores and

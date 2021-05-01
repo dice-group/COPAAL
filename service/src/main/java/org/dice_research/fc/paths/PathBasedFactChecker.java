@@ -6,7 +6,6 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
-import org.dice.FactCheck.Corraborative.sum.ScoreSummarist;
 import org.dice_research.fc.IFactChecker;
 import org.dice_research.fc.data.FactCheckingResult;
 import org.dice_research.fc.data.Predicate;
@@ -15,6 +14,7 @@ import org.dice_research.fc.paths.filter.AlwaysTruePathFilter;
 import org.dice_research.fc.paths.filter.AlwaysTrueScoreFilter;
 import org.dice_research.fc.paths.filter.IPathFilter;
 import org.dice_research.fc.paths.filter.IScoreFilter;
+import org.dice_research.fc.sum.ScoreSummarist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

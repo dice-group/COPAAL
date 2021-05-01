@@ -1,4 +1,4 @@
-package org.dice.FactCheck.Corraborative.sum;
+package org.dice_research.fc.sum;
 
 import org.springframework.stereotype.Component;
 
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public class CubicMeanSummarist implements ScoreSummarist {
+public class HigherOrderMeanSummarist implements ScoreSummarist {
 
     @Override
     public double summarize(double[] scores) {
@@ -20,10 +20,10 @@ public class CubicMeanSummarist implements ScoreSummarist {
             } else {
                 temp = Math.max(scores[s], -1.0);
             }
-            score += Math.pow(temp, 3.0);
+            score += Math.pow(temp, 9.0);
         }
         score /= scores.length;
-        return (score < 0 ? -1 : 1) * Math.pow(Math.abs(score), 1.0 / 3.0);
+        return (score < 0 ? -1 : 1) * Math.pow(Math.abs(score), 1.0 / 9.0);
     }
 
 }

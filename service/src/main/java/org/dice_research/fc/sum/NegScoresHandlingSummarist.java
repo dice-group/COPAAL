@@ -1,4 +1,4 @@
-package org.dice.FactCheck.Corraborative.sum;
+package org.dice_research.fc.sum;
 
 import org.springframework.stereotype.Component;
 

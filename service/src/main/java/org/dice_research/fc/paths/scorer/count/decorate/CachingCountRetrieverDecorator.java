@@ -10,34 +10,59 @@ import com.google.common.cache.LoadingCache;
 
 public class CachingCountRetrieverDecorator extends AbstractCountRetrieverDecorator {
 
+  private static final long DEFAULT_MAX_SIZE_PATH_CACHE = 1000;
+  private static final long DEFAULT_MAX_SIZE_PRED_CACHE = 200;
+  private static final long DEFAULT_MAX_SIZE_COOC_CACHE = 1000;
+  private static final long DEFAULT_MAX_SIZE_MAX_COUNT_CACHE = DEFAULT_MAX_SIZE_PRED_CACHE;
+
   protected LoadingCache<PathInstanceCountQuery, Long> pathInstanceCache;
   protected LoadingCache<Predicate, Long> predicateInstanceCache;
   protected LoadingCache<CooccurrenceCountQuery, Long> cooccurrenceCache;
   protected LoadingCache<Predicate, Long> maxCountCache;
 
+  /**
+   * Constructor that uses default sizes for the internal caches.
+   * 
+   * @param decorated the {@link ICountRetriever} instance used internally.
+   */
   public CachingCountRetrieverDecorator(ICountRetriever decorated) {
+    this(decorated, DEFAULT_MAX_SIZE_PATH_CACHE, DEFAULT_MAX_SIZE_PRED_CACHE,
+        DEFAULT_MAX_SIZE_COOC_CACHE, DEFAULT_MAX_SIZE_MAX_COUNT_CACHE);
+  }
+
+  /**
+   * Constructor that allows the configuration of the maximum cache sizes.
+   * 
+   * @param decorated the {@link ICountRetriever} instance used internally.
+   * @param maxSizePathCache maximum size for the cache of path counts
+   * @param maxSizePredCache maximum size for the cache of predicate counts
+   * @param maxSizeCoocCache maximum size for the cache of co-occurrence counts
+   * @param maxSizeMaxCountCache maximum size for the cache of maximum count per predicate
+   */
+  public CachingCountRetrieverDecorator(ICountRetriever decorated, long maxSizePathCache,
+      long maxSizePredCache, long maxSizeCoocCache, long maxSizeMaxCountCache) {
     super(decorated);
-    pathInstanceCache =
-        CacheBuilder.newBuilder().build(new CacheLoader<PathInstanceCountQuery, Long>() {
+    pathInstanceCache = CacheBuilder.newBuilder().maximumSize(maxSizePathCache)
+        .build(new CacheLoader<PathInstanceCountQuery, Long>() {
           public Long load(PathInstanceCountQuery key) {
             return decorated.countPathInstances(key.path, key.domainRestriction,
                 key.rangeRestriction);
           }
         });
-    predicateInstanceCache =
-        CacheBuilder.newBuilder().build(new CacheLoader<Predicate, Long>() {
+    predicateInstanceCache = CacheBuilder.newBuilder().maximumSize(maxSizePredCache)
+        .build(new CacheLoader<Predicate, Long>() {
           public Long load(Predicate key) {
             return decorated.countPredicateInstances(key);
           }
         });
-    cooccurrenceCache =
-        CacheBuilder.newBuilder().build(new CacheLoader<CooccurrenceCountQuery, Long>() {
+    cooccurrenceCache = CacheBuilder.newBuilder().maximumSize(maxSizeCoocCache)
+        .build(new CacheLoader<CooccurrenceCountQuery, Long>() {
           public Long load(CooccurrenceCountQuery key) {
             return decorated.countCooccurrences(key.predicate, key.path);
           }
         });
-    maxCountCache =
-        CacheBuilder.newBuilder().build(new CacheLoader<Predicate, Long>() {
+    maxCountCache = CacheBuilder.newBuilder().maximumSize(maxSizeMaxCountCache)
+        .build(new CacheLoader<Predicate, Long>() {
           public Long load(Predicate key) {
             return decorated.deriveMaxCount(key);
           }
@@ -47,7 +72,8 @@ public class CachingCountRetrieverDecorator extends AbstractCountRetrieverDecora
   @Override
   public long countPathInstances(QRestrictedPath path, ITypeRestriction domainRestriction,
       ITypeRestriction rangeRestriction) {
-    return pathInstanceCache.getUnchecked(new PathInstanceCountQuery(path, domainRestriction, rangeRestriction));
+    return pathInstanceCache
+        .getUnchecked(new PathInstanceCountQuery(path, domainRestriction, rangeRestriction));
   }
 
   @Override
