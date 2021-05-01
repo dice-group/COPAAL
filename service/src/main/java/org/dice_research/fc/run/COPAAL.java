@@ -7,7 +7,6 @@ import org.aksw.jena_sparql_api.delay.core.QueryExecutionFactoryDelay;
 import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.aksw.jena_sparql_api.timeout.QueryExecutionFactoryTimeout;
 import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.log4j.PropertyConfigurator;
 import org.dice_research.fc.data.FactCheckingResult;
 import org.dice_research.fc.paths.PathBasedFactChecker;
 import org.dice_research.fc.paths.PredicateFactory;
@@ -33,7 +32,8 @@ public class COPAAL {
 
   public static void main(String[] args) {
     // Unfortunately this is necessary to ensure that we have the correct log config :(
-    PropertyConfigurator.configure(COPAAL.class.getClassLoader().getResource("log4j.properties"));
+    // Ana: It should work fine without it now
+    // PropertyConfigurator.configure(COPAAL.class.getClassLoader().getResource("log4j.properties"));
     
     QueryExecutionFactory qef = new QueryExecutionFactoryHttp("https://synthg-fact.dice-research.org/sparql");//"https://dbpedia.org/sparql");
     qef = new QueryExecutionFactoryDelay(qef, 200);

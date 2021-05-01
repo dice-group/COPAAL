@@ -19,7 +19,6 @@ import org.apache.jena.riot.system.StreamRDF;
 import org.apache.jena.riot.system.StreamRDFWriter;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.XSD;
-import org.apache.log4j.PropertyConfigurator;
 import org.dice_research.fc.IFactChecker;
 import org.dice_research.fc.data.FactCheckingResult;
 import org.dice_research.fc.tools.ProgramParams;
@@ -32,7 +31,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
- * Launches the application locally. <p>
+ * Launches the application locally.
+ * <p>
  * It can read a file with reified facts and write the predictions to file.
  */
 @SpringBootApplication
@@ -42,15 +42,13 @@ public class LocalApplication {
   private static final Logger LOGGER = LoggerFactory.getLogger(LocalApplication.class);
 
   public static void main(String[] args) throws FileNotFoundException, IOException {
-    PropertyConfigurator.configure(LocalApplication.class.getClassLoader().getResource("log4j.properties"));
-    ProgramParams pArgs = new ProgramParams();
-
     // Get context
     ConfigurableApplicationContext app =
         new SpringApplicationBuilder(LocalApplication.class).web(WebApplicationType.NONE).run(args);
     IFactChecker factChecker = app.getBean(IFactChecker.class);
 
     // Read facts to check
+    ProgramParams pArgs = new ProgramParams();
     Model facts = ModelFactory.createDefaultModel();
     facts.read(pArgs.facts);
 
