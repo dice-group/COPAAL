@@ -115,6 +115,10 @@
 					<groupId>com.github.sharispe</groupId>
 					<artifactId>slib-sml</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>edu.berkeley.compbio</groupId>
+					<artifactId>jlibsvm</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
