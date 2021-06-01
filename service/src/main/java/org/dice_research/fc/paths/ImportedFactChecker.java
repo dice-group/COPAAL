@@ -51,17 +51,7 @@ public class ImportedFactChecker implements IFactChecker {
   @Override
   public FactCheckingResult check(Resource subject, Property predicate, Resource object) {
     Statement fact = ResourceFactory.createStatement(subject, predicate, object);
-
-    // Load paths from file
-    // Collection<QRestrictedPath> paths = metaPreprocessor.get(predicate);
-    // if (paths == null) {
-    // LOGGER.error("Couldn't find the requested meta-paths");
-    // return new FactCheckingResult();
-    // }
-    // if (paths.isEmpty()) {
-    // return new FactCheckingResult(pathsNotFoundResult, paths, fact);
-    // }
-
+    
     // pre-process paths in file if needed
     Collection<QRestrictedPath> paths = metaPreprocessor.processMetaPaths(fact);
     if (paths.isEmpty()) {

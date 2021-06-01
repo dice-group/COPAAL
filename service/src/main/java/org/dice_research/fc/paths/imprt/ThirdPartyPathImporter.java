@@ -132,6 +132,7 @@ public class ThirdPartyPathImporter {
    * @param fileName path to the serialized paths
    * @return {@link HashMap} with the properties' pre-processed paths
    */
+  @SuppressWarnings("unchecked")
   public static HashMap<Property, List<QRestrictedPath>> importPathsFromObject(String fileName) {
 
     HashMap<Property, List<QRestrictedPath>> map = new HashMap<Property, List<QRestrictedPath>>();
