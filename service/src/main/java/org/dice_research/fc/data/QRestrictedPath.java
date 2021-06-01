@@ -1,6 +1,5 @@
 package org.dice_research.fc.data;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.util.Pair;
@@ -18,12 +17,7 @@ import org.apache.jena.rdf.model.Property;
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
-public class QRestrictedPath implements IPieceOfEvidence, Serializable {
-
-  /**
-   * 
-   */
-  private static final long serialVersionUID = 7042396304967413564L;
+public class QRestrictedPath implements IPieceOfEvidence {
 
   /**
    * The score of the path
@@ -96,6 +90,7 @@ public class QRestrictedPath implements IPieceOfEvidence, Serializable {
     result = prime * result + ((pathElements == null) ? 0 : pathElements.hashCode());
     return result;
   }
+  
 
   @Override
   public boolean equals(Object obj) {
@@ -111,9 +106,13 @@ public class QRestrictedPath implements IPieceOfEvidence, Serializable {
         return false;
     } else if (!pathElements.equals(other.pathElements))
       return false;
+    if (Double.doubleToLongBits(score) != Double.doubleToLongBits(other.score))
+      return false;
     return true;
   }
+  
 
+  
   public int length() {
     if (pathElements != null) {
       return pathElements.size();
