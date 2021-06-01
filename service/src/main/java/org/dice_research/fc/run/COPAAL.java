@@ -30,11 +30,7 @@ public class COPAAL {
       new String[] {"http://dbpedia.org/ontology/wikiPageExternalLink", "http://dbpedia.org/ontology/wikiPageWikiLink"};
   protected static final String FILTERED_NAMESPACE = "http://dbpedia.org/ontology/";
 
-  public static void main(String[] args) {
-    // Unfortunately this is necessary to ensure that we have the correct log config :(
-    // Ana: It should work fine without it now
-    // PropertyConfigurator.configure(COPAAL.class.getClassLoader().getResource("log4j.properties"));
-    
+  public static void main(String[] args) {    
     QueryExecutionFactory qef = new QueryExecutionFactoryHttp("https://synthg-fact.dice-research.org/sparql");//"https://dbpedia.org/sparql");
     qef = new QueryExecutionFactoryDelay(qef, 200);
     //qef = new QueryExecutionFactoryPaginated(qef, 10000);

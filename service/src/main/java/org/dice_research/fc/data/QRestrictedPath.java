@@ -1,5 +1,6 @@
 package org.dice_research.fc.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.util.Pair;
@@ -17,24 +18,31 @@ import org.apache.jena.rdf.model.Property;
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
-public class QRestrictedPath implements IPieceOfEvidence {
+public class QRestrictedPath implements IPieceOfEvidence, Serializable {
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 7042396304967413564L;
 
   /**
    * The score of the path
    */
-  private double score = 0;
+  protected double score = 0;
   /**
    * The elements of this path as {@link Pair}s. The first part of the pair is the IRI of the
    * property. The second part represents whether the property is inverted, i.e., if the second part
    * is {@code true} the property can be used as it is. If the second part is {@code false}, the
    * property has to be inverted.
    */
-  private List<Pair<Property, Boolean>> pathElements;
+  protected List<Pair<Property, Boolean>> pathElements;
 
   /**
    * Constructor.
    */
-  public QRestrictedPath() {}
+  public QRestrictedPath() {
+    this.pathElements = new ArrayList<Pair<Property, Boolean>>();
+  }
 
   /**
    * Constructor.
@@ -44,6 +52,18 @@ public class QRestrictedPath implements IPieceOfEvidence {
   public QRestrictedPath(List<Pair<Property, Boolean>> pathElements) {
     super();
     this.pathElements = pathElements;
+  }
+  
+  /**
+   * Constructor.
+   * 
+   * @param The elements of this path as {@link Pair}s
+   * @param The path's veracity score
+   */
+  public QRestrictedPath(List<Pair<Property, Boolean>> pathElements, double score) {
+    super();
+    this.pathElements = pathElements;
+    this.score = score;
   }
 
   @Override
@@ -100,6 +120,27 @@ public class QRestrictedPath implements IPieceOfEvidence {
     } else {
       return 0;
     }
+  }
+
+  /**
+   * 
+   * @return the equivalent SPARQL property path that can be used in queries
+   */
+  public String getPropertyPath() {
+    StringBuilder builder = new StringBuilder();
+    boolean first = true;
+    for (Pair<Property, Boolean> element : pathElements) {
+      if (first) {
+        first = false;
+      } else {
+        builder.append("/");
+      }
+      if (!element.getSecond()) {
+        builder.append("^");
+      }
+      builder.append("<").append(element.getFirst().getURI()).append(">");
+    }
+    return builder.toString();
   }
 
   @Override

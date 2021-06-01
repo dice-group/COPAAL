@@ -25,6 +25,9 @@ public class FactCheckingResult {
    * The fact we just checked
    */
   private String fact;
+  
+  public FactCheckingResult() {
+  }
 
   public FactCheckingResult(double veracityValue,
       Collection<? extends IPieceOfEvidence> piecesOfEvidence, Statement fact) {
