@@ -29,6 +29,8 @@ public class ThirdPartyPathImporter {
   private static final String PREDICATE_REGEX = "Predicate: <(.+?)>";
 
   private static final String PROPERTY_PATH_REGEX = "(\\^?)<(.+?)>";
+  
+  private static final String DELIMITER = "^(-?[0-9]+\\.[0-9]+)?\\,(\\^?<.+>)?";
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ThirdPartyPathImporter.class);
 
@@ -76,25 +78,28 @@ public class ThirdPartyPathImporter {
         }
 
         // separate score from path
-        String[] lineItems = line.split(",");
+        String score = null;
+        String propertyPath = null;
+        Pattern pattern = Pattern.compile(DELIMITER);
+        Matcher matcher = pattern.matcher(line);
+        if (matcher.find()) {
+          score = matcher.group(1);
+          propertyPath = matcher.group(2);
+        }
 
         // if there are no paths
-        if (lineItems.length < 2) {
+        if (propertyPath == null || propertyPath.isEmpty()) {
           map.putIfAbsent(curPredicate, new ArrayList<QRestrictedPath>());
           continue;
         }
 
         // convert path string to path object
-        List<Pair<Property, Boolean>> pathElements = convertPathToPairs(lineItems[1]);
+        List<Pair<Property, Boolean>> pathElements = convertPathToPairs(propertyPath);
         QRestrictedPath path = new QRestrictedPath(pathElements);
-        String scoreStr = lineItems[0];
-        if (!scoreStr.isEmpty()) {
-          path.setScore(Double.parseDouble(scoreStr));
+        if (score != null) {
+          path.setScore(Double.parseDouble(score));
         }
-        // else {
-        // path.setScore(0);
-        // }
-
+        
         // commit result to map
         map.putIfAbsent(curPredicate, new ArrayList<QRestrictedPath>());
         map.get(curPredicate).add(path);

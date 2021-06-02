@@ -50,6 +50,7 @@ public class PathImporterTest {
     Property prop = ResourceFactory.createProperty("http://example.org#randomProperty");
     Property prop2 = ResourceFactory.createProperty("http://example.org#randomProperty2");
     Property prop3 = ResourceFactory.createProperty("http://example.org#randomProperty3");
+    Property prop3m = ResourceFactory.createProperty("http://example.org#randomProperty3,We");
 
     List<Pair<Property, Boolean>> exp1 = new ArrayList<Pair<Property, Boolean>>();
     exp1.add(new Pair<Property, Boolean>(prop2, true));
@@ -68,7 +69,7 @@ public class PathImporterTest {
     List<Pair<Property, Boolean>> exp5 = new ArrayList<Pair<Property, Boolean>>();
     exp5.add(new Pair<Property, Boolean>(prop2, true));
     exp5.add(new Pair<Property, Boolean>(prop3, true));
-    exp5.add(new Pair<Property, Boolean>(prop3, false));
+    exp5.add(new Pair<Property, Boolean>(prop3m, false));
 
     List<QRestrictedPath> paths = new ArrayList<QRestrictedPath>();
     paths.add(new QRestrictedPath(exp1));
@@ -93,9 +94,9 @@ public class PathImporterTest {
     builder.append("0.5,^<http://example.org#randomProperty2>\n");
     builder
         .append("0.1,<http://example.org#randomProperty2>/^<http://example.org#randomProperty3>\n");
-    builder.append("0,<http://example.org#randomProperty2>/<http://example.org#randomProperty3>\n");
+    builder.append("0.0,<http://example.org#randomProperty2>/<http://example.org#randomProperty3>\n");
     builder.append(
-        "-0.5,<http://example.org#randomProperty2>/<http://example.org#randomProperty3>/^<http://example.org#randomProperty3>\n");
+        "-0.5,<http://example.org#randomProperty2>/<http://example.org#randomProperty3>/^<http://example.org#randomProperty3,We>\n");
     builder.append("Predicate: <http://example.org#randomProperty2>\n\n");
     builder.append(",<http://example.org#randomProperty3>\n");
     builder.append("Predicate: <http://example.org#randomProperty3>\n\n");
@@ -105,5 +106,4 @@ public class PathImporterTest {
 
     return testConfigs;
   }
-
 }
