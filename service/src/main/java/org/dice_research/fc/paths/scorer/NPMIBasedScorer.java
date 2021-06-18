@@ -1,9 +1,8 @@
 package org.dice_research.fc.paths.scorer;
 
-import org.apache.jena.rdf.model.Resource;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
-import org.dice_research.fc.paths.IPathScorer;
+import org.dice_research.fc.paths.IPropertyBasedPathScorer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public class NPMIBasedScorer implements IPathScorer {
+public class NPMIBasedScorer implements IPropertyBasedPathScorer {
 
   /**
    * The maximum result returned by this scorer.
@@ -52,15 +51,13 @@ public class NPMIBasedScorer implements IPathScorer {
   }
 
   @Override
-  public QRestrictedPath score(Resource subject, Predicate predicate, Resource Object,
-      QRestrictedPath path) {
-    double score = calculateScore(subject, predicate, Object, path);
+  public QRestrictedPath score(Predicate predicate, QRestrictedPath path) {
+    double score = calculateScore(predicate, path);
     path.setScore(score);
     return path;
   }
 
-  public double calculateScore(Resource subject, Predicate predicate, Resource object,
-      QRestrictedPath path) {
+  public double calculateScore(Predicate predicate, QRestrictedPath path) {
     long pathCounts = countRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     if (pathCounts == 0) {
       return pathDoesNotExistResult;
