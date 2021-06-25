@@ -4,12 +4,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
+import org.dice_research.fc.data.StringTriple;
 import org.dice_research.fc.paths.FactPreprocessor;
 import org.dice_research.fc.paths.IPathSearcher;
 import org.dice_research.fc.paths.IPropertyBasedPathScorer;
@@ -26,6 +26,14 @@ import org.dice_research.fc.paths.filter.IScoreFilter;
  */
 public class SamplingPathExtractor implements IPathExtractor {
 
+  /**
+   * A class that is used to retrieve triples with a given property.
+   */
+  protected TripleProvider tripleProvider;
+  /**
+   * Number of triples that are retrieved and used to search for paths.
+   */
+  protected int numberOfTriples;
   /**
    * The preprocessor used to prepare the given fact.
    */
@@ -50,14 +58,20 @@ public class SamplingPathExtractor implements IPathExtractor {
   /**
    * Constructor.
    * 
+   * @param tripleProvider A class that is used to retrieve triples with a given property.
+   * @param numberOfTriples Number of triples that are retrieved and used to search for paths. If
+   *        the number is negative, all available triples will be used.
    * @param factPreprocessor The preprocessor used to prepare the given fact.
    * @param pathSearcher The class that is used to search for (corroborative) paths.
    * @param pathScorer The path scorer that is used to score the single paths.
    * @param summarist The class that is used to summarize the scores of the single paths to create a
    *        final score.
    */
-  public SamplingPathExtractor(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
+  public SamplingPathExtractor(TripleProvider tripleProvider, int numberOfTriples,
+      FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
       IPropertyBasedPathScorer pathScorer) {
+    this.tripleProvider = tripleProvider;
+    this.numberOfTriples = numberOfTriples;
     this.factPreprocessor = factPreprocessor;
     this.pathSearcher = pathSearcher;
     this.pathScorer = pathScorer;
@@ -65,30 +79,27 @@ public class SamplingPathExtractor implements IPathExtractor {
 
   @Override
   public List<QRestrictedPath> extract(String propertyURI) {
-
-    // TODO sample a set of triples that have the given property as predicate
-    List<Triple> triples = null;
+    // Sample a set of triples that have the given property as predicate
+    List<StringTriple> triples = tripleProvider.provideTriples(propertyURI, numberOfTriples);
 
     Set<QRestrictedPath> paths = new HashSet<>();
     Resource subject;
     Resource object;
     Statement fact;
     Predicate preparedPredicate = null;
-    for (Triple triple : triples) {
-      if (triple.getSubject().isURI() && triple.getObject().isURI()) {
-        subject = ResourceFactory.createResource(triple.getSubject().getURI());
-        object = ResourceFactory.createResource(triple.getObject().getURI());
+    for (StringTriple triple : triples) {
+      subject = ResourceFactory.createResource(triple.subject);
+      object = ResourceFactory.createResource(triple.object);
 
-        // Preprocess the data
-        fact = ResourceFactory.createStatement(subject, ResourceFactory.createProperty(propertyURI),
-            object);
-        preparedPredicate = factPreprocessor.generatePredicate(fact);
+      // Preprocess the data
+      fact = ResourceFactory.createStatement(subject, ResourceFactory.createProperty(propertyURI),
+          object);
+      preparedPredicate = factPreprocessor.generatePredicate(fact);
 
-        // Get potential paths
-        paths.addAll(pathSearcher.search(subject, preparedPredicate, object));
-      }
+      // Get potential paths
+      paths.addAll(pathSearcher.search(subject, preparedPredicate, object));
     }
-    
+
     final Predicate lastPreparedPredicate = preparedPredicate;
 
     // Filter paths, score the paths with respect to the given triple and filter them again based on
