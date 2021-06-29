@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.math3.util.Pair;
 import org.apache.jena.rdf.model.Property;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 /**
  * A q-restricted path as defined in the paper of Syed et al. (2019).
@@ -31,7 +29,6 @@ public class QRestrictedPath implements IPieceOfEvidence {
    * is {@code true} the property can be used as it is. If the second part is {@code false}, the
    * property has to be inverted.
    */
-  @JsonSerialize(using = ToStringSerializer.class)
   private List<Pair<Property, Boolean>> pathElements;
 
   /**
@@ -103,6 +100,27 @@ public class QRestrictedPath implements IPieceOfEvidence {
     } else {
       return 0;
     }
+  }
+  
+  /**
+   * @return The corresponding SPARQL property path.
+   */
+  @Override
+  public String getEvidence() {
+    StringBuilder builder = new StringBuilder();
+    boolean first = true;
+    for (Pair<Property, Boolean> element : pathElements) {
+      if (first) {
+        first = false;
+      } else {
+        builder.append("/");
+      }
+      if (!element.getSecond()) {
+        builder.append("^");
+      }
+      builder.append(element.getFirst().getURI());
+    }
+    return builder.toString();
   }
 
   @Override
