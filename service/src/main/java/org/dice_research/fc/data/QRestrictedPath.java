@@ -118,7 +118,9 @@ public class QRestrictedPath implements IPieceOfEvidence {
       if (!element.getSecond()) {
         builder.append("^");
       }
+      builder.append("<");
       builder.append(element.getFirst().getURI());
+      builder.append(">");
     }
     return builder.toString();
   }
