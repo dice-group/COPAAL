@@ -2,6 +2,8 @@ package org.dice_research.fc.data;
 
 import java.util.Collection;
 import org.apache.jena.rdf.model.Statement;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 /**
  * The result of a fact checker.
@@ -18,20 +20,21 @@ public class FactCheckingResult {
   
   /**
    * The pieces of evidence that have been used to come to the veracity value
-   */
+   */  
   private Collection<? extends IPieceOfEvidence> piecesOfEvidence;
 
   /**
    * The fact we just checked
    */
-  private String fact;
+  @JsonSerialize(using = ToStringSerializer.class)
+  private Statement fact;
 
   public FactCheckingResult(double veracityValue,
       Collection<? extends IPieceOfEvidence> piecesOfEvidence, Statement fact) {
     super();
     this.veracityValue = veracityValue;
     this.piecesOfEvidence = piecesOfEvidence;
-    this.fact = fact.toString();
+    this.fact = fact;
   }
 
   /**
@@ -65,14 +68,14 @@ public class FactCheckingResult {
   /**
    * @return the fact
    */
-  public String getFact() {
+  public Statement getFact() {
     return fact;
   }
 
   /**
    * @param fact the fact we just checked
    */
-  public void setFact(String fact) {
+  public void setFact(Statement fact) {
     this.fact = fact;
   }
   
