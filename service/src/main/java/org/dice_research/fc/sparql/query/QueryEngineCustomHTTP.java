@@ -20,7 +20,10 @@ import org.apache.jena.sparql.util.Context;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,8 +79,19 @@ public class QueryEngineCustomHTTP implements QueryExecution {
     public ResultSet execSelect() {
         String result = createRequest(query.toString(), timeout, service);
         ResultSetFactory fac = new ResultSetFactory();
+
+        // the result is not a valid XML then replace with an empty XML
+        if(result.length()<10) {
+            result = emptyXML();
+        }
+
         ResultSet resultSet = fac.fromXML(result);
+
         return resultSet;
+    }
+
+    private String emptyXML() {
+        return "<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/sw/DataAccess/rf1/result2.xsd\"><head></head><results distinct=\"false\" ordered=\"true\"></results></sparql>>";
     }
 
     private static String read(InputStream content) {
