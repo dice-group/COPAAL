@@ -12,18 +12,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.LangBuilder;
 import org.apache.jena.sparql.core.Quad;
-import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 import org.apache.jena.sparql.util.Context;
-import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
