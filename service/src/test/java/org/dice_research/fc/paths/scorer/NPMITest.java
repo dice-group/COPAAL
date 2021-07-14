@@ -95,7 +95,7 @@ public class NPMITest {
         ResourceFactory.createProperty("http://www.example.org/P4"), true));
     QRestrictedPath path3 = new QRestrictedPath(pathElements3);
 
-    testConfigs.add(new Object[] {qef, path, triple, -0.2846});
+    testConfigs.add(new Object[] {qef, path, triple, 0.2846});
     testConfigs.add(new Object[] {qef, path2, triple, -0.1});
     testConfigs.add(new Object[] {qef, path3, triple, -0.1});
     return testConfigs;
