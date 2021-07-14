@@ -41,7 +41,7 @@ public class MaxCounterTest {
   private boolean[] directions = {true, true};
 
   private static QueryExecutionFactory qef =
-      new QueryExecutionFactoryHttp("https://synthg-fact.dice-research.org/sparql");;
+      new QueryExecutionFactoryHttp("https://synthg-fact.dice-research.org/sparql");
 
   @Test
   public void test() {

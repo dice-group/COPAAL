@@ -72,8 +72,8 @@ public class PathBasedFactCheckerTest {
 
     // Same fact, different lengths
     testConfigs.add(new Object[] {qef, 1, filter, triple, 0});
-    testConfigs.add(new Object[] {qef, 2, filter, triple, -0.2291});
-    testConfigs.add(new Object[] {qef, 3, filter, triple, -0.1867});
+    testConfigs.add(new Object[] {qef, 2, filter, triple, 0.2291});
+    testConfigs.add(new Object[] {qef, 3, filter, triple, 0.1867});
     return testConfigs;
   }
 
