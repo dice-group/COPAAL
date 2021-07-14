@@ -3,6 +3,7 @@ package org.dice_research.fc.paths.scorer.count;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
+import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,8 +20,8 @@ import org.springframework.stereotype.Component;
 public class PropPathBasedPairCountRetriever extends AbstractSPARQLBasedCountRetriever {
 
   @Autowired
-  public PropPathBasedPairCountRetriever(QueryExecutionFactory qef) {
-    super(qef);
+  public PropPathBasedPairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
+    super(qef, maxCounter);
   }
 
   @Override
