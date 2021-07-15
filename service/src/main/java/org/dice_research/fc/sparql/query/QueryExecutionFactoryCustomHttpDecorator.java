@@ -13,6 +13,9 @@ import org.apache.jena.query.QueryExecution;
 
 public class QueryExecutionFactoryCustomHttpDecorator implements QueryExecutionFactory {
 
+    /**
+     * decorator
+     */
     protected QueryExecutionFactory decorate;
 
     public QueryExecutionFactoryCustomHttpDecorator(QueryExecutionFactory decorate) {

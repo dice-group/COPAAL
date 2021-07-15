@@ -46,15 +46,22 @@ public class QueryEngineCustomHTTP implements QueryExecution {
     private String service;
 
     /**
-     * The time out for running query
+     * The time out for running query ,
+     * beware here the timeout is int (because of RequestConfig ) but in QueryExecution it is long that's why we have conversion in set timeout
      */
     private int timeout;
+
+    /**
+     * used for make HTTP get request for running a query
+     */
+    private CloseableHttpClient client;
 
     /**
      * constructor of the class
      * @param query is a query to run
      * @param service is a url of a SPARQL endpoint
      */
+
     public QueryEngineCustomHTTP(Query query, String service) {
         this.query = query;
         this.service = service;
@@ -135,7 +142,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
                     .setConnectTimeout(timeout)
                     .setConnectionRequestTimeout(timeout)
                     .setSocketTimeout(timeout).build();
-            CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+            client = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
             HttpGet get = new HttpGet(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
             get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
             HttpResponse resp = client.execute(get);
@@ -146,12 +153,14 @@ public class QueryEngineCustomHTTP implements QueryExecution {
             return result;
         }
         catch(java.net.SocketTimeoutException e) {
-            LOGGER.error("Timeout ",e);
+            LOGGER.info("Timeout ");
             return "";
         }
         catch(Exception e){
             e.printStackTrace();
             throw new RuntimeException("There is an error while running the query",e);
+        }finally {
+            close();
         }
     }
 
@@ -212,6 +221,11 @@ public class QueryEngineCustomHTTP implements QueryExecution {
 
     @Override
     public void close() {
+        try {
+            client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

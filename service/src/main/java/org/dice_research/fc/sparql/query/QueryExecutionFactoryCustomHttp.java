@@ -13,6 +13,9 @@ import org.apache.jena.query.QueryFactory;
  */
 
 public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
+    /**
+     * The url of SPARQL endpoint
+     */
     private String service;
     public QueryExecutionFactoryCustomHttp(String service) {
         this.service = service;

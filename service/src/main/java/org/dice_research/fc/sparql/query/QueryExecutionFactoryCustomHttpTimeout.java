@@ -13,6 +13,9 @@ import org.apache.jena.query.QueryExecution;
 
 public class QueryExecutionFactoryCustomHttpTimeout extends  QueryExecutionFactoryCustomHttpDecorator{
 
+    /**
+     * The timeout , beware here the timeout is long but in @QueryEngineCustomHttp it is int
+     */
     private long timeOut ;
 
     public QueryExecutionFactoryCustomHttpTimeout(QueryExecutionFactory decorate, long timeout) {
