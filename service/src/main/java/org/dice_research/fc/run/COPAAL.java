@@ -13,6 +13,7 @@ import org.dice_research.fc.paths.PredicateFactory;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
+import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
@@ -30,11 +31,7 @@ public class COPAAL {
       new String[] {"http://dbpedia.org/ontology/wikiPageExternalLink", "http://dbpedia.org/ontology/wikiPageWikiLink"};
   protected static final String FILTERED_NAMESPACE = "http://dbpedia.org/ontology/";
 
-  public static void main(String[] args) {
-    // Unfortunately this is necessary to ensure that we have the correct log config :(
-    // Ana: It should work fine without it now
-    // PropertyConfigurator.configure(COPAAL.class.getClassLoader().getResource("log4j.properties"));
-    
+  public static void main(String[] args) {    
     QueryExecutionFactory qef = new QueryExecutionFactoryHttp("https://synthg-fact.dice-research.org/sparql");//"https://dbpedia.org/sparql");
     qef = new QueryExecutionFactoryDelay(qef, 200);
     //qef = new QueryExecutionFactoryPaginated(qef, 10000);
@@ -44,7 +41,7 @@ public class COPAAL {
         new SPARQLBasedSOPathSearcher(qef, 3,
             Arrays.asList(new NamespaceFilter("http://dbpedia.org/ontology", false),
                 new EqualsFilter(FILTERED_PROPERTIES))),
-        new NPMIBasedScorer(new CachingCountRetrieverDecorator(new ApproximatingCountRetriever(qef))), new FixedSummarist());
+        new NPMIBasedScorer(new CachingCountRetrieverDecorator(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef)))), new FixedSummarist());
 
     FactCheckingResult result = checker.check(ResourceFactory.createResource("http://dbpedia.org/resource/Tay_Zonday"), ResourceFactory.createProperty("http://dbpedia.org/ontology/birthPlace"),
         ResourceFactory.createResource("http://dbpedia.org/resource/Minneapolis"));

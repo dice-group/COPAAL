@@ -15,6 +15,7 @@ import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.FactPreprocessor;
 import org.dice_research.fc.paths.PredicateFactory;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
+import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -39,14 +40,14 @@ public class CountRetrieverTest {
     pathElements.add(new Pair<Property, Boolean>(ResourceFactory.createProperty("http://www.example.org/P1"), true));
     QRestrictedPath path = new QRestrictedPath(pathElements);
 
-    ICountRetriever appCountRetriever = new ApproximatingCountRetriever(qef);
+    ICountRetriever appCountRetriever = new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef));
     long predCount = appCountRetriever.countPredicateInstances(predicate);
     long maxCount = appCountRetriever.deriveMaxCount(predicate);
 
     long pathCount = appCountRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     long predPathCount = appCountRetriever.countCooccurrences(predicate, path);
 
-    ICountRetriever propPathRetriever = new PropPathBasedPairCountRetriever(qef);
+    ICountRetriever propPathRetriever = new PropPathBasedPairCountRetriever(qef, new DefaultMaxCounter(qef));
     long pathCount2 = propPathRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     long predPathCount2 = propPathRetriever.countCooccurrences(predicate, path);
     

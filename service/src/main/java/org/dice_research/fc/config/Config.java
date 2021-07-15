@@ -24,6 +24,9 @@ import org.dice_research.fc.paths.scorer.PNPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.PropPathBasedPairCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
+import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
+import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
+import org.dice_research.fc.paths.scorer.count.max.VirtualTypesMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
@@ -81,9 +84,15 @@ public class Config {
   @Value("${dataset.file.path:}")
   private String filePath;
 
+  /**
+   * Virtual types flag
+   */
   @Value("${dataset.virtual-types:false}")
   private boolean isVirtualTypes;
 
+  /**
+   * Path's maximum length
+   */
   @Value("${dataset.max.length:3}")
   private int maxLength;
   /**
@@ -97,6 +106,9 @@ public class Config {
   @Value("${dataset.sparql.counter:}")
   private String counter;
 
+  /**
+   * Score cache flag
+   */
   @Value("${cache:true}")
   private boolean isCache;
 
@@ -116,18 +128,23 @@ public class Config {
     return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
   }
 
+  /**
+   * @param qef
+   * @param maxCounter
+   * @return The desired {@link ICountRetriever} implementation.
+   */
   @Bean
-  public ICountRetriever getCountRetriever(QueryExecutionFactory qef) {
+  public ICountRetriever getCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
     ICountRetriever countRetriever;
     switch (counter) {
       case "ApproximatingCountRetriever":
-        countRetriever = new ApproximatingCountRetriever(qef);
+        countRetriever = new ApproximatingCountRetriever(qef, maxCounter);
         break;
       case "PropPathBasedPairCountRetriever":
-        countRetriever = new PropPathBasedPairCountRetriever(qef);
+        countRetriever = new PropPathBasedPairCountRetriever(qef, maxCounter);
         break;
       default:
-        countRetriever = new PropPathBasedPairCountRetriever(qef);
+        countRetriever = new PropPathBasedPairCountRetriever(qef, maxCounter);
         break;
     }
     if (isCache) {
@@ -135,7 +152,27 @@ public class Config {
     }
     return countRetriever;
   }
+  
+  /**
+   * 
+   * @param qef
+   * @return The desired {@link MaxCounter} implementation.
+   */
+  @Bean
+  public MaxCounter getMaxCounter(QueryExecutionFactory qef) {
+    MaxCounter maxCounter;
+    if(isVirtualTypes) {
+      maxCounter = new VirtualTypesMaxCounter(qef);
+    } else {
+      maxCounter = new DefaultMaxCounter(qef);
+    }
+    return maxCounter;
+  }
 
+  /**
+   * @param countRetriever
+   * @return The desired {@link IPathScorer} implementation.
+   */
   @Bean
   public IPathScorer getPathScorer(ICountRetriever countRetriever) {
     switch (scorer) {
@@ -193,7 +230,7 @@ public class Config {
   }
 
   /**
-   * @return The corresponding {@link ScoreSummarist} object
+   * @return The desired {@link ScoreSummarist} implementation.
    */
   @Bean
   public ScoreSummarist getSummarist() {

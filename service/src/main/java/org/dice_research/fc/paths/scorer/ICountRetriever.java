@@ -20,7 +20,8 @@ public interface ICountRetriever {
    * @param rangeRestriction the restriction for the range of the path
    * @return the count of the path in the reference graph
    */
-  long countPathInstances(QRestrictedPath path, ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction);
+  long countPathInstances(QRestrictedPath path, ITypeRestriction domainRestriction,
+      ITypeRestriction rangeRestriction);
 
   /**
    * Retrieves the count for the given predicate.
