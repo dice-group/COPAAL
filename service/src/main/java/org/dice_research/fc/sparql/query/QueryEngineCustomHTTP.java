@@ -52,11 +52,6 @@ public class QueryEngineCustomHTTP implements QueryExecution {
     private int timeout;
 
     /**
-     * used for make HTTP get request for running a query
-     */
-    private CloseableHttpClient client;
-
-    /**
      * constructor of the class
      * @param query is a query to run
      * @param service is a url of a SPARQL endpoint
@@ -72,12 +67,12 @@ public class QueryEngineCustomHTTP implements QueryExecution {
 
     @Override
     public Dataset getDataset() {
-        return null;
+        throw new UnsupportedOperationException("Invalid operation");
     }
 
     @Override
     public Context getContext() {
-        return null;
+        throw new UnsupportedOperationException("Invalid operation");
     }
 
     @Override
@@ -127,7 +122,6 @@ public class QueryEngineCustomHTTP implements QueryExecution {
             LOGGER.error("Could not read stream due to ",e);
         }
         return "";
-
     }
 
 
@@ -137,12 +131,11 @@ public class QueryEngineCustomHTTP implements QueryExecution {
      * @return string which is a result of the query
      */
     private String createRequest() {
-        try {
-            RequestConfig config = RequestConfig.custom()
-                    .setConnectTimeout(timeout)
-                    .setConnectionRequestTimeout(timeout)
-                    .setSocketTimeout(timeout).build();
-            client = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(timeout)
+                .setConnectionRequestTimeout(timeout)
+                .setSocketTimeout(timeout).build();
+        try(CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).build()){
             HttpGet get = new HttpGet(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
             get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
             HttpResponse resp = client.execute(get);
@@ -153,7 +146,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
             return result;
         }
         catch(java.net.SocketTimeoutException e) {
-            LOGGER.info("Timeout ");
+            LOGGER.info("Timeout this query: "+query.toString());
             return "";
         }
         catch(Exception e){
@@ -219,13 +212,11 @@ public class QueryEngineCustomHTTP implements QueryExecution {
         throw new UnsupportedOperationException("Invalid operation");
     }
 
+    /**
+     * we do not need this because the CloseableHttpClient closed by itself , but because this method called leave it empty
+     */
     @Override
     public void close() {
-        try {
-            client.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
