@@ -21,9 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,19 +35,33 @@ public class QueryEngineCustomHTTP implements QueryExecution {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryEngineCustomHTTP.class);
 
+    /**
+     * The query which should run
+     */
     private Query query;
-    private String service;
-    private long timeout=15000;
 
+    /**
+     * The SPARQL endpoint
+     */
+    private String service;
+
+    /**
+     * The time out for running query
+     */
+    private int timeout;
+
+    /**
+     * constructor of the class
+     * @param query is a query to run
+     * @param service is a url of a SPARQL endpoint
+     */
     public QueryEngineCustomHTTP(Query query, String service) {
         this.query = query;
         this.service = service;
     }
 
     @Override
-    public void setInitialBinding(QuerySolution binding) {
-
-    }
+    public void setInitialBinding(QuerySolution binding) {}
 
     @Override
     public Dataset getDataset() {
@@ -68,7 +80,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
 
     @Override
     public ResultSet execSelect() {
-        String result = createRequest(query.toString(), timeout, service);
+        String result = createRequest();
         ResultSetFactory fac = new ResultSetFactory();
 
         // the result is not a valid XML then replace with an empty XML
@@ -81,11 +93,20 @@ public class QueryEngineCustomHTTP implements QueryExecution {
         return resultSet;
     }
 
+    /**
+     * the empty xml used to generate empty ResultSet
+     * @return string which is an empty xml
+     */
     private String emptyXML() {
         return "<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/sw/DataAccess/rf1/result2.xsd\"><head></head><results distinct=\"false\" ordered=\"true\"></results></sparql>>";
     }
 
-    private static String read(InputStream content) {
+    /**
+     * read an InputStream and return the String
+     * @param content is an InputStream
+     * @return string which is a content of input stream
+     */
+    private String read(InputStream content) {
         ByteSource byteSource = new ByteSource() {
             @Override
             public InputStream openStream() throws IOException {
@@ -102,90 +123,95 @@ public class QueryEngineCustomHTTP implements QueryExecution {
 
     }
 
-    protected static String createRequest(String sparqlQuery, Long to,String service){
-        List<String> ret =  new ArrayList<String>();
-        int code=0;
-        String test;
-        String actualContentType="";
+
+    /**
+     * run the query and return the result
+     * when the timeout reached the query terminated and should handle in catch
+     * @return string which is a result of the query
+     */
+    private String createRequest() {
         try {
-            int timeout = to.intValue();
             RequestConfig config = RequestConfig.custom()
                     .setConnectTimeout(timeout)
                     .setConnectionRequestTimeout(timeout)
                     .setSocketTimeout(timeout).build();
             CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
-            HttpGet get = new HttpGet(service+"?query="+ URLEncoder.encode(sparqlQuery, "UTF-8"));
+            HttpGet get = new HttpGet(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
             get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
             HttpResponse resp = client.execute(get);
-            test = read(resp.getEntity().getContent());
-            InputStream is = new ByteArrayInputStream(test.getBytes(StandardCharsets.UTF_8));
+            String responseContent = read(resp.getEntity().getContent());
+            InputStream is = new ByteArrayInputStream(responseContent.getBytes(StandardCharsets.UTF_8));
             String result = IOUtils.toString(is, StandardCharsets.UTF_8);
             LOGGER.info(result);
             return result;
-        }catch(Exception e){
-            LOGGER.error("Could not execute request due to ",e);
         }
-        return "";
+        catch(java.net.SocketTimeoutException e) {
+            LOGGER.error("Timeout ",e);
+            return "";
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            throw new RuntimeException("There is an error while running the query",e);
+        }
     }
 
     @Override
     public Model execConstruct() {
-        return null;
+        throw new UnsupportedOperationException("Invalid operation");
     }
 
     @Override
     public Model execConstruct(Model model) {
-        return null;
+        throw new UnsupportedOperationException("Invalid operation");
     }
 
     @Override
     public Iterator<Triple> execConstructTriples() {
-        return null;
+        throw new UnsupportedOperationException("Invalid operation");
     }
 
     @Override
     public Iterator<Quad> execConstructQuads() {
-        return null;
+        throw new UnsupportedOperationException("Invalid operation");
     }
 
     @Override
     public Dataset execConstructDataset() {
-        return null;
+        throw new UnsupportedOperationException("Invalid operation");
     }
 
     @Override
     public Dataset execConstructDataset(Dataset dataset) {
-        return null;
+        throw new UnsupportedOperationException("Invalid operation");
     }
 
     @Override
     public Model execDescribe() {
-        return null;
+        throw new UnsupportedOperationException("Invalid operation");
     }
 
     @Override
     public Model execDescribe(Model model) {
-        return null;
+        throw new UnsupportedOperationException("Invalid operation");
     }
 
     @Override
     public Iterator<Triple> execDescribeTriples() {
-        return null;
+        throw new UnsupportedOperationException("Invalid operation");
     }
 
     @Override
     public boolean execAsk() {
-        return false;
+        throw new UnsupportedOperationException("Invalid operation");
     }
 
     @Override
     public void abort() {
-
+        throw new UnsupportedOperationException("Invalid operation");
     }
 
     @Override
     public void close() {
-
     }
 
     @Override
@@ -200,7 +226,8 @@ public class QueryEngineCustomHTTP implements QueryExecution {
 
     @Override
     public void setTimeout(long timeout) {
-        this.timeout = timeout;
+        Long t = timeout;
+        this.timeout = t.intValue();
     }
 
     @Override

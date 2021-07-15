@@ -34,22 +34,11 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
         return qe;
     }
 
-    public QueryExecution createQueryExecution(Query query, String service) {
-        this.service = service;
-        QueryEngineCustomHTTP qe = new QueryEngineCustomHTTP(query,service);
-        return qe;
-    }
-
     @Override
     public QueryExecution createQueryExecution(String queryString) {
         QueryFactory qf = new QueryFactory();
         Query query = qf.create(queryString);
         QueryEngineCustomHTTP qe = new QueryEngineCustomHTTP(query, service);
         return qe;
-    }
-
-    public QueryExecution createQueryExecution(String queryString, String service) {
-        this.service = service;
-        return createQueryExecution(queryString);
     }
 }
