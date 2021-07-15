@@ -11,6 +11,7 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.vocabulary.RDF;
 import org.dice_research.fc.IFactChecker;
+import org.dice_research.fc.data.FactCheckingResult;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
@@ -18,6 +19,7 @@ import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
 import org.dice_research.fc.sum.CubicMeanSummarist;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -30,13 +32,15 @@ public class PathBasedFactCheckerTest {
   private int maximumLength;
   private Collection<IRIFilter> propertyFilter;
   private Statement triple;
+  private double expectedScore;
   
   public PathBasedFactCheckerTest(QueryExecutionFactory qef, int maximumLength,
-      Collection<IRIFilter> propertyFilter, Statement triple) {
+      Collection<IRIFilter> propertyFilter, Statement triple, double expectedScore) {
     this.qef = qef;
     this.maximumLength = maximumLength;
     this.propertyFilter = propertyFilter;
     this.triple = triple;
+    this.expectedScore = expectedScore;
   }
 
   @Test
@@ -44,7 +48,8 @@ public class PathBasedFactCheckerTest {
     IFactChecker factChecker = new PathBasedFactChecker(new PredicateFactory(qef),
         new SPARQLBasedSOPathSearcher(qef, maximumLength, propertyFilter),
         new NPMIBasedScorer(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef))), new CubicMeanSummarist());
-    factChecker.check(triple);
+    FactCheckingResult result = factChecker.check(triple);
+    Assert.assertEquals(expectedScore, result.getVeracityValue(), 0.001);
   }
   
   @Parameters
@@ -66,9 +71,9 @@ public class PathBasedFactCheckerTest {
             ResourceFactory.createResource("http://www.example.org/D"));
 
     // Same fact, different lengths
-    testConfigs.add(new Object[] {qef, 1, filter, triple});
-    testConfigs.add(new Object[] {qef, 2, filter, triple});
-    testConfigs.add(new Object[] {qef, 3, filter, triple});
+    testConfigs.add(new Object[] {qef, 1, filter, triple, 0});
+    testConfigs.add(new Object[] {qef, 2, filter, triple, 0.222});
+    testConfigs.add(new Object[] {qef, 3, filter, triple, 0.171});
     return testConfigs;
   }
 
