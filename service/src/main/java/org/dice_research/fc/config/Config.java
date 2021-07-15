@@ -11,6 +11,7 @@ import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.aksw.jena_sparql_api.timeout.QueryExecutionFactoryTimeout;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 import org.dice_research.fc.IFactChecker;
 import org.dice_research.fc.paths.EmptyPredicateFactory;
 import org.dice_research.fc.paths.FactPreprocessor;
@@ -31,6 +32,8 @@ import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
+import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttp;
+import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttpTimeout;
 import org.dice_research.fc.sum.AdaptedRootMeanSquareSummarist;
 import org.dice_research.fc.sum.CubicMeanSummarist;
 import org.dice_research.fc.sum.FixedSummarist;
@@ -206,14 +209,15 @@ public class Config {
   public QueryExecutionFactory getQueryExecutionFactory() {
     QueryExecutionFactory qef;
     if (filePath == null || filePath.isEmpty()) {
-      qef = new QueryExecutionFactoryHttp(serviceURL);
+      qef = new QueryExecutionFactoryCustomHttp(serviceURL);
     } else {
       Model model = ModelFactory.createDefaultModel();
       model.read(filePath);
       qef = new QueryExecutionFactoryModel(model);
     }
-    qef = new QueryExecutionFactoryDelay(qef, 2000);
-    qef = new QueryExecutionFactoryTimeout(qef, 30, TimeUnit.SECONDS, 30, TimeUnit.SECONDS);
+    //qef = new QueryExecutionFactoryDelay(qef, 2000);
+    //qef = new QueryExecutionFactoryTimeout(qef, 30, TimeUnit.SECONDS, 30, TimeUnit.SECONDS);
+    qef = new QueryExecutionFactoryCustomHttpTimeout(qef, 30000);
     return qef;
   }
 
