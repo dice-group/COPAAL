@@ -22,8 +22,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Testing <http://dbpedia.org/ontology/birthPlace>/<http://dbpedia.org/ontology/country> with and
- * without virtual type configuration.
+ * Testing maximum counts calculation with and without virtual type configuration.
  * 
  * @author Alexandra Silva
  *
