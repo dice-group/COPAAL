@@ -150,7 +150,6 @@ public class QueryEngineCustomHTTP implements QueryExecution {
             return "";
         }
         catch(Exception e){
-            e.printStackTrace();
             throw new RuntimeException("There is an error while running the query",e);
         }finally {
             close();
