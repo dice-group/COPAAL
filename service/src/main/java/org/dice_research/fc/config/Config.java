@@ -12,6 +12,7 @@ import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.aksw.jena_sparql_api.timeout.QueryExecutionFactoryTimeout;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.IFactChecker;
 import org.dice_research.fc.data.QRestrictedPath;
@@ -32,10 +33,15 @@ import org.dice_research.fc.paths.scorer.PNPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.PropPathBasedPairCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
+import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
+import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
+import org.dice_research.fc.paths.scorer.count.max.VirtualTypesMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
+import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttp;
+import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttpTimeout;
 import org.dice_research.fc.sum.AdaptedRootMeanSquareSummarist;
 import org.dice_research.fc.sum.CubicMeanSummarist;
 import org.dice_research.fc.sum.FixedSummarist;
@@ -89,10 +95,15 @@ public class Config {
   @Value("${dataset.file.path:}")
   private String filePath;
 
-  // TODO: should these be here or part of the get request?
+  /**
+   * Virtual types flag
+   */
   @Value("${dataset.virtual-types:false}")
   private boolean isVirtualTypes;
 
+  /**
+   * Path's maximum length
+   */
   @Value("${dataset.max.length:3}")
   private int maxLength;
   
@@ -107,9 +118,9 @@ public class Config {
    */
   @Value("${dataset.sparql.counter:}")
   private String counter;
-  
+
   /**
-   * Do we want cache enabled
+   * Score cache flag
    */
   @Value("${cache:true}")
   private boolean isCache;
@@ -163,18 +174,23 @@ public class Config {
     return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
   }
 
+  /**
+   * @param qef
+   * @param maxCounter
+   * @return The desired {@link ICountRetriever} implementation.
+   */
   @Bean
-  public ICountRetriever getCountRetriever(QueryExecutionFactory qef) {
+  public ICountRetriever getCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
     ICountRetriever countRetriever;
     switch (counter) {
       case "ApproximatingCountRetriever":
-        countRetriever = new ApproximatingCountRetriever(qef);
+        countRetriever = new ApproximatingCountRetriever(qef, maxCounter);
         break;
       case "PropPathBasedPairCountRetriever":
-        countRetriever = new PropPathBasedPairCountRetriever(qef);
+        countRetriever = new PropPathBasedPairCountRetriever(qef, maxCounter);
         break;
       default:
-        countRetriever = new PropPathBasedPairCountRetriever(qef);
+        countRetriever = new PropPathBasedPairCountRetriever(qef, maxCounter);
         break;
     }
     if (isCache) {
@@ -182,7 +198,27 @@ public class Config {
     }
     return countRetriever;
   }
+  
+  /**
+   * 
+   * @param qef
+   * @return The desired {@link MaxCounter} implementation.
+   */
+  @Bean
+  public MaxCounter getMaxCounter(QueryExecutionFactory qef) {
+    MaxCounter maxCounter;
+    if(isVirtualTypes) {
+      maxCounter = new VirtualTypesMaxCounter(qef);
+    } else {
+      maxCounter = new DefaultMaxCounter(qef);
+    }
+    return maxCounter;
+  }
 
+  /**
+   * @param countRetriever
+   * @return The desired {@link IPathScorer} implementation.
+   */
   @Bean
   public IPathScorer getPathScorer(ICountRetriever countRetriever) {
     switch (scorer) {
@@ -216,14 +252,15 @@ public class Config {
   public QueryExecutionFactory getQueryExecutionFactory() {
     QueryExecutionFactory qef;
     if (filePath == null || filePath.isEmpty()) {
-      qef = new QueryExecutionFactoryHttp(serviceURL);
+      qef = new QueryExecutionFactoryCustomHttp(serviceURL);
     } else {
       Model model = ModelFactory.createDefaultModel();
       model.read(filePath);
       qef = new QueryExecutionFactoryModel(model);
     }
-    qef = new QueryExecutionFactoryDelay(qef, 2000);
-    qef = new QueryExecutionFactoryTimeout(qef, 30, TimeUnit.SECONDS, 30, TimeUnit.SECONDS);
+    //qef = new QueryExecutionFactoryDelay(qef, 2000);
+    //qef = new QueryExecutionFactoryTimeout(qef, 30, TimeUnit.SECONDS, 30, TimeUnit.SECONDS);
+    qef = new QueryExecutionFactoryCustomHttpTimeout(qef, 30000);
     return qef;
   }
 
@@ -240,7 +277,7 @@ public class Config {
   }
 
   /**
-   * @return The corresponding {@link ScoreSummarist} object
+   * @return The desired {@link ScoreSummarist} implementation.
    */
   @Bean
   public ScoreSummarist getSummarist() {

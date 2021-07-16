@@ -322,6 +322,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
     BitSet directions;
     List<Pair<Property, Boolean>> pathElements;
     for (SearchQuery query : queries) {
+      long time = System.currentTimeMillis();
       LOGGER.info("Executing query \"{}\"", query.getQuery());
       try (QueryExecution qe = qef.createQueryExecution(query.getQuery())) {
         directions = query.getDirections();
@@ -340,6 +341,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
           ++count;
         }
         LOGGER.info("Got {} paths from the query", count);
+        LOGGER.debug("Got a query result  after {}ms.", System.currentTimeMillis() - time);
       } catch (Exception e) {
         LOGGER.error("Got an exception while executing query \"" + query.getQuery()
             + "\". The query will be ignored.", e);

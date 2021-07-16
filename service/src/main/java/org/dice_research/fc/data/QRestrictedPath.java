@@ -120,6 +120,29 @@ public class QRestrictedPath implements IPieceOfEvidence {
       return 0;
     }
   }
+  
+  /**
+   * @return The corresponding SPARQL property path.
+   */
+  @Override
+  public String getEvidence() {
+    StringBuilder builder = new StringBuilder();
+    boolean first = true;
+    for (Pair<Property, Boolean> element : pathElements) {
+      if (first) {
+        first = false;
+      } else {
+        builder.append("/");
+      }
+      if (!element.getSecond()) {
+        builder.append("^");
+      }
+      builder.append("<");
+      builder.append(element.getFirst().getURI());
+      builder.append(">");
+    }
+    return builder.toString();
+  }
 
   /**
    * 

@@ -18,6 +18,7 @@ import org.dice_research.fc.paths.IPathScorer;
 import org.dice_research.fc.paths.PredicateFactory;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.PropPathBasedPairCountRetriever;
+import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,11 +45,11 @@ public class NPMITest {
     FactPreprocessor preprocessor = new PredicateFactory(qef);
     Predicate predicate = preprocessor.generatePredicate(triple);
 
-    IPathScorer pathScorer = new NPMIBasedScorer(new ApproximatingCountRetriever(qef));
+    IPathScorer pathScorer = new NPMIBasedScorer(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef)));
     pathScorer.score(triple.getSubject(), predicate, triple.getObject().asResource(), path);
     Assert.assertEquals(expectedScore, path.getScore(), 0.0001);
 
-    IPathScorer pathScorer2 = new NPMIBasedScorer(new PropPathBasedPairCountRetriever(qef));
+    IPathScorer pathScorer2 = new NPMIBasedScorer(new PropPathBasedPairCountRetriever(qef, new DefaultMaxCounter(qef)));
     pathScorer2.score(triple.getSubject(), predicate, triple.getObject().asResource(), path);
     Assert.assertEquals(expectedScore, path.getScore(), 0.0001);
 
@@ -95,7 +96,7 @@ public class NPMITest {
         ResourceFactory.createProperty("http://www.example.org/P4"), true));
     QRestrictedPath path3 = new QRestrictedPath(pathElements3);
 
-    testConfigs.add(new Object[] {qef, path, triple, -0.2846});
+    testConfigs.add(new Object[] {qef, path, triple, 0.2846});
     testConfigs.add(new Object[] {qef, path2, triple, -0.1});
     testConfigs.add(new Object[] {qef, path3, triple, -0.1});
     return testConfigs;

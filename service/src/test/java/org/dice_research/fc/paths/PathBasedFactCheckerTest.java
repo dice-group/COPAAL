@@ -14,6 +14,7 @@ import org.dice_research.fc.IFactChecker;
 import org.dice_research.fc.data.FactCheckingResult;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
+import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
@@ -46,9 +47,9 @@ public class PathBasedFactCheckerTest {
   public void test() {
     IFactChecker factChecker = new PathBasedFactChecker(new PredicateFactory(qef),
         new SPARQLBasedSOPathSearcher(qef, maximumLength, propertyFilter),
-        new NPMIBasedScorer(new ApproximatingCountRetriever(qef)), new CubicMeanSummarist());
+        new NPMIBasedScorer(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef))), new CubicMeanSummarist());
     FactCheckingResult result = factChecker.check(triple);
-    Assert.assertEquals(expectedScore, result.getVeracityValue(), 0.0001);
+    Assert.assertEquals(expectedScore, result.getVeracityValue(), 0.001);
   }
   
   @Parameters
@@ -71,8 +72,8 @@ public class PathBasedFactCheckerTest {
 
     // Same fact, different lengths
     testConfigs.add(new Object[] {qef, 1, filter, triple, 0});
-    testConfigs.add(new Object[] {qef, 2, filter, triple, -0.2291});
-    testConfigs.add(new Object[] {qef, 3, filter, triple, -0.1867});
+    testConfigs.add(new Object[] {qef, 2, filter, triple, 0.222});
+    testConfigs.add(new Object[] {qef, 3, filter, triple, 0.171});
     return testConfigs;
   }
 

@@ -84,7 +84,7 @@ public class NPMIBasedScorer implements IPropertyBasedPathScorer {
     // = (c(p,path)/c(max)) / (c(p)/c(max))*(c(path)/c(max))
     // = c(p,path)*c(max) / c(p)*(c(path)
     double npmi = Math.log((cooccurrenceCounts * deriveMaxCount) / (predicateCounts * pathCounts))
-        / Math.log(cooccurrenceCounts / deriveMaxCount);
+        / -Math.log(cooccurrenceCounts / deriveMaxCount);
     if (npmi > maxResult) {
       return maxResult;
     } else if (npmi < minResult) {

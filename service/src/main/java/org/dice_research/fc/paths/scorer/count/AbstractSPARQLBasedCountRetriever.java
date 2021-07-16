@@ -10,6 +10,7 @@ import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
+import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +24,18 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
 
   protected QueryExecutionFactory qef;
 
-  public AbstractSPARQLBasedCountRetriever(QueryExecutionFactory qef) {
+  /**
+   * The max count retriever.
+   */
+  protected MaxCounter maxCounter;
+
+  public AbstractSPARQLBasedCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
     this.qef = qef;
+    this.maxCounter = maxCounter;
+  }
+
+  public long deriveMaxCount(Predicate predicate) {
+    return maxCounter.deriveMaxCount(predicate);
   }
 
   @Override
@@ -36,11 +47,6 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
     queryBuilder.append(predicate.getProperty().getURI());
     queryBuilder.append("> ?o }");
     return executeCountQuery(queryBuilder);
-  }
-
-  @Override
-  public long deriveMaxCount(Predicate predicate) {
-    return countTypeInstances(predicate.getDomain()) * countTypeInstances(predicate.getRange());
   }
 
   /**
