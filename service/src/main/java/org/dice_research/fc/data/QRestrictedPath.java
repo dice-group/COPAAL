@@ -22,19 +22,21 @@ public class QRestrictedPath implements IPieceOfEvidence {
   /**
    * The score of the path
    */
-  private double score = 0;
+  protected double score = 0;
   /**
    * The elements of this path as {@link Pair}s. The first part of the pair is the IRI of the
    * property. The second part represents whether the property is inverted, i.e., if the second part
    * is {@code true} the property can be used as it is. If the second part is {@code false}, the
    * property has to be inverted.
    */
-  private List<Pair<Property, Boolean>> pathElements;
+  protected List<Pair<Property, Boolean>> pathElements;
 
   /**
    * Constructor.
    */
-  public QRestrictedPath() {}
+  public QRestrictedPath() {
+    this.pathElements = new ArrayList<Pair<Property, Boolean>>();
+  }
 
   /**
    * Constructor.
@@ -44,6 +46,18 @@ public class QRestrictedPath implements IPieceOfEvidence {
   public QRestrictedPath(List<Pair<Property, Boolean>> pathElements) {
     super();
     this.pathElements = pathElements;
+  }
+  
+  /**
+   * Constructor.
+   * 
+   * @param The elements of this path as {@link Pair}s
+   * @param The path's veracity score
+   */
+  public QRestrictedPath(List<Pair<Property, Boolean>> pathElements, double score) {
+    super();
+    this.pathElements = pathElements;
+    this.score = score;
   }
 
   @Override
@@ -76,6 +90,7 @@ public class QRestrictedPath implements IPieceOfEvidence {
     result = prime * result + ((pathElements == null) ? 0 : pathElements.hashCode());
     return result;
   }
+  
 
   @Override
   public boolean equals(Object obj) {
@@ -91,9 +106,13 @@ public class QRestrictedPath implements IPieceOfEvidence {
         return false;
     } else if (!pathElements.equals(other.pathElements))
       return false;
+    if (Double.doubleToLongBits(score) != Double.doubleToLongBits(other.score))
+      return false;
     return true;
   }
+  
 
+  
   public int length() {
     if (pathElements != null) {
       return pathElements.size();
@@ -121,6 +140,27 @@ public class QRestrictedPath implements IPieceOfEvidence {
       builder.append("<");
       builder.append(element.getFirst().getURI());
       builder.append(">");
+    }
+    return builder.toString();
+  }
+
+  /**
+   * 
+   * @return the equivalent SPARQL property path that can be used in queries
+   */
+  public String getPropertyPath() {
+    StringBuilder builder = new StringBuilder();
+    boolean first = true;
+    for (Pair<Property, Boolean> element : pathElements) {
+      if (first) {
+        first = false;
+      } else {
+        builder.append("/");
+      }
+      if (!element.getSecond()) {
+        builder.append("^");
+      }
+      builder.append("<").append(element.getFirst().getURI()).append(">");
     }
     return builder.toString();
   }

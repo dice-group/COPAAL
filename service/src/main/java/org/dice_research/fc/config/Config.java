@@ -3,6 +3,7 @@ package org.dice_research.fc.config;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.delay.core.QueryExecutionFactoryDelay;
@@ -12,13 +13,20 @@ import org.aksw.jena_sparql_api.timeout.QueryExecutionFactoryTimeout;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
+import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.IFactChecker;
+import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.EmptyPredicateFactory;
 import org.dice_research.fc.paths.FactPreprocessor;
 import org.dice_research.fc.paths.IPathScorer;
 import org.dice_research.fc.paths.IPathSearcher;
+import org.dice_research.fc.paths.ImportedFactChecker;
 import org.dice_research.fc.paths.PathBasedFactChecker;
 import org.dice_research.fc.paths.PredicateFactory;
+import org.dice_research.fc.paths.imprt.EstherPathProcessor;
+import org.dice_research.fc.paths.imprt.MetaPathsProcessor;
+import org.dice_research.fc.paths.imprt.NoopPathProcessor;
+import org.dice_research.fc.paths.imprt.ThirdPartyPathImporter;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.PNPMIBasedScorer;
@@ -98,11 +106,13 @@ public class Config {
    */
   @Value("${dataset.max.length:3}")
   private int maxLength;
+  
   /**
    * The score calculator
    */
   @Value("${dataset.scorer.type:}")
   private String scorer;
+  
   /**
    * The count retriever type
    */
@@ -114,6 +124,24 @@ public class Config {
    */
   @Value("${cache:true}")
   private boolean isCache;
+  
+  /**
+   * The meta-paths pre-processor
+   */
+  @Value("${dataset.file.metapaths.processor:}")
+  private String metaPaths;
+  
+  /**
+   * The meta-paths file path
+   */
+  @Value("${dataset.file.metapaths.path:}")
+  private String metaPathsPath;
+  
+  /**
+   * Do we want to load the paths from file
+   */
+  @Value("${dataset.file.metapaths:false}")
+  private boolean isPathsLoad;
 
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -121,9 +149,24 @@ public class Config {
   }
   
   @Bean
+  public MetaPathsProcessor getMetaPathsProcessor(QueryExecutionFactory qef) {
+    Map<Property, Collection<QRestrictedPath>> loadedPaths = ThirdPartyPathImporter.importPathsFromFile(metaPathsPath);
+    switch (metaPaths) {
+      case "EstherPathProcessor":
+        return new EstherPathProcessor(loadedPaths, qef);
+      default:
+        return new NoopPathProcessor(loadedPaths, qef);
+    }
+  }
+  
+  @Bean
   public IFactChecker getFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
-      IPathScorer pathScorer, ScoreSummarist summarist) {
-    return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist);
+      IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaProcessor) {
+    if(isPathsLoad) {
+      return new ImportedFactChecker(metaProcessor, summarist);
+    } else {
+      return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist);
+    }
   }
   
   @Bean
