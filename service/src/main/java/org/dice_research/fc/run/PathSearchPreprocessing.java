@@ -16,6 +16,7 @@ import org.dice_research.fc.paths.ext.TripleProvider;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
+import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
@@ -47,7 +48,7 @@ public class PathSearchPreprocessing {
                 Arrays.asList(new NamespaceFilter("http://dbpedia.org/ontology", false),
                     new EqualsFilter(FILTERED_PROPERTIES))),
             new NPMIBasedScorer(
-                new CachingCountRetrieverDecorator(new ApproximatingCountRetriever(qef))));
+                new CachingCountRetrieverDecorator(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef)))));
 
     // TODO get a list of property URIs from somewhere
     String propertyURI = null;

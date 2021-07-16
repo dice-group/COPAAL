@@ -2,17 +2,13 @@ package org.dice_research.fc.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
-import org.aksw.jena_sparql_api.delay.core.QueryExecutionFactoryDelay;
-import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
-import org.aksw.jena_sparql_api.timeout.QueryExecutionFactoryTimeout;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
 import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.IFactChecker;
 import org.dice_research.fc.data.QRestrictedPath;
@@ -150,6 +146,9 @@ public class Config {
   
   @Bean
   public MetaPathsProcessor getMetaPathsProcessor(QueryExecutionFactory qef) {
+    if(metaPathsPath.isBlank()) {
+      return new NoopPathProcessor(new HashMap<>(), qef);
+    } 
     Map<Property, Collection<QRestrictedPath>> loadedPaths = ThirdPartyPathImporter.importPathsFromFile(metaPathsPath);
     switch (metaPaths) {
       case "EstherPathProcessor":
