@@ -12,13 +12,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.IFactChecker;
 import org.dice_research.fc.data.QRestrictedPath;
-import org.dice_research.fc.paths.EmptyPredicateFactory;
-import org.dice_research.fc.paths.FactPreprocessor;
-import org.dice_research.fc.paths.IPathScorer;
-import org.dice_research.fc.paths.IPathSearcher;
-import org.dice_research.fc.paths.ImportedFactChecker;
-import org.dice_research.fc.paths.PathBasedFactChecker;
-import org.dice_research.fc.paths.PredicateFactory;
+import org.dice_research.fc.paths.*;
 import org.dice_research.fc.paths.imprt.EstherPathProcessor;
 import org.dice_research.fc.paths.imprt.MetaPathsProcessor;
 import org.dice_research.fc.paths.imprt.NoopPathProcessor;
@@ -164,7 +158,8 @@ public class Config {
     if(isPathsLoad) {
       return new ImportedFactChecker(metaProcessor, summarist);
     } else {
-      return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist);
+      //return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist);
+      return new PathBasedFactCheckerSavePathScore(factPreprocessor, pathSearcher, pathScorer, summarist);
     }
   }
   
