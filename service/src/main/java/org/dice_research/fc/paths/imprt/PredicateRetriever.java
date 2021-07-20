@@ -45,8 +45,8 @@ public class PredicateRetriever {
    */
   public Set<String> getMostFrequentPredicates(int max) {
     StringBuilder freqPredQuery = new StringBuilder();
-    freqPredQuery.append(
-        "SELECT ?p (COUNT(*) AS ?freq) WHERE { ?s ?p ?o . } GROUP BY ?p ORDER BY DESC(?freq) LIMIT ");
+    freqPredQuery.append("SELECT ?p (COUNT(*) AS ?freq) WHERE { ?s ?p ?o . } ");
+    freqPredQuery.append(" GROUP BY ?p ORDER BY DESC(?freq) LIMIT ");
     freqPredQuery.append(max);
     return executeQuery(freqPredQuery.toString());
   }

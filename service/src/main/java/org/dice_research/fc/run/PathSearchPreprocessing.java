@@ -61,13 +61,15 @@ public class PathSearchPreprocessing {
     // gets the most frequent predicate in the graph
     // TODO: temporary, just to check functionality
     PredicateRetriever predRetr = new PredicateRetriever(qef);
-    String property = predRetr.getMostFrequentPredicates(1).stream().findAny().get();
+    String property = "http://dbpedia.org/property/birthPlace";
+    // String property =  predRetr.getMostFrequentPredicates(1).stream().findAny().get();
 
     // store paths 
     List<QRestrictedPath> paths = extractor.extract(property);
     Entry<Property, List<QRestrictedPath>> pair = new AbstractMap.SimpleEntry<Property, List<QRestrictedPath>>(ResourceFactory.createProperty(property), paths);
-    IPathExporter exporter = new DefaultExporter("./paths/");
-    exporter.exportPaths(pair);
+    IPathExporter exporter = new DefaultExporter("paths/");
+    String savedIn = exporter.exportPaths(pair);
+    System.out.println(savedIn);
   }
 
 }
