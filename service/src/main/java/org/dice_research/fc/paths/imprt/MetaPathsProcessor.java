@@ -1,6 +1,7 @@
 package org.dice_research.fc.paths.imprt;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.jena.rdf.model.Property;
@@ -21,7 +22,7 @@ public abstract class MetaPathsProcessor {
   /**
    * The predicate to meta-paths map
    */
-  protected Map<Property, Collection<QRestrictedPath>> metaPaths;
+  protected Map<Property, List<QRestrictedPath>> metaPaths;
 
   /**
    * The query execution factory
@@ -29,7 +30,7 @@ public abstract class MetaPathsProcessor {
   protected QueryExecutionFactory qef;
 
   @Autowired
-  public MetaPathsProcessor(Map<Property, Collection<QRestrictedPath>> metaPaths,
+  public MetaPathsProcessor(Map<Property, List<QRestrictedPath>> metaPaths,
       QueryExecutionFactory qef) {
     this.metaPaths = metaPaths;
     this.qef = qef;
@@ -45,11 +46,11 @@ public abstract class MetaPathsProcessor {
    */
   public abstract Collection<QRestrictedPath> processMetaPaths(Statement fact);
 
-  public Map<Property, Collection<QRestrictedPath>> getMetaPaths() {
+  public Map<Property, List<QRestrictedPath>> getMetaPaths() {
     return metaPaths;
   }
 
-  public void setMetaPaths(Map<Property, Collection<QRestrictedPath>> metaPaths) {
+  public void setMetaPaths(Map<Property, List<QRestrictedPath>> metaPaths) {
     this.metaPaths = metaPaths;
   }
 }

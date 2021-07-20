@@ -1,6 +1,7 @@
 package org.dice_research.fc.paths.imprt;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.jena.rdf.model.Property;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class NoopPathProcessor extends MetaPathsProcessor {
 
   @Autowired
-  public NoopPathProcessor(Map<Property, Collection<QRestrictedPath>> metaPaths,
+  public NoopPathProcessor(Map<Property, List<QRestrictedPath>> metaPaths,
       QueryExecutionFactory qef) {
     super(metaPaths, qef);
   }

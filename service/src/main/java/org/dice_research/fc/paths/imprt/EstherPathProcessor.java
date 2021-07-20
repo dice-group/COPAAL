@@ -1,6 +1,7 @@
 package org.dice_research.fc.paths.imprt;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
@@ -27,28 +28,34 @@ public class EstherPathProcessor extends MetaPathsProcessor {
   private static final Logger LOGGER = LoggerFactory.getLogger(EstherPathProcessor.class);
 
   @Autowired
-  public EstherPathProcessor(Map<Property, Collection<QRestrictedPath>> metaPaths,
+  public EstherPathProcessor(Map<Property, List<QRestrictedPath>> metaPaths,
       QueryExecutionFactory qef) {
     super(metaPaths, qef);
   }
 
   /**
-   * Removes the non-existent paths in the KG from the meta-paths {@link Collection}
+   * Removes the non-existent paths in the KG from the meta-paths
    */
   @Override
   public Collection<QRestrictedPath> processMetaPaths(Statement fact) {
     Collection<QRestrictedPath> paths = metaPaths.get(fact.getPredicate());
 
-    Collection<QRestrictedPath> copy =
-        paths.stream().map(curPath -> new QRestrictedPath(curPath.getPathElements(), curPath.getScore()))
-            .collect(Collectors.toList());
+    Collection<QRestrictedPath> copy = paths.stream()
+        .map(curPath -> new QRestrictedPath(curPath.getPathElements(), curPath.getScore()))
+        .collect(Collectors.toList());
 
-    copy.removeIf(curPath -> ask(fact.getSubject().toString(), curPath.getPropertyPath(),
+    copy.removeIf(curPath -> ask(fact.getSubject().toString(), curPath.getEvidence(),
         fact.getObject().toString()));
     return copy;
   }
 
 
+  /**
+   * @param subject The subject's URI.
+   * @param propertyPath The property path according to SPARQL standards.
+   * @param object The object's URI.
+   * @return True if a path exists between a given subject and object.
+   */
   private boolean ask(String subject, String propertyPath, String object) {
     StringBuilder query = new StringBuilder("ASK  { ");
     query.append("<").append(subject).append("> ").append(propertyPath).append(" <").append(object)
