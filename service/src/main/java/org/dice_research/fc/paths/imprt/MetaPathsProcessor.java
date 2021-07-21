@@ -7,6 +7,8 @@ import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Statement;
 import org.dice_research.fc.data.QRestrictedPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public abstract class MetaPathsProcessor {
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(MetaPathsProcessor.class);
 
   /**
    * The predicate to meta-paths map
@@ -28,6 +32,11 @@ public abstract class MetaPathsProcessor {
    * The query execution factory
    */
   protected QueryExecutionFactory qef;
+  
+  /**
+   * JSON file extension
+   */
+  protected final String JSON_EXTENSION = ".json";
 
   @Autowired
   public MetaPathsProcessor(String metaPaths, QueryExecutionFactory qef) {
@@ -52,6 +61,7 @@ public abstract class MetaPathsProcessor {
    * @return
    */
   protected Entry<Property, List<QRestrictedPath>> readMetaPaths(String fileName) {
+    LOGGER.info("Reading paths from {} .",fileName);
     DefaultImporter importer = new DefaultImporter();
     return importer.importPaths(fileName);
   }

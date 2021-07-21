@@ -20,15 +20,16 @@ import org.springframework.stereotype.Component;
 public class NoopPathProcessor extends MetaPathsProcessor {
 
   @Autowired
-  public NoopPathProcessor(String metaPaths,
-      QueryExecutionFactory qef) {
+  public NoopPathProcessor(String metaPaths, QueryExecutionFactory qef) {
     super(metaPaths, qef);
   }
 
   @Override
   public Collection<QRestrictedPath> processMetaPaths(Statement fact) {
-    Entry<Property, List<QRestrictedPath>> paths = readMetaPaths(metaPaths+fact.getPredicate().getLocalName());
-    if(paths == null) {
+    // FIXME getLocalName isn't be the best way to name the files
+    Entry<Property, List<QRestrictedPath>> paths =
+        readMetaPaths(metaPaths + fact.getPredicate().getLocalName() + JSON_EXTENSION);
+    if (paths == null) {
       return null;
     }
     return paths.getValue();

@@ -34,16 +34,17 @@ public class EstherPathProcessor extends MetaPathsProcessor {
    */
   @Override
   public Collection<QRestrictedPath> processMetaPaths(Statement fact) {
-    // read preprocessed facts from file
-    Entry<Property, List<QRestrictedPath>> paths = readMetaPaths(metaPaths+fact.getPredicate().getLocalName());
-    if(paths == null) {
+    // FIXME getLocalName isn't be the best way to name the files
+    Entry<Property, List<QRestrictedPath>> paths =
+        readMetaPaths(metaPaths + fact.getPredicate().getLocalName() + JSON_EXTENSION);
+    if (paths == null) {
       return null;
     }
 
     // remove if non existent
-    paths.getValue().removeIf(curPath -> ask(fact.getSubject().toString(), curPath.getEvidence(),
+    paths.getValue().removeIf(curPath -> !ask(fact.getSubject().toString(), curPath.getEvidence(),
         fact.getObject().toString()));
-    
+
     return paths.getValue();
   }
 

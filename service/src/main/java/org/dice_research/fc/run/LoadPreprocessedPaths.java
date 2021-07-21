@@ -41,7 +41,7 @@ public class LoadPreprocessedPaths {
                 new EqualsFilter(FILTERED_PROPERTIES))),
         new NPMIBasedScorer(new CachingCountRetrieverDecorator(
             new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef)))),
-        new FixedSummarist(), new EstherPathProcessor(FILTERED_NAMESPACE, qef));
+        new FixedSummarist(), new EstherPathProcessor("./paths/", qef));
 
     FactCheckingResult result =
         checker.check(ResourceFactory.createResource("http://dbpedia.org/resource/Tay_Zonday"),
