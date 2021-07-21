@@ -54,4 +54,12 @@ public class NamespaceFilter implements IRIFilter {
     queryBuilder.append("\")) \n");
   }
 
+  public boolean isExcludeMatch() {
+    return excludeMatch;
+  }
+
+  public String getNamespace() {
+    return namespace;
+  }
+  
 }

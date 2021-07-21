@@ -2,11 +2,12 @@ package org.dice_research.fc.paths.imprt;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.Property;
+import org.dice_research.fc.sparql.filter.NamespaceFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,27 +29,44 @@ public class PredicateRetriever {
   /**
    * Predicate variable in queries.
    */
-  private final String PREDICATE_VARIABLE = "?p";
+  private final String PREDICATE_VARIABLE = "p";
+
+  /**
+   * Namespace filter to apply to queries.
+   */
+  private NamespaceFilter filter;
 
   /**
    * Constructor.
    */
-  public PredicateRetriever(QueryExecutionFactory qef) {
+  public PredicateRetriever(QueryExecutionFactory qef, NamespaceFilter filter) {
     this.qef = qef;
+    this.filter = filter;
   }
 
   /**
-   * Retrieves the n most frequent predicates in a graph.
+   * 
+   * Retrieves < n most frequent predicates from a graph.
    * 
    * @param max Maximum number of predicates desired.
    * @return
    */
   public Set<String> getMostFrequentPredicates(int max) {
     StringBuilder freqPredQuery = new StringBuilder();
-    freqPredQuery.append("SELECT ?p (COUNT(*) AS ?freq) WHERE { ?s ?p ?o . } ");
-    freqPredQuery.append(" GROUP BY ?p ORDER BY DESC(?freq) LIMIT ");
+    freqPredQuery.append("SELECT ?p (COUNT(*) AS ?freq) WHERE { ?s ?p ?o .  ");
+    // removed filter clause since it was not working
+    // filter.addFilter(PREDICATE_VARIABLE, freqPredQuery);
+    freqPredQuery.append("} GROUP BY ?p ORDER BY DESC(?freq) LIMIT ");
     freqPredQuery.append(max);
-    return executeQuery(freqPredQuery.toString());
+
+    // execute query and filter afterwards
+    Set<String> result = executeQuery(freqPredQuery.toString());
+    Predicate<String> filterPred = k -> !k.contains(filter.getNamespace());
+    if (filter.isExcludeMatch()) {
+      filterPred = k -> k.contains(filter.getNamespace());
+    }
+    result.removeIf(filterPred);
+    return result;
   }
 
   /**

@@ -1,29 +1,20 @@
 package org.dice_research.fc.config;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.IFactChecker;
-import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.EmptyPredicateFactory;
 import org.dice_research.fc.paths.FactPreprocessor;
 import org.dice_research.fc.paths.IPathScorer;
 import org.dice_research.fc.paths.IPathSearcher;
 import org.dice_research.fc.paths.PathBasedFactChecker;
 import org.dice_research.fc.paths.PredicateFactory;
-import org.dice_research.fc.paths.imprt.DefaultImporter;
 import org.dice_research.fc.paths.imprt.EstherPathProcessor;
-import org.dice_research.fc.paths.imprt.IPathImporter;
 import org.dice_research.fc.paths.imprt.ImportedFactChecker;
 import org.dice_research.fc.paths.imprt.MetaPathsProcessor;
 import org.dice_research.fc.paths.imprt.NoopPathProcessor;
@@ -148,37 +139,30 @@ public class Config {
     return new PropertySourcesPlaceholderConfigurer();
   }
 
+  /**
+   * 
+   * @param qef
+   * @return The desired {@link MetaPathsProcessor} implementation.
+   */
   @Bean
   public MetaPathsProcessor getMetaPathsProcessor(QueryExecutionFactory qef) {
-    Map<Property, List<QRestrictedPath>> loadedPaths = new HashMap<>();
-    if (preprocessedPaths.isBlank()) {
-      return new NoopPathProcessor(loadedPaths, qef);
-    }
-    // FIXME this shouldn't be here.
-    // read all folder files 
-    IPathImporter importer = new DefaultImporter();
-    File folder = new File(preprocessedPaths);
-    for (File fileEntry : folder.listFiles()) {
-      if (fileEntry.isFile()) {
-        Entry<Property, List<QRestrictedPath>> entry = null;
-        try {
-          entry = importer.importPaths(fileEntry.getAbsolutePath());
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        loadedPaths.put(entry.getKey(), entry.getValue());
-      } 
-  }
-
-    
     switch (metaPaths) {
       case "EstherPathProcessor":
-        return new EstherPathProcessor(loadedPaths, qef);
+        return new EstherPathProcessor(preprocessedPaths, qef);
       default:
-        return new NoopPathProcessor(loadedPaths, qef);
+        return new NoopPathProcessor(preprocessedPaths, qef);
     }
   }
 
+  /**
+   * 
+   * @param factPreprocessor
+   * @param pathSearcher
+   * @param pathScorer
+   * @param summarist
+   * @param metaProcessor
+   * @return The desired {@link IFactChecker} implementation.
+   */
   @Bean
   public IFactChecker getFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
       IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaProcessor) {
@@ -190,6 +174,12 @@ public class Config {
     }
   }
 
+  /**
+   * 
+   * @param qef
+   * @param filter
+   * @return The desired {@link IPathSearcher} implementation.
+   */
   @Bean
   public IPathSearcher getPathSearcher(QueryExecutionFactory qef, Collection<IRIFilter> filter) {
     return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
@@ -279,8 +269,6 @@ public class Config {
       model.read(filePath);
       qef = new QueryExecutionFactoryModel(model);
     }
-    // qef = new QueryExecutionFactoryDelay(qef, 2000);
-    // qef = new QueryExecutionFactoryTimeout(qef, 30, TimeUnit.SECONDS, 30, TimeUnit.SECONDS);
     qef = new QueryExecutionFactoryCustomHttpTimeout(qef, 30000);
     return qef;
   }

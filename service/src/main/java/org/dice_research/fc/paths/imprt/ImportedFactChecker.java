@@ -14,7 +14,10 @@ import org.dice_research.fc.paths.FactPreprocessor;
 import org.dice_research.fc.paths.IPathScorer;
 import org.dice_research.fc.paths.IPathSearcher;
 import org.dice_research.fc.paths.PathBasedFactChecker;
+import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.sum.ScoreSummarist;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +30,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ImportedFactChecker extends PathBasedFactChecker {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(SPARQLBasedSOPathSearcher.class);
 
   /**
    * The imported facts processor
@@ -44,9 +49,19 @@ public class ImportedFactChecker extends PathBasedFactChecker {
   @Override
   public FactCheckingResult check(Resource subject, Property predicate, Resource object) {
     Statement fact = ResourceFactory.createStatement(subject, predicate, object);
+    Predicate preparedPredicate = factPreprocessor.generatePredicate(fact);
 
-    // pre-process paths in file if needed
+    // pre-process paths in file
     Collection<QRestrictedPath> paths = metaPreprocessor.processMetaPaths(fact);
+
+    // search for paths if preprocessed paths can't be found
+    if (paths == null) {
+      LOGGER.warn("Couldn't find the files for paths of {}. Switching to path search.",
+          predicate.getURI());
+      paths = pathSearcher.search(subject, preparedPredicate, object);
+    }
+
+    // return default score if no paths are found
     if (paths.isEmpty()) {
       return new FactCheckingResult(pathsNotFoundResult, paths, fact);
     }
@@ -54,7 +69,8 @@ public class ImportedFactChecker extends PathBasedFactChecker {
     // calculate scores if needed only
     Stream<QRestrictedPath> pathStream = paths.stream();
     if (pathStream.findFirst().get().getScore() == Double.NaN) {
-      Predicate preparedPredicate = factPreprocessor.generatePredicate(fact);
+      LOGGER.warn("Couldn't find scores for paths of predicate {}. Executing path scoring.",
+          predicate.getURI());
       paths = paths.parallelStream().filter(pathFilter)
           .map(p -> pathScorer.score(subject, preparedPredicate, object, p))
           .filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());

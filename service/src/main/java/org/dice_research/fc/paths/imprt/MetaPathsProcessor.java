@@ -2,7 +2,7 @@ package org.dice_research.fc.paths.imprt;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Statement;
@@ -22,7 +22,7 @@ public abstract class MetaPathsProcessor {
   /**
    * The predicate to meta-paths map
    */
-  protected Map<Property, List<QRestrictedPath>> metaPaths;
+  protected String metaPaths;
 
   /**
    * The query execution factory
@@ -30,8 +30,7 @@ public abstract class MetaPathsProcessor {
   protected QueryExecutionFactory qef;
 
   @Autowired
-  public MetaPathsProcessor(Map<Property, List<QRestrictedPath>> metaPaths,
-      QueryExecutionFactory qef) {
+  public MetaPathsProcessor(String metaPaths, QueryExecutionFactory qef) {
     this.metaPaths = metaPaths;
     this.qef = qef;
   }
@@ -44,13 +43,24 @@ public abstract class MetaPathsProcessor {
    * @param object the fact's object
    * @return the {@link Collection} of paths after pre-processing
    */
-  public abstract Collection<QRestrictedPath> processMetaPaths(Statement fact);
+  protected abstract Collection<QRestrictedPath> processMetaPaths(Statement fact);
 
-  public Map<Property, List<QRestrictedPath>> getMetaPaths() {
+  /**
+   * Reads a property's metapaths from file. It is assumed each file pertains only to one property.
+   * 
+   * @param fileName
+   * @return
+   */
+  protected Entry<Property, List<QRestrictedPath>> readMetaPaths(String fileName) {
+    DefaultImporter importer = new DefaultImporter();
+    return importer.importPaths(fileName);
+  }
+
+  public String getMetaPaths() {
     return metaPaths;
   }
 
-  public void setMetaPaths(Map<Property, List<QRestrictedPath>> metaPaths) {
+  public void setMetaPaths(String metaPaths) {
     this.metaPaths = metaPaths;
   }
 }

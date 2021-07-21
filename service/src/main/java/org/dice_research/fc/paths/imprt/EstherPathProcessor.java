@@ -2,8 +2,7 @@ package org.dice_research.fc.paths.imprt;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Map.Entry;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.rdf.model.Property;
@@ -15,10 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * This class pre-processes the meta-paths by ascertaining their existence between two nodes in the
+ * This class pre-processes the saved paths by ascertaining their existence between two nodes in the
  * knowledge graph and removing the non-existent.
- * <p>
- * It is written for ESTHER's use-case in mind.
  * 
  * @author Alexandra Silva
  *
@@ -28,8 +25,7 @@ public class EstherPathProcessor extends MetaPathsProcessor {
   private static final Logger LOGGER = LoggerFactory.getLogger(EstherPathProcessor.class);
 
   @Autowired
-  public EstherPathProcessor(Map<Property, List<QRestrictedPath>> metaPaths,
-      QueryExecutionFactory qef) {
+  public EstherPathProcessor(String metaPaths, QueryExecutionFactory qef) {
     super(metaPaths, qef);
   }
 
@@ -38,17 +34,18 @@ public class EstherPathProcessor extends MetaPathsProcessor {
    */
   @Override
   public Collection<QRestrictedPath> processMetaPaths(Statement fact) {
-    Collection<QRestrictedPath> paths = metaPaths.get(fact.getPredicate());
+    // read preprocessed facts from file
+    Entry<Property, List<QRestrictedPath>> paths = readMetaPaths(metaPaths+fact.getPredicate().getLocalName());
+    if(paths == null) {
+      return null;
+    }
 
-    Collection<QRestrictedPath> copy = paths.stream()
-        .map(curPath -> new QRestrictedPath(curPath.getPathElements(), curPath.getScore()))
-        .collect(Collectors.toList());
-
-    copy.removeIf(curPath -> ask(fact.getSubject().toString(), curPath.getEvidence(),
+    // remove if non existent
+    paths.getValue().removeIf(curPath -> ask(fact.getSubject().toString(), curPath.getEvidence(),
         fact.getObject().toString()));
-    return copy;
+    
+    return paths.getValue();
   }
-
 
   /**
    * @param subject The subject's URI.

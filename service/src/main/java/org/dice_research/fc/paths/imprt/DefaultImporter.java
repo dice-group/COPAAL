@@ -37,6 +37,11 @@ public class DefaultImporter implements IPathImporter {
 
     // get the map
     Entry<Property, List<QRestrictedPath>> typedMap = null;
+    File file = new File(filePath);
+    if(!file.exists() || !file.isFile()){
+      return typedMap;
+    }
+    
     try {
       typedMap = mapper.readValue(new File(filePath),
           new TypeReference<Entry<Property, List<QRestrictedPath>>>() {});
