@@ -26,7 +26,6 @@ public class NoopPathProcessor extends MetaPathsProcessor {
 
   @Override
   public Collection<QRestrictedPath> processMetaPaths(Statement fact) {
-    // FIXME getLocalName isn't be the best way to name the files
     Entry<Property, List<QRestrictedPath>> paths =
         readMetaPaths(metaPaths + fact.getPredicate().getLocalName() + JSON_EXTENSION);
     if (paths == null) {

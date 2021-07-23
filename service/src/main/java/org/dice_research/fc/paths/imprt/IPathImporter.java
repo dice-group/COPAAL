@@ -15,11 +15,9 @@ import org.dice_research.fc.data.QRestrictedPath;
  */
 public interface IPathImporter {
 
-  /**
-   * FIXME should be IPieceOfEvidence instead.
-   * 
-   * @param filePath
-   * @return
+  /** 
+   * @param filePath Path where the file is saved.
+   * @return The paths corresponding to a predicate.
    * @throws IOException
    */
   Entry<Property, List<QRestrictedPath>> importPaths(String filePath) throws IOException;

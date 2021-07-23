@@ -42,7 +42,7 @@ public class PathSearchPreprocessing {
     qef = new QueryExecutionFactoryCustomHttpTimeout(qef, 30000);
 
     long seed = 123;
-    int numberOfTriples = 10;
+    int numberOfTriples = 500;
 
     TripleProvider tripleProvider = new SamplingSPARQLBasedTripleProvider(qef, seed);
     NamespaceFilter filter = new NamespaceFilter("http://dbpedia.org/ontology", false);
@@ -56,9 +56,9 @@ public class PathSearchPreprocessing {
                 new CachingCountRetrieverDecorator(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef)))));
 
     // gets one of the most frequent predicates in the graph
-    //String property = "http://dbpedia.org/ontology/birthPlace";
-    PredicateRetriever predRetr = new PredicateRetriever(qef, filter);
-    String property =  predRetr.getMostFrequentPredicates(50).stream().findAny().get();
+    String property = "http://dbpedia.org/ontology/birthPlace";
+    //PredicateRetriever predRetr = new PredicateRetriever(qef, filter);
+    //String property =  predRetr.getMostFrequentPredicates(50).stream().findAny().get();
     
     // store paths 
     List<QRestrictedPath> paths = extractor.extract(property);
