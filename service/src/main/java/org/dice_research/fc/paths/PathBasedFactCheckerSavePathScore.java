@@ -1,10 +1,12 @@
 package org.dice_research.fc.paths;
 
+import org.apache.commons.math3.util.Pair;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.dice_research.fc.IFactChecker;
+import org.dice_research.fc.IMapper;
 import org.dice_research.fc.data.FactCheckingResult;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
@@ -12,19 +14,39 @@ import org.dice_research.fc.paths.filter.AlwaysTruePathFilter;
 import org.dice_research.fc.paths.filter.AlwaysTrueScoreFilter;
 import org.dice_research.fc.paths.filter.IPathFilter;
 import org.dice_research.fc.paths.filter.IScoreFilter;
-import org.dice_research.fc.paths.repository.PathRepository;
-import org.dice_research.fc.paths.scorer.ICountRetriever;
+import org.dice_research.fc.paths.model.Path;
+import org.dice_research.fc.paths.model.PathElement;
+import org.dice_research.fc.paths.repository.IPathElementRepository;
+import org.dice_research.fc.paths.repository.IPathRepository;
 import org.dice_research.fc.sum.ScoreSummarist;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * This class implements the typical process for checking a given fact and save tha paths , then next time if the saved path needed just load it from DB.
+ *
+ * @author Farshad Afshari
+ *
+ */
+
+@Component
 public class PathBasedFactCheckerSavePathScore implements IFactChecker {
 
     @Autowired
-    PathRepository pathRepository;
+    IPathRepository pathRepository;
+
+    @Autowired
+    IPathElementRepository pathElementRepository;
+
+    @Autowired
+    IMapper<Path, QRestrictedPath> mapper;
+
+    @Autowired
+    IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper;
 
     /**
      * The preprocessor used to prepare the given fact.
@@ -119,7 +141,8 @@ public class PathBasedFactCheckerSavePathScore implements IFactChecker {
             paths = paths.parallelStream().filter(pathFilter)
                     .map(p -> pathScorer.score(subject, preparedPredicate, object, p))
                     .filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());
-            savePaths(paths,subject,predicate,object,factPreprocessorClassName,pathSearcherClassName,pathScorerClassName);
+
+            savePaths(paths,subject,predicate,object,factPreprocessorClassName,counterRetrieverClassName,pathSearcherClassName,pathScorerClassName);
         }
         // Get the scores
         double[] scores = paths.stream().mapToDouble(p -> p.getScore()).toArray();
@@ -130,13 +153,52 @@ public class PathBasedFactCheckerSavePathScore implements IFactChecker {
         return new FactCheckingResult(veracity, paths, fact);
     }
 
-    private void savePaths(Collection<QRestrictedPath> paths, Resource subject, Property predicate, Resource object, String factPreprocessorClassName, String pathSearcherClassName, String pathScorerClassName) {
+    /**
+     * save the path in DB
+     * @param paths is a list of calculated path which we want to store
+     * @param subject is a fact subject
+     * @param predicate ia a fact predicate
+     * @param object is a fact predicate
+     * @param factPreprocessorClassName shows which factPreprocessor used
+     * @param counterRetrieverClassName shows which counterRetriever used
+     * @param pathSearcherClassName shows which pathSearcher used
+     * @param pathScorerClassName shows which pathScorer used
+     */
+    private void savePaths(Collection<QRestrictedPath> paths, Resource subject, Property predicate, Resource object, String factPreprocessorClassName,String counterRetrieverClassName, String pathSearcherClassName, String pathScorerClassName) {
+        for (QRestrictedPath p: paths) {
+            List<PathElement> pathElements = p.getPathElements()
+                    .stream()
+                    .map(element -> propertyElementMapper.map(element))
+                    .collect(Collectors.toList());
+
+            Path forSave = new Path(subject.getURI(),predicate.getURI(),object.getURI(),factPreprocessorClassName,counterRetrieverClassName,pathSearcherClassName,pathScorerClassName,p.getScore());
+            for (PathElement pe:pathElements
+                 ) {
+                PathElement p1=pathElementRepository.save(pe);
+
+                forSave.addPathElement(pe);
+            }
+            pathRepository.save(forSave);
+        }
     }
 
-    private List<QRestrictedPath> retrievePathsFromDB(Resource subject, Property predicate, Resource object, String factPreprocessorClassName, String counterRetrieverName, String pathSearcherClassName, String pathScorerClassName) {
-        //return pathRepository.findBysubjectSubjectAndPredicateAndObjectAndFactPreprocessorAndCounterRetrieverAndPathSearcherAndPathScorer(subject.getURI(),predicate.getURI(),object.getURI(),factPreprocessorClassName,counterRetrieverName,pathSearcherClassName,pathScorerClassName);
-    return null;
+    /**
+     * retrive the path from DB
+     * @return  a list of saved path
+     * @param subject is a fact subject
+     * @param predicate ia a fact predicate
+     * @param object is a fact predicate
+     * @param factPreprocessorClassName shows which factPreprocessor used
+     * @param counterRetrieverClassName shows which counterRetriever used
+     * @param pathSearcherClassName shows which pathSearcher used
+     * @param pathScorerClassName shows which pathScorer used
+     */
+    private List<QRestrictedPath> retrievePathsFromDB(Resource subject, Property predicate, Resource object, String factPreprocessorClassName, String counterRetrieverClassName, String pathSearcherClassName, String pathScorerClassName) {
+        List<Path> paths = pathRepository.findBySubjectAndPredicateAndObjectAndFactPreprocessorAndCounterRetrieverAndPathSearcherAndPathScorer(subject.getURI(),predicate.getURI(),object.getURI(),factPreprocessorClassName,counterRetrieverClassName,pathSearcherClassName,pathScorerClassName);
+        List<QRestrictedPath> returnVal = paths.stream().map(p -> mapper.map(p)).collect(Collectors.toList());
+        return returnVal;
     }
+
 
     /**
      * @param pathFilter the pathFilter to set

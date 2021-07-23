@@ -1,22 +1,27 @@
 package org.dice_research.fc.config;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
+import org.apache.commons.math3.util.Pair;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
+import org.dice_research.fc.IBidirectionalMapper;
 import org.dice_research.fc.IFactChecker;
+import org.dice_research.fc.IMapper;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.*;
 import org.dice_research.fc.paths.imprt.EstherPathProcessor;
 import org.dice_research.fc.paths.imprt.MetaPathsProcessor;
 import org.dice_research.fc.paths.imprt.NoopPathProcessor;
 import org.dice_research.fc.paths.imprt.ThirdPartyPathImporter;
+import org.dice_research.fc.paths.map.PathMapper;
+import org.dice_research.fc.paths.map.PropertyElementMapper;
+import org.dice_research.fc.paths.map.PropertyMapper;
+import org.dice_research.fc.paths.model.Path;
+import org.dice_research.fc.paths.model.PathElement;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.PNPMIBasedScorer;
@@ -293,6 +298,34 @@ public class Config {
       default:
         return new OriginalSummarist();
     }
+  }
+
+  /**
+   * @return {@link PathMapper} .
+   */
+  @Bean
+  public IMapper<Path, QRestrictedPath> getPathMapper(){
+    return new PathMapper();
+  }
+
+  /**
+   * @return {@link PropertyMapper} .
+   */
+  @Bean
+  public IBidirectionalMapper<Property,String> getPropertyMapper(){
+    return new PropertyMapper();
+  }
+
+  //TODO : delete this
+/*  @Bean
+  public IPathRepository getFakeRepos(){
+    Mockito mocker = new Mockito();
+    return mocker.mock(IPathRepository.class);
+  }*/
+
+  @Bean
+  public IMapper<Pair<Property, Boolean>, PathElement> getPropertyElementMapper(){
+    return new PropertyElementMapper();
   }
 }
 // TODO: we can also use reflection instead of switch case statements?
