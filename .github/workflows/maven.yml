@@ -36,9 +36,4 @@ jobs:
       run: mvn jacoco:prepare-agent verify -Dmaven.javadoc.skip=true -B jacoco:report
       working-directory: service
     - name: Upload test results to Codacy
-      run: |
-        LATEST_VERSION="$(curl -Ls https://api.bintray.com/packages/codacy/Binaries/codacy-coverage-reporter/versions/_latest | jq -r .name)"
-        curl -Ls -o codacy-coverage-reporter "https://dl.bintray.com/codacy/Binaries/${LATEST_VERSION}/codacy-coverage-reporter-linux"
-        chmod +x codacy-coverage-reporter
-        ./codacy-coverage-reporter report -l Java -r target/site/jacoco/jacoco.xml
-      working-directory: service
+      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r service/target/site/jacoco/jacoco.xml

@@ -5,11 +5,13 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class QueryTest {
 
   @Test
+  @Ignore
   public void test() {
     QueryExecutioner queryExecutioner = new QueryExecutioner();
     queryExecutioner.setServiceRequestURL("https://dbpedia.org/sparql");
