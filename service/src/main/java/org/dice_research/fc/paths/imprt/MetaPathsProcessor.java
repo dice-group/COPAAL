@@ -1,11 +1,14 @@
 package org.dice_research.fc.paths.imprt;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.List;
+import java.util.Map.Entry;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Statement;
 import org.dice_research.fc.data.QRestrictedPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,20 +20,26 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public abstract class MetaPathsProcessor {
+  
+  private static final Logger LOGGER = LoggerFactory.getLogger(MetaPathsProcessor.class);
 
   /**
    * The predicate to meta-paths map
    */
-  protected Map<Property, Collection<QRestrictedPath>> metaPaths;
+  protected String metaPaths;
 
   /**
    * The query execution factory
    */
   protected QueryExecutionFactory qef;
+  
+  /**
+   * JSON file extension
+   */
+  protected final String JSON_EXTENSION = ".json";
 
   @Autowired
-  public MetaPathsProcessor(Map<Property, Collection<QRestrictedPath>> metaPaths,
-      QueryExecutionFactory qef) {
+  public MetaPathsProcessor(String metaPaths, QueryExecutionFactory qef) {
     this.metaPaths = metaPaths;
     this.qef = qef;
   }
@@ -43,13 +52,25 @@ public abstract class MetaPathsProcessor {
    * @param object the fact's object
    * @return the {@link Collection} of paths after pre-processing
    */
-  public abstract Collection<QRestrictedPath> processMetaPaths(Statement fact);
+  protected abstract Collection<QRestrictedPath> processMetaPaths(Statement fact);
 
-  public Map<Property, Collection<QRestrictedPath>> getMetaPaths() {
+  /**
+   * Reads a property's metapaths from file. It is assumed each file pertains only to one property.
+   * 
+   * @param fileName
+   * @return
+   */
+  protected Entry<Property, List<QRestrictedPath>> readMetaPaths(String fileName) {
+    LOGGER.info("Reading paths from {} .",fileName);
+    DefaultImporter importer = new DefaultImporter();
+    return importer.importPaths(fileName);
+  }
+
+  public String getMetaPaths() {
     return metaPaths;
   }
 
-  public void setMetaPaths(Map<Property, Collection<QRestrictedPath>> metaPaths) {
+  public void setMetaPaths(String metaPaths) {
     this.metaPaths = metaPaths;
   }
 }

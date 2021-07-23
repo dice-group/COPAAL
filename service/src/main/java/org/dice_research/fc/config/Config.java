@@ -2,27 +2,26 @@ package org.dice_research.fc.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.IFactChecker;
-import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.EmptyPredicateFactory;
 import org.dice_research.fc.paths.FactPreprocessor;
 import org.dice_research.fc.paths.IPathScorer;
 import org.dice_research.fc.paths.IPathSearcher;
-import org.dice_research.fc.paths.ImportedFactChecker;
 import org.dice_research.fc.paths.PathBasedFactChecker;
 import org.dice_research.fc.paths.PredicateFactory;
+import org.dice_research.fc.paths.export.DefaultExporter;
+import org.dice_research.fc.paths.export.IPathExporter;
+import org.dice_research.fc.paths.imprt.DefaultImporter;
 import org.dice_research.fc.paths.imprt.EstherPathProcessor;
+import org.dice_research.fc.paths.imprt.IPathImporter;
+import org.dice_research.fc.paths.imprt.ImportedFactChecker;
 import org.dice_research.fc.paths.imprt.MetaPathsProcessor;
 import org.dice_research.fc.paths.imprt.NoopPathProcessor;
-import org.dice_research.fc.paths.imprt.ThirdPartyPathImporter;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.PNPMIBasedScorer;
@@ -78,7 +77,7 @@ public class Config {
    */
   @Value("${dataset.filter.properties:}")
   private String[] filteredProperties;
-  
+
   /**
    * The namespace we are interested in
    */
@@ -102,13 +101,13 @@ public class Config {
    */
   @Value("${dataset.max.length:3}")
   private int maxLength;
-  
+
   /**
    * The score calculator
    */
   @Value("${dataset.scorer.type:}")
   private String scorer;
-  
+
   /**
    * The count retriever type
    */
@@ -120,19 +119,19 @@ public class Config {
    */
   @Value("${cache:true}")
   private boolean isCache;
-  
+
   /**
    * The meta-paths pre-processor
    */
   @Value("${dataset.file.metapaths.processor:}")
   private String metaPaths;
-  
+
   /**
-   * The meta-paths file path
+   * The preprocessed folder path
    */
-  @Value("${dataset.file.metapaths.path:}")
-  private String metaPathsPath;
-  
+  @Value("${dataset.file.preprocess.path:}")
+  private String preprocessedPaths;
+
   /**
    * Do we want to load the paths from file
    */
@@ -143,31 +142,48 @@ public class Config {
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
     return new PropertySourcesPlaceholderConfigurer();
   }
-  
+
+  /**
+   * 
+   * @param qef
+   * @return The desired {@link MetaPathsProcessor} implementation.
+   */
   @Bean
   public MetaPathsProcessor getMetaPathsProcessor(QueryExecutionFactory qef) {
-    if(metaPathsPath.isBlank()) {
-      return new NoopPathProcessor(new HashMap<>(), qef);
-    } 
-    Map<Property, Collection<QRestrictedPath>> loadedPaths = ThirdPartyPathImporter.importPathsFromFile(metaPathsPath);
     switch (metaPaths) {
       case "EstherPathProcessor":
-        return new EstherPathProcessor(loadedPaths, qef);
+        return new EstherPathProcessor(preprocessedPaths, qef);
       default:
-        return new NoopPathProcessor(loadedPaths, qef);
+        return new NoopPathProcessor(preprocessedPaths, qef);
     }
   }
-  
+
+  /**
+   * 
+   * @param factPreprocessor
+   * @param pathSearcher
+   * @param pathScorer
+   * @param summarist
+   * @param metaProcessor
+   * @return The desired {@link IFactChecker} implementation.
+   */
   @Bean
   public IFactChecker getFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
       IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaProcessor) {
-    if(isPathsLoad) {
-      return new ImportedFactChecker(metaProcessor, summarist);
+    if (isPathsLoad) {
+      return new ImportedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist,
+          metaProcessor);
     } else {
       return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist);
     }
   }
-  
+
+  /**
+   * 
+   * @param qef
+   * @param filter
+   * @return The desired {@link IPathSearcher} implementation.
+   */
   @Bean
   public IPathSearcher getPathSearcher(QueryExecutionFactory qef, Collection<IRIFilter> filter) {
     return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
@@ -197,7 +213,7 @@ public class Config {
     }
     return countRetriever;
   }
-  
+
   /**
    * 
    * @param qef
@@ -206,7 +222,7 @@ public class Config {
   @Bean
   public MaxCounter getMaxCounter(QueryExecutionFactory qef) {
     MaxCounter maxCounter;
-    if(isVirtualTypes) {
+    if (isVirtualTypes) {
       maxCounter = new VirtualTypesMaxCounter(qef);
     } else {
       maxCounter = new DefaultMaxCounter(qef);
@@ -231,13 +247,13 @@ public class Config {
   }
 
   /**
-   * @return The {@link IRIFilter} object with the unwanted properties 
+   * @return The {@link IRIFilter} object with the unwanted properties
    */
   @Bean
   public Collection<IRIFilter> getFilter() {
     List<IRIFilter> filters = new ArrayList<IRIFilter>();
     filters.add(new EqualsFilter(filteredProperties));
-    for(int i = 0; i<namespaceFilters.length;i++) {
+    for (int i = 0; i < namespaceFilters.length; i++) {
       filters.add(new NamespaceFilter(namespaceFilters[i], false));
     }
     return filters;
@@ -257,8 +273,6 @@ public class Config {
       model.read(filePath);
       qef = new QueryExecutionFactoryModel(model);
     }
-    //qef = new QueryExecutionFactoryDelay(qef, 2000);
-    //qef = new QueryExecutionFactoryTimeout(qef, 30, TimeUnit.SECONDS, 30, TimeUnit.SECONDS);
     qef = new QueryExecutionFactoryCustomHttpTimeout(qef, 30000);
     return qef;
   }
@@ -299,6 +313,17 @@ public class Config {
         return new OriginalSummarist();
     }
   }
+
+  @Bean
+  public IPathImporter getImporter() {
+    return new DefaultImporter();
+  }
+
+  @Bean
+  public IPathExporter getExporter() {
+    return new DefaultExporter(preprocessedPaths);
+  }
+
 }
 // TODO: we can also use reflection instead of switch case statements?
 // ScoreSummarist pathScorer = null;

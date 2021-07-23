@@ -42,6 +42,7 @@ public class SPARQLBasedTripleProvider implements TripleProvider {
   public List<StringTriple> provideTriples(String propertyIri, int numberOfTriples) {
     StringBuilder queryBuilder = new StringBuilder();
     queryBuilder.append("SELECT DISTINCT ?s ?o WHERE { ?s <");
+    queryBuilder.append(propertyIri);
     queryBuilder.append("> ?o }");
     if (numberOfTriples >= 0) {
       queryBuilder.append(" LIMIT ");
