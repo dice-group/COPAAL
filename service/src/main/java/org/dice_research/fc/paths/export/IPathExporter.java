@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.data.QRestrictedPath;
+import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  * @author Alexandra Silva
  *
  */
+@Component
 public interface IPathExporter {
 
   /**

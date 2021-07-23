@@ -2,7 +2,6 @@ package org.dice_research.fc.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
@@ -15,7 +14,11 @@ import org.dice_research.fc.paths.IPathScorer;
 import org.dice_research.fc.paths.IPathSearcher;
 import org.dice_research.fc.paths.PathBasedFactChecker;
 import org.dice_research.fc.paths.PredicateFactory;
+import org.dice_research.fc.paths.export.DefaultExporter;
+import org.dice_research.fc.paths.export.IPathExporter;
+import org.dice_research.fc.paths.imprt.DefaultImporter;
 import org.dice_research.fc.paths.imprt.EstherPathProcessor;
+import org.dice_research.fc.paths.imprt.IPathImporter;
 import org.dice_research.fc.paths.imprt.ImportedFactChecker;
 import org.dice_research.fc.paths.imprt.MetaPathsProcessor;
 import org.dice_research.fc.paths.imprt.NoopPathProcessor;
@@ -122,7 +125,7 @@ public class Config {
    */
   @Value("${dataset.file.metapaths.processor:}")
   private String metaPaths;
-  
+
   /**
    * The preprocessed folder path
    */
@@ -310,6 +313,17 @@ public class Config {
         return new OriginalSummarist();
     }
   }
+
+  @Bean
+  public IPathImporter getImporter() {
+    return new DefaultImporter();
+  }
+
+  @Bean
+  public IPathExporter getExporter() {
+    return new DefaultExporter(preprocessedPaths);
+  }
+
 }
 // TODO: we can also use reflection instead of switch case statements?
 // ScoreSummarist pathScorer = null;

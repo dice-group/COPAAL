@@ -15,7 +15,6 @@ import org.dice_research.fc.paths.ext.IPathExtractor;
 import org.dice_research.fc.paths.ext.SamplingPathExtractor;
 import org.dice_research.fc.paths.ext.SamplingSPARQLBasedTripleProvider;
 import org.dice_research.fc.paths.ext.TripleProvider;
-import org.dice_research.fc.paths.imprt.PredicateRetriever;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;

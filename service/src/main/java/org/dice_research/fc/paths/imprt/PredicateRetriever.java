@@ -32,14 +32,23 @@ public class PredicateRetriever {
   private final String PREDICATE_VARIABLE = "p";
 
   /**
-   * Namespace filter to apply to queries.
+   * Predicate filter.
    */
-  private NamespaceFilter filter;
+  private Predicate<String> filter;
 
   /**
    * Constructor.
    */
   public PredicateRetriever(QueryExecutionFactory qef, NamespaceFilter filter) {
+    this.qef = qef;
+    if (filter.isExcludeMatch()) {
+      this.filter = k -> k.contains(filter.getNamespace());
+    } else {
+      this.filter = k -> !k.contains(filter.getNamespace());
+    }
+  }
+
+  public PredicateRetriever(QueryExecutionFactory qef, Predicate<String> filter) {
     this.qef = qef;
     this.filter = filter;
   }
@@ -61,11 +70,7 @@ public class PredicateRetriever {
 
     // execute query and filter afterwards
     Set<String> result = executeQuery(freqPredQuery.toString());
-    Predicate<String> filterPred = k -> !k.contains(filter.getNamespace());
-    if (filter.isExcludeMatch()) {
-      filterPred = k -> k.contains(filter.getNamespace());
-    }
-    result.removeIf(filterPred);
+    result.removeIf(filter);
     return result;
   }
 

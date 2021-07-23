@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.data.QRestrictedPath;
+import org.springframework.stereotype.Component;
 
 /**
  * Classes implementing this interface should describe different methods of importing paths to
@@ -13,6 +14,7 @@ import org.dice_research.fc.data.QRestrictedPath;
  * @author Alexandra Silva
  *
  */
+@Component
 public interface IPathImporter {
 
   /** 
