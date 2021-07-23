@@ -23,8 +23,6 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
-    - name: Switch to service directory
-      run: cd service
     - name: Build with Maven
       run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true --batch-mode --update-snapshots --show-version
       working-directory: service
