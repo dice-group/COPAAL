@@ -1,16 +1,35 @@
 package org.dice_research.fc.paths.model;
 
-import org.apache.jena.rdf.model.Resource;
-
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * This class is a model for path which saved in a DB
+ *
+ * @author Farshad Afshari
+ *
+ */
 
 @Entity
-@Table(name = "paths")
+@Table(name = "Paths")
 public class Path {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
+    /**
+     * This make many to many relation with PathElement table
+     */
+
+    @ManyToMany
+    @JoinTable(
+            name = "pathelements_paths",
+            joinColumns = @JoinColumn(name = "path_id"),
+            inverseJoinColumns = @JoinColumn(name = "pathelements_id")
+    )
+    private List<PathElement> pathElements = new ArrayList<>();
 
     @Column(name = "Subject")
     private String subject;
@@ -21,29 +40,36 @@ public class Path {
     @Column(name = "Object")
     private String object;
 
-    @Column(name = "FactPreprocessor")
-    private String factPreprocessorClassName;
+    @Column(name = "Factpreprocessor")
+    private String factPreprocessor;
 
     @Column(name = "CounterRetriever")
-    private String counterRetrieverName;
+    private String counterRetriever;
 
     @Column(name = "PathSearcher")
-    private String pathSearcherClassName;
+    private String pathSearcher;
 
     @Column(name = "PathScorer")
-    private String pathScorerClassName;
+    private String pathScorer;
+
+    @Column(name = "Score")
+    private double score;
 
     public Path(){}
 
-    public Path(long id, String subject, String predicate, String object, String factPreprocessorClassName, String counterRetrieverName, String pathSearcherClassName, String pathScorerClassName) {
-        this.id = id;
+    public Path( String subject, String predicate, String object, String factPreprocessor, String counterRetriever, String pathSearcher, String pathScorer, double score) {
         this.subject = subject;
         this.predicate = predicate;
         this.object = object;
-        this.factPreprocessorClassName = factPreprocessorClassName;
-        this.counterRetrieverName = counterRetrieverName;
-        this.pathSearcherClassName = pathSearcherClassName;
-        this.pathScorerClassName = pathScorerClassName;
+        this.factPreprocessor = factPreprocessor;
+        this.counterRetriever = counterRetriever;
+        this.pathSearcher = pathSearcher;
+        this.pathScorer = pathScorer;
+        this.score = score;
+    }
+
+    public void addPathElement(PathElement pathElements){
+        this.pathElements.add(pathElements);
     }
 
     public long getId() {
@@ -75,34 +101,50 @@ public class Path {
     }
 
     public String getFactPreprocessorClassName() {
-        return factPreprocessorClassName;
+        return factPreprocessor;
     }
 
     public void setFactPreprocessorClassName(String factPreprocessorClassName) {
-        this.factPreprocessorClassName = factPreprocessorClassName;
+        this.factPreprocessor = factPreprocessorClassName;
     }
 
     public String getCounterRetrieverName() {
-        return counterRetrieverName;
+        return counterRetriever;
     }
 
     public void setCounterRetrieverName(String counterRetrieverName) {
-        this.counterRetrieverName = counterRetrieverName;
+        this.counterRetriever = counterRetrieverName;
     }
 
     public String getPathSearcherClassName() {
-        return pathSearcherClassName;
+        return pathSearcher;
     }
 
     public void setPathSearcherClassName(String pathSearcherClassName) {
-        this.pathSearcherClassName = pathSearcherClassName;
+        this.pathSearcher = pathSearcherClassName;
     }
 
     public String getPathScorerClassName() {
-        return pathScorerClassName;
+        return pathScorer;
     }
 
     public void setPathScorerClassName(String pathScorerClassName) {
-        this.pathScorerClassName = pathScorerClassName;
+        this.pathScorer = pathScorerClassName;
+    }
+
+    public List<PathElement> getPathElements() {
+        return pathElements;
+    }
+
+    public void setPathElements(List<PathElement> pathElements) {
+        this.pathElements = pathElements;
+    }
+
+    public double getScore() {
+        return score;
+    }
+
+    public void setScore(double score) {
+        this.score = score;
     }
 }
