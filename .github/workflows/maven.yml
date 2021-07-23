@@ -30,12 +30,15 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Build with Maven
-      run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true --batch-mode --update-snapshots --show-version
+      run: mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true --batch-mode --update-snapshots --show-version
       working-directory: service
-#    - name: Get codacy assembly
-#      run: wget -O ~/codacy-coverage-reporter-assembly-latest.jar "https://github.com/codacy/codacy-coverage-reporter/releases/download/4.0.5/codacy-coverage-reporter-4.0.5-assembly.jar"
-    - name: Run tests
-      run: mvn verify --batch-mode
+    - name: Run tests with Maven
+      run: mvn jacoco:prepare-agent verify -Dmaven.javadoc.skip=true -B jacoco:report
       working-directory: service
-#    - name: Upload test report
-#      run: java -jar ~/codacy-coverage-reporter-assembly-latest.jar report -l Java -r build/reports/jacoco/test/jacocoTestReport.xml
+    - name: Upload test results to Codacy
+      run: |
+        LATEST_VERSION="$(curl -Ls https://api.bintray.com/packages/codacy/Binaries/codacy-coverage-reporter/versions/_latest | jq -r .name)"
+        curl -Ls -o codacy-coverage-reporter "https://dl.bintray.com/codacy/Binaries/${LATEST_VERSION}/codacy-coverage-reporter-linux"
+        chmod +x codacy-coverage-reporter
+        ./codacy-coverage-reporter report -l Java -r target/site/jacoco/jacoco.xml
+      working-directory: service
