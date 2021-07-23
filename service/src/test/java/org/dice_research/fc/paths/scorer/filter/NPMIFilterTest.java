@@ -1,7 +1,5 @@
-package org.dice.FactCheck.Corraborative.filter;
+package org.dice_research.fc.paths.scorer.filter;
 
-import org.dice.FactCheck.Corraborative.filter.npmi.LowCountBasedNPMIFilter;
-import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilterException;
 import org.junit.Assert;
 import org.junit.Test;
 

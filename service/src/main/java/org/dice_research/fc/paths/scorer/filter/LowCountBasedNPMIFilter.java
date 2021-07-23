@@ -1,4 +1,4 @@
-package org.dice.FactCheck.Corraborative.filter.npmi;
+package org.dice_research.fc.paths.scorer.filter;
 
 public class LowCountBasedNPMIFilter implements NPMIFilter {
     private int[] pathsMinJ;

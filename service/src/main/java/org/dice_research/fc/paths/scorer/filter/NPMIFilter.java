@@ -1,4 +1,4 @@
-package org.dice.FactCheck.Corraborative.filter.npmi;
+package org.dice_research.fc.paths.scorer.filter;
 
 /**
  * A simple interface to filter NPMI values.
