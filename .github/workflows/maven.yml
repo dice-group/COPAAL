@@ -37,3 +37,5 @@ jobs:
       working-directory: service
     - name: Upload test results to Codacy
       run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r service/target/site/jacoco/jacoco.xml
+      env: 
+        CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
