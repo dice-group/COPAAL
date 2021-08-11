@@ -37,10 +37,6 @@ public class Config {
 
   @Value("${ontology.uri:}")
   private String ontologyURI;
-
-  public String getOntologyURI() {
-    return ontologyURI;
-  }
   
   @Bean
   public QueryExecutioner getQueryExecutioner() {
