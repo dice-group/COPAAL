@@ -1,9 +1,18 @@
 package org.dice.FactCheck.Corraborative.Config;
 
-import org.apache.jena.sparql.lang.sparql_11.ParseException;
+import org.dice.FactCheck.Corraborative.FactChecking;
+import org.dice.FactCheck.Corraborative.PathGenerator.DefaultPathGeneratorFactory;
+import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory.PathGeneratorType;
+import org.dice.FactCheck.Corraborative.Query.LocalQueryExecutioner;
+import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
+import org.dice.FactCheck.Corraborative.Query.SparqlQueryGenerator;
+import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
+import org.dice.FactCheck.Corraborative.UIResult.create.DefaultPathFactory;
+import org.dice.FactCheck.Corraborative.UIResult.create.IPathFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author Daniel Gerber <dgerber@informatik.uni-leipzig.de>
@@ -11,26 +20,72 @@ import org.springframework.stereotype.Component;
  *         <p>
  *         SEP2020 Farshad remove redundant methods and add serviceURLResolve
  */
-@Component
+@Configuration
 public class Config {
+  
+  @Value("${info.dataset:default}")
+  private String dataset;
 
-  @Value("${info.service.url.default}")
+  @Value("${info.service.url.default:}")
   private String serviceURLDefault;
 
-  @Value("${info.service.url.wikidata}")
+  @Value("${info.service.url.wikidata:}")
   private String serviceURLWikiData;
 
-  @Value("${ontology.uri}")
+  @Value("${info.dataset.local:}")
+  private String localPath;
+  
+  @Value("${ontology.uri:}")
   private String ontologyURI;
 
-  public String serviceURLResolve(PathGeneratorType pathGeneratorType) throws ParseException {
-    switch (pathGeneratorType) {
-      case defaultPathGenerator:
-        return serviceURLDefault;
-      case wikidataPathGenerator:
-        return serviceURLWikiData;
+  @Bean
+  public QueryExecutioner getQueryExecutioner() {
+    switch (dataset.toLowerCase()) {
+      case "wikidata":
+        return new QueryExecutioner(serviceURLWikiData);
+      case "local":
+        return new LocalQueryExecutioner(localPath);
+      default:
+        return new QueryExecutioner(serviceURLDefault);
     }
-    throw new ParseException("Can not resolve the SPARQL server");
+  }
+
+  @Bean
+  public PathGeneratorType getPathGeneratorType() {
+    switch (dataset.toLowerCase()) {
+      case "wikidata":
+        return PathGeneratorType.defaultPathGenerator;
+      default:
+        return PathGeneratorType.wikidataPathGenerator;
+    }
+  }
+
+  @Bean
+  public FactChecking getFactChecking(SparqlQueryGenerator sparqlQueryGenerator,
+      QueryExecutioner queryExecutioner, CorroborativeGraph corroborativeGraph,
+      IPathFactory defaultPathFactory, IPathGeneratorFactory pathGeneratorFactory) {
+    return new FactChecking(sparqlQueryGenerator, queryExecutioner, corroborativeGraph,
+        defaultPathFactory, pathGeneratorFactory, ontologyURI);
+  }
+
+  @Bean
+  public SparqlQueryGenerator getSparqlQueryGenerator() {
+    return new SparqlQueryGenerator();
+  }
+
+  @Bean
+  public CorroborativeGraph getCorroborativeGraph() {
+    return new CorroborativeGraph();
+  }
+
+  @Bean
+  public IPathFactory getPathFactory() {
+    return new DefaultPathFactory();
+  }
+
+  @Bean
+  public IPathGeneratorFactory getPathGeneratorFactory() {
+    return new DefaultPathGeneratorFactory();
   }
 
   public String GetOntologyURI() {

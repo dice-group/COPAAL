@@ -29,7 +29,6 @@ import org.apache.jena.rdf.model.impl.StatementImpl;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
-import org.dice.FactCheck.Corraborative.Config.Config;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGenerator;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory.PathGeneratorType;
@@ -64,19 +63,22 @@ public class FactChecking {
 
   protected ScoreSummarist summarist = new FixedSummarist();
 
-  @Autowired
-  private Config config;
-
+  /**
+   * The namespace we want the paths to follow
+   */
+  private String ontologyURI;
+  
   @Autowired
   public FactChecking(SparqlQueryGenerator sparqlQueryGenerator, QueryExecutioner queryExecutioner,
       CorroborativeGraph corroborativeGraph, IPathFactory defaultPathFactory,
-      IPathGeneratorFactory pathGeneratorFactory) {
+      IPathGeneratorFactory pathGeneratorFactory, String ontologyURI) {
     this.sparqlQueryGenerator = sparqlQueryGenerator;
     this.queryExecutioner = queryExecutioner;
     this.corroborativeGraph = corroborativeGraph;
     this.defaultPathFactory = defaultPathFactory;
     this.pathGeneratorFactory = pathGeneratorFactory;
     this.filter = new LowCountBasedNPMIFilter(new int[] {1, 1, 3});
+    this.ontologyURI = ontologyURI;
   }
 
   public void setPathGeneratorFactory(IPathGeneratorFactory pathGeneratorFactory) {
@@ -98,7 +100,6 @@ public class FactChecking {
     // Initialization
     long startTime = System.nanoTime();
     long stepTime = System.nanoTime();
-    queryExecutioner.setServiceRequestURL(config.serviceURLResolve(pathGeneratorType));
 
     Resource subject = inputTriple.getSubject();
     Resource object = inputTriple.getObject().asResource();
@@ -169,7 +170,7 @@ public class FactChecking {
     for (Entry<String, Integer> entry : sparqlQueryGenerator.sparqlQueries.entrySet()) {
 
       IPathGenerator pg = pathGeneratorFactory.build(entry.getKey(), inputTriple, entry.getValue(),
-          queryExecutioner, pathGeneratorType);
+          queryExecutioner, pathGeneratorType, ontologyURI);
       pathGenerators.add(pg);
     }
 
@@ -359,7 +360,7 @@ public class FactChecking {
     typeBuilder.addPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
     typeBuilder.addWhere(subject, property, NodeFactory.createVariable("x"));
     try {
-      typeBuilder.addFilter("STRSTARTS(str(?x), \"" + config.GetOntologyURI() + "\")");
+      typeBuilder.addFilter("STRSTARTS(str(?x), \"" + ontologyURI + "\")");
     } catch (ParseException e) {
       e.printStackTrace();
     }
@@ -386,9 +387,5 @@ public class FactChecking {
 
   public void setMaxThreads(int maxThreads) {
     this.maxThreads = maxThreads;
-  }
-
-  public void setConfig(Config config) {
-    this.config = config;
   }
 }

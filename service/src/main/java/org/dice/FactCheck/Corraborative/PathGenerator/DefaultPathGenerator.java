@@ -7,7 +7,6 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Statement;
 import org.dice.FactCheck.Corraborative.PathQuery;
-import org.dice.FactCheck.Corraborative.Config.Config;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +20,6 @@ public class DefaultPathGenerator implements IPathGenerator {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPathGenerator.class);
 
-  private Config config;
-
   private final String queryBuilder;
   private final Statement input;
   private final int pathLength;
@@ -30,14 +27,15 @@ public class DefaultPathGenerator implements IPathGenerator {
   HashMap<String, Integer> paths = new HashMap<String, Integer>();
   HashMap<String, String> intermediateNodes = new HashMap<String, String>();
   public PathQuery pathQuery;
+  private String ontologyURI;
 
   public DefaultPathGenerator(String queryBuilder, Statement input, int pathLength,
-      QueryExecutioner queryExecutioner, Config config) {
+      QueryExecutioner queryExecutioner, String ontologyURI) {
     this.queryBuilder = queryBuilder;
     this.input = input;
     this.pathLength = pathLength;
     this.queryExecutioner = queryExecutioner;
-    this.config = config;
+    this.ontologyURI = ontologyURI;
   }
 
   public PathQuery call() throws Exception {
@@ -50,7 +48,7 @@ public class DefaultPathGenerator implements IPathGenerator {
     if (pathLength == 1) {
       ParameterizedSparqlString paraPathQuery = new ParameterizedSparqlString(
           "SELECT ?p1 where " + "\n { \n" + queryBuilder + " . \n" + "FILTER(strstarts(str(?p1),"
-              + "\"" + config.GetOntologyURI() + "\"" + ")) \n " + filters + "}");
+              + "\"" + ontologyURI + "\"" + ")) \n " + filters + "}");
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());
       try (QueryExecution qe = queryExecutioner.getQueryExecution(paraPathQuery.asQuery());) {
@@ -72,8 +70,8 @@ public class DefaultPathGenerator implements IPathGenerator {
       String[] querySequence = queryBuilder.split(";");
       ParameterizedSparqlString paraPathQuery = new ParameterizedSparqlString(
           "SELECT ?p1 ?x1 ?p2 where \n" + "{ \n " + querySequence[0] + "." + querySequence[1] + "."
-              + "\n" + "FILTER(strstarts(str(?p1)," + "\"" + config.GetOntologyURI() + "\"" + "))"
-              + "FILTER(strstarts(str(?p2)," + "\"" + config.GetOntologyURI() + "\"" + "))"
+              + "\n" + "FILTER(strstarts(str(?p1)," + "\"" + ontologyURI + "\"" + "))"
+              + "FILTER(strstarts(str(?p2)," + "\"" + ontologyURI + "\"" + "))"
               + "FILTER(!ISLITERAL(?x1))" + "\n " + filters + "}");
 
       paraPathQuery.setParam("s", input.getSubject());
@@ -100,9 +98,9 @@ public class DefaultPathGenerator implements IPathGenerator {
               + querySequence[0] + ".\n" + querySequence[1] + ".\n" + querySequence[2] + ".\n"
               + "FILTER(?x1 != <" + input.getObject().asNode() + ">) \n" + "FILTER(?x2 != <"
               + input.getSubject().asNode() + ">) \n" + "FILTER(strstarts(str(?p1)," + "\""
-              + config.GetOntologyURI() + "\"" + "))" + "FILTER(strstarts(str(?p2)," + "\""
-              + config.GetOntologyURI() + "\"" + "))" + "FILTER(strstarts(str(?p3)," + "\""
-              + config.GetOntologyURI() + "\"" + "))" + filters + "}");
+              + ontologyURI + "\"" + "))" + "FILTER(strstarts(str(?p2)," + "\""
+              + ontologyURI + "\"" + "))" + "FILTER(strstarts(str(?p3)," + "\""
+              + ontologyURI + "\"" + "))" + filters + "}");
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());
       LOGGER.info(paraPathQuery.asQuery().toString());
