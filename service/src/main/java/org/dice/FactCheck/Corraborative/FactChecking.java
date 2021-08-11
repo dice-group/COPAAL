@@ -343,7 +343,6 @@ public class FactChecking {
     } catch (ParseException e) {
       e.printStackTrace();
     }
-    System.out.println(occurrenceBuilder);
     return returnCount(occurrenceBuilder);
   }
 
