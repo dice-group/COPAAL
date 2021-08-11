@@ -1,58 +1,58 @@
 package org.dice.FactCheck.Corraborative;
 
-import static org.junit.Assert.assertTrue;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Resource;
+import java.util.HashSet;
+import java.util.Set;
+import org.apache.jena.graph.Node;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
-import org.dice.FactCheck.Corraborative.Config.Config;
-import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory.PathGeneratorType;
+import org.dice.FactCheck.Corraborative.Query.LocalQueryExecutioner;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
 import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilterException;
+import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class NPMICalculator_vTyTest {
 
-  @Autowired private QueryExecutioner queryExecutioner;
-
-  @Autowired private Config config;
+  private final QueryExecutioner queryExecutioner =
+      new LocalQueryExecutioner("src/test/resources/test_model.nt");
 
   @Test
   public void testQueries() throws NPMIFilterException, ParseException {
-    queryExecutioner.setServiceRequestURL(
-        config.serviceURLResolve(PathGeneratorType.defaultPathGenerator));
-    Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Bill_Gates");
-    Resource object = ResourceFactory.createResource("http://dbpedia.org/resource/United_States");
-    Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/nationality");
-    Statement statement = ResourceFactory.createStatement(subject, property, object);
+    Statement statement =
+        ResourceFactory.createStatement(ResourceFactory.createResource("http://www.example.org/A"),
+            ResourceFactory.createProperty("http://www.example.org/P1"),
+            ResourceFactory.createResource("http://www.example.org/D"));
 
-    int count_predicate_Occurrence = 130523;
-    int count_subject_Triples = 126000;
-    int count_object_Triples = 2523;
-    String path = "http://dbpedia.org/ontology/child;http://dbpedia.org/ontology/birthPlace";
-    String builder = "?x1 ?p1 ?s;?x1 ?p2 ?o";
+    // virtual types count
+    int predicateOccurrencesVT = 5;
+    int subjectTriplesVT = 3;
+    int objectTriplesVT = 4;
+
+    // non virtual types count
+    int predicateOccurrences = 5;
+    int subjectTriples = 5;
+    int objectTriples = 5;
+
+    // path
+    String path = "http://www.example.org/P1;http://www.example.org/P1";
+    String builder = "?s ?p1 ?x1;?x1 ?p2 ?o";
+
+    // calculate NPMI for virtual types
+    NPMICalculator calculatorVT = new NPMICalculator(path, builder, statement, "", 2,
+        predicateOccurrencesVT, subjectTriplesVT, objectTriplesVT, null, null, queryExecutioner);
+    double scoreVT = calculatorVT.calculatePMIScore_vTy();
+
+    // calculate NPMI for non virtual types
+    Set<Node> subjectType = new HashSet<>();
+    subjectType.add(ResourceFactory.createResource("http://www.example.org/C1").asNode());
 
     NPMICalculator calculator =
-        new NPMICalculator(
-            path,
-            builder,
-            statement,
-            null,
-            2,
-            count_predicate_Occurrence,
-            count_subject_Triples,
-            count_object_Triples,
-            null,
-            null,
-            queryExecutioner);
-    System.out.println(calculator.calculatePMIScore_vTy());
-    assertTrue(calculator.calculatePMIScore_vTy() > 0);
+        new NPMICalculator(path, builder, statement, "", 2, predicateOccurrences, subjectTriples,
+            objectTriples, subjectType, subjectType, queryExecutioner);
+    double score = calculator.calculatePMIScore();
+
+    // assert both differ from each other
+    Assert.assertNotEquals(score, scoreVT);
   }
 }
