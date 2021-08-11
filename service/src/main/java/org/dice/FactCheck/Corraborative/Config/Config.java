@@ -1,6 +1,5 @@
 package org.dice.FactCheck.Corraborative.Config;
 
-import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.dice.FactCheck.Corraborative.FactChecking;
 import org.dice.FactCheck.Corraborative.PathGenerator.DefaultPathGeneratorFactory;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory;
@@ -14,12 +13,12 @@ import org.dice.FactCheck.Corraborative.UIResult.create.IPathFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 /**
  * @author Daniel Gerber <dgerber@informatik.uni-leipzig.de>
  * @author Farshad Afshari farshad.afshari@uni-paderborn.de
- *     <p>SEP2020 Farshad remove redundant methods and add serviceURLResolve
+ *         <p>
+ *         SEP2020 Farshad remove redundant methods and add serviceURLResolve
  */
 @Configuration
 public class Config {
@@ -35,6 +34,9 @@ public class Config {
 
   @Value("${info.dataset.local:}")
   private String localPath;
+  
+  @Value("${ontology.uri:}")
+  private String ontologyURI;
 
   @Bean
   public QueryExecutioner getQueryExecutioner() {
@@ -47,7 +49,7 @@ public class Config {
         return new QueryExecutioner(serviceURLDefault);
     }
   }
-  
+
   @Bean
   public PathGeneratorType getPathGeneratorType() {
     switch (dataset.toLowerCase()) {
@@ -63,7 +65,7 @@ public class Config {
       QueryExecutioner queryExecutioner, CorroborativeGraph corroborativeGraph,
       IPathFactory defaultPathFactory, IPathGeneratorFactory pathGeneratorFactory) {
     return new FactChecking(sparqlQueryGenerator, queryExecutioner, corroborativeGraph,
-        defaultPathFactory, pathGeneratorFactory);
+        defaultPathFactory, pathGeneratorFactory, ontologyURI);
   }
 
   @Bean
@@ -84,5 +86,9 @@ public class Config {
   @Bean
   public IPathGeneratorFactory getPathGeneratorFactory() {
     return new DefaultPathGeneratorFactory();
+  }
+
+  public String GetOntologyURI() {
+    return ontologyURI;
   }
 }

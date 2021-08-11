@@ -28,7 +28,8 @@ public class FactCheckingDemo {
             new QueryExecutioner("http://131.234.29.111:8890/sparql"),
             new CorroborativeGraph(),
             new DefaultPathFactory(),
-            new DefaultPathGeneratorFactory());
+            new DefaultPathGeneratorFactory(),
+            "http://dbpedia.org");
 
     factChecking.checkFacts(getTestModel(), 2, true, PathGeneratorType.defaultPathGenerator, false);
   }

@@ -65,7 +65,7 @@ public class FactCheckingTest {
 
     FactChecking factChecking =
         new FactChecking(new SparqlQueryGenerator(), queryExecutioner, new CorroborativeGraph(),
-            new DefaultPathFactory(), new DefaultPathGeneratorFactory());
+            new DefaultPathFactory(), new DefaultPathGeneratorFactory(), "http://www.example.org");
     
     CorroborativeGraph cg = factChecking.checkFacts(model, pathLen, vTy,
         PathGeneratorType.defaultPathGenerator, false); // vTy:virtual types

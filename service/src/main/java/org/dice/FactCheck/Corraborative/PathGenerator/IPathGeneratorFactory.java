@@ -16,5 +16,6 @@ public interface IPathGeneratorFactory {
       Statement input,
       int pathLength,
       QueryExecutioner queryExecutioner,
-      PathGeneratorType pathGeneratorType);
+      PathGeneratorType pathGeneratorType,
+      String ontologyURI);
 }
