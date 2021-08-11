@@ -53,11 +53,11 @@ public class FactCheckingTest {
             ResourceFactory.createProperty("http://www.example.org/P1"),
             ResourceFactory.createResource("http://www.example.org/D"));
 
-    FCTest(statement, 2, true);
-    FCTest(statement, 2, false);
+    fcTest(statement, 2, true);
+    fcTest(statement, 2, false);
   }
 
-  protected void FCTest(Statement statement, int pathLen, boolean vTy)
+  protected void fcTest(Statement statement, int pathLen, boolean vTy)
       throws FileNotFoundException, InterruptedException, ParseException {
 
     final Model model = ModelFactory.createDefaultModel();
