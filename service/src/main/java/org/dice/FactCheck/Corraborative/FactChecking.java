@@ -29,7 +29,6 @@ import org.apache.jena.rdf.model.impl.StatementImpl;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
-import org.dice.FactCheck.Corraborative.Config.Config;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGenerator;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory.PathGeneratorType;
@@ -63,8 +62,6 @@ public class FactChecking {
   private NPMIFilter filter = null;
 
   protected ScoreSummarist summarist = new FixedSummarist();
-
-  @Autowired private Config config;
 
   @Autowired
   public FactChecking(
@@ -108,7 +105,6 @@ public class FactChecking {
       // Initialization
       long startTime = System.nanoTime();
       long stepTime = System.nanoTime();
-      queryExecutioner.setServiceRequestURL(config.serviceURLResolve(pathGeneratorType));
 
       Resource subject = inputTriple.getSubject();
       Resource object = inputTriple.getObject().asResource();
@@ -404,8 +400,5 @@ public class FactChecking {
   public void setMaxThreads(int maxThreads) {
     this.maxThreads = maxThreads;
   }
-  
-  public void setConfig(Config config) {
-    this.config = config;
-  }
+
 }
