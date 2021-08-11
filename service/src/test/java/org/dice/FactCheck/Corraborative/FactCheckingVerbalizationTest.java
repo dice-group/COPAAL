@@ -1,133 +1,86 @@
 package org.dice.FactCheck.Corraborative;
 
-import static org.junit.Assert.assertTrue;
-import java.io.FileNotFoundException;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.sparql.lang.sparql_11.ParseException;
-import org.dice.FactCheck.Corraborative.Config.Config;
-import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory.PathGeneratorType;
-import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
-import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
+import org.dice.FactCheck.Corraborative.UIResult.Path;
+import org.dice.FactCheck.Corraborative.UIResult.create.IPathBuilder;
+import org.dice.FactCheck.Corraborative.UIResult.create.VerbalizingPathBuilder;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+/**
+ * Tests the verbalization feature.
+ *
+ */
+@RunWith(Parameterized.class)
 public class FactCheckingVerbalizationTest {
+  /**
+   * The path with the intermediate nodes
+   */
+  private Result result;
+  /**
+   * The fact's subject
+   */
+  private Resource subject;
+  /**
+   * The fact's object
+   */
+  private Resource object;
+  /**
+   * True if we expect an empty result
+   */
+  private boolean isEmptyExpected;
 
-  @Autowired private QueryExecutioner queryExecutioner;
-
-  @Autowired private FactChecking factChecking;
-
-  @Autowired private Config config;
-
-  @Test
-  public void VerbalizationForWikiPathGenerationShouldWork()
-      throws FileNotFoundException, InterruptedException, ParseException {
-    final Model model = ModelFactory.createDefaultModel();
-    // https://en.wikibooks.org/wiki/SPARQL/Prefixes
-    Resource subject = ResourceFactory.createResource("http://www.wikidata.org/entity/Q76");
-    Resource object = ResourceFactory.createResource("http://www.wikidata.org/entity/Q61");
-    Property property = ResourceFactory.createProperty("http://www.wikidata.org/prop/direct/P551");
-
-    Statement statement = ResourceFactory.createStatement(subject, property, object);
-
-    model.add(statement);
-
-    CorroborativeGraph cg =
-        factChecking.checkFacts(model, 2, true, PathGeneratorType.wikidataPathGenerator, true);
-
-    System.out.println("Subject: " + statement.getSubject());
-    System.out.println("Property: " + statement.getPredicate());
-    System.out.println("Object: " + statement.getObject());
-    System.out.println("Count paths: " + cg.getPathList().toArray().length);
-    System.out.println(" Score:" + cg.getGraphScore());
-
-    assertTrue(!cg.getPathList().get(0).getPathText().equals("Not available"));
+  public FactCheckingVerbalizationTest(Resource subject, Resource object, Result result,
+      boolean isEmptyExpected) {
+    this.result = result;
+    this.subject = subject;
+    this.object = object;
+    this.isEmptyExpected = isEmptyExpected;
   }
 
   @Test
-  public void VerbalizationNotNeccesseryForWikiPathGenerationShouldNotBringResult()
-      throws FileNotFoundException, InterruptedException, ParseException {
-    final Model model = ModelFactory.createDefaultModel();
-    // https://en.wikibooks.org/wiki/SPARQL/Prefixes
-    Resource subject = ResourceFactory.createResource("http://www.wikidata.org/entity/Q76");
-    Resource object = ResourceFactory.createResource("http://www.wikidata.org/entity/Q61");
-    Property property = ResourceFactory.createProperty("http://www.wikidata.org/prop/direct/P551");
-
-    Statement statement = ResourceFactory.createStatement(subject, property, object);
-
-    model.add(statement);
-
-    CorroborativeGraph cg =
-        factChecking.checkFacts(model, 2, true, PathGeneratorType.wikidataPathGenerator, false);
-
-    System.out.println("Subject: " + statement.getSubject());
-    System.out.println("Property: " + statement.getPredicate());
-    System.out.println("Object: " + statement.getObject());
-    System.out.println("Count paths: " + cg.getPathList().toArray().length);
-    System.out.println(" Score:" + cg.getGraphScore());
-
-    assertTrue(cg.getPathList().get(0).getPathText().equals("Not available"));
+  public void testVerbalization() {
+    IPathBuilder verbalizer = new VerbalizingPathBuilder();
+    Path path = verbalizer.createPath(subject, object, result);
+    Assert.assertEquals(path.getPathText().isBlank(), isEmptyExpected);
   }
 
-  @Test
-  public void VerbalizationForDefaultPathGenerationShouldWork()
-      throws FileNotFoundException, InterruptedException, ParseException {
-    final Model model = ModelFactory.createDefaultModel();
-    // https://en.wikibooks.org/wiki/SPARQL/Prefixes
-    Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Nia_Gill");
-    Resource object =
-        ResourceFactory.createResource("http://dbpedia.org/resource/Bachelor_of_Arts");
-    Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/education");
+  @Parameters
+  public static Collection<Object[]> data() {
+    List<Object[]> testConfigs = new ArrayList<Object[]>();
+    Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Bill_Gates");
+    Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/birthPlace");
+    Resource object = ResourceFactory.createResource("http://dbpedia.org/resource/United_States");
 
-    Statement statement = ResourceFactory.createStatement(subject, property, object);
+    Resource subject2 = ResourceFactory.createResource("http://dbpedia.org/resource/Nia_Gill");
+    Resource object2 = ResourceFactory.createResource("http://dbpedia.org/resource/Bachelor_of_Arts");
+    Property property2 = ResourceFactory.createProperty("http://dbpedia.org/ontology/education");
 
-    model.add(statement);
+    Resource randomRes = ResourceFactory.createResource("http://dbpedia.org/resource/randomRes");
 
-    CorroborativeGraph cg =
-        factChecking.checkFacts(model, 2, true, PathGeneratorType.defaultPathGenerator, true);
+    String builder = "?s ?p1 ?x1;?x1 ?p2 ?o";
+    String pathStr = "http://dbpedia.org/ontology/birthPlace;http://dbpedia.org/ontology/country";
+    String intermediateNodes = "http://dbpedia.org/resource/Washington_(state)";
 
-    System.out.println("Subject: " + statement.getSubject());
-    System.out.println("Property: " + statement.getPredicate());
-    System.out.println("Object: " + statement.getObject());
-    System.out.println("Count paths: " + cg.getPathList().toArray().length);
-    System.out.println(" Score:" + cg.getGraphScore());
+    String builder2 = "?s ?p1 ?o";
+    String pathStr2 = "http://dbpedia.org/ontology/almaMater";
+    String intermediateNodes2 = "";
 
-    assertTrue(!cg.getPathList().get(0).getPathText().equals("Not available"));
+    Result result = new Result(pathStr, property, builder, intermediateNodes, 2);
+    Result result2 = new Result(pathStr2, property2, builder2, intermediateNodes2, 1);
+
+    testConfigs.add(new Object[] {subject, object, result, false});
+    testConfigs.add(new Object[] {subject2, object2, result2, false});
+    testConfigs.add(new Object[] {randomRes, randomRes, result, true});
+    return testConfigs;
   }
 
-  @Test
-  public void VerbalizationNotNeccesseryForDefaultPathGenerationShouldNotBringResult()
-      throws FileNotFoundException, InterruptedException, ParseException {
-    final Model model = ModelFactory.createDefaultModel();
-    // https://en.wikibooks.org/wiki/SPARQL/Prefixes
-    Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/Nia_Gill");
-    Resource object =
-        ResourceFactory.createResource("http://dbpedia.org/resource/Bachelor_of_Arts");
-    Property property = ResourceFactory.createProperty("http://dbpedia.org/ontology/education");
-
-    Statement statement = ResourceFactory.createStatement(subject, property, object);
-
-    model.add(statement);
-
-    CorroborativeGraph cg =
-        factChecking.checkFacts(model, 2, true, PathGeneratorType.defaultPathGenerator, false);
-
-    System.out.println("Subject: " + statement.getSubject());
-    System.out.println("Property: " + statement.getPredicate());
-    System.out.println("Object: " + statement.getObject());
-    System.out.println("Count paths: " + cg.getPathList().toArray().length);
-    System.out.println(" Score:" + cg.getGraphScore());
-
-    assertTrue(cg.getPathList().get(0).getPathText().equals("Not available"));
-  }
 }

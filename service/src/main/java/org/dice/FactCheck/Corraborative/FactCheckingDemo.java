@@ -1,7 +1,6 @@
 package org.dice.FactCheck.Corraborative;
 
 import java.io.FileNotFoundException;
-import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
@@ -18,21 +17,17 @@ import org.dice.FactCheck.Corraborative.UIResult.create.DefaultPathFactory;
 
 public class FactCheckingDemo {
 
-  public static QueryExecutionFactoryHttp qef =
-      new QueryExecutionFactoryHttp("http://131.234.29.111:8890/sparql");
-
   public static void main(String[] args)
       throws InterruptedException, FileNotFoundException, ParseException {
 
-    org.apache.log4j.PropertyConfigurator.configure(
-        FactChecking.class.getClassLoader().getResource("properties/log4j.properties"));
     FactChecking factChecking =
         new FactChecking(
             new SparqlQueryGenerator(),
-            new QueryExecutioner(),
+            new QueryExecutioner("https://synthg-fact.dice-research.org/sparql"),
             new CorroborativeGraph(),
             new DefaultPathFactory(),
-            new DefaultPathGeneratorFactory());
+            new DefaultPathGeneratorFactory(),
+            "http://dbpedia.org/ontology");
 
     factChecking.checkFacts(getTestModel(), 2, true, PathGeneratorType.defaultPathGenerator, false);
   }

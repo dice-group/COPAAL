@@ -2,7 +2,9 @@ package org.dice.FactCheck.Corraborative.PathGenerator;
 
 import org.apache.jena.rdf.model.Statement;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
+import org.springframework.stereotype.Component;
 
+@Component
 public interface IPathGeneratorFactory {
   public enum PathGeneratorType {
     defaultPathGenerator,
@@ -14,5 +16,6 @@ public interface IPathGeneratorFactory {
       Statement input,
       int pathLength,
       QueryExecutioner queryExecutioner,
-      PathGeneratorType pathGeneratorType);
+      PathGeneratorType pathGeneratorType,
+      String ontologyURI);
 }
