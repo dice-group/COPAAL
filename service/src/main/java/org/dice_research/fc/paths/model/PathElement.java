@@ -25,8 +25,8 @@ public class PathElement {
     @ManyToMany( mappedBy = "pathElements")
     private List<Path> paths = new ArrayList<>();
 
-    @Column(name = "IsInverted")
-    private Boolean IsInverted;
+    @Column(name = "Inverted")
+    private Boolean inverted;
 
     @Column(name = "Property")
     private String property;
@@ -34,8 +34,8 @@ public class PathElement {
     public PathElement() {
     }
 
-    public PathElement(Boolean isInverted, String property) {
-        IsInverted = isInverted;
+    public PathElement(Boolean inverted, String property) {
+        this.inverted = inverted;
         this.property = property;
     }
 
@@ -56,11 +56,11 @@ public class PathElement {
     }
 
     public Boolean isInverted() {
-        return IsInverted;
+        return inverted;
     }
 
     public void setInverted(Boolean inverted) {
-        IsInverted = inverted;
+        inverted = inverted;
     }
 
     public String getProperty() {

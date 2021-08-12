@@ -18,6 +18,7 @@ import org.dice_research.fc.paths.model.Path;
 import org.dice_research.fc.paths.model.PathElement;
 import org.dice_research.fc.paths.repository.IPathElementRepository;
 import org.dice_research.fc.paths.repository.IPathRepository;
+import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.dice_research.fc.sum.ScoreSummarist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -47,6 +48,9 @@ public class PathBasedFactCheckerSavePathScore implements IFactChecker {
 
     @Autowired
     IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper;
+
+    @Autowired
+    ICountRetriever countRetriever;
 
     /**
      * The preprocessor used to prepare the given fact.
@@ -119,7 +123,7 @@ public class PathBasedFactCheckerSavePathScore implements IFactChecker {
         String pathSearcherClassName = this.pathSearcher.getClass().getName();
         String pathScorerClassName = this.pathScorer.getClass().getName();
         //TODO : find what is the name ?
-        String counterRetrieverClassName = "";
+        String counterRetrieverClassName = this.countRetriever.getClass().getName();
 
         // Preprocess the data
         Statement fact = ResourceFactory.createStatement(subject, predicate, object);
@@ -166,18 +170,27 @@ public class PathBasedFactCheckerSavePathScore implements IFactChecker {
      */
     private void savePaths(Collection<QRestrictedPath> paths, Resource subject, Property predicate, Resource object, String factPreprocessorClassName,String counterRetrieverClassName, String pathSearcherClassName, String pathScorerClassName) {
         for (QRestrictedPath p: paths) {
+            // make a path
+            Path forSave = new Path(subject.getURI(),predicate.getURI(),object.getURI(),factPreprocessorClassName,counterRetrieverClassName,pathSearcherClassName,pathScorerClassName,p.getScore());
+            // save path elements for a Path
             List<PathElement> pathElements = p.getPathElements()
                     .stream()
                     .map(element -> propertyElementMapper.map(element))
                     .collect(Collectors.toList());
-
-            Path forSave = new Path(subject.getURI(),predicate.getURI(),object.getURI(),factPreprocessorClassName,counterRetrieverClassName,pathSearcherClassName,pathScorerClassName,p.getScore());
             for (PathElement pe:pathElements
                  ) {
-                PathElement p1=pathElementRepository.save(pe);
 
-                forSave.addPathElement(pe);
+                List<PathElement> retrivedPathelements = pathElementRepository.findByInvertedAndProperty(pe.isInverted(),pe.getProperty());
+
+                if(retrivedPathelements.size()>0){
+                    forSave.addPathElement(retrivedPathelements.get(0));
+                }else{
+                    // add new
+                    PathElement savedPathElement=pathElementRepository.save(pe);
+                    forSave.addPathElement(savedPathElement);
+                }
             }
+            // save path
             pathRepository.save(forSave);
         }
     }
