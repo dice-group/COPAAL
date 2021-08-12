@@ -1,6 +1,5 @@
 package org.dice.fact_check.corraborative;
 
-import static org.junit.Assert.assertTrue;
 import java.io.FileNotFoundException;
 import org.apache.jena.arq.querybuilder.SelectBuilder;
 import org.apache.jena.graph.NodeFactory;
@@ -40,7 +39,7 @@ public class FactCheckingTest {
     queryExecution.close();
     System.out.println("Count: " + count_Occurrence);
 
-    assertTrue(count_Occurrence > 0);
+    Assert.assertTrue(count_Occurrence > 0);
   }
 
   // This test shows that the vTy parameter has a positive effect and show that 'virtual types' can
@@ -53,13 +52,12 @@ public class FactCheckingTest {
         ResourceFactory.createStatement(ResourceFactory.createResource("http://www.example.org/A"),
             ResourceFactory.createProperty("http://www.example.org/P1"),
             ResourceFactory.createResource("http://www.example.org/D"));
-
-    fcTest(statement, 2, true);
-    fcTest(statement, 2, false);
     
+    Assert.assertTrue(fcTest(statement, 2, true) > 0);
+    Assert.assertTrue(fcTest(statement, 2, false) > 0);
   }
 
-  protected void fcTest(Statement statement, int pathLen, boolean vTy)
+  protected double fcTest(Statement statement, int pathLen, boolean vTy)
       throws FileNotFoundException, InterruptedException, ParseException {
 
     final Model model = ModelFactory.createDefaultModel();
@@ -78,6 +76,6 @@ public class FactCheckingTest {
     System.out.println("Count paths: " + cg.getPathList().toArray().length);
     System.out.println("virtual Types: " + vTy + " Score:" + cg.getGraphScore());
     
-    Assert.assertTrue(cg.getGraphScore() > 0);
+    return cg.getGraphScore();
   }
 }

@@ -245,7 +245,7 @@ public class FactChecking {
     LOGGER.info("there are " + results.size() + " Path ");
 
     List<Path> pathList = results.parallelStream()
-        .map(r -> defaultPathFactory.ReturnPath(verbalize).createPath(subject, object, r))
+        .map(r -> defaultPathFactory.returnPath(verbalize).createPath(subject, object, r))
         .collect(Collectors.toList());
 
     double[] scores = results.parallelStream().mapToDouble(r -> r.score).toArray();

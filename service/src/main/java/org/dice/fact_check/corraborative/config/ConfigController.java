@@ -10,7 +10,6 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.dice.fact_check.corraborative.FactChecking;
 import org.dice.fact_check.corraborative.path_generator.IPathGeneratorFactory.PathGeneratorType;
-import org.dice.fact_check.corraborative.query.SparqlQueryGenerator;
 import org.dice.fact_check.corraborative.ui_result.CorroborativeGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,12 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConfigController {
 
   private final FactChecking factChecking;
-  private final SparqlQueryGenerator sparqlQueryGenerator;
 
   @Autowired
-  public ConfigController(FactChecking factChecking, SparqlQueryGenerator sparqlQueryGenerator) {
+  public ConfigController(FactChecking factChecking) {
     this.factChecking = factChecking;
-    this.sparqlQueryGenerator = sparqlQueryGenerator;
   }
 
   // To verify status of server

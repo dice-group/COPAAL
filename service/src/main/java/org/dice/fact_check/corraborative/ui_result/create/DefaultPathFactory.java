@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class DefaultPathFactory implements IPathFactory {
 
   @Override
-  public IPathBuilder ReturnPath(boolean verbalize) {
+  public IPathBuilder returnPath(boolean verbalize) {
     if (verbalize) {
       return new VerbalizingPathBuilder();
     } else {

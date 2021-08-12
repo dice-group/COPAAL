@@ -11,8 +11,6 @@ import java.io.PrintWriter;
 import java.util.StringTokenizer;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.rdf.model.Statement;
 
 
 
@@ -22,7 +20,6 @@ public class TSVtoTripleGenerator {
 
 	public static void tsvToTriple(File sourcetsv, File outputTriple) throws IOException 
 	{
-		Model model = ModelFactory.createDefaultModel();
 		PrintWriter pw = new PrintWriter(new FileWriter("/home/datascienceadmin/Downloads/dbpedia.3.8_v2.ttl"));
 		String subject = "";
 		String object = "";
@@ -50,13 +47,9 @@ public class TSVtoTripleGenerator {
 			predicate = st.nextToken().split(":")[1].replaceAll(">", "");
 			object = st.nextToken().split(":")[1].replaceAll(">", "");
 			
-			if(subject=="" || object=="" || predicate=="") {
+			if(subject.isEmpty() || object.isEmpty() || predicate.isEmpty()) {
 				System.out.println("found empty");
 			}
-			Statement statement = ResourceFactory.createStatement(ResourceFactory.createResource("http://dbpedia.org/resource/"+subject), 
-					ResourceFactory.createProperty("http://dbpedia.org/ontology/"
-					+predicate), ResourceFactory.createResource("http://dbpedia.org/resource/"
-							+object));
 			pw.write("<http://dbpedia.org/resource/"+subject+">");
 			pw.write(" ");
 			pw.write("<http://dbpedia.org/ontology/"+predicate+">");
