@@ -99,8 +99,8 @@ public class SparqlQueryGenerator {
       // combinations for subject and object
       Triple INPUTSUBJECT_AS_SUBJECT =
           new Triple(this.subjectNode, subjectPredicate, firstIntermediateNode);
-      Triple INPUTSUBJECT_AS_OBJECT =
-          new Triple(firstIntermediateNode, subjectPredicate, this.subjectNode);
+//      Triple INPUTSUBJECT_AS_OBJECT =
+//          new Triple(firstIntermediateNode, subjectPredicate, this.subjectNode);
       Triple INPUTOBJECT_AS_SUBJECT =
           new Triple(this.objectNode, objectPredicate, secondIntermediateNode);
       Triple INPUTOBJECT_AS_OBJECT =
@@ -109,8 +109,8 @@ public class SparqlQueryGenerator {
       // Intermediate nodes combinations
       Triple SUBJECT_OBJECT =
           new Triple(firstIntermediateNode, intermediatePredicate, secondIntermediateNode);
-      Triple OBJECT_SUBJECT =
-          new Triple(secondIntermediateNode, intermediatePredicate, firstIntermediateNode);
+//      Triple OBJECT_SUBJECT =
+//          new Triple(secondIntermediateNode, intermediatePredicate, firstIntermediateNode);
 
       sparqlQueries.put(
           INPUTSUBJECT_AS_SUBJECT.toString().replace("@", "")

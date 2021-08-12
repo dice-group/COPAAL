@@ -18,7 +18,6 @@ public class WikiDataPathGenerator implements IPathGenerator {
 
   private HashMap<String, Integer> paths = new HashMap<String, Integer>();
   private HashMap<String, String> intermediateNodes = new HashMap<String, String>();
-  private PathQuery pathQuery;
 
   public WikiDataPathGenerator(
       String queryBuilder, Statement input, int pathLength, QueryExecutioner queryExecutioner) {
@@ -129,16 +128,13 @@ public class WikiDataPathGenerator implements IPathGenerator {
 	          paths.put(path, pathLength);
 	          intermediateNodes.put(path, qs.get("?x1").toString() + ";" + qs.get("?x2").toString());
 	        }
-	
-	        break;
 	      }
       }
     }
     HashMap<String, HashMap<String, Integer>> pathBuilder =
             new HashMap<String, HashMap<String, Integer>>();
 	pathBuilder.put(queryBuilder, paths);
-	this.pathQuery = new PathQuery(pathBuilder, intermediateNodes);
 
-    return this.pathQuery;
+    return new PathQuery(pathBuilder, intermediateNodes);
   }
 }

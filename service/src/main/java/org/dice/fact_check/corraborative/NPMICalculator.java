@@ -107,8 +107,7 @@ public class NPMICalculator implements Callable<Result> {
     return null;
   }
 
-  private String generatePathPredicateQueryString_vTy(String subjType, String objType,
-      String[] querySequence, String predicateTriple, int pathLength) {
+  private String generatePathPredicateQueryStringVT(String[] querySequence, String predicateTriple, int pathLength) {
 
     if (pathLength == 1) {
       String firstPath = generatePath(querySequence, 0);
@@ -176,7 +175,7 @@ public class NPMICalculator implements Callable<Result> {
     return null;
   }
 
-  private String generatePathQueryString_vTy(String subjType, String objType,
+  private String generatePathQueryStringVT(String subjType, String objType,
       String[] querySequence, int pathLength) {
 
     if (pathLength == 1) {
@@ -274,16 +273,17 @@ public class NPMICalculator implements Callable<Result> {
     return npmiValue(count_Path_Occurrence, count_path_Predicate_Occurrence);
   }
 
-  public double calculatePMIScore_vTy() throws ParseException, NPMIFilterException {
+  public double calculatePMIScoreVT() throws ParseException, NPMIFilterException {
     // ignore types, consider subjects/objects of input-triple-predicate as virtual types
 
     String predicateTriple = "?s <" + inputStatement.getPredicate() + "> ?o .";
-    String pathQueryString, pathPredicateQueryString;
+    String pathQueryString;
+    String pathPredicateQueryString;
     String[] querySequence = builder.split(";");
     String subjType = " filter(exists {?s <" + inputStatement.getPredicate() + ">  []}).";
     String objType = " filter(exists {[] <" + inputStatement.getPredicate() + ">  ?o}).";
 
-    pathQueryString = generatePathQueryString_vTy(subjType, objType, querySequence, pathLength);
+    pathQueryString = generatePathQueryStringVT(subjType, objType, querySequence, pathLength);
 
     Query pathQuery = QueryFactory.create(pathQueryString);
 
@@ -304,12 +304,11 @@ public class NPMICalculator implements Callable<Result> {
     LOGGER.info("count_Path_Occurrence : " + count_Path_Occurrence);
 
 
-    pathPredicateQueryString = generatePathPredicateQueryString_vTy(subjType, objType,
-        querySequence, predicateTriple, pathLength);
+    pathPredicateQueryString = generatePathPredicateQueryStringVT(querySequence, predicateTriple, pathLength);
 
     Query pathPredicateQuery = QueryFactory.create(pathPredicateQueryString);
 
-    LOGGER.info(pathPredicateQueryString.toString());
+    LOGGER.info(pathPredicateQueryString);
 
     double count_path_Predicate_Occurrence = 0;
     try (QueryExecution predicatePathQueryExecution =
@@ -413,7 +412,7 @@ public class NPMICalculator implements Callable<Result> {
         this.intermediateNodes, this.pathLength);
     try {
       if (this.vTy) {
-        result.score = calculatePMIScore_vTy();
+        result.score = calculatePMIScoreVT();
       } else {
         result.score = calculatePMIScore();
       }

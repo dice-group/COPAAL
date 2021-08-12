@@ -57,10 +57,11 @@ public class DefaultPathBuilder implements IPathBuilder {
     String[] paths = path.split(";");
     int prop = 1;
     int res = 1;
+    String pathFormat = builder;
     for (int i = 0; i < paths.length; i++) {
 
       String property = "?p" + (prop);
-      builder = builder.replace(property, paths[i]);
+      pathFormat = pathFormat.replace(property, paths[i]);
       prop++;
     }
     if (pathLength > 1) {
@@ -68,15 +69,15 @@ public class DefaultPathBuilder implements IPathBuilder {
       for (int i = 0; i < intermediateResources.length; i++) {
 
         String resource = "?x" + (res);
-        builder = builder.replace(resource, intermediateResources[i]);
+        pathFormat = pathFormat.replace(resource, intermediateResources[i]);
         res++;
       }
     }
 
-    builder = builder.replace("?s", subject.toString());
-    builder = builder.replace("?o", object.toString());
+    pathFormat = pathFormat.replace("?s", subject.toString());
+    pathFormat = pathFormat.replace("?o", object.toString());
 
-    String[] triples = builder.split(";");
+    String[] triples = pathFormat.split(";");
     for (int i = 0; i < triples.length; i++) {
       Resource resourceSubject = ResourceFactory.createResource(triples[i].split(" ")[0].trim());
       Property property = ResourceFactory.createProperty(triples[i].split(" ")[1].trim());

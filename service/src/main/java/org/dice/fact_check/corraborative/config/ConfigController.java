@@ -62,7 +62,7 @@ public class ConfigController {
     // call
 
     // TODO: in future if we add more KB this section should change
-    if (pathgeneratortype.toLowerCase().equals("wikidata")
+    if (pathgeneratortype.equalsIgnoreCase("wikidata")
         || property.toLowerCase().contains("wikidata")) {
       return factChecking.checkFacts(model, Integer.parseInt(pathLength), virtualType,
           PathGeneratorType.wikidataPathGenerator, verbalize);

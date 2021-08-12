@@ -11,11 +11,10 @@ public class DefaultPathGeneratorFactory implements IPathGeneratorFactory {
       QueryExecutioner queryExecutioner, PathGeneratorType pathGeneratorType,
       String ontologyURI) {
     switch (pathGeneratorType) {
-      case defaultPathGenerator:
+      default:
         return new DefaultPathGenerator(queryBuilder, input, pathLength, queryExecutioner, ontologyURI);
       case wikidataPathGenerator:
         return new WikiDataPathGenerator(queryBuilder, input, pathLength, queryExecutioner);
     }
-    return null;
   }
 }

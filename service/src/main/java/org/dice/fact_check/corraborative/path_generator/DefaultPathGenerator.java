@@ -117,8 +117,6 @@ public class DefaultPathGenerator implements IPathGenerator {
               intermediateNodes.put(path,
                   qs.get("?x1").toString() + ";" + qs.get("?x2").toString());
             }
-
-            break;
           }
 
         } catch (Exception ex) {

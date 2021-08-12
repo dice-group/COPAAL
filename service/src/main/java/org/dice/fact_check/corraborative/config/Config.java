@@ -87,8 +87,4 @@ public class Config {
   public IPathGeneratorFactory getPathGeneratorFactory() {
     return new DefaultPathGeneratorFactory();
   }
-
-  public String GetOntologyURI() {
-    return ontologyURI;
-  }
 }

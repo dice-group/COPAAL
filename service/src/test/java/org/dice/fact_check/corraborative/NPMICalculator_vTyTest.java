@@ -41,7 +41,7 @@ public class NPMICalculator_vTyTest {
     // calculate NPMI for virtual types
     NPMICalculator calculatorVT = new NPMICalculator(path, builder, statement, "", 2,
         predicateOccurrencesVT, subjectTriplesVT, objectTriplesVT, null, null, queryExecutioner);
-    double scoreVT = calculatorVT.calculatePMIScore_vTy();
+    double scoreVT = calculatorVT.calculatePMIScoreVT();
 
     // calculate NPMI for non virtual types
     Set<Node> subjectType = new HashSet<>();

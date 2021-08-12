@@ -18,6 +18,7 @@ import org.dice.fact_check.corraborative.query.QueryExecutioner;
 import org.dice.fact_check.corraborative.query.SparqlQueryGenerator;
 import org.dice.fact_check.corraborative.ui_result.CorroborativeGraph;
 import org.dice.fact_check.corraborative.ui_result.create.DefaultPathFactory;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class FactCheckingTest {
@@ -26,7 +27,7 @@ public class FactCheckingTest {
       new LocalQueryExecutioner("src/test/resources/test_model.nt");
 
   @Test
-  public void QryTest() throws ParseException {
+  public void queryTest() throws ParseException {
     SelectBuilder qryBuilder = new SelectBuilder();
     qryBuilder.addVar("count(*)", "?c");
     qryBuilder.addWhere(NodeFactory.createVariable("s"), "<http://www.example.org/P1>",
@@ -45,7 +46,7 @@ public class FactCheckingTest {
   // This test shows that the vTy parameter has a positive effect and show that 'virtual types' can
   // be helpful
   @Test
-  public void FC_EducationTest()
+  public void fcEducationTest()
       throws FileNotFoundException, InterruptedException, ParseException {
 
     Statement statement =
@@ -55,6 +56,7 @@ public class FactCheckingTest {
 
     fcTest(statement, 2, true);
     fcTest(statement, 2, false);
+    
   }
 
   protected void fcTest(Statement statement, int pathLen, boolean vTy)
@@ -75,5 +77,7 @@ public class FactCheckingTest {
     System.out.println("Object: " + statement.getObject());
     System.out.println("Count paths: " + cg.getPathList().toArray().length);
     System.out.println("virtual Types: " + vTy + " Score:" + cg.getGraphScore());
+    
+    Assert.assertTrue(cg.getGraphScore() > 0);
   }
 }

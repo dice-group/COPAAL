@@ -111,7 +111,8 @@ public class FactChecking {
         property, NodeFactory.createVariable("o"));
 
     // get Domain and Range info
-    Set<Node> subjectTypes = null, objectTypes = null;
+    Set<Node> subjectTypes = null;
+    Set<Node> objectTypes = null;
     if (!vTy) {
       subjectTypes = getTypeInformation(property, RDFS.domain);
       objectTypes = getTypeInformation(property, RDFS.range);
@@ -138,23 +139,24 @@ public class FactChecking {
       }
     }
 
-    int count_subject_Triples, count_object_Triples;
+    int countSubjectTriples;
+    int countObjectTriples;
     if (!vTy) {
-      count_subject_Triples =
+      countSubjectTriples =
           countOccurrances(NodeFactory.createVariable("s"), RDF.type, subjectTypes);
-      count_object_Triples =
+      countObjectTriples =
           countOccurrances(NodeFactory.createVariable("s"), RDF.type, objectTypes);
     } else {
-      count_subject_Triples = countSOOccurrances("count(distinct ?s)", property);
-      count_object_Triples = countSOOccurrances("count(distinct ?o)", property);
+      countSubjectTriples = countSOOccurrances("count(distinct ?s)", property);
+      countObjectTriples = countSOOccurrances("count(distinct ?o)", property);
     }
 
     stepTime = logElapsedTimeThisStep("initiate", stepTime);
 
     // Path Discovery
     LOGGER.info("Checking Fact");
-    LOGGER.info("count_subject_Triples: " + count_subject_Triples + " count_object_Triples: "
-        + count_object_Triples);
+    LOGGER.info("count_subject_Triples: " + countSubjectTriples + " count_object_Triples: "
+        + countObjectTriples);
 
     for (int j = 1; j <= pathLength; j++) {
       try {
@@ -203,8 +205,8 @@ public class FactChecking {
           String pathString = path.getKey();
           String intermediateNodes = pathQuery.getIntermediateNodes().get(pathString);
           NPMICalculator pc = new NPMICalculator(pathString, querySequence, inputTriple,
-              intermediateNodes, path.getValue(), count_predicate_Triples, count_subject_Triples,
-              count_object_Triples, subjectTypes, objectTypes, queryExecutioner, filter, vTy);
+              intermediateNodes, path.getValue(), count_predicate_Triples, countSubjectTriples,
+              countObjectTriples, subjectTypes, objectTypes, queryExecutioner, filter, vTy);
           pmiCallables.add(pc);
         }
       }
@@ -263,8 +265,7 @@ public class FactChecking {
   private long logElapsedTimeThisStep(String stepName, long time) {
     LOGGER.info("time elapsed for " + stepName + " :"
         + (double) (System.nanoTime() - time) / 1_000_000_000 + " seconds");
-    time = System.nanoTime();
-    return time;
+    return System.nanoTime();
   }
 
   public RDFNode getResource(Model model, Property property, Resource statement) {
@@ -279,12 +280,13 @@ public class FactChecking {
       String intermediateNodes, int pathLength, RDFNode subject, RDFNode object) {
     List<Statement> statementList = new ArrayList<Statement>();
     String[] paths = path.split(";");
+    String pathFormat = builder;
     int prop = 1;
     int res = 1;
     for (int i = 0; i < paths.length; i++) {
 
       String property = "?p" + (prop);
-      builder = builder.replace(property, paths[i]);
+      pathFormat = pathFormat.replace(property, paths[i]);
       prop++;
     }
     if (pathLength > 1) {
@@ -292,15 +294,15 @@ public class FactChecking {
       for (int i = 0; i < intermediateResources.length; i++) {
 
         String resource = "?x" + (res);
-        builder = builder.replace(resource, intermediateResources[i]);
+        pathFormat = pathFormat.replace(resource, intermediateResources[i]);
         res++;
       }
     }
 
-    builder = builder.replace("?s", subject.toString());
-    builder = builder.replace("?o", object.toString());
+    pathFormat = pathFormat.replace("?s", subject.toString());
+    pathFormat = pathFormat.replace("?o", object.toString());
 
-    String[] triples = builder.split(";");
+    String[] triples = pathFormat.split(";");
     for (int i = 0; i < triples.length; i++) {
       Resource resourceSubject = ResourceFactory.createResource(triples[i].split(" ")[0].trim());
       Property property = ResourceFactory.createProperty(triples[i].split(" ")[1].trim());

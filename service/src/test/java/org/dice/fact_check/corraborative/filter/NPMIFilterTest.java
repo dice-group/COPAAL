@@ -42,7 +42,7 @@ public class NPMIFilterTest {
     }
     
     @Test
-    public void DiffLims() throws NPMIFilterException {
+    public void diffLims() throws NPMIFilterException {
         // 
     	int[] minJ= {2,3};
     	
