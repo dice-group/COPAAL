@@ -5,6 +5,8 @@ package org.dice.fact_check.corraborative.query;
  * @author Sven Kuhlmann
  */
 
+import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -12,16 +14,21 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class LocalQueryExecutioner extends QueryExecutioner {
+public class LocalQueryExecutioner extends QueryExecutioner {  
   private Model model;
 
   @Autowired
   public LocalQueryExecutioner(String graphString) {
     super(graphString);
-    if (!graphString.isBlank()) {
-      readModelFromFile(graphString);
-    }
+    String trimmedPath = validatePath(graphString.trim());
+    readModelFromFile(trimmedPath);
   }
+  
+  private String validatePath(String pathString) throws InvalidPathException {
+    String trimmedPath = pathString.trim();
+    Paths.get(trimmedPath);
+    return trimmedPath;
+}
 
   private void readModelFromFile(String graphString) {
     Model model = ModelFactory.createDefaultModel();
