@@ -30,10 +30,10 @@ public class PropertyPathParserTest {
   @Test
   public void test() {
     // test if property path string to pair is correct
-    Assert.assertEquals(expected, ThirdPartyPathImporter.convertPathToPairs(propertyPath));
+    Assert.assertEquals(expected, QRestrictedPath.create(propertyPath,0).getPathElements());
 
     // test if path to property path string is correct
-    Assert.assertEquals(propertyPath, path.getPropertyPath());
+    Assert.assertEquals(propertyPath, path.getEvidence());
   }
 
   @Parameters
