@@ -122,7 +122,6 @@ public class PathBasedFactCheckerSavePathScore implements IFactChecker {
         String factPreprocessorClassName = this.factPreprocessor.getClass().getName();
         String pathSearcherClassName = this.pathSearcher.getClass().getName();
         String pathScorerClassName = this.pathScorer.getClass().getName();
-        //TODO : find what is the name ?
         String counterRetrieverClassName = this.countRetriever.getClass().getName();
 
         // Preprocess the data
@@ -191,6 +190,10 @@ public class PathBasedFactCheckerSavePathScore implements IFactChecker {
                 }
             }
             // save path
+            pathRepository.save(forSave);
+        }
+        if(paths==null || paths.size()==0){
+            Path forSave = new Path(subject.getURI(),predicate.getURI(),object.getURI(),factPreprocessorClassName,counterRetrieverClassName,pathSearcherClassName,pathScorerClassName,0);
             pathRepository.save(forSave);
         }
     }

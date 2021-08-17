@@ -6,6 +6,8 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.impl.PropertyImpl;
 import org.dice_research.fc.IBidirectionalMapper;
 import org.dice_research.fc.paths.map.PropertyMapper;
+import org.dice_research.fc.run.Application;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.AllTests;
@@ -31,35 +33,35 @@ import java.util.List;
 @ContextConfiguration(classes= org.dice_research.fc.config.Config.class , loader= AnnotationConfigContextLoader.class)
 @SpringBootTest*/
 
-@RunWith(SpringRunner.class)
+/*@RunWith(SpringRunner.class)
 @SpringBootTest
-@ContextConfiguration(classes = org.dice_research.fc.config.Config.class)
+@ContextConfiguration(classes = org.dice_research.fc.config.Config.class)*/
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
 
 public class PropertyMapperTest {
 
     @Autowired
     IBidirectionalMapper<Property,String> mapper;
 
-    Mockito mocker = new Mockito();
-
     @Test
-    public void mapper_should_map_valid_input_from_Property_to_Json() {
+    public void mapper_should_map_valid_input_from_Property_to_String() {
+        String excpected = "http://dbpedia.org/resource/Tay_Zonday";
 
-        List<Property> tempList = new ArrayList<>();
-        Property pr = ResourceFactory.createProperty("http://dbpedia.org/resource/Tay_Zonday");
-        tempList.add(pr);
+        Property pr = ResourceFactory.createProperty(excpected);
 
-/*        pr = ResourceFactory.createProperty("http://dbpedia.org/ontology/birthPlace");
-        tempList.add(pr);
-
-        pr = ResourceFactory.createProperty("http://dbpedia.org/resource/Minneapolis");
-        tempList.add(pr);*/
-
-        String str = mapper.map(pr);
-        System.out.println(str);
+        String actual = mapper.map(pr);
+        Assert.assertEquals(excpected,actual);
     }
 
     @Test
-    public void mapper_should_map_valid_input_from_Json_to_Property() {
+    public void mapper_should_map_valid_input_from_String_to_Property() {
+        String uri = "http://dbpedia.org/resource/Tay_Zonday";
+
+        Property expected = ResourceFactory.createProperty(uri);
+
+        Property actual = mapper.reverseMap(uri);
+        Assert.assertEquals(expected,actual);
     }
 }

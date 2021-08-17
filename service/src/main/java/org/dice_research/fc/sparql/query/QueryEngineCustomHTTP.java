@@ -35,6 +35,8 @@ public class QueryEngineCustomHTTP implements QueryExecution {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryEngineCustomHTTP.class);
 
+    int tryNumber;
+
     /**
      * The query which should run
      */
@@ -60,6 +62,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
     public QueryEngineCustomHTTP(Query query, String service) {
         this.query = query;
         this.service = service;
+        tryNumber = 0;
     }
 
     @Override
@@ -82,6 +85,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
 
     @Override
     public ResultSet execSelect() {
+        tryNumber = 0;
         String result = createRequest();
         ResultSetFactory fac = new ResultSetFactory();
 
@@ -89,7 +93,6 @@ public class QueryEngineCustomHTTP implements QueryExecution {
         if(result.length()<10) {
             result = emptyXML();
         }
-
         ResultSet resultSet = fac.fromXML(result);
 
         return resultSet;
@@ -136,13 +139,25 @@ public class QueryEngineCustomHTTP implements QueryExecution {
                 .setConnectionRequestTimeout(timeout)
                 .setSocketTimeout(timeout).build();
         try(CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).build()){
+            LOGGER.info("--------Start Reqest------------");
+            LOGGER.info(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
             HttpGet get = new HttpGet(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
             get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
             HttpResponse resp = client.execute(get);
             String responseContent = read(resp.getEntity().getContent());
             InputStream is = new ByteArrayInputStream(responseContent.getBytes(StandardCharsets.UTF_8));
             String result = IOUtils.toString(is, StandardCharsets.UTF_8);
+
+            if(result.contains("404 File not found") && tryNumber < 5){
+                // face error try one more time
+                LOGGER.info("----------try one more -------------"+tryNumber+"---");
+                TimeUnit.SECONDS.sleep(3);
+                tryNumber = tryNumber +1;
+                client.close();
+                createRequest();
+            }
             LOGGER.info(result);
+            LOGGER.info("----------end Reqest-------------");
             return result;
         }
         catch(java.net.SocketTimeoutException e) {
