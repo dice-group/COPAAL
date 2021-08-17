@@ -23,7 +23,7 @@ public class PropertyMapperTest {
     IBidirectionalMapper<Property,String> mapper;
 
     @Test
-    public void mapper_should_map_valid_input_from_Property_to_String() {
+    public void mapperShouldMapValidInputFromPropertyToString() {
         String excpected = "http://dbpedia.org/resource/Tay_Zonday";
 
         Property pr = ResourceFactory.createProperty(excpected);
@@ -33,7 +33,7 @@ public class PropertyMapperTest {
     }
 
     @Test
-    public void mapper_should_map_valid_input_from_String_to_Property() {
+    public void mapperShouldMapValidInputFromStringToProperty() {
         String uri = "http://dbpedia.org/resource/Tay_Zonday";
 
         Property expected = ResourceFactory.createProperty(uri);

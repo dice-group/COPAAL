@@ -23,7 +23,7 @@ public class PathMapperTest {
     IMapper<Path, QRestrictedPath> mapper;
 
     @Test
-    public void mapper_should_map_valid_input_from_Path_to_QRestrictedPath(){
+    public void mapperShouldMapValidInputFromPathToQRestrictedPath(){
         Path path = new Path( "subject","predicate","object","factPreprocessor","counterRetriever","pathSearcher","pathScorer", 0.51);
         List<PathElement> pathElements = new ArrayList<>();
 

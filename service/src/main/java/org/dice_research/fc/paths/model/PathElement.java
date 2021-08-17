@@ -60,7 +60,7 @@ public class PathElement {
     }
 
     public void setInverted(Boolean inverted) {
-        inverted = inverted;
+        this.inverted = inverted;
     }
 
     public String getProperty() {

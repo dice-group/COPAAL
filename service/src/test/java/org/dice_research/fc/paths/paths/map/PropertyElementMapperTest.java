@@ -21,7 +21,7 @@ public class PropertyElementMapperTest {
     IMapper<Pair<Property, Boolean>, PathElement> mapper;
 
     @Test
-    public void mapper_should_map_valid_input_from_Pair_to_PathElement(){
+    public void mapperShouldMapValidInputFromPairToPathElement(){
         String excpectedURI = "http://dbpedia.org/resource/Tay_Zonday";
 
         Property property = ResourceFactory.createProperty(excpectedURI);
