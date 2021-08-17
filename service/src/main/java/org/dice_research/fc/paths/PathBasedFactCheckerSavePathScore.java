@@ -192,10 +192,11 @@ public class PathBasedFactCheckerSavePathScore implements IFactChecker {
             // save path
             pathRepository.save(forSave);
         }
-        if(paths==null || paths.size()==0){
+        // in fact never the path is empty or null , but if want to call this method from another method where you may pass the empty path then uncomment these lines
+/*        if(paths==null || paths.size()==0){
             Path forSave = new Path(subject.getURI(),predicate.getURI(),object.getURI(),factPreprocessorClassName,counterRetrieverClassName,pathSearcherClassName,pathScorerClassName,0);
             pathRepository.save(forSave);
-        }
+        }*/
     }
 
     /**

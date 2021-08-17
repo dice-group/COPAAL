@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 
 /**
- * This class is a bidirectional mapper between  Property and Sting
+ * This class is a bidirectional mapper between  Property and String
  * for property we just consider URI if need more data it should add
  *
  * @author Farshad Afshari

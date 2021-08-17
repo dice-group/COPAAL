@@ -316,13 +316,6 @@ public class Config {
     return new PropertyMapper();
   }
 
-  //TODO : delete this
-/*  @Bean
-  public IPathRepository getFakeRepos(){
-    Mockito mocker = new Mockito();
-    return mocker.mock(IPathRepository.class);
-  }*/
-
   @Bean
   public IMapper<Pair<Property, Boolean>, PathElement> getPropertyElementMapper(){
     return new PropertyElementMapper();
