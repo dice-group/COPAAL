@@ -13,12 +13,14 @@ import org.apache.jena.graph.Triple;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.core.Quad;
+import org.apache.jena.sparql.resultset.XMLInput;
 import org.apache.jena.sparql.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
@@ -87,13 +89,13 @@ public class QueryEngineCustomHTTP implements QueryExecution {
     public ResultSet execSelect() {
         tryNumber = 0;
         String result = createRequest();
-        ResultSetFactory fac = new ResultSetFactory();
 
         // the result is not a valid XML then replace with an empty XML
         if(result.length()<10) {
             result = emptyXML();
         }
-        ResultSet resultSet = fac.fromXML(result);
+
+        ResultSet resultSet = ResultSetFactory.fromXML(result);
 
         return resultSet;
     }
@@ -156,12 +158,12 @@ public class QueryEngineCustomHTTP implements QueryExecution {
                 client.close();
                 createRequest();
             }
-            LOGGER.info(result);
+            LOGGER.debug(result);
             LOGGER.info("----------end Reqest-------------");
             return result;
         }
-        catch(java.net.SocketTimeoutException e) {
-            LOGGER.info("Timeout this query: "+query.toString());
+        catch(SocketTimeoutException e) {
+            LOGGER.debug("Timeout this query: "+query.toString());
             return "";
         }
         catch(Exception e){
@@ -218,7 +220,14 @@ public class QueryEngineCustomHTTP implements QueryExecution {
 
     @Override
     public boolean execAsk() {
-        throw new UnsupportedOperationException("Invalid operation");
+      String result = createRequest();
+
+      // the result is not a valid XML then replace with an empty XML
+      if(result.length()<10) {
+          result = emptyXML();
+      }
+      
+      return  XMLInput.booleanFromXML(result);
     }
 
     @Override

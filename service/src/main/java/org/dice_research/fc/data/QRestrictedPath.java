@@ -2,8 +2,11 @@ package org.dice_research.fc.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.math3.util.Pair;
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 /**
  * A q-restricted path as defined in the paper of Syed et al. (2019).
@@ -47,7 +50,7 @@ public class QRestrictedPath implements IPieceOfEvidence {
     super();
     this.pathElements = pathElements;
   }
-  
+
   /**
    * Constructor.
    * 
@@ -90,7 +93,7 @@ public class QRestrictedPath implements IPieceOfEvidence {
     result = prime * result + ((pathElements == null) ? 0 : pathElements.hashCode());
     return result;
   }
-  
+
 
   @Override
   public boolean equals(Object obj) {
@@ -110,9 +113,9 @@ public class QRestrictedPath implements IPieceOfEvidence {
       return false;
     return true;
   }
-  
 
-  
+
+
   public int length() {
     if (pathElements != null) {
       return pathElements.size();
@@ -120,7 +123,7 @@ public class QRestrictedPath implements IPieceOfEvidence {
       return 0;
     }
   }
-  
+
   /**
    * @return The corresponding SPARQL property path.
    */
@@ -140,27 +143,6 @@ public class QRestrictedPath implements IPieceOfEvidence {
       builder.append("<");
       builder.append(element.getFirst().getURI());
       builder.append(">");
-    }
-    return builder.toString();
-  }
-
-  /**
-   * 
-   * @return the equivalent SPARQL property path that can be used in queries
-   */
-  public String getPropertyPath() {
-    StringBuilder builder = new StringBuilder();
-    boolean first = true;
-    for (Pair<Property, Boolean> element : pathElements) {
-      if (first) {
-        first = false;
-      } else {
-        builder.append("/");
-      }
-      if (!element.getSecond()) {
-        builder.append("^");
-      }
-      builder.append("<").append(element.getFirst().getURI()).append(">");
     }
     return builder.toString();
   }
@@ -195,5 +177,37 @@ public class QRestrictedPath implements IPieceOfEvidence {
       pathElements.add(new Pair<Property, Boolean>(properties[i], direction[i]));
     }
     return new QRestrictedPath(pathElements);
+  }
+
+
+  /**
+   * Creates a new {@link QRestrictedPath} object from a string containing a property path.
+   * 
+   * @param propertyPath
+   * @param score
+   * @return
+   */
+  public static QRestrictedPath create(String propertyPath, double score) {
+
+    // The REGEX to extract the property path and inverse operator from.
+    final String PROPERTY_PATH_REGEX = "(\\^?)<(.+?)>";
+
+    List<Pair<Property, Boolean>> pathElements = new ArrayList<Pair<Property, Boolean>>();
+
+    Pattern pattern = Pattern.compile(PROPERTY_PATH_REGEX);
+    Matcher matcher = pattern.matcher(propertyPath);
+    while (matcher.find()) {
+      String operator = matcher.group(1);
+      String uri = matcher.group(2);
+
+      // can we deal with the property as is or is it inverse
+      boolean isAsIs = operator.contains("^") ? false : true;
+
+      Property property = ResourceFactory.createProperty(uri);
+      pathElements.add(new Pair<Property, Boolean>(property, isAsIs));
+    }
+
+    return new QRestrictedPath(pathElements, score);
+
   }
 }

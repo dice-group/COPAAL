@@ -1,6 +1,6 @@
 package org.dice_research.fc.data;
 
-import org.dice_research.fc.config.PathSerializer;
+import org.dice_research.fc.serialization.PathSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**

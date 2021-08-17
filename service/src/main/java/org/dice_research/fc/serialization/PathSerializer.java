@@ -1,4 +1,4 @@
-package org.dice_research.fc.config;
+package org.dice_research.fc.serialization;
 
 import java.io.IOException;
 import org.dice_research.fc.data.IPieceOfEvidence;
@@ -27,6 +27,7 @@ public class PathSerializer extends StdSerializer<IPieceOfEvidence> {
   @Override
   public void serialize(IPieceOfEvidence path, JsonGenerator gen, SerializerProvider provider)
       throws IOException {
+    gen.useDefaultPrettyPrinter();
     gen.writeStartObject();
     gen.writeNumberField("score", path.getScore());
     gen.writeStringField("evidence", path.getEvidence());
