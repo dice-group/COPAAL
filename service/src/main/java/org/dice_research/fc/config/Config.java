@@ -32,6 +32,8 @@ import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.VirtualTypesMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
+import org.dice_research.fc.paths.verbalizer.DefaultPathVerbalizer;
+import org.dice_research.fc.paths.verbalizer.IPathVerbalizer;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
@@ -137,6 +139,13 @@ public class Config {
    */
   @Value("${dataset.file.metapaths:false}")
   private boolean isPathsLoad;
+  
+  /**
+   * Do we want to enable verbalization of paths
+   */
+  @Value("${dataset.verbalization:false}")
+  private boolean isVerbalization;
+  
 
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -314,16 +323,29 @@ public class Config {
     }
   }
 
+  /**
+   * @return The desired {@link IPathImporter} implementation.
+   */
   @Bean
   public IPathImporter getImporter() {
     return new DefaultImporter();
   }
 
+  /**
+   * @return The desired {@link IPathExporter} implementation.
+   */
   @Bean
   public IPathExporter getExporter() {
     return new DefaultExporter(preprocessedPaths);
   }
 
+  /**
+   * @return The desired {@link IPathVerbalizer} implementation.
+   */
+  @Bean
+  public IPathVerbalizer getVerbalizer(QueryExecutionFactory qef) {
+    return new DefaultPathVerbalizer(qef);
+  }
 }
 // TODO: we can also use reflection instead of switch case statements?
 // ScoreSummarist pathScorer = null;

@@ -33,6 +33,11 @@ public class QRestrictedPath implements IPieceOfEvidence {
    * property has to be inverted.
    */
   protected List<Pair<Property, Boolean>> pathElements;
+  
+  /**
+   * 
+   */
+  protected String verbalizedOutput;
 
   /**
    * Constructor.
@@ -84,6 +89,20 @@ public class QRestrictedPath implements IPieceOfEvidence {
    */
   public void setPathElements(List<Pair<Property, Boolean>> pathElements) {
     this.pathElements = pathElements;
+  }
+
+  /**
+   * @return the verbalized output
+   */
+  public String getVerbalizedOutput() {
+    return verbalizedOutput;
+  }
+
+  /**
+   * @param verbalizedOutput the verbalized output to set
+   */
+  public void setVerbalizedOutput(String verbalizedOutput) {
+    this.verbalizedOutput = verbalizedOutput;
   }
 
   @Override
