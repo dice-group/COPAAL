@@ -15,6 +15,7 @@ import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
 import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
+import org.dice_research.fc.paths.verbalizer.DefaultPathVerbalizer;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
 import org.dice_research.fc.sum.FixedSummarist;
@@ -41,10 +42,11 @@ public class COPAAL {
         new SPARQLBasedSOPathSearcher(qef, 3,
             Arrays.asList(new NamespaceFilter("http://dbpedia.org/ontology", false),
                 new EqualsFilter(FILTERED_PROPERTIES))),
-        new NPMIBasedScorer(new CachingCountRetrieverDecorator(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef)))), new FixedSummarist());
+        new NPMIBasedScorer(new CachingCountRetrieverDecorator(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef)))), new FixedSummarist(),
+        new DefaultPathVerbalizer(qef));
 
     FactCheckingResult result = checker.check(ResourceFactory.createResource("http://dbpedia.org/resource/Tay_Zonday"), ResourceFactory.createProperty("http://dbpedia.org/ontology/birthPlace"),
-        ResourceFactory.createResource("http://dbpedia.org/resource/Minneapolis"));
+        ResourceFactory.createResource("http://dbpedia.org/resource/Minneapolis"), false);
     System.out.print("Result: ");
     System.out.println(result.getVeracityValue());
   }

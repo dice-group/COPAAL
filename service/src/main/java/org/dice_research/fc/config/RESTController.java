@@ -26,14 +26,15 @@ public class RESTController {
   public FactCheckingResult validate(
       @RequestParam(value = "subject", required = true) String subject,
       @RequestParam(value = "object", required = true) String object,
-      @RequestParam(value = "property", required = true) String property)
+      @RequestParam(value = "property", required = true) String property,
+      @RequestParam(value = "verbalize", required = false, defaultValue = "false") boolean verbalize)
       throws InterruptedException, FileNotFoundException, ParseException {
 
     Resource subjectURI = ResourceFactory.createResource(subject);
     Resource objectURI = ResourceFactory.createResource(object);
     Property propertyURI = ResourceFactory.createProperty(property);
-
-    return factChecker.check(subjectURI, propertyURI, objectURI);
+     
+    return factChecker.check(subjectURI, propertyURI, objectURI, verbalize);
   }
 
 }

@@ -2,7 +2,6 @@ package org.dice_research.fc.paths.imprt;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -14,6 +13,7 @@ import org.dice_research.fc.paths.FactPreprocessor;
 import org.dice_research.fc.paths.IPathScorer;
 import org.dice_research.fc.paths.IPathSearcher;
 import org.dice_research.fc.paths.PathBasedFactChecker;
+import org.dice_research.fc.paths.verbalizer.IPathVerbalizer;
 import org.dice_research.fc.sum.ScoreSummarist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,13 +40,15 @@ public class ImportedFactChecker extends PathBasedFactChecker {
 
   @Autowired
   public ImportedFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
-      IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaPreprocessor) {
-    super(factPreprocessor, pathSearcher, pathScorer, summarist);
+      IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaPreprocessor,
+      IPathVerbalizer verbalizer) {
+    super(factPreprocessor, pathSearcher, pathScorer, summarist, verbalizer);
     this.metaPreprocessor = metaPreprocessor;
   }
 
   @Override
-  public FactCheckingResult check(Resource subject, Property predicate, Resource object) {
+  public FactCheckingResult check(Resource subject, Property predicate, Resource object,
+      boolean verbalize) {
     Statement fact = ResourceFactory.createStatement(subject, predicate, object);
     Predicate preparedPredicate = factPreprocessor.generatePredicate(fact);
 
@@ -65,15 +67,19 @@ public class ImportedFactChecker extends PathBasedFactChecker {
       return new FactCheckingResult(pathsNotFoundResult, paths, fact);
     }
 
-    // calculate scores if needed only
-    Stream<QRestrictedPath> pathStream = paths.stream();
-    if (pathStream.findFirst().get().getScore() == Double.NaN) {
-      LOGGER.warn("Couldn't find scores for paths of predicate {}. Executing path scoring.",
-          predicate.getURI());
-      paths = paths.parallelStream().filter(pathFilter)
-          .map(p -> pathScorer.score(subject, preparedPredicate, object, p))
-          .filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());
-    }
+    // calculate scores and verbalize if needed only
+    paths = paths.parallelStream().filter(pathFilter).map(p -> {
+      if (verbalize && (p.getVerbalizedOutput()==null || p.getVerbalizedOutput().isBlank())) {
+        verbalizer.verbalizePaths(subject, object, p);
+      }
+      if (Double.isNaN(p.getScore())) {
+        LOGGER.warn("Couldn't find scores for paths of predicate {}. Executing path scoring.",
+            predicate.getURI());
+        return pathScorer.score(subject, preparedPredicate, object, p);
+      } else {
+        return p; 
+      }
+    }).filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());
 
     // Get the scores
     double[] scores = paths.stream().mapToDouble(p -> p.getScore()).toArray();

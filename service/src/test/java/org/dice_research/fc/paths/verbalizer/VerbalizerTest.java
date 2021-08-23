@@ -64,18 +64,24 @@ public class VerbalizerTest {
 
     Resource subject2 = ResourceFactory.createResource("http://dbpedia.org/resource/Nia_Gill");
     Resource object2 = ResourceFactory.createResource("http://dbpedia.org/resource/Bachelor_of_Arts");
+    
+    Resource subject3 = ResourceFactory.createResource("http://dbpedia.org/resource/Tay_Zonday");
+    Resource object3 = ResourceFactory.createResource("http://dbpedia.org/resource/Minneapolis");
 
     Resource randomRes = ResourceFactory.createResource("http://dbpedia.org/resource/randomRes");
 
     String pathStr = "<http://dbpedia.org/ontology/birthPlace>/<http://dbpedia.org/ontology/country>";
     String pathStr2 = "<http://dbpedia.org/ontology/almaMater>";
+    String pathStr3 = "<http://dbpedia.org/ontology/birthPlace>/^<http://dbpedia.org/ontology/deathPlace>/<http://dbpedia.org/ontology/residence>";
+    
 
     QRestrictedPath path = QRestrictedPath.create(pathStr, 0);
     QRestrictedPath path2 = QRestrictedPath.create(pathStr2, 0);
-    // TODO add a path with inverse
+    QRestrictedPath path3 = QRestrictedPath.create(pathStr3, 0);
 
     testConfigs.add(new Object[] {subject, object, path, false});
     testConfigs.add(new Object[] {subject2, object2, path2, false});
+    testConfigs.add(new Object[] {subject3, object3, path3, false});
     testConfigs.add(new Object[] {randomRes, randomRes, path, true});
     return testConfigs;
   }

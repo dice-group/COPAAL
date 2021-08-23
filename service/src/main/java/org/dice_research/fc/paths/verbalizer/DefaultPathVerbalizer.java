@@ -52,8 +52,9 @@ public class DefaultPathVerbalizer implements IPathVerbalizer {
     List<Statement> stmts = getStmtsFromPath(subject, object, path);
     Document doc =
         verbalizer.generateDocument(stmts, Paraphrasing.prop.getProperty("surfaceForms"));
-    path.setVerbalizedOutput(doc.getText());
-    return doc.getText();
+    String output = doc.getText();
+    path.setVerbalizedOutput(output);
+    return output;
   }
 
   /**
@@ -87,19 +88,18 @@ public class DefaultPathVerbalizer implements IPathVerbalizer {
         stretchEnd = INTERMEDIATE_VAR + i;
       }
 
-      // swap if inverse
-      if (!pathStretch.getSecond()) {
-        String temp = stretchStart;
-        stretchStart = stretchEnd;
-        stretchEnd = temp;
-      }
-
       // build string
-      builder.append(stretchStart);
-      builder.append(RDFUtil.format(pathStretch.getFirst()));
-      builder.append(stretchEnd);
+      if (pathStretch.getSecond()) {
+        builder.append(stretchStart);
+        builder.append(RDFUtil.format(pathStretch.getFirst()));
+        builder.append(stretchEnd);
+      } else {
+        builder.append(stretchEnd);
+        builder.append(RDFUtil.format(pathStretch.getFirst()));
+        builder.append(stretchStart);
+      }
       builder.append(" . ");
-
+      
       // store variables
       // TODO is this really needed? we could just use the query directly?
       if(stretchStart.contains("?"))
@@ -138,7 +138,7 @@ public class DefaultPathVerbalizer implements IPathVerbalizer {
         
         String temp = localResult;
         for (String curVarName : resultVariables) {
-          temp = localResult.replace(curVarName, curSol.get(curVarName).toString());
+          temp = temp.replace(curVarName, curSol.get(curVarName).toString());
         }
         result.append(temp);
       }

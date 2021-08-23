@@ -16,6 +16,7 @@ import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
+import org.dice_research.fc.paths.verbalizer.DefaultPathVerbalizer;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
 import org.dice_research.fc.sum.CubicMeanSummarist;
@@ -27,13 +28,13 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class PathBasedFactCheckerTest {
-  
+
   private QueryExecutionFactory qef;
   private int maximumLength;
   private Collection<IRIFilter> propertyFilter;
   private Statement triple;
   private double expectedScore;
-  
+
   public PathBasedFactCheckerTest(QueryExecutionFactory qef, int maximumLength,
       Collection<IRIFilter> propertyFilter, Statement triple, double expectedScore) {
     this.qef = qef;
@@ -47,24 +48,25 @@ public class PathBasedFactCheckerTest {
   public void test() {
     IFactChecker factChecker = new PathBasedFactChecker(new PredicateFactory(qef),
         new SPARQLBasedSOPathSearcher(qef, maximumLength, propertyFilter),
-        new NPMIBasedScorer(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef))), new CubicMeanSummarist());
-    FactCheckingResult result = factChecker.check(triple);
+        new NPMIBasedScorer(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef))),
+        new CubicMeanSummarist(), new DefaultPathVerbalizer(qef));
+    FactCheckingResult result = factChecker.check(triple, false);
     Assert.assertEquals(expectedScore, result.getVeracityValue(), 0.001);
   }
-  
+
   @Parameters
   public static Collection<Object[]> data() {
     List<Object[]> testConfigs = new ArrayList<Object[]>();
-    
+
     Model model = ModelFactory.createDefaultModel();
     model.read("test_graph.nt");
     QueryExecutionFactory qef = new QueryExecutionFactoryModel(model);
-    
+
     String[] filteredProps = {RDF.type.getURI()};
-    
+
     List<IRIFilter> filter = new ArrayList<IRIFilter>();
     filter.add(new EqualsFilter(filteredProps));
-    
+
     Statement triple =
         ResourceFactory.createStatement(ResourceFactory.createResource("http://www.example.org/A"),
             ResourceFactory.createProperty("http://www.example.org/P1"),

@@ -139,13 +139,7 @@ public class Config {
    */
   @Value("${dataset.file.metapaths:false}")
   private boolean isPathsLoad;
-  
-  /**
-   * Do we want to enable verbalization of paths
-   */
-  @Value("${dataset.verbalization:false}")
-  private boolean isVerbalization;
-  
+
 
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -178,12 +172,14 @@ public class Config {
    */
   @Bean
   public IFactChecker getFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
-      IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaProcessor) {
+      IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaProcessor,
+      IPathVerbalizer verbalizer) {
     if (isPathsLoad) {
       return new ImportedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist,
-          metaProcessor);
+          metaProcessor, verbalizer);
     } else {
-      return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist);
+      return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist,
+          verbalizer);
     }
   }
 

@@ -14,6 +14,7 @@ import org.dice_research.fc.paths.filter.AlwaysTruePathFilter;
 import org.dice_research.fc.paths.filter.AlwaysTrueScoreFilter;
 import org.dice_research.fc.paths.filter.IPathFilter;
 import org.dice_research.fc.paths.filter.IScoreFilter;
+import org.dice_research.fc.paths.verbalizer.IPathVerbalizer;
 import org.dice_research.fc.sum.ScoreSummarist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -55,6 +56,10 @@ public class PathBasedFactChecker implements IFactChecker {
    * The score if no paths were found.
    */
   protected double pathsNotFoundResult = 0;
+  /**
+   * Path verbalizer
+   */
+  protected IPathVerbalizer verbalizer;
   
   /**
    * Constructor.
@@ -63,15 +68,17 @@ public class PathBasedFactChecker implements IFactChecker {
    * @param pathSearcher The class that is used to search for (corroborative) paths.
    * @param pathScorer The path scorer that is used to score the single paths.
    * @param summarist The class that is used to summarize the scores of the single paths to create a final score.
+   * @param verbalizer The intended path verbalizer implementation.
    */
   @Autowired
   public PathBasedFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
-      IPathScorer pathScorer, ScoreSummarist summarist) {
+      IPathScorer pathScorer, ScoreSummarist summarist, IPathVerbalizer verbalizer) {
     super();
     this.factPreprocessor = factPreprocessor;
     this.pathSearcher = pathSearcher;
     this.pathScorer = pathScorer;
     this.summarist = summarist;
+    this.verbalizer = verbalizer;
   }
 
   /**
@@ -83,7 +90,7 @@ public class PathBasedFactChecker implements IFactChecker {
    * @return The result of the fact checking
    */
   @Override
-  public FactCheckingResult check(Resource subject, Property predicate, Resource object) {
+  public FactCheckingResult check(Resource subject, Property predicate, Resource object, boolean verbalize) {
     // Preprocess the data
     Statement fact = ResourceFactory.createStatement(subject, predicate, object);
     Predicate preparedPredicate = factPreprocessor.generatePredicate(fact);
@@ -96,9 +103,13 @@ public class PathBasedFactChecker implements IFactChecker {
     }
 
     // Filter paths, score the paths with respect to the given triple and filter them again based on
-    // the score
+    // the score and verbalize if needed
     paths = paths.parallelStream().filter(pathFilter)
-        .map(p -> pathScorer.score(subject, preparedPredicate, object, p))
+        .map(p -> {
+          if(verbalize)
+            verbalizer.verbalizePaths(subject, object, p);
+          return pathScorer.score(subject, preparedPredicate, object, p);
+          })
         .filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());
 
     // Get the scores
