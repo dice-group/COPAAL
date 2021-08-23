@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.dice.FactCheck</groupId>
 	<artifactId>Corraborative</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.2.0</version>
 	<packaging>jar</packaging>
 
 	<name>Corraborative</name>
@@ -24,13 +23,23 @@
 		<java.version>1.8</java.version>
 	</properties>
 
+	<repositories>
+		<repository>
+			<id>maven.aksw.internal</id>
+			<name>University Leipzig, AKSW Maven2 Repository</name>
+			<url>https://maven.aksw.org/repository/internal</url>
+		</repository>
+		<repository>
+			<id>maven.aksw.snapshots</id>
+			<name>University Leipzig, AKSW Maven2 Repository</name>
+			<url>https://maven.aksw.org/repository/snapshots</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
-
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -38,12 +47,6 @@
 			<groupId>org.ini4j</groupId>
 			<artifactId>ini4j</artifactId>
 			<version>0.5.4</version>
-		</dependency>
-
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
 		</dependency>
 
 		<dependency>
@@ -57,9 +60,7 @@
 			<artifactId>opencsv</artifactId>
 			<version>4.0</version>
 		</dependency>
-
-
-
+        
 		<!-- https://mvnrepository.com/artifact/org.apache.jena/jena-core -->
 		<dependency>
 			<groupId>org.apache.jena</groupId>
@@ -81,11 +82,6 @@
 			<version>4.4.11</version>
 		</dependency>
 
-
-
-
-
-
 		<!-- https://mvnrepository.com/artifact/org.apache.jena/jena -->
 		<dependency>
 			<groupId>org.apache.jena</groupId>
@@ -105,6 +101,12 @@
 			<groupId>org.aksw.simba</groupId>
 			<artifactId>BENGAL</artifactId>
 			<version>1.0-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>edu.berkeley.compbio</groupId>
+					<artifactId>jlibsvm</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -134,14 +136,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.aksw.simba</groupId>
-			<artifactId>BENGAL</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-
 	</dependencies>
-
 
 	<build>
 		<plugins>
@@ -151,7 +146,49 @@
 				<configuration>
 					<executable>true</executable>
 				</configuration>
+				<executions>
+					<execution>
+						<id>repackage</id>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<attach>false</attach>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
+            <!-- Surefire plugin for JUnit tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- connect with JaCoCo -->
+                    <systemPropertyVariables>
+                        <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <!-- JaCoCo plugin for test coverage reports -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.7</version>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>default-report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 </project>
