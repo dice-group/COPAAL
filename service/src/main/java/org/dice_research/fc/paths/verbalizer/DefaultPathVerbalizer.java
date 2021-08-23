@@ -2,6 +2,7 @@ package org.dice_research.fc.paths.verbalizer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.aksw.gerbil.transfer.nif.Document;
@@ -100,14 +101,8 @@ public class DefaultPathVerbalizer implements IPathVerbalizer {
       }
       builder.append(" . ");
       
-      // store variables
-      // TODO is this really needed? we could just use the query directly?
-      if(stretchStart.contains("?"))
-        resultVariables.add(stretchStart.replace("?", ""));
-      if(stretchEnd.contains("?"))
-        resultVariables.add(stretchEnd.replace("?", ""));
     }
-    return returnIntermediateNodes(builder.toString(), resultVariables);
+    return returnIntermediateNodes(builder.toString());
   }
 
   /**
@@ -116,12 +111,10 @@ public class DefaultPathVerbalizer implements IPathVerbalizer {
    * Note: If there are multiple occurrences of the path, this method might return a {@link List}
    * with more {@link Statement}s.
    * 
-   * @param resultVariables
-   * 
    * @param query SPARQL query to retrieve the intermediate nodes
    * @return The path's equivalent list of statements with the intermediate nodes
    */
-  public List<Statement> returnIntermediateNodes(String queryStr, Set<String> resultVariables) {
+  public List<Statement> returnIntermediateNodes(String queryStr) {
     StringBuilder builder = new StringBuilder();
     builder.append("SELECT * WHERE {");
     builder.append(queryStr);
@@ -137,7 +130,9 @@ public class DefaultPathVerbalizer implements IPathVerbalizer {
         QuerySolution curSol = resultSet.next();
         
         String temp = localResult;
-        for (String curVarName : resultVariables) {
+        Iterator<String> varNames = curSol.varNames();
+        while(varNames.hasNext()) {
+          String curVarName = varNames.next();
           temp = temp.replace(curVarName, curSol.get(curVarName).toString());
         }
         result.append(temp);
