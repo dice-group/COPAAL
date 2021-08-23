@@ -54,7 +54,7 @@ public class FactCheckingVerbalizationTest {
       throws FileNotFoundException, InterruptedException, ParseException {
     IPathBuilder verbalizer = new VerbalizingPathBuilder();
     Path path = verbalizer.createPath(subject, object, result);
-    Assert.assertEquals(path.getPathText().isBlank(), isEmptyExpected);
+    Assert.assertEquals(path.getPathText().isEmpty(), isEmptyExpected);
   }
 
   @Parameters
