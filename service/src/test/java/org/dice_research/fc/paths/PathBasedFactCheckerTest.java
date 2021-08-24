@@ -27,13 +27,13 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class PathBasedFactCheckerTest {
-  
+
   private QueryExecutionFactory qef;
   private int maximumLength;
   private Collection<IRIFilter> propertyFilter;
   private Statement triple;
   private double expectedScore;
-  
+
   public PathBasedFactCheckerTest(QueryExecutionFactory qef, int maximumLength,
       Collection<IRIFilter> propertyFilter, Statement triple, double expectedScore) {
     this.qef = qef;
@@ -47,24 +47,25 @@ public class PathBasedFactCheckerTest {
   public void test() {
     IFactChecker factChecker = new PathBasedFactChecker(new PredicateFactory(qef),
         new SPARQLBasedSOPathSearcher(qef, maximumLength, propertyFilter),
-        new NPMIBasedScorer(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef))), new CubicMeanSummarist());
+        new NPMIBasedScorer(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef))),
+        new CubicMeanSummarist());
     FactCheckingResult result = factChecker.check(triple);
     Assert.assertEquals(expectedScore, result.getVeracityValue(), 0.001);
   }
-  
+
   @Parameters
   public static Collection<Object[]> data() {
     List<Object[]> testConfigs = new ArrayList<Object[]>();
-    
+
     Model model = ModelFactory.createDefaultModel();
     model.read("test_graph.nt");
     QueryExecutionFactory qef = new QueryExecutionFactoryModel(model);
-    
+
     String[] filteredProps = {RDF.type.getURI()};
-    
+
     List<IRIFilter> filter = new ArrayList<IRIFilter>();
     filter.add(new EqualsFilter(filteredProps));
-    
+
     Statement triple =
         ResourceFactory.createStatement(ResourceFactory.createResource("http://www.example.org/A"),
             ResourceFactory.createProperty("http://www.example.org/P1"),

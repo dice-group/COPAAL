@@ -2,7 +2,6 @@ package org.dice_research.fc.paths.imprt;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -65,15 +64,16 @@ public class ImportedFactChecker extends PathBasedFactChecker {
       return new FactCheckingResult(pathsNotFoundResult, paths, fact);
     }
 
-    // calculate scores if needed only
-    Stream<QRestrictedPath> pathStream = paths.stream();
-    if (pathStream.findFirst().get().getScore() == Double.NaN) {
-      LOGGER.warn("Couldn't find scores for paths of predicate {}. Executing path scoring.",
-          predicate.getURI());
-      paths = paths.parallelStream().filter(pathFilter)
-          .map(p -> pathScorer.score(subject, preparedPredicate, object, p))
-          .filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());
-    }
+    // calculate scores and verbalize if needed only
+    paths = paths.parallelStream().filter(pathFilter).map(p -> {
+      if (Double.isNaN(p.getScore())) {
+        LOGGER.warn("Couldn't find scores for paths of predicate {}. Executing path scoring.",
+            predicate.getURI());
+        return pathScorer.score(subject, preparedPredicate, object, p);
+      } else {
+        return p; 
+      }
+    }).filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());
 
     // Get the scores
     double[] scores = paths.stream().mapToDouble(p -> p.getScore()).toArray();

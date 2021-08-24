@@ -1,59 +1,34 @@
 package org.dice_research.fc.paths.SlowQuery;
 
-import java.io.StringReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.*;
-
+import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
-
-import java.net.URLEncoder;
-
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.jena.query.ResultSet;
-import org.apache.jena.riot.*;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-
-
-import com.google.common.base.Charsets;
-import com.google.common.io.ByteSource;
-import org.apache.http.HttpResponse;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
-import java.io.ByteArrayInputStream;
-import java.util.*;
-
-
-import com.google.common.base.Charsets;
-import com.google.common.io.ByteSource;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
-import org.apache.jena.query.*;
-import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.query.ResultSetFactory;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.ResultSetMgr;
-import org.apache.jena.riot.WebContent;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import org.apache.jena.riot.LangBuilder;
+import org.apache.jena.riot.RDFLanguages;
+import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
+import com.google.common.base.Charsets;
+import com.google.common.io.ByteSource;
 
 
 public class SlowQueriesTest {
