@@ -42,6 +42,7 @@ import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.VirtualTypesMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
+import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcherSaveLoadDecorator;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
@@ -184,8 +185,8 @@ public class Config {
       return new ImportedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist,
           metaProcessor);
     } else {
-      //return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist);
-      return new PathBasedFactCheckerSavePathScore(factPreprocessor, pathSearcher, pathScorer, summarist);
+      return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist);
+      //return new PathBasedFactCheckerSavePathScore(factPreprocessor, pathSearcher, pathScorer, summarist);
     }
   }
 
@@ -197,7 +198,8 @@ public class Config {
    */
   @Bean
   public IPathSearcher getPathSearcher(QueryExecutionFactory qef, Collection<IRIFilter> filter) {
-    return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
+    //return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
+    return new SPARQLBasedSOPathSearcherSaveLoadDecorator(new SPARQLBasedSOPathSearcher(qef, maxLength, filter));
   }
 
   /**
