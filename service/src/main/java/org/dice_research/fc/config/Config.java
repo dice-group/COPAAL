@@ -197,9 +197,15 @@ public class Config {
    * @return The desired {@link IPathSearcher} implementation.
    */
   @Bean
-  public IPathSearcher getPathSearcher(QueryExecutionFactory qef, Collection<IRIFilter> filter) {
+  public IPathSearcher getPathSearcher(QueryExecutionFactory qef, Collection<IRIFilter> filter,IMapper<Path, QRestrictedPath> mapper,
+                                       IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper,ICountRetriever counterRetrieverClass,
+                                       FactPreprocessor factPreprocessorClass, IPathScorer pathScorerClass) {
     //return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
-    return new SPARQLBasedSOPathSearcherSaveLoadDecorator(new SPARQLBasedSOPathSearcher(qef, maxLength, filter));
+
+    String counterRetriever = counterRetrieverClass.getClass().getName();
+    String factPreprocessor = factPreprocessorClass.getClass().getName();
+    String pathScorer = pathScorerClass.getClass().getName();
+    return new SPARQLBasedSOPathSearcherSaveLoadDecorator(new SPARQLBasedSOPathSearcher(qef, maxLength, filter),mapper,propertyElementMapper,counterRetriever,factPreprocessor,pathScorer);
   }
 
   /**

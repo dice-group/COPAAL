@@ -6,16 +6,12 @@ import org.apache.jena.rdf.model.Resource;
 import org.dice_research.fc.IMapper;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
-import org.dice_research.fc.paths.FactPreprocessor;
-import org.dice_research.fc.paths.IPathScorer;
 import org.dice_research.fc.paths.IPathSearcher;
 import org.dice_research.fc.paths.IPathSearcherDecorator;
 import org.dice_research.fc.paths.model.Path;
 import org.dice_research.fc.paths.model.PathElement;
 import org.dice_research.fc.paths.repository.IPathElementRepository;
 import org.dice_research.fc.paths.repository.IPathRepository;
-import org.dice_research.fc.paths.scorer.ICountRetriever;
-import org.dice_research.fc.sum.ScoreSummarist;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
@@ -34,49 +30,48 @@ import java.util.stream.Collectors;
 public class SPARQLBasedSOPathSearcherSaveLoadDecorator extends IPathSearcherDecorator {
 
     @Autowired
-    IPathRepository pathRepository;
+    protected IPathRepository pathRepository;
 
     @Autowired
-    IPathElementRepository pathElementRepository;
+    protected IPathElementRepository pathElementRepository;
 
-    @Autowired
-    IMapper<Path, QRestrictedPath> mapper;
+    protected IMapper<Path, QRestrictedPath> mapper;
 
-    @Autowired
-    IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper;
+    protected IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper;
 
-    @Autowired
-    ICountRetriever countRetriever;
+    protected String counterRetriever;
 
-    @Autowired
-    FactPreprocessor factPreprocessor;
+    protected String factPreprocessor;
 
-    @Autowired
-    IPathSearcher pathSearcher;
+    private String pathSearcher;
 
-    @Autowired
-    protected IPathScorer pathScorer;
+    protected String pathScorer;
 
-    @Autowired
-    protected ScoreSummarist summarist;
-
-    public SPARQLBasedSOPathSearcherSaveLoadDecorator(IPathSearcher decoratedPathSearcher) {
+    public SPARQLBasedSOPathSearcherSaveLoadDecorator(IPathSearcher decoratedPathSearcher,
+                                                      IMapper<Path, QRestrictedPath> mapper,
+                                                      IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper,
+                                                      String counterRetriever,
+                                                      String factPreprocessor,
+                                                      String pathScorer
+                                                      ) {
         super(decoratedPathSearcher);
+        this.mapper = mapper;
+        this.propertyElementMapper = propertyElementMapper;
+        this.counterRetriever = counterRetriever;
+        this.factPreprocessor = factPreprocessor;
+        this.pathSearcher = this.getClass().getName();
+        this.pathScorer = pathScorer;
     }
 
     @Override
     public Collection<QRestrictedPath> search(Resource subject, Predicate predicate, Resource object){
-        String factPreprocessorClassName = this.factPreprocessor.getClass().getName();
-        String pathSearcherClassName = this.pathSearcher.getClass().getName();
-        String pathScorerClassName = this.pathScorer.getClass().getName();
-        String counterRetrieverClassName = this.countRetriever.getClass().getName();
 
-        Collection<QRestrictedPath> paths = retrievePathsFromDB(subject,predicate.getProperty(),object,factPreprocessorClassName,counterRetrieverClassName,pathSearcherClassName,pathScorerClassName);
+        Collection<QRestrictedPath> paths = retrievePathsFromDB(subject,predicate.getProperty(),object,factPreprocessor,counterRetriever,pathSearcher,pathScorer);
 
         if(paths.size()==0){
             paths = decoratedPathSearcher.search(subject,predicate,object);
             //save paths
-            savePaths(paths,subject,predicate.getProperty(),object,factPreprocessorClassName,counterRetrieverClassName,pathSearcherClassName,pathScorerClassName);
+            savePaths(paths,subject,predicate.getProperty(),object,factPreprocessor,counterRetriever,pathSearcher,pathScorer);
         }
 
         return paths;
@@ -88,13 +83,13 @@ public class SPARQLBasedSOPathSearcherSaveLoadDecorator extends IPathSearcherDec
      * @param subject is a fact subject
      * @param predicate ia a fact predicate
      * @param object is a fact predicate
-     * @param factPreprocessorClassName shows which factPreprocessor used
-     * @param counterRetrieverClassName shows which counterRetriever used
-     * @param pathSearcherClassName shows which pathSearcher used
-     * @param pathScorerClassName shows which pathScorer used
+     * @param factPreprocessor shows which factPreprocessor used
+     * @param counterRetriever shows which counterRetriever used
+     * @param pathSearcher shows which pathSearcher used
+     * @param pathScorer shows which pathScorer used
      */
-    private List<QRestrictedPath> retrievePathsFromDB(Resource subject, Property predicate, Resource object, String factPreprocessorClassName, String counterRetrieverClassName, String pathSearcherClassName, String pathScorerClassName) {
-        List<Path> paths = pathRepository.findBySubjectAndPredicateAndObjectAndFactPreprocessorAndCounterRetrieverAndPathSearcherAndPathScorer(subject.getURI(),predicate.getURI(),object.getURI(),factPreprocessorClassName,counterRetrieverClassName,pathSearcherClassName,pathScorerClassName);
+    private List<QRestrictedPath> retrievePathsFromDB(Resource subject, Property predicate, Resource object, String factPreprocessor, String counterRetriever, String pathSearcher, String pathScorer) {
+        List<Path> paths = pathRepository.findBySubjectAndPredicateAndObjectAndFactPreprocessorAndCounterRetrieverAndPathSearcherAndPathScorer(subject.getURI(),predicate.getURI(),object.getURI(),factPreprocessor,counterRetriever,pathSearcher,pathScorer);
         List<QRestrictedPath> returnVal = paths.stream().map(p -> mapper.map(p)).collect(Collectors.toList());
         return returnVal;
     }
