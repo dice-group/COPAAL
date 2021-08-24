@@ -34,17 +34,29 @@ public class SPARQLBasedSOPathSearcherSaveLoadDecorator extends IPathSearcherDec
 
     @Autowired
     protected IPathElementRepository pathElementRepository;
-
+    /**
+     * the mappr for map from Path to QRestrictedPath
+     */
     protected IMapper<Path, QRestrictedPath> mapper;
-
+    /**
+     * the mappr for map from Pair<Property, Boolean> to PathElement
+     */
     protected IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper;
-
+    /**
+     * the name of the class of counterRetriever
+     */
     protected String counterRetriever;
-
+    /**
+     * the name of the class of factPreprocessor
+     */
     protected String factPreprocessor;
-
+    /**
+     * the name of the class of pathSearcher this is private because it is itself and we name it on constructor
+     */
     private String pathSearcher;
-
+    /**
+     * the name of the class of pathScorer
+     */
     protected String pathScorer;
 
     public SPARQLBasedSOPathSearcherSaveLoadDecorator(IPathSearcher decoratedPathSearcher,

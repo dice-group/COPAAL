@@ -25,7 +25,6 @@ import org.dice_research.fc.paths.export.DefaultExporter;
 import org.dice_research.fc.paths.export.IPathExporter;
 import org.dice_research.fc.paths.imprt.*;
 
-//import org.dice_research.fc.paths.imprt.ThirdPartyPathImporter;
 import org.dice_research.fc.paths.map.PathMapper;
 import org.dice_research.fc.paths.map.PropertyElementMapper;
 import org.dice_research.fc.paths.map.PropertyMapper;
@@ -148,6 +147,11 @@ public class Config {
    */
   @Value("${dataset.file.metapaths:false}")
   private boolean isPathsLoad;
+  /**
+   * The PathSearcher
+   */
+  @Value("${dataset.pathsearcher.type:}")
+  private String pathSearcher;
 
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -186,7 +190,6 @@ public class Config {
           metaProcessor);
     } else {
       return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist);
-      //return new PathBasedFactCheckerSavePathScore(factPreprocessor, pathSearcher, pathScorer, summarist);
     }
   }
 
@@ -200,12 +203,16 @@ public class Config {
   public IPathSearcher getPathSearcher(QueryExecutionFactory qef, Collection<IRIFilter> filter,IMapper<Path, QRestrictedPath> mapper,
                                        IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper,ICountRetriever counterRetrieverClass,
                                        FactPreprocessor factPreprocessorClass, IPathScorer pathScorerClass) {
-    //return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
+    switch (pathSearcher){
+      case "loadSaveDecorator" :
+        String counterRetriever = counterRetrieverClass.getClass().getName();
+        String factPreprocessor = factPreprocessorClass.getClass().getName();
+        String pathScorer = pathScorerClass.getClass().getName();
+        return new SPARQLBasedSOPathSearcherSaveLoadDecorator(new SPARQLBasedSOPathSearcher(qef, maxLength, filter),mapper,propertyElementMapper,counterRetriever,factPreprocessor,pathScorer);
 
-    String counterRetriever = counterRetrieverClass.getClass().getName();
-    String factPreprocessor = factPreprocessorClass.getClass().getName();
-    String pathScorer = pathScorerClass.getClass().getName();
-    return new SPARQLBasedSOPathSearcherSaveLoadDecorator(new SPARQLBasedSOPathSearcher(qef, maxLength, filter),mapper,propertyElementMapper,counterRetriever,factPreprocessor,pathScorer);
+      default:
+        return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
+    }
   }
 
   /**
