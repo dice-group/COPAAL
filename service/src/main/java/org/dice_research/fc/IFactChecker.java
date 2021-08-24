@@ -17,7 +17,6 @@ public interface IFactChecker {
    * Checks the given fact.
    * 
    * @param statement the fact to be checked
-   * @param verbalize true if we want the paths to be verbalized
    * @return The result of the fact checking
    */
   default FactCheckingResult check(Statement statement) {
@@ -34,7 +33,6 @@ public interface IFactChecker {
    * @param subject the subject of the fact to check
    * @param predicate the predicate of the fact to check
    * @param object the object of the fact to check
-   * @param verbalize true if we want the paths to be verbalized
    * @return The result of the fact checking
    */
   FactCheckingResult check(Resource subject, Property predicate, Resource object);

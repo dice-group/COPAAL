@@ -96,7 +96,7 @@ public class PathBasedFactChecker implements IFactChecker {
     }
 
     // Filter paths, score the paths with respect to the given triple and filter them again based on
-    // the score and verbalize if needed
+    // the score
     paths = paths.parallelStream().filter(pathFilter)
         .map(p -> pathScorer.score(subject, preparedPredicate, object, p))
         .filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());
