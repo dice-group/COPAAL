@@ -32,6 +32,9 @@ import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.VirtualTypesMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
+import org.dice_research.fc.paths.verbalizer.DefaultPathVerbalizer;
+import org.dice_research.fc.paths.verbalizer.IPathVerbalizer;
+import org.dice_research.fc.paths.verbalizer.NoopVerbalizer;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
@@ -46,9 +49,11 @@ import org.dice_research.fc.sum.OriginalSummarist;
 import org.dice_research.fc.sum.ScoreSummarist;
 import org.dice_research.fc.sum.SquaredAverageSummarist;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 /**
@@ -314,16 +319,34 @@ public class Config {
     }
   }
 
+  /**
+   * @return The desired {@link IPathImporter} implementation.
+   */
   @Bean
   public IPathImporter getImporter() {
     return new DefaultImporter();
   }
 
+  /**
+   * @return The desired {@link IPathExporter} implementation.
+   */
   @Bean
   public IPathExporter getExporter() {
     return new DefaultExporter(preprocessedPaths);
   }
 
+  /**
+   * @return The desired {@link IPathVerbalizer} implementation based on HTTP request parameters.
+   */
+  @Bean
+  @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+  public IPathVerbalizer getVerbalizer(QueryExecutionFactory qef, RequestParameters details) {
+    if (details.isVerbalize()) {
+      return new DefaultPathVerbalizer(qef);
+    } else {
+      return new NoopVerbalizer();
+    }
+  }
 }
 // TODO: we can also use reflection instead of switch case statements?
 // ScoreSummarist pathScorer = null;
