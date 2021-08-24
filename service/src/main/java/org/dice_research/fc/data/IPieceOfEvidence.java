@@ -45,6 +45,8 @@ public interface IPieceOfEvidence {
    * 
    * @param verbalizedPath
    */
-  default void setVerbalizedOutput(String verbalizedPath) {};
+  default void setVerbalizedOutput(String verbalizedPath) {
+    // no-op
+  };
 
 }

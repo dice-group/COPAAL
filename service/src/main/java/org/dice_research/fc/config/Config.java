@@ -49,13 +49,12 @@ import org.dice_research.fc.sum.OriginalSummarist;
 import org.dice_research.fc.sum.ScoreSummarist;
 import org.dice_research.fc.sum.SquaredAverageSummarist;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 
 /**
  * Configuration class containing the variables present in the applications.properties file and the
@@ -340,7 +339,7 @@ public class Config {
    * @return The desired {@link IPathVerbalizer} implementation based on HTTP request parameters.
    */
   @Bean
-  @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
+  @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
   public IPathVerbalizer getVerbalizer(QueryExecutionFactory qef, RequestParameters details) {
     if (details.isVerbalize()) {
       return new DefaultPathVerbalizer(qef);
