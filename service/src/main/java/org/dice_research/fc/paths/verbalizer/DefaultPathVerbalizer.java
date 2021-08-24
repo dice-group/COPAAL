@@ -16,38 +16,37 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.dice_research.fc.data.IPieceOfEvidence;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.util.RDFUtil;
 import org.dllearner.kb.sparql.SparqlEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * Default path verbalizer implementation.
  * <p>
- * Retrieves the intermediate nodes from a path between two nodes and retrieves the verbalized
+ * Retrieves the intermediate nodes from a path between two nodes and the verbalized
  * output.
  * 
  * @author Alexandra Silva
  *
  */
-@Component
 public class DefaultPathVerbalizer implements IPathVerbalizer {
 
   protected static final String INTERMEDIATE_VAR = "?x";
 
   protected QueryExecutionFactory qef;
 
-  protected SemWeb2NLVerbalizer verbalizer =
+  protected final SemWeb2NLVerbalizer verbalizer =
       new SemWeb2NLVerbalizer(SparqlEndpoint.getEndpointDBpedia(), true, true);
 
   @Autowired
   public DefaultPathVerbalizer(QueryExecutionFactory qef) {
     this.qef = qef;
   }
-
+  
   @Override
-  public String verbalizePaths(Resource subject, Resource object, QRestrictedPath path) {
+  public String verbalizePaths(Resource subject, Resource object, IPieceOfEvidence path) {
     List<Statement> stmts = getStmtsFromPath(subject, object, path);
     Document doc =
         verbalizer.generateDocument(stmts, Paraphrasing.prop.getProperty("surfaceForms"));
@@ -67,14 +66,16 @@ public class DefaultPathVerbalizer implements IPathVerbalizer {
    * @param path A path found
    * @return The path's equivalent list of statements with the intermediate nodes
    */
-  public List<Statement> getStmtsFromPath(Resource subject, Resource object, QRestrictedPath path) {
+  public List<Statement> getStmtsFromPath(Resource subject, Resource object, IPieceOfEvidence path) {
     StringBuilder builder = new StringBuilder();
 
     // initialize as if there was a previous path stretch
     String stretchStart = null;
     String stretchEnd = RDFUtil.format(subject);
 
-    List<Pair<Property, Boolean>> pathElements = path.getPathElements();
+    List<Pair<Property, Boolean>> pathElements =
+        QRestrictedPath.create(path.getEvidence(), path.getScore()).getPathElements();
+    
     for (int i = 0; i < pathElements.size(); i++) {
       Pair<Property, Boolean> pathStretch = pathElements.get(i);
 

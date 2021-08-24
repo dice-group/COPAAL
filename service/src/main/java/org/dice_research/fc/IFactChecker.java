@@ -20,12 +20,12 @@ public interface IFactChecker {
    * @param verbalize true if we want the paths to be verbalized
    * @return The result of the fact checking
    */
-  default FactCheckingResult check(Statement statement, boolean verbalize) {
+  default FactCheckingResult check(Statement statement) {
     if (!statement.getObject().isResource()) {
       throw new IllegalArgumentException("The given object has to be a resource.");
     }
     return check(statement.getSubject(), statement.getPredicate(),
-        statement.getObject().asResource(), verbalize);
+        statement.getObject().asResource());
   }
 
   /**
@@ -37,6 +37,6 @@ public interface IFactChecker {
    * @param verbalize true if we want the paths to be verbalized
    * @return The result of the fact checking
    */
-  FactCheckingResult check(Resource subject, Property predicate, Resource object, boolean verbalize);
+  FactCheckingResult check(Resource subject, Property predicate, Resource object);
 
 }

@@ -74,7 +74,7 @@ public class LocalApplication {
           stmtR.getPropertyResourceValue(RDF.predicate).as(Property.class),
           stmtR.getPropertyResourceValue(RDF.object));
 
-      FactCheckingResult result = factChecker.check(fact, false);
+      FactCheckingResult result = factChecker.check(fact);
 
       writer.triple(new Triple(stmtR.asNode(), VERACITY_PROPERTY.asNode(),
           ResourceFactory

@@ -16,7 +16,6 @@ import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
-import org.dice_research.fc.paths.verbalizer.DefaultPathVerbalizer;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
 import org.dice_research.fc.sum.CubicMeanSummarist;
@@ -49,8 +48,8 @@ public class PathBasedFactCheckerTest {
     IFactChecker factChecker = new PathBasedFactChecker(new PredicateFactory(qef),
         new SPARQLBasedSOPathSearcher(qef, maximumLength, propertyFilter),
         new NPMIBasedScorer(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef))),
-        new CubicMeanSummarist(), new DefaultPathVerbalizer(qef));
-    FactCheckingResult result = factChecker.check(triple, false);
+        new CubicMeanSummarist());
+    FactCheckingResult result = factChecker.check(triple);
     Assert.assertEquals(expectedScore, result.getVeracityValue(), 0.001);
   }
 

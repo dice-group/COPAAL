@@ -102,6 +102,7 @@ public class QRestrictedPath implements IPieceOfEvidence {
   /**
    * @param verbalizedOutput the verbalized output to set
    */
+  @Override
   public void setVerbalizedOutput(String verbalizedOutput) {
     this.verbalizedOutput = verbalizedOutput;
   }

@@ -34,6 +34,7 @@ import org.dice_research.fc.paths.scorer.count.max.VirtualTypesMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.paths.verbalizer.DefaultPathVerbalizer;
 import org.dice_research.fc.paths.verbalizer.IPathVerbalizer;
+import org.dice_research.fc.paths.verbalizer.NoopVerbalizer;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
@@ -51,7 +52,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 
 /**
  * Configuration class containing the variables present in the applications.properties file and the
@@ -140,7 +144,6 @@ public class Config {
   @Value("${dataset.file.metapaths:false}")
   private boolean isPathsLoad;
 
-
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
     return new PropertySourcesPlaceholderConfigurer();
@@ -172,14 +175,12 @@ public class Config {
    */
   @Bean
   public IFactChecker getFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
-      IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaProcessor,
-      IPathVerbalizer verbalizer) {
+      IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaProcessor) {
     if (isPathsLoad) {
       return new ImportedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist,
-          metaProcessor, verbalizer);
+          metaProcessor);
     } else {
-      return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist,
-          verbalizer);
+      return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist);
     }
   }
 
@@ -336,11 +337,16 @@ public class Config {
   }
 
   /**
-   * @return The desired {@link IPathVerbalizer} implementation.
+   * @return The desired {@link IPathVerbalizer} implementation based on HTTP request parameters.
    */
   @Bean
-  public IPathVerbalizer getVerbalizer(QueryExecutionFactory qef) {
-    return new DefaultPathVerbalizer(qef);
+  @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
+  public IPathVerbalizer getVerbalizer(QueryExecutionFactory qef, RequestParameters details) {
+    if (details.isVerbalize()) {
+      return new DefaultPathVerbalizer(qef);
+    } else {
+      return new NoopVerbalizer();
+    }
   }
 }
 // TODO: we can also use reflection instead of switch case statements?

@@ -32,11 +32,19 @@ public interface IPieceOfEvidence {
   String getEvidence();
 
   /**
-   * A piece of evidence might be verbalized.
+   * A piece of evidence might be verbalized. Getter for the verbalized output.
    * 
    * @return The evidence's verbalized output.
    */
   default String getVerbalizedOutput() {
     return NO_OUTPUT;
   }
+
+  /**
+   * A piece of evidence might be verbalized. Setter for the verbalized output.
+   * 
+   * @param verbalizedPath
+   */
+  default void setVerbalizedOutput(String verbalizedPath) {};
+
 }

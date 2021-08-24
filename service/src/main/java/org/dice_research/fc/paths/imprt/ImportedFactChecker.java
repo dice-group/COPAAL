@@ -13,7 +13,6 @@ import org.dice_research.fc.paths.FactPreprocessor;
 import org.dice_research.fc.paths.IPathScorer;
 import org.dice_research.fc.paths.IPathSearcher;
 import org.dice_research.fc.paths.PathBasedFactChecker;
-import org.dice_research.fc.paths.verbalizer.IPathVerbalizer;
 import org.dice_research.fc.sum.ScoreSummarist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,15 +39,13 @@ public class ImportedFactChecker extends PathBasedFactChecker {
 
   @Autowired
   public ImportedFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
-      IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaPreprocessor,
-      IPathVerbalizer verbalizer) {
-    super(factPreprocessor, pathSearcher, pathScorer, summarist, verbalizer);
+      IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaPreprocessor) {
+    super(factPreprocessor, pathSearcher, pathScorer, summarist);
     this.metaPreprocessor = metaPreprocessor;
   }
 
   @Override
-  public FactCheckingResult check(Resource subject, Property predicate, Resource object,
-      boolean verbalize) {
+  public FactCheckingResult check(Resource subject, Property predicate, Resource object) {
     Statement fact = ResourceFactory.createStatement(subject, predicate, object);
     Predicate preparedPredicate = factPreprocessor.generatePredicate(fact);
 
@@ -69,9 +66,6 @@ public class ImportedFactChecker extends PathBasedFactChecker {
 
     // calculate scores and verbalize if needed only
     paths = paths.parallelStream().filter(pathFilter).map(p -> {
-      if (verbalize && (p.getVerbalizedOutput()==null || p.getVerbalizedOutput().isBlank())) {
-        verbalizer.verbalizePaths(subject, object, p);
-      }
       if (Double.isNaN(p.getScore())) {
         LOGGER.warn("Couldn't find scores for paths of predicate {}. Executing path scoring.",
             predicate.getURI());
