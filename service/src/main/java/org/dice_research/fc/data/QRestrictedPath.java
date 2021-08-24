@@ -25,7 +25,7 @@ public class QRestrictedPath implements IPieceOfEvidence {
   /**
    * The score of the path
    */
-  protected double score = 0;
+  protected double score = Double.NaN;
   /**
    * The elements of this path as {@link Pair}s. The first part of the pair is the IRI of the
    * property. The second part represents whether the property is inverted, i.e., if the second part
@@ -33,6 +33,11 @@ public class QRestrictedPath implements IPieceOfEvidence {
    * property has to be inverted.
    */
   protected List<Pair<Property, Boolean>> pathElements;
+
+  /**
+   * The verbalized output.
+   */
+  protected String verbalizedOutput;
 
   /**
    * Constructor.
@@ -84,6 +89,22 @@ public class QRestrictedPath implements IPieceOfEvidence {
    */
   public void setPathElements(List<Pair<Property, Boolean>> pathElements) {
     this.pathElements = pathElements;
+  }
+
+  /**
+   * @return the verbalized output
+   */
+  @Override
+  public String getVerbalizedOutput() {
+    return verbalizedOutput;
+  }
+
+  /**
+   * @param verbalizedOutput the verbalized output to set
+   */
+  @Override
+  public void setVerbalizedOutput(String verbalizedOutput) {
+    this.verbalizedOutput = verbalizedOutput;
   }
 
   @Override
@@ -181,7 +202,7 @@ public class QRestrictedPath implements IPieceOfEvidence {
 
 
   /**
-   * Creates a new {@link QRestrictedPath} object from a string containing a property path.
+   * Creates a new {@link QRestrictedPath} object from a property path and a score.
    * 
    * @param propertyPath
    * @param score
@@ -208,6 +229,22 @@ public class QRestrictedPath implements IPieceOfEvidence {
     }
 
     return new QRestrictedPath(pathElements, score);
+
+  }
+
+  /**
+   * Creates a new {@link QRestrictedPath} object from a a property path, a score and the verbalized
+   * output.
+   * 
+   * @param propertyPath
+   * @param verbalizedOutput
+   * @param score
+   * @return
+   */
+  public static QRestrictedPath create(String propertyPath, String verbalizedOutput, double score) {
+    QRestrictedPath path = create(propertyPath, score);
+    path.setVerbalizedOutput(verbalizedOutput);
+    return path;
 
   }
 }

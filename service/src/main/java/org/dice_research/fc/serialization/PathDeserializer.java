@@ -31,13 +31,14 @@ public class PathDeserializer extends StdDeserializer<QRestrictedPath> {
   public QRestrictedPath deserialize(JsonParser parser, DeserializationContext ctxt)
       throws IOException, JsonProcessingException {
     JsonNode node = parser.getCodec().readTree(parser);
-    Number number = node.get("score").numberValue();
+    String number = node.get("score").asText();
     String propertyPath = node.get("evidence").asText();
+    String verbalization = node.get("verbalization").asText();
     double score = Double.NaN;
-    if (number != null) {
-      score = number.doubleValue();
+    if (number != null && !number.isBlank()) {
+      score = Double.parseDouble(number);
     }
-    return QRestrictedPath.create(propertyPath, score);
+    return QRestrictedPath.create(propertyPath, verbalization, score);
   }
 
 }
