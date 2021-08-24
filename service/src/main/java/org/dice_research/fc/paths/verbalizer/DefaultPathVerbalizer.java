@@ -1,10 +1,8 @@
 package org.dice_research.fc.paths.verbalizer;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import org.aksw.gerbil.transfer.nif.Document;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.simba.bengal.paraphrasing.Paraphrasing;
@@ -71,7 +69,6 @@ public class DefaultPathVerbalizer implements IPathVerbalizer {
    */
   public List<Statement> getStmtsFromPath(Resource subject, Resource object, QRestrictedPath path) {
     StringBuilder builder = new StringBuilder();
-    Set<String> resultVariables = new HashSet<>();
 
     // initialize as if there was a previous path stretch
     String stretchStart = null;
