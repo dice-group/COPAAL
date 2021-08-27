@@ -24,7 +24,12 @@ public class RESTController {
   
   @Autowired
   ApplicationContext ctx;
-  
+
+  @GetMapping("/test")
+  public String ping(){
+    return "OK!";
+  }
+
   @GetMapping("/validate")
   public FactCheckingResult validate(
       @RequestParam(value = "subject", required = true) String subject,
