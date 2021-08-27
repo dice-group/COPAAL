@@ -18,8 +18,6 @@ export class UserFormComponent implements OnInit {
   propertyFc: FormControl;
   objectFc: FormControl;
   verbalizeFc: FormControl;
-  virtualtypFc: FormControl;
-  pathlengthFc: FormControl;
 
   public showBar = false;
 
@@ -28,26 +26,22 @@ export class UserFormComponent implements OnInit {
 
   constructor(public eventService: EventProviderService, public restService: RestService, fb: FormBuilder, public dialog: MatDialog) {
     this.exampleArr = [];
-    let exObj: CgTriple = new CgTriple('http://dbpedia.org/resource/Barack_Obama',
-      'http://dbpedia.org/ontology/nationality', 'http://dbpedia.org/resource/United_States');
+    let exObj: CgTriple = new CgTriple('http://rdf.frockg.eu/resource/fdaers/case/8779990',
+      'http://rdf.frockg.eu/resource/fdaers/occupation', 'http://rdf.frockg.eu/resource/fdaers/occupation/Y');
     this.exampleArr.push(exObj);
-    exObj = new CgTriple('http://dbpedia.org/resource/Berkshire_Hathaway',
-      'http://dbpedia.org/ontology/keyPerson', 'http://dbpedia.org/resource/Warren_Buffett');
+    exObj = new CgTriple('http://rdf.frockg.eu/resource/snomed/id/2674479021',
+      'http://rdf.frockg.eu/resource/snomed/field/destination', 'http://rdf.frockg.eu/resource/snomed/id/955009');
     this.exampleArr.push(exObj);
 
     this.subjectFc = new FormControl(this.exampleArr[0].subject, Validators.required);
     this.propertyFc = new FormControl(this.exampleArr[0].property, Validators.required);
     this.objectFc = new FormControl(this.exampleArr[0].object, Validators.required);
     this.verbalizeFc =  new FormControl(false);
-    this.virtualtypFc =  new FormControl(false);
-    this.pathlengthFc = new FormControl(2);
     this.complexForm = fb.group({
       'subject' : this.subjectFc,
       'property': this.propertyFc,
       'object' : this.objectFc,
-      'verbalize' : this.verbalizeFc,
-      'virtualType' : this.virtualtypFc,
-      'pathlength': this.pathlengthFc
+      'verbalize' : this.verbalizeFc
     });
   }
 
