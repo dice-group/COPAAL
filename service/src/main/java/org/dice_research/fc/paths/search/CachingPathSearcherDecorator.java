@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * This class is a decorator fot SPARQLBasedSOPathSearcher, for searching the paths at first try to find them in DB
+ * This class is a decorator fot PathSearcher, for searching the paths at first try to find them in DB
  * if find then return them
  * if not use the actual search part.
  *
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  *
  */
 
-public class SPARQLBasedSOPathSearcherSaveLoadDecorator extends IPathSearcherDecorator {
+public class CachingPathSearcherDecorator extends IPathSearcherDecorator {
 
     @Autowired
     protected IPathRepository pathRepository;
@@ -59,12 +59,12 @@ public class SPARQLBasedSOPathSearcherSaveLoadDecorator extends IPathSearcherDec
      */
     protected String pathScorer;
 
-    public SPARQLBasedSOPathSearcherSaveLoadDecorator(IPathSearcher decoratedPathSearcher,
-                                                      IMapper<Path, QRestrictedPath> mapper,
-                                                      IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper,
-                                                      String counterRetriever,
-                                                      String factPreprocessor,
-                                                      String pathScorer
+    public CachingPathSearcherDecorator(IPathSearcher decoratedPathSearcher,
+                                        IMapper<Path, QRestrictedPath> mapper,
+                                        IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper,
+                                        String counterRetriever,
+                                        String factPreprocessor,
+                                        String pathScorer
                                                       ) {
         super(decoratedPathSearcher);
         this.mapper = mapper;

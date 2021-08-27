@@ -41,7 +41,7 @@ import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.VirtualTypesMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
-import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcherSaveLoadDecorator;
+import org.dice_research.fc.paths.search.CachingPathSearcherDecorator;
 import org.dice_research.fc.paths.verbalizer.DefaultPathVerbalizer;
 import org.dice_research.fc.paths.verbalizer.IPathVerbalizer;
 import org.dice_research.fc.paths.verbalizer.NoopVerbalizer;
@@ -213,7 +213,7 @@ public class Config {
         String counterRetriever = counterRetrieverClass.getClass().getName();
         String factPreprocessor = factPreprocessorClass.getClass().getName();
         String pathScorer = pathScorerClass.getClass().getName();
-        return new SPARQLBasedSOPathSearcherSaveLoadDecorator(new SPARQLBasedSOPathSearcher(qef, maxLength, filter),mapper,propertyElementMapper,counterRetriever,factPreprocessor,pathScorer);
+        return new CachingPathSearcherDecorator(new SPARQLBasedSOPathSearcher(qef, maxLength, filter),mapper,propertyElementMapper,counterRetriever,factPreprocessor,pathScorer);
 
       default:
         return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
