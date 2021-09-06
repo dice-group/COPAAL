@@ -96,7 +96,7 @@ public class NPMIBasedScorer implements IPropertyBasedPathScorer {
     LOGGER.trace("npmi calculated with this  = Math.log(({} * {}) / ({} * {})) / -Math.log({} / {})",cooccurrenceCounts,deriveMaxCount,predicateCounts,pathCounts,cooccurrenceCounts,deriveMaxCount);
     double npmi = Math.log((cooccurrenceCounts * deriveMaxCount) / (predicateCounts * pathCounts))
         / -Math.log(cooccurrenceCounts / deriveMaxCount);
-    LOGGER.debug("npmi is : {}",npmi);
+    LOGGER.debug("calculated npmi is : {}",npmi);
     LOGGER.trace("maxResult is : {}, minResult is : {}",maxResult,minResult);
     if (npmi > maxResult) {
       return maxResult;

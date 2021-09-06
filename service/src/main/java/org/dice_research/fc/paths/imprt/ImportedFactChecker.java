@@ -1,5 +1,6 @@
 package org.dice_research.fc.paths.imprt;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import org.apache.jena.rdf.model.Property;
@@ -46,25 +47,33 @@ public class ImportedFactChecker extends PathBasedFactChecker {
 
   @Override
   public FactCheckingResult check(Resource subject, Property predicate, Resource object) {
+    LOGGER.trace(" -------------  START OF FACT CHECKING @ ImportedFactChecker-------------");
+    LOGGER.trace(" -------------  Start to preprocess the data  -------------");
     Statement fact = ResourceFactory.createStatement(subject, predicate, object);
     Predicate preparedPredicate = factPreprocessor.generatePredicate(fact);
+    LOGGER.trace(" -------------  Preprocess the data Done   -------------");
 
     // pre-process paths in file
     Collection<QRestrictedPath> paths = metaPreprocessor.processMetaPaths(fact);
 
     // search for paths if preprocessed paths can't be found
     if (paths == null) {
-      LOGGER.warn("Couldn't find the files for paths of {} in {}. Switching to path search.",
+      LOGGER.warn("Couldn't find the files for paths of {}. Switching to path search.",
           predicate.getURI());
+      LOGGER.trace(" -------------  Start to get a list of potential paths  -------------");
       paths = pathSearcher.search(subject, preparedPredicate, object);
+      LOGGER.trace(" -------------  Get a list of potential paths Done  -------------");
     }
 
     // return default score if no paths are found
     if (paths.isEmpty()) {
+      LOGGER.warn("paths for {} in a file is empty.",
+              predicate.getURI());
       return new FactCheckingResult(pathsNotFoundResult, paths, fact);
     }
 
     // calculate scores and verbalize if needed only
+    LOGGER.trace(" -------------  Start to filter and Score  -------------");
     paths = paths.parallelStream().filter(pathFilter).map(p -> {
       if (Double.isNaN(p.getScore())) {
         LOGGER.warn("Couldn't find scores for paths of predicate {}. Executing path scoring.",
@@ -74,12 +83,19 @@ public class ImportedFactChecker extends PathBasedFactChecker {
         return p; 
       }
     }).filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());
+    LOGGER.trace(" -------------  Filter and Score Done  -------------");
 
     // Get the scores
+    LOGGER.trace(" -------------  Start to get the scores  -------------");
     double[] scores = paths.stream().mapToDouble(p -> p.getScore()).toArray();
+    LOGGER.trace(" -------------  Get the scores Done  -------------");
 
     // Summarize the scores
+    LOGGER.trace(" summarist is : {}",summarist.getClass().getName());
+    LOGGER.trace(" scores are : {}", Arrays.toString(scores));
     double veracity = summarist.summarize(scores);
+    LOGGER.debug(" calculated veracity is : {}",veracity);
+    LOGGER.trace(" ------------- END OF FACT CHECKING -------------");
 
     return new FactCheckingResult(veracity, paths, fact);
   }

@@ -180,7 +180,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
    */
   protected void generateSearchQueries(int length, Resource subject, Predicate predicate,
       Resource object, List<SearchQuery> queries) {
-    LOGGER.trace("generate search queries for lent \"{}\"", length);
+    LOGGER.trace("generate search queries for length \"{}\"", length);
     // Create search query builders for all direction combinations
     SearchQueryBuilder[] builders = new SearchQueryBuilder[1 << length];
     for (int i = 0; i < builders.length; ++i) {
