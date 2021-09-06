@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    # The official  Traefik docker image
+    image: traefik:1.7.7
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - "--docker"
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+  api:
+    image: "dicegroup/copaal-demo-service:1.0.2-frockg"
+    restart: always
+    labels:
+      - traefik.frontend.rule=Host:frockg.cs.uni-paderborn.de;PathPrefixStrip:/service
+  ui:
+    image: "dicegroup/copaal-demo-ui:0.3.0"
+    restart: always
+    labels:
+      - traefik.frontend.rule=Host:frockg.cs.uni-paderborn.de;PathPrefixStrip:/
