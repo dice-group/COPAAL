@@ -3,6 +3,8 @@ package org.dice_research.fc.paths.scorer;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.IPropertyBasedPathScorer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +16,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class NPMIBasedScorer implements IPropertyBasedPathScorer {
-
+  private static final Logger LOGGER = LoggerFactory.getLogger(NPMIBasedScorer.class);
   /**
    * The maximum result returned by this scorer.
    */
@@ -48,6 +50,7 @@ public class NPMIBasedScorer implements IPropertyBasedPathScorer {
   public NPMIBasedScorer(ICountRetriever countRetriever) {
     super();
     this.countRetriever = countRetriever;
+    LOGGER.trace("Count retriever is {}",countRetriever.getClass().getName());
   }
 
   @Override
@@ -58,19 +61,26 @@ public class NPMIBasedScorer implements IPropertyBasedPathScorer {
   }
 
   public double calculateScore(Predicate predicate, QRestrictedPath path) {
+    LOGGER.debug("Start calculating score for this predicate : {} and this QRestrictedPath : {}",predicate.getProperty().getURI(),path.toString());
     long pathCounts = countRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
+    LOGGER.debug("pathCounts is : {}",pathCounts);
     if (pathCounts == 0) {
       return pathDoesNotExistResult;
     }
     long predicateCounts = countRetriever.countPredicateInstances(predicate);
+    LOGGER.debug("predicateCounts is : {}",predicateCounts);
     if (predicateCounts == 0) {
       return propertyDoesNotExistResult;
     }
     long cooccurrenceCounts = countRetriever.countCooccurrences(predicate, path);
+    LOGGER.debug("cooccurrenceCounts is : {}",cooccurrenceCounts);
     if (cooccurrenceCounts == 0) {
       return noCooccurrenceResult;
     }
     long maxCount = countRetriever.deriveMaxCount(predicate);
+    LOGGER.debug("maxCount is : {}",maxCount);
+
+    // TODO : is this line necessary ? because before this line if pathCounts == 0 the function returns  pathDoesNotExistResult (line 68)
     if (pathCounts == 0) {
       throw new IllegalStateException("The maximum count is 0. That is not supported.");
     }
@@ -83,8 +93,11 @@ public class NPMIBasedScorer implements IPropertyBasedPathScorer {
     // PMI (without log) = P(p,path) / P(p)*P(path)
     // = (c(p,path)/c(max)) / (c(p)/c(max))*(c(path)/c(max))
     // = c(p,path)*c(max) / c(p)*(c(path)
+    LOGGER.trace("npmi calculated with this  = Math.log(({} * {}) / ({} * {})) / -Math.log({} / {})",cooccurrenceCounts,deriveMaxCount,predicateCounts,pathCounts,cooccurrenceCounts,deriveMaxCount);
     double npmi = Math.log((cooccurrenceCounts * deriveMaxCount) / (predicateCounts * pathCounts))
         / -Math.log(cooccurrenceCounts / deriveMaxCount);
+    LOGGER.debug("npmi is : {}",npmi);
+    LOGGER.trace("maxResult is : {}, minResult is : {}",maxResult,minResult);
     if (npmi > maxResult) {
       return maxResult;
     } else if (npmi < minResult) {

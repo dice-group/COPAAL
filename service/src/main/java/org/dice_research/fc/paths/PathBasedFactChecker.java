@@ -15,6 +15,8 @@ import org.dice_research.fc.paths.filter.AlwaysTrueScoreFilter;
 import org.dice_research.fc.paths.filter.IPathFilter;
 import org.dice_research.fc.paths.filter.IScoreFilter;
 import org.dice_research.fc.sum.ScoreSummarist;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PathBasedFactChecker implements IFactChecker {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(PathBasedFactChecker.class);
   /**
    * The preprocessor used to prepare the given fact.
    */
@@ -105,7 +108,13 @@ public class PathBasedFactChecker implements IFactChecker {
     double[] scores = paths.stream().mapToDouble(p -> p.getScore()).toArray();
 
     // Summarize the scores
+    LOGGER.trace(" summarist is : {}",summarist.getClass().getName());
+    LOGGER.trace(" scores are : {}",scores);
     double veracity = summarist.summarize(scores);
+    LOGGER.debug(" calculated veracity is : {}",veracity);
+
+
+
 
     return new FactCheckingResult(veracity, paths, fact);
   }
