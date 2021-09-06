@@ -2,7 +2,6 @@ package org.dice_research.fc.paths;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
@@ -109,14 +108,22 @@ public class PathBasedFactChecker implements IFactChecker {
     // Filter paths, score the paths with respect to the given triple and filter them again based on
     // the score
     LOGGER.trace(" -------------  Start to filter and Score  -------------");
+    LOGGER.debug("number of paths before filtering is {}",paths.size());
     paths = paths.parallelStream().filter(pathFilter)
         .map(p -> pathScorer.score(subject, preparedPredicate, object, p))
         .filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());
+    LOGGER.debug("number of paths after filtering is {}",paths.size());
     LOGGER.trace(" -------------  Filter and Score Done  -------------");
 
     // Get the scores
     LOGGER.trace(" -------------  Start to get the scores  -------------");
     double[] scores = paths.stream().mapToDouble(p -> p.getScore()).toArray();
+    if(LOGGER.isTraceEnabled()){
+      LOGGER.trace("list of paths with their score");
+      for(QRestrictedPath p :paths){
+        LOGGER.trace("{} : {}",p.toString(),p.getScore());
+      }
+    }
     LOGGER.trace(" -------------  Get the scores Done  -------------");
 
     // Summarize the scores
