@@ -80,10 +80,6 @@ public class NPMIBasedScorer implements IPropertyBasedPathScorer {
     long maxCount = countRetriever.deriveMaxCount(predicate);
     LOGGER.debug("maxCount is : {}",maxCount);
 
-    // TODO : is this line necessary ? because before this line if pathCounts == 0 the function returns  pathDoesNotExistResult (line 68)
-    if (pathCounts == 0) {
-      throw new IllegalStateException("The maximum count is 0. That is not supported.");
-    }
     return calculateScore(pathCounts, predicateCounts, cooccurrenceCounts, maxCount);
   }
 
