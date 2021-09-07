@@ -5,10 +5,10 @@ import com.google.common.io.ByteSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
@@ -48,10 +48,15 @@ public class QueryEngineCustomHTTP implements QueryExecution {
     private String service;
 
     /**
+     * The HTTP client which will be used to send queries.
+     */
+    private HttpClient client;
+
+    /**
      * The time out for running query ,
      * beware here the timeout is int (because of RequestConfig ) but in QueryExecution it is long that's why we have conversion in set timeout
      */
-    private int timeout;
+    private int timeout = 0;
 
     /**
      * constructor of the class
@@ -59,8 +64,9 @@ public class QueryEngineCustomHTTP implements QueryExecution {
      * @param service is a url of a SPARQL endpoint
      */
 
-    public QueryEngineCustomHTTP(Query query, String service) {
+    public QueryEngineCustomHTTP(Query query, HttpClient client, String service) {
         this.query = query;
+        this.client = client;
         this.service = service;
     }
 
@@ -132,15 +138,19 @@ public class QueryEngineCustomHTTP implements QueryExecution {
      * @return string which is a result of the query
      */
     private String createRequest() {
-        RequestConfig config = RequestConfig.custom()
-                .setConnectTimeout(timeout)
-                .setConnectionRequestTimeout(timeout)
-                .setSocketTimeout(timeout).build();
-        try(CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).build()){
+        HttpResponse response = null;
+        try {
             HttpGet get = new HttpGet(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
+            if(timeout > 0) {
+              RequestConfig config = RequestConfig.custom()
+                  .setConnectTimeout(timeout)
+                  .setConnectionRequestTimeout(timeout)
+                  .setSocketTimeout(timeout).build();
+              get.setConfig(config);
+            }
             get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
-            HttpResponse resp = client.execute(get);
-            String responseContent = read(resp.getEntity().getContent());
+            response = client.execute(get);
+            String responseContent = read(response.getEntity().getContent());
             InputStream is = new ByteArrayInputStream(responseContent.getBytes(StandardCharsets.UTF_8));
             String result = IOUtils.toString(is, StandardCharsets.UTF_8);
             LOGGER.debug(result);
@@ -153,6 +163,11 @@ public class QueryEngineCustomHTTP implements QueryExecution {
         catch(Exception e){
             throw new RuntimeException("There is an error while running the query",e);
         }finally {
+            // If we received a response, we need to ensure that its entity is consumed correctly to free
+            // all resources
+            if (response != null) {
+              EntityUtils.consumeQuietly(response.getEntity());
+            }
             close();
         }
     }
