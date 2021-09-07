@@ -45,7 +45,10 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
     queryBuilder.append(COUNT_VARIABLE_NAME);
     queryBuilder.append(") WHERE { ?s <");
     queryBuilder.append(predicate.getProperty().getURI());
-    queryBuilder.append("> ?o }");
+    queryBuilder.append("> ?o ");
+    predicate.getDomain().addRestrictionToQuery("s", queryBuilder);
+    predicate.getRange().addRestrictionToQuery("o", queryBuilder);
+    queryBuilder.append(" }");
     return executeCountQuery(queryBuilder);
   }
 
