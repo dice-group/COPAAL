@@ -150,9 +150,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
             }
             get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
             response = client.execute(get);
-            String responseContent = read(response.getEntity().getContent());
-            InputStream is = new ByteArrayInputStream(responseContent.getBytes(StandardCharsets.UTF_8));
-            String result = IOUtils.toString(is, StandardCharsets.UTF_8);
+            String result = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             LOGGER.debug(result);
             return result;
         }
