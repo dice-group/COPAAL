@@ -1,8 +1,10 @@
 package org.dice_research.fc.sparql.query;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.ByteSource;
-import org.apache.commons.io.IOUtils;
+import java.net.SocketTimeoutException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -10,21 +12,18 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import org.apache.jena.graph.Triple;
-import org.apache.jena.query.*;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.Query;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFactory;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.resultset.XMLInput;
 import org.apache.jena.sparql.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.SocketTimeoutException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This class run SPARQL queries with CloseableHttpClient .
@@ -109,28 +108,6 @@ public class QueryEngineCustomHTTP implements QueryExecution {
     private String emptyXML() {
         return "<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/sw/DataAccess/rf1/result2.xsd\"><head></head><results distinct=\"false\" ordered=\"true\"></results></sparql>>";
     }
-
-    /**
-     * read an InputStream and return the String
-     * @param content is an InputStream
-     * @return string which is a content of input stream
-     */
-    private String read(InputStream content) {
-        ByteSource byteSource = new ByteSource() {
-            @Override
-            public InputStream openStream() throws IOException {
-                return content;
-            }
-        };
-
-        try {
-            return byteSource.asCharSource(Charsets.UTF_8).read();
-        } catch (IOException e) {
-            LOGGER.error("Could not read stream due to ",e);
-        }
-        return "";
-    }
-
 
     /**
      * run the query and return the result
