@@ -10,7 +10,7 @@ import java.util.Collection;
  *
  */
 public class OneOfRestriction implements ITypeRestriction {
-  
+
   /**
    * The values that are allowed.
    */
@@ -22,15 +22,17 @@ public class OneOfRestriction implements ITypeRestriction {
 
   @Override
   public void addRestrictionToQuery(String variable, StringBuilder builder) {
-    builder.append("VALUES ?");
-    builder.append(variable);
-    builder.append(" {");
-    for (String value : values) {
-      builder.append(" <");
-      builder.append(value);
-      builder.append('>');
+    if (!values.isEmpty()) {
+      builder.append("VALUES ?");
+      builder.append(variable);
+      builder.append(" {");
+      for (String value : values) {
+        builder.append(" <");
+        builder.append(value);
+        builder.append('>');
+      }
+      builder.append(" } .");
     }
-    builder.append(" } .");
   }
 
   public Collection<String> getValues() {
@@ -39,6 +41,11 @@ public class OneOfRestriction implements ITypeRestriction {
 
   public int getNumberOfValues() {
     return values.size();
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return !values.isEmpty();
   }
 
 }

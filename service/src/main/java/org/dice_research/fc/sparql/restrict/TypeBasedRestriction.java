@@ -42,4 +42,9 @@ public class TypeBasedRestriction implements ITypeRestriction {
       builder.append("> . ");
     }
   }
+  
+  @Override
+  public boolean isEmpty() {
+    return types.isEmpty();
+  }
 }

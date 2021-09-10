@@ -17,6 +17,7 @@ import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.dice_research.fc.sparql.restrict.OneOfRestriction;
+import org.dice_research.fc.sparql.restrict.TriplePositionRestriction;
 
 /**
  * A class that samples instances from the given restrictions. All queries are restricted to the
@@ -71,8 +72,8 @@ public class SamplingCountRetrieverDecorator extends AbstractCountRetrieverDecor
    * @return The newly created predicate with the new restrictions
    */
   protected Predicate replacePredicate(Predicate predicate) {
-    return new Predicate(predicate.getProperty(), replaceRestriction(predicate.getDomain()),
-        replaceRestriction(predicate.getRange()));
+    return new Predicate(predicate.getProperty(), replaceRestriction(predicate.getDomain(), true),
+        replaceRestriction(predicate.getRange(), false));
   }
 
   /**
@@ -82,11 +83,15 @@ public class SamplingCountRetrieverDecorator extends AbstractCountRetrieverDecor
    * @param restriction The original restriction
    * @return The newly created restriction
    */
-  protected OneOfRestriction replaceRestriction(ITypeRestriction restriction) {
-    if (restriction == null) {
-      return null;
+  protected OneOfRestriction replaceRestriction(ITypeRestriction restriction, boolean isSubject) {
+    List<String> instances;
+    // If there is no restriction that can be replaced
+    if ((restriction == null) || (restriction.isEmpty())) {
+      // Use the position as restriction
+      instances = retrieveInstances(new TriplePositionRestriction(isSubject, false, !isSubject));
+    } else {
+      instances = retrieveInstances(restriction);
     }
-    List<String> instances = retrieveInstances(restriction);
     return new OneOfRestriction(sampleInstances(instances, maxSampleSize));
   }
 
@@ -149,8 +154,8 @@ public class SamplingCountRetrieverDecorator extends AbstractCountRetrieverDecor
   @Override
   public long countPathInstances(QRestrictedPath path, ITypeRestriction domainRestriction,
       ITypeRestriction rangeRestriction) {
-    return decorated.countPathInstances(path, replaceRestriction(domainRestriction),
-        replaceRestriction(rangeRestriction));
+    return decorated.countPathInstances(path, replaceRestriction(domainRestriction, true),
+        replaceRestriction(rangeRestriction, false));
   }
 
   @Override
@@ -161,13 +166,13 @@ public class SamplingCountRetrieverDecorator extends AbstractCountRetrieverDecor
   @Override
   public long countCooccurrences(Predicate predicate, QRestrictedPath path) {
     return decorated.countCooccurrences(new Predicate(predicate.getProperty(),
-        replaceRestriction(predicate.getDomain()), replaceRestriction(predicate.getRange())), path);
+        replaceRestriction(predicate.getDomain(), true), replaceRestriction(predicate.getRange(), false)), path);
   }
 
   @Override
   public long deriveMaxCount(Predicate predicate) {
-    OneOfRestriction domain = replaceRestriction(predicate.getDomain());
-    OneOfRestriction range = replaceRestriction(predicate.getRange());
+    OneOfRestriction domain = replaceRestriction(predicate.getDomain(), true);
+    OneOfRestriction range = replaceRestriction(predicate.getRange(), false);
     return ((domain != null) ? domain.getNumberOfValues() : 0)
         * ((range != null) ? range.getNumberOfValues() : 0);
   }
