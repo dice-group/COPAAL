@@ -5,10 +5,12 @@ import com.google.common.io.ByteSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
@@ -26,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
+
 /**
  * This class run SPARQL queries with CloseableHttpClient .
  *
@@ -36,9 +39,6 @@ import java.util.concurrent.TimeUnit;
 public class QueryEngineCustomHTTP implements QueryExecution {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryEngineCustomHTTP.class);
-
-    int tryNumber;
-
     /**
      * The query which should run
      */
@@ -50,10 +50,15 @@ public class QueryEngineCustomHTTP implements QueryExecution {
     private String service;
 
     /**
+     * The HTTP client which will be used to send queries.
+     */
+    private HttpClient client;
+
+    /**
      * The time out for running query ,
      * beware here the timeout is int (because of RequestConfig ) but in QueryExecution it is long that's why we have conversion in set timeout
      */
-    private int timeout;
+    private int timeout = 0;
 
     /**
      * constructor of the class
@@ -61,10 +66,10 @@ public class QueryEngineCustomHTTP implements QueryExecution {
      * @param service is a url of a SPARQL endpoint
      */
 
-    public QueryEngineCustomHTTP(Query query, String service) {
+    public QueryEngineCustomHTTP(Query query, HttpClient client, String service) {
         this.query = query;
+        this.client = client;
         this.service = service;
-        tryNumber = 0;
     }
 
     @Override
@@ -87,7 +92,6 @@ public class QueryEngineCustomHTTP implements QueryExecution {
 
     @Override
     public ResultSet execSelect() {
-        tryNumber = 0;
         String result = createRequest();
 
         // the result is not a valid XML then replace with an empty XML
@@ -129,13 +133,17 @@ public class QueryEngineCustomHTTP implements QueryExecution {
         return "";
     }
 
+    private String createRequest() {
+        return createRequest(0);
+    }
 
     /**
      * run the query and return the result
      * when the timeout reached the query terminated and should handle in catch
      * @return string which is a result of the query
      */
-    private String createRequest() {
+    private String createRequest(int tryNumber) {
+        HttpResponse response = null;
         RequestConfig config = RequestConfig.custom()
                 .setConnectTimeout(timeout)
                 .setConnectionRequestTimeout(timeout)
@@ -145,8 +153,8 @@ public class QueryEngineCustomHTTP implements QueryExecution {
             LOGGER.info(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
             HttpGet get = new HttpGet(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
             get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
-            HttpResponse resp = client.execute(get);
-            String responseContent = read(resp.getEntity().getContent());
+            response = client.execute(get);
+            String responseContent = read(response.getEntity().getContent());
             InputStream is = new ByteArrayInputStream(responseContent.getBytes(StandardCharsets.UTF_8));
             String result = IOUtils.toString(is, StandardCharsets.UTF_8);
 
@@ -156,7 +164,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
                 TimeUnit.SECONDS.sleep(3);
                 tryNumber = tryNumber +1;
                 client.close();
-                createRequest();
+                createRequest(tryNumber);
             }
             LOGGER.debug(result);
             LOGGER.info("----------end Reqest-------------");
@@ -169,6 +177,11 @@ public class QueryEngineCustomHTTP implements QueryExecution {
         catch(Exception e){
             throw new RuntimeException("There is an error while running the query",e);
         }finally {
+            // If we received a response, we need to ensure that its entity is consumed correctly to free
+            // all resources
+            if (response != null) {
+              EntityUtils.consumeQuietly(response.getEntity());
+            }
             close();
         }
     }
