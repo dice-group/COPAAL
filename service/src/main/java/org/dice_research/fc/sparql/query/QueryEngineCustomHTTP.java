@@ -1,15 +1,10 @@
 package org.dice_research.fc.sparql.query;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.ByteSource;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.*;
@@ -19,9 +14,6 @@ import org.apache.jena.sparql.resultset.XMLInput;
 import org.apache.jena.sparql.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -112,27 +104,6 @@ public class QueryEngineCustomHTTP implements QueryExecution {
         return "<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/sw/DataAccess/rf1/result2.xsd\"><head></head><results distinct=\"false\" ordered=\"true\"></results></sparql>>";
     }
 
-    /**
-     * read an InputStream and return the String
-     * @param content is an InputStream
-     * @return string which is a content of input stream
-     */
-    private String read(InputStream content) {
-        ByteSource byteSource = new ByteSource() {
-            @Override
-            public InputStream openStream() throws IOException {
-                return content;
-            }
-        };
-
-        try {
-            return byteSource.asCharSource(Charsets.UTF_8).read();
-        } catch (IOException e) {
-            LOGGER.error("Could not read stream due to ",e);
-        }
-        return "";
-    }
-
     private String createRequest() {
         return createRequest(0);
     }
@@ -143,31 +114,29 @@ public class QueryEngineCustomHTTP implements QueryExecution {
      * @return string which is a result of the query
      */
     private String createRequest(int tryNumber) {
+
         HttpResponse response = null;
-        RequestConfig config = RequestConfig.custom()
-                .setConnectTimeout(timeout)
-                .setConnectionRequestTimeout(timeout)
-                .setSocketTimeout(timeout).build();
-        try(CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).build()){
+        try {
             LOGGER.info("--------Start Reqest------------");
             LOGGER.info(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
             HttpGet get = new HttpGet(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
+            if(timeout > 0) {
+                RequestConfig config = RequestConfig.custom()
+                        .setConnectTimeout(timeout)
+                        .setConnectionRequestTimeout(timeout)
+                        .setSocketTimeout(timeout).build();
+                get.setConfig(config);
+            }
             get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
             response = client.execute(get);
-            String responseContent = read(response.getEntity().getContent());
-            InputStream is = new ByteArrayInputStream(responseContent.getBytes(StandardCharsets.UTF_8));
-            String result = IOUtils.toString(is, StandardCharsets.UTF_8);
-
+            String result = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             if(result.contains("404 File not found") && tryNumber < 5){
                 // face error try one more time
                 LOGGER.info("----------try one more -------------"+tryNumber+"---");
                 TimeUnit.SECONDS.sleep(3);
-                tryNumber = tryNumber +1;
-                client.close();
-                createRequest(tryNumber);
+                createRequest(tryNumber+1);
             }
             LOGGER.debug(result);
-            LOGGER.info("----------end Reqest-------------");
             return result;
         }
         catch(SocketTimeoutException e) {
@@ -180,7 +149,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
             // If we received a response, we need to ensure that its entity is consumed correctly to free
             // all resources
             if (response != null) {
-              EntityUtils.consumeQuietly(response.getEntity());
+                EntityUtils.consumeQuietly(response.getEntity());
             }
             close();
         }
