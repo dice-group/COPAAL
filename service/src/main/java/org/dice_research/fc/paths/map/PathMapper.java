@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * This class is a mapper from Path to QRestrictedPath
- * for property we just consider URI if need more data it should add on the mapper @link PropertyMapper
+ * for property we just consider URI if need more data it should add on the mapper {@link PropertyMapper}
  *
  * @author Farshad Afshari
  *

@@ -7,7 +7,7 @@ import org.dice_research.fc.IMapper;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.IPathSearcher;
-import org.dice_research.fc.paths.IPathSearcherDecorator;
+import org.dice_research.fc.paths.AbstractPathSearcherDecorator;
 import org.dice_research.fc.paths.model.Path;
 import org.dice_research.fc.paths.model.PathElement;
 import org.dice_research.fc.paths.repository.IPathElementRepository;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  *
  */
 
-public class CachingPathSearcherDecorator extends IPathSearcherDecorator {
+public class CachingPathSearcherDecorator extends AbstractPathSearcherDecorator {
 
     @Autowired
     protected IPathRepository pathRepository;
@@ -81,7 +81,7 @@ public class CachingPathSearcherDecorator extends IPathSearcherDecorator {
         Collection<QRestrictedPath> paths = retrievePathsFromDB(subject,predicate.getProperty(),object,factPreprocessor,counterRetriever,pathSearcher,pathScorer);
 
         if(paths.size()==0){
-            paths = decoratedPathSearcher.search(subject,predicate,object);
+            paths = decorator.search(subject,predicate,object);
             //save paths
             savePaths(paths,subject,predicate.getProperty(),object,factPreprocessor,counterRetriever,pathSearcher,pathScorer);
         }
