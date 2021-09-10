@@ -88,7 +88,7 @@ public class SamplingCountRetrieverDecorator extends AbstractCountRetrieverDecor
     // If there is no restriction that can be replaced
     if ((restriction == null) || (restriction.isEmpty())) {
       // Use the position as restriction
-      instances = retrieveInstances(new TriplePositionRestriction(isSubject, false, !isSubject));
+      instances = retrieveInstances(new TriplePositionRestriction(isSubject, false, !isSubject, !isSubject));
     } else {
       instances = retrieveInstances(restriction);
     }
