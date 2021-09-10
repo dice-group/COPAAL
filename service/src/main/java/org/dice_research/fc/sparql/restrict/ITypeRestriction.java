@@ -4,6 +4,9 @@ package org.dice_research.fc.sparql.restrict;
  * This interface is implemented by classes that express a type-based restriction for a variable in
  * a SPARQL query.
  * 
+ * Instances of this interface <b>must</b> override the {@link #equals(Object)} and
+ * {@link #hashCode()} methods to ensure that they can be used within collections.
+ * 
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */

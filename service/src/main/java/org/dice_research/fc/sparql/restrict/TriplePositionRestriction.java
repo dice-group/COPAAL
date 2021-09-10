@@ -53,4 +53,35 @@ public class TriplePositionRestriction implements ITypeRestriction {
     return !(mustBeSubject || mustBePredicate || mustBeObject);
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + (mustBeObject ? 1231 : 1237);
+    result = prime * result + (mustBePredicate ? 1231 : 1237);
+    result = prime * result + (mustBeResource ? 1231 : 1237);
+    result = prime * result + (mustBeSubject ? 1231 : 1237);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    TriplePositionRestriction other = (TriplePositionRestriction) obj;
+    if (mustBeObject != other.mustBeObject)
+      return false;
+    if (mustBePredicate != other.mustBePredicate)
+      return false;
+    if (mustBeResource != other.mustBeResource)
+      return false;
+    if (mustBeSubject != other.mustBeSubject)
+      return false;
+    return true;
+  }
+
 }
