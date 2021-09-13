@@ -73,15 +73,8 @@ public class TriplePositionRestriction implements ITypeRestriction {
     if (getClass() != obj.getClass())
       return false;
     TriplePositionRestriction other = (TriplePositionRestriction) obj;
-    if (mustBeObject != other.mustBeObject)
-      return false;
-    if (mustBePredicate != other.mustBePredicate)
-      return false;
-    if (mustBeResource != other.mustBeResource)
-      return false;
-    if (mustBeSubject != other.mustBeSubject)
-      return false;
-    return true;
+    return (mustBeSubject == other.mustBeSubject) && (mustBePredicate != other.mustBePredicate)
+        && (mustBeObject == other.mustBeObject) && (mustBeResource != other.mustBeResource);
   }
 
 }
