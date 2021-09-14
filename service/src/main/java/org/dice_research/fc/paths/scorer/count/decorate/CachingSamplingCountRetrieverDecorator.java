@@ -60,7 +60,7 @@ public class CachingSamplingCountRetrieverDecorator extends SamplingCountRetriev
     samplingResultCache = CacheBuilder.newBuilder().maximumSize(maxCacheSize)
         .build(new CacheLoader<CacheKey, OneOfRestriction>() {
           public OneOfRestriction load(CacheKey entry) {
-            return replaceRestriction(entry.restriction, entry.isSubject);
+            return replaceRestrictionWithoutCache(entry.restriction, entry.isSubject);
           }
         });
   }
@@ -74,6 +74,19 @@ public class CachingSamplingCountRetrieverDecorator extends SamplingCountRetriev
           e);
       return null;
     }
+  }
+
+  /**
+   * Internal method that is used by an internal cache to call the
+   * {@link SamplingCountRetrieverDecorator#replaceRestriction(ITypeRestriction, boolean)} method.
+   * 
+   * @param restriction The original restriction
+   * @param isSubject Flag indicating whether the given restriction is applied for a subject
+   * @return The newly created restriction
+   */
+  protected OneOfRestriction replaceRestrictionWithoutCache(ITypeRestriction restriction,
+      boolean isSubject) {
+    return super.replaceRestriction(restriction, isSubject);
   }
 
   /**

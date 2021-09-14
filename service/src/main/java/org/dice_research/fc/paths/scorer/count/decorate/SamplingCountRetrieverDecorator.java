@@ -81,6 +81,7 @@ public class SamplingCountRetrieverDecorator extends AbstractCountRetrieverDecor
    * have been sampled from all instance that fulfill the given restriction.
    * 
    * @param restriction The original restriction
+   * @param isSubject Flag indicating whether the given restriction is applied for a subject
    * @return The newly created restriction
    */
   protected OneOfRestriction replaceRestriction(ITypeRestriction restriction, boolean isSubject) {
