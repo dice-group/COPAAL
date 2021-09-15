@@ -1,10 +1,5 @@
 package org.dice_research.fc.sparql.query;
 
-import java.net.SocketTimeoutException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -12,18 +7,19 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 import org.apache.jena.graph.Triple;
-import org.apache.jena.query.Dataset;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.query.ResultSetFactory;
+import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.resultset.XMLInput;
 import org.apache.jena.sparql.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.net.SocketTimeoutException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
+
 
 /**
  * This class run SPARQL queries with CloseableHttpClient .
@@ -35,7 +31,6 @@ import org.slf4j.LoggerFactory;
 public class QueryEngineCustomHTTP implements QueryExecution {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryEngineCustomHTTP.class);
-
     /**
      * The query which should run
      */
@@ -109,25 +104,38 @@ public class QueryEngineCustomHTTP implements QueryExecution {
         return "<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/sw/DataAccess/rf1/result2.xsd\"><head></head><results distinct=\"false\" ordered=\"true\"></results></sparql>>";
     }
 
+    private String createRequest() {
+        return createRequest(0);
+    }
+
     /**
      * run the query and return the result
      * when the timeout reached the query terminated and should handle in catch
      * @return string which is a result of the query
      */
-    private String createRequest() {
+    private String createRequest(int tryNumber) {
+
         HttpResponse response = null;
         try {
+            LOGGER.info("--------Start Reqest------------");
+            LOGGER.info(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
             HttpGet get = new HttpGet(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
             if(timeout > 0) {
-              RequestConfig config = RequestConfig.custom()
-                  .setConnectTimeout(timeout)
-                  .setConnectionRequestTimeout(timeout)
-                  .setSocketTimeout(timeout).build();
-              get.setConfig(config);
+                RequestConfig config = RequestConfig.custom()
+                        .setConnectTimeout(timeout)
+                        .setConnectionRequestTimeout(timeout)
+                        .setSocketTimeout(timeout).build();
+                get.setConfig(config);
             }
             get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
             response = client.execute(get);
             String result = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+            if(result.contains("404 File not found") && tryNumber < 5){
+                // face error try one more time
+                LOGGER.info("----------try one more -------------"+tryNumber+"---");
+                TimeUnit.SECONDS.sleep(3);
+                createRequest(tryNumber+1);
+            }
             LOGGER.debug(result);
             return result;
         }
@@ -141,7 +149,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
             // If we received a response, we need to ensure that its entity is consumed correctly to free
             // all resources
             if (response != null) {
-              EntityUtils.consumeQuietly(response.getEntity());
+                EntityUtils.consumeQuietly(response.getEntity());
             }
             close();
         }
