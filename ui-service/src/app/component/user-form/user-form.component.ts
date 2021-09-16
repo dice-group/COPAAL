@@ -32,6 +32,9 @@ export class UserFormComponent implements OnInit {
     exObj = new CgTriple('http://rdf.frockg.eu/resource/snomed/id/2674479021',
       'http://rdf.frockg.eu/resource/snomed/field/destination', 'http://rdf.frockg.eu/resource/snomed/id/955009');
     this.exampleArr.push(exObj);
+    exObj = new CgTriple('http://dbpedia.org/resource/Tay_Zonday',
+      'http://dbpedia.org/ontology/birthPlace', 'http://dbpedia.org/resource/Minneapolis');
+    this.exampleArr.push(exObj);
 
     this.subjectFc = new FormControl(this.exampleArr[0].subject, Validators.required);
     this.propertyFc = new FormControl(this.exampleArr[0].property, Validators.required);

@@ -3,6 +3,7 @@ import {AfterContentInit, Component} from '@angular/core';
 import {GRAPHDATA} from './model/mock-data';
 import {EventProviderService} from './service/event/event-provider.service';
 import {CgData} from './model/cg-data';
+import {CgTriple} from './model/cg-triple';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
