@@ -8,6 +8,8 @@ package org.dice_research.fc.sparql.restrict;
  *
  */
 public class TriplePositionRestriction implements ITypeRestriction {
+  
+  private static final String VARIABLE_NAME = "random";
 
   private boolean mustBeSubject;
   private boolean mustBePredicate;
@@ -27,20 +29,32 @@ public class TriplePositionRestriction implements ITypeRestriction {
     if (mustBeSubject) {
       builder.append(" ?");
       builder.append(variable);
-      builder.append(" [] [] .");
+      builder.append(" ?");
+      builder.append(VARIABLE_NAME);
+      builder.append("P ?");
+      builder.append(VARIABLE_NAME);
+      builder.append("O .");
     }
     if (mustBePredicate) {
-      builder.append(" [] ?");
+      builder.append(" ?");
+      builder.append(VARIABLE_NAME);
+      builder.append("s ?");
       builder.append(variable);
-      builder.append(" [] .");
+      builder.append(" ?");
+      builder.append(VARIABLE_NAME);
+      builder.append("O .");
     }
     if (mustBeObject) {
-      builder.append(" [] [] ?");
+      builder.append(" ?");
+      builder.append(VARIABLE_NAME);
+      builder.append("s ?");
+      builder.append(VARIABLE_NAME);
+      builder.append("P ?");
       builder.append(variable);
       builder.append(" .");
       if (mustBeResource) {
         // !Literal means that it could be either an IRI or a blank node
-        builder.append(" FILTER ()!isLiteral(?");
+        builder.append(" FILTER (!isLiteral(?");
         builder.append(variable);
         builder.append(")) ");
       }
