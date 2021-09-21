@@ -2,6 +2,8 @@ package org.dice_research.fc.sparql.restrict;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,8 +19,9 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class TriplePositionRestrictionTest extends AbstractRestrictionTest {
+public class OneOfRestrictionTest extends AbstractRestrictionTest {
 
+  @SuppressWarnings("unchecked")
   @Parameters
   public static List<Object[]> testCases() {
     Model model = ModelFactory.createDefaultModel();
@@ -47,37 +50,45 @@ public class TriplePositionRestrictionTest extends AbstractRestrictionTest {
         new HashSet<String>(Arrays.asList("http://example.org/r1", "http://example.org/r3",
             "http://example.org/r5", "http://example.org/r7", "http://example.org/r9",
             "http://example.org/r11", sBlankNode.getId().getLabelString())),
-        new TriplePositionRestriction(true, false, false, false)});
+        new OneOfRestriction(new HashSet<String>(Arrays.asList("http://example.org/r1",
+            "http://example.org/r2", "http://example.org/r3", "http://example.org/r4",
+            "http://example.org/r5", "http://example.org/r6", "http://example.org/r7",
+            "http://example.org/r8", "http://example.org/r9", "http://example.org/r10",
+            "http://example.org/r11", "_:" + sBlankNode.getId().getLabelString())))});
+    // Select subjects <= r5
     parameters.add(new Object[] {qef,
+        new HashSet<String>(Arrays.asList("http://example.org/r1", "http://example.org/r3",
+            "http://example.org/r5")),
+        new OneOfRestriction(
+            new HashSet<String>(Arrays.asList("http://example.org/r1", "http://example.org/r2",
+                "http://example.org/r3", "http://example.org/r4", "http://example.org/r5")))});
+    // Select a single subject
+    parameters.add(new Object[] {qef, new HashSet<String>(Arrays.asList("http://example.org/r5")),
+        new OneOfRestriction(new HashSet<String>(Arrays.asList("http://example.org/r5")))});
+    // Select a single resource that is not a subject
+    parameters.add(new Object[] {qef, Collections.EMPTY_SET,
+        new OneOfRestriction(new HashSet<String>(Arrays.asList("http://example.org/r2")))});
+    // Give an empty restriction -> leads to selecting all subjects
+    parameters.add(new Object[] {qef, 
         new HashSet<String>(Arrays.asList("http://example.org/r1", "http://example.org/r3",
             "http://example.org/r5", "http://example.org/r7", "http://example.org/r9",
             "http://example.org/r11", sBlankNode.getId().getLabelString())),
-        new TriplePositionRestriction(true, false, false, true)});
-    // Select all predicates
-    parameters.add(new Object[] {qef,
-        new HashSet<String>(Arrays.asList("http://example.org/p1", "http://example.org/p2")),
-        new TriplePositionRestriction(false, true, false, false)});
-    parameters.add(new Object[] {qef,
-        new HashSet<String>(Arrays.asList("http://example.org/p1", "http://example.org/p2")),
-        new TriplePositionRestriction(false, true, false, true)});
-    // Select all objects
-    parameters.add(new Object[] {qef,
-        new HashSet<String>(Arrays.asList("http://example.org/r2", "http://example.org/r4",
-            "http://example.org/r6", "http://example.org/r8", "http://example.org/r10", "Text",
-            oBlankNode.getId().getLabelString())),
-        new TriplePositionRestriction(false, false, true, false)});
-    parameters.add(new Object[] {qef,
-        new HashSet<String>(Arrays.asList("http://example.org/r2", "http://example.org/r4",
-            "http://example.org/r6", "http://example.org/r8", "http://example.org/r10",
-            oBlankNode.getId().getLabelString())),
-        new TriplePositionRestriction(false, false, true, true)});
-    
+        new OneOfRestriction((Collection<String>) Collections.EMPTY_SET)});
+
     return parameters;
   }
 
-  public TriplePositionRestrictionTest(QueryExecutionFactory qef, Set<String> expectedSet,
+  public OneOfRestrictionTest(QueryExecutionFactory qef, Set<String> expectedSet,
       ITypeRestriction restriction) {
     super(qef, expectedSet, restriction);
+  }
+
+  @Override
+  protected void addBeforeRestriction(StringBuilder builder) {
+    // We will only select subjects
+    builder.append(" ?");
+    builder.append(SELECT_VARIABLE);
+    builder.append(" ?p ?o . ");
   }
 
 }
