@@ -50,8 +50,7 @@ public class SamplingCountRetrieverDecoratorTest {
 
     long seed = 1631026416727L;// System.currentTimeMillis();
     LOGGER.info("seed={}", seed);
-    ICountRetriever retriever = new SamplingCountRetrieverDecorator(
-        new PropPathBasedPairCountRetriever(qef, new DefaultMaxCounter(qef)), seed, 3, qef);
+    ICountRetriever retriever = createCountRetriever(seed, qef);
     long predCount = retriever.countPredicateInstances(predicate);
     long maxCount = retriever.deriveMaxCount(predicate);
 
@@ -64,6 +63,11 @@ public class SamplingCountRetrieverDecoratorTest {
         retriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     long predPathCount2 = retriever.countCooccurrences(predicate, path);
 
+    long predCount3 = retriever.countPredicateInstances(predicate);
+    long pathCount3 =
+        retriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
+    long predPathCount3 = retriever.countCooccurrences(predicate, path);
+
     Assert.assertTrue(predCount >= 0);
     Assert.assertTrue(predCount <= 3);
     Assert.assertEquals(maxCount, 9);// 3*3
@@ -75,5 +79,13 @@ public class SamplingCountRetrieverDecoratorTest {
     Assert.assertEquals(predCount, predCount2);
     Assert.assertEquals(pathCount, pathCount2);
     Assert.assertEquals(predPathCount, predPathCount2);
+    Assert.assertEquals(predCount, predCount3);
+    Assert.assertEquals(pathCount, pathCount3);
+    Assert.assertEquals(predPathCount, predPathCount3);
+  }
+
+  protected ICountRetriever createCountRetriever(long seed, QueryExecutionFactory qef) {
+    return new SamplingCountRetrieverDecorator(
+        new PropPathBasedPairCountRetriever(qef, new DefaultMaxCounter(qef)), seed, 3, qef);
   }
 }
