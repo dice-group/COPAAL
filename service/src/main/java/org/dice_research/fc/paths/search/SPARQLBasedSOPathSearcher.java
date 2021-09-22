@@ -95,11 +95,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
   public Collection<QRestrictedPath> search(Resource subject, Predicate predicate,
       Resource object) {
     // Generate queries
-    List<SearchQuery> queries = new ArrayList<SearchQuery>();
-    generateShortSearchQuery(subject, predicate, object, queries);
-    for (int i = 2; i <= maximumLength; ++i) {
-      generateSearchQueries(i, subject, predicate, object, queries);
-    }
+    List<SearchQuery> queries = generateSearchQueries(subject, predicate, object);
     LOGGER.info("Generated {} queries for the triple ({}, {}, {})", queries.size(),
         subject.getURI(), predicate.getProperty().getURI(), object.getURI());
     List<QRestrictedPath> paths = searchPaths(queries);
@@ -108,40 +104,13 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
     return paths;
   }
 
-  /**
-   * Generates queries for searching paths of length 1.
-   * 
-   * @param subject the subject of the given triple
-   * @param predicate the predicate of the given triple
-   * @param object the object of the given triple
-   * @param queries the list of search queries to which the generated queries should be added
-   */
-  protected void generateShortSearchQuery(Resource subject, Predicate predicate, Resource object,
-      List<SearchQuery> queries) {
-    // s p1 o
-    StringBuilder queryBuilder = new StringBuilder();
-    // (PROPERTY_VARIABLE_NAME + "1") is the same as using propertyVariables[0] but faster ;)
-    queryBuilder.append("SELECT DISTINCT ?" + PROPERTY_VARIABLE_NAME + "1 WHERE { <");
-    queryBuilder.append(subject.getURI());
-    queryBuilder.append("> ?" + PROPERTY_VARIABLE_NAME + "1 <");
-    queryBuilder.append(object.getURI());
-    queryBuilder.append("> . ");
-    queryBuilder.append(propertyFilter[0]);
-    queryBuilder.append(" }");
-    BitSet directions = new BitSet(1);
-    directions.set(0);
-    queries.add(new SearchQuery(queryBuilder.toString(), directions, 1));
-    // o p1 s
-    queryBuilder.delete(0, queryBuilder.length());
-    queryBuilder.append("SELECT DISTINCT ?" + PROPERTY_VARIABLE_NAME + "1 WHERE { <");
-    queryBuilder.append(object.getURI());
-    queryBuilder.append("> ?" + PROPERTY_VARIABLE_NAME + "1 <");
-    queryBuilder.append(subject.getURI());
-    queryBuilder.append("> . ");
-    queryBuilder.append(propertyFilter[0]);
-    queryBuilder.append(" }");
-    directions = new BitSet(1);
-    queries.add(new SearchQuery(queryBuilder.toString(), directions, 1));
+  protected List<SearchQuery> generateSearchQueries(Resource subject, Predicate predicate,
+      Resource object) {
+    List<SearchQuery> queries = new ArrayList<SearchQuery>();
+    for (int i = 1; i <= maximumLength; ++i) {
+      generateSearchQueries(i, subject, predicate, object, queries);
+    }
+    return queries;
   }
 
   /**
@@ -177,15 +146,26 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
    */
   protected void generateSearchQueries(int length, Resource subject, Predicate predicate,
       Resource object, List<SearchQuery> queries) {
+    // Generate the SELECT part
+    StringBuilder selectBuilder = new StringBuilder();
+    selectBuilder.append("SELECT DISTINCT ");
+    for (int i = 1; i <= length; ++i) {
+      selectBuilder.append(" ?");
+      selectBuilder.append(propertyVariables[i - 1]);
+    }
+    selectBuilder.append(" WHERE { ");
     // Create search query builders for all direction combinations
     SearchQueryBuilder[] builders = new SearchQueryBuilder[1 << length];
     for (int i = 0; i < builders.length; ++i) {
       builders[i] = new SearchQueryBuilder(length);
+      builders[i].getQueryBuilder().append(selectBuilder);
     }
     // Fill the builders recursively
     generateSearchQuery_Recursion(1, length, subject, predicate, object, builders);
+    
     // Add the built queries to the result
     for (int i = 0; i < builders.length; ++i) {
+      builders[i].getQueryBuilder().append("}");
       queries.add(builders[i].build());
     }
   }
@@ -211,37 +191,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
         : ("?" + INTERMEDIATE_NODE_VARIABLE_NAME + (step - 1));
     String oVariable = step == length ? ("<" + object.getURI() + ">")
         : ("?" + INTERMEDIATE_NODE_VARIABLE_NAME + step);
-
-    // If this is not the first select, we need to start with a bracket
-    if (step > 1) {
-      localBuilder.append(" { ");
-    }
-
-    // Create SELECT part
-    localBuilder.append("SELECT DISTINCT");
-    for (int i = step; i <= length; ++i) {
-      localBuilder.append(" ?");
-      localBuilder.append(propertyVariables[i - 1]);
-    }
-    // If this is not the first select, we need to select the intermediate node of this step
-    if (step > 1) {
-      localBuilder.append(" ?");
-      localBuilder.append(INTERMEDIATE_NODE_VARIABLE_NAME);
-      localBuilder.append(step - 1);
-    }
-    localBuilder.append(" WHERE { ");
-
-    // prepare recursion by adding the first part of the query to the builders
-    for (int i = 0; i < builders.length; ++i) {
-      builders[i].getQueryBuilder().append(localBuilder);
-    }
-    localBuilder.delete(0, localBuilder.length());
-
-    // Recursion
-    if (step < length) {
-      generateSearchQuery_Recursion(step + 1, length, subject, predicate, object, builders);
-    }
-
+    
     // Create a mask for this step to separate the directions
     int stepMask = 1 << (step - 1);
     // create the triple pattern of this step with the s -> o direction
@@ -265,6 +215,11 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
         builders[i].getQueryBuilder().append(localBuilder);
         // The triple pattern is in o -> s direction, so we have leave the direction as FALSE
       }
+    }
+
+    // Recursion
+    if (step < length) {
+      generateSearchQuery_Recursion(step + 1, length, subject, predicate, object, builders);
     }
 
     // Clean up local builder so that we can reuse it
@@ -297,11 +252,6 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
         localBuilder.append(">) \n");
       }
     }
-    // If this is not the first select, we need to end with an additional bracket
-    if (step > 1) {
-      localBuilder.append(" } ");
-    }
-    localBuilder.append(" } ");
     // Add the filters to all queries
     for (int i = 0; i < builders.length; ++i) {
       builders[i].getQueryBuilder().append(localBuilder);

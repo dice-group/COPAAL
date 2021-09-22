@@ -18,6 +18,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.dice.FactCheck.Corraborative.filter.npmi.NPMIFilterException;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
+import org.dice_research.fc.paths.IPathSearcher;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
@@ -30,13 +31,13 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class SPARQLBasedSOPathSearcherTest {
 
-  private QueryExecutionFactory qef;
-  private int maximumLength;
-  private Collection<IRIFilter> propertyFilter;
-  private Resource subject;
-  private Predicate predicate;
-  private Resource object;
-  private Set<QRestrictedPath> expectedPaths;
+  protected QueryExecutionFactory qef;
+  protected int maximumLength;
+  protected Collection<IRIFilter> propertyFilter;
+  protected Resource subject;
+  protected Predicate predicate;
+  protected Resource object;
+  protected Set<QRestrictedPath> expectedPaths;
 
   public SPARQLBasedSOPathSearcherTest(Dataset dataset, Integer maximumLength,
       Collection<IRIFilter> propertyFilter, Resource subject, Predicate predicate, Resource object,
@@ -50,15 +51,18 @@ public class SPARQLBasedSOPathSearcherTest {
     this.expectedPaths = expectedPaths;
   }
 
+  public IPathSearcher createSearcher() {
+    return new SPARQLBasedSOPathSearcher(qef, maximumLength, propertyFilter);
+  }
+
   @Test
   public void test() throws NPMIFilterException {
-    SPARQLBasedSOPathSearcher searcher =
-        new SPARQLBasedSOPathSearcher(qef, maximumLength, propertyFilter);
+    IPathSearcher searcher = createSearcher();
     Collection<QRestrictedPath> paths = searcher.search(subject, predicate, object);
     StringBuilder builder = new StringBuilder();
     for (QRestrictedPath path : paths) {
       if (!expectedPaths.contains(path)) {
-        builder.append("The expected path ");
+        builder.append("The path ");
         builder.append(path.toString());
         builder.append(" couldn't be found in the set of expected paths.\n");
       } else {
@@ -66,7 +70,7 @@ public class SPARQLBasedSOPathSearcherTest {
       }
     }
     if (expectedPaths.size() > 0) {
-      builder.append("The following paths were expected but are are missing in the result:\n");
+      builder.append("The following paths were expected but are missing in the result:\n");
       for (QRestrictedPath path : expectedPaths) {
         builder.append(path.toString());
         builder.append("\n");
