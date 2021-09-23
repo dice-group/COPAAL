@@ -2,9 +2,16 @@ package org.dice_research.fc.sparql.query;
 
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ConnectionPoolTimeoutException;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.query.*;
@@ -17,7 +24,9 @@ import org.slf4j.LoggerFactory;
 import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -119,17 +128,28 @@ public class QueryEngineCustomHTTP implements QueryExecution {
         try {
             LOGGER.info("--------Start Reqest------------");
             LOGGER.info(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
-            HttpGet get = new HttpGet(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
+            //HttpGet get = new HttpGet(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
+            HttpPost post = new HttpPost(service );
+            //post.addHeader(new BasicHeader("Content-Type",""));
             if(timeout > 0) {
                 RequestConfig config = RequestConfig.custom()
                         .setConnectTimeout(timeout)
                         .setConnectionRequestTimeout(timeout)
                         .setSocketTimeout(timeout).build();
-                get.setConfig(config);
+                //get.setConfig(config);
+                post.setConfig(config);
             }
-            get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
-            response = client.execute(get);
+            //get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
+            String body = query.toString();
+            StringEntity stringEntity = new StringEntity(body);
+            post.setEntity(stringEntity);
+            post.setHeader("Content-Type", "application/sparql-update");
+            post.setHeader("Accept", "application/sparql-results+xml");
+           // post.setEntity(new StringEntity("query="+query.toString()));
+            QueryCounter.add();
+            response = client.execute(post);
             String result = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+            LOGGER.debug("http response code is {} query number is {}",String.valueOf(response.getStatusLine().getStatusCode()),QueryCounter.show());
             if(result.contains("404 File not found") && tryNumber < 5){
                 // face error try one more time
                 LOGGER.info("----------try one more -------------"+tryNumber+"---");
@@ -137,13 +157,21 @@ public class QueryEngineCustomHTTP implements QueryExecution {
                 createRequest(tryNumber+1);
             }
             LOGGER.debug(result);
+            if(response.getStatusLine().getStatusCode()==404){
+                throw new RuntimeException("There is an error , response is 404");
+            }
             return result;
         }
         catch(SocketTimeoutException e) {
             LOGGER.debug("Timeout this query: "+query.toString());
             return "";
         }
+        catch(ConnectionPoolTimeoutException e) {
+            LOGGER.debug("Timeout this query: "+query.toString());
+            return "";
+        }
         catch(Exception e){
+            LOGGER.error(e.getMessage() + e.getStackTrace());
             throw new RuntimeException("There is an error while running the query",e);
         }finally {
             // If we received a response, we need to ensure that its entity is consumed correctly to free
