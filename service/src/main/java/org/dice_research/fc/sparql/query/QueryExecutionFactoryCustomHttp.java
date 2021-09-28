@@ -74,14 +74,14 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
 
   @Override
   public QueryExecution createQueryExecution(Query query) {
-    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTP(query, client, service);
+    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTPSaveDb(query, client, service);
     return qe;
   }
 
   @Override
   public QueryExecution createQueryExecution(String queryString) {
     Query query = QueryFactory.create(queryString);
-    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTP(query, client, service);
+    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTPSaveDb(query, client, service);
     return qe;
   }
 

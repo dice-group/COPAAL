@@ -34,7 +34,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
     /**
      * The query which should run
      */
-    private Query query;
+    protected Query query;
 
     /**
      * The SPARQL endpoint
@@ -100,11 +100,11 @@ public class QueryEngineCustomHTTP implements QueryExecution {
      * the empty xml used to generate empty ResultSet
      * @return string which is an empty xml
      */
-    private String emptyXML() {
+    protected String emptyXML() {
         return "<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.w3.org/2001/sw/DataAccess/rf1/result2.xsd\"><head></head><results distinct=\"false\" ordered=\"true\"></results></sparql>>";
     }
 
-    private String createRequest() {
+    protected String createRequest() {
         return createRequest(0);
     }
 

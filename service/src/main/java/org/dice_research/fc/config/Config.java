@@ -66,6 +66,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
+import javax.management.MXBean;
+
 /**
  * Configuration class containing the variables present in the applications.properties file and the
  * bean configurations.
