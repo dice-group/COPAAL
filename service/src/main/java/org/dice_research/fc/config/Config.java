@@ -31,6 +31,7 @@ import org.dice_research.fc.paths.map.PropertyMapper;
 import org.dice_research.fc.paths.model.Path;
 import org.dice_research.fc.paths.model.PathElement;
 
+import org.dice_research.fc.paths.repository.IQueryResultsRepository;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.PNPMIBasedScorer;
@@ -58,6 +59,7 @@ import org.dice_research.fc.sum.NegScoresHandlingSummarist;
 import org.dice_research.fc.sum.OriginalSummarist;
 import org.dice_research.fc.sum.ScoreSummarist;
 import org.dice_research.fc.sum.SquaredAverageSummarist;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
@@ -76,6 +78,14 @@ import javax.management.MXBean;
 @Configuration
 @PropertySource(value = "classpath:application.properties")
 public class Config {
+
+  private IQueryResultsRepository repository;
+
+  @Autowired
+  public Config(IQueryResultsRepository repository) {
+    this.repository = repository;
+  }
+
 
   /**
    * The SPARQL endpoint URL
@@ -159,6 +169,9 @@ public class Config {
    */
   @Value("${dataset.pathsearcher.type:}")
   private String pathSearcher;
+
+  @Value("${dataset.QueryEngineCustomHttp.type:}")
+  private String typeOfQueryEngineCustomHttp;
 
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -300,7 +313,7 @@ public class Config {
   public QueryExecutionFactory getQueryExecutionFactory() {
     QueryExecutionFactory qef;
     if (filePath == null || filePath.isEmpty()) {
-      qef = new QueryExecutionFactoryCustomHttp(serviceURL);
+      qef = new QueryExecutionFactoryCustomHttp(serviceURL,0,repository, typeOfQueryEngineCustomHttp);
     } else {
       Model model = ModelFactory.createDefaultModel();
       model.read(filePath);

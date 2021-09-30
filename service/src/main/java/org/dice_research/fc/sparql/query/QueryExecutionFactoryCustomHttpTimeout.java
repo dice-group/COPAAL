@@ -26,7 +26,6 @@ public class QueryExecutionFactoryCustomHttpTimeout extends  QueryExecutionFacto
     @Override
     public QueryExecution createQueryExecution(Query query) {
         QueryExecution result = super.createQueryExecution(query);
-
         result.setTimeout(timeOut);
 
         return result;

@@ -32,6 +32,7 @@ public class CachingPathSearcherDecorator extends AbstractPathSearcherDecorator 
     @Autowired
     protected IPathRepository pathRepository;
 
+
     @Autowired
     protected IPathElementRepository pathElementRepository;
     /**

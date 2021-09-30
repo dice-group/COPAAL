@@ -31,7 +31,8 @@ public class LoadPreprocessedPaths {
   protected static final String FILTERED_NAMESPACE = "http://dbpedia.org/ontology/";
 
   public static void main(String[] args) {
-    QueryExecutionFactory qef =
+    //TODO
+/*    QueryExecutionFactory qef =
         new QueryExecutionFactoryCustomHttp("https://synthg-fact.dice-research.org/sparql");// "https://dbpedia.org/sparql");
     qef = new QueryExecutionFactoryCustomHttpTimeout(qef, 30000);
 
@@ -48,6 +49,6 @@ public class LoadPreprocessedPaths {
             ResourceFactory.createProperty("http://dbpedia.org/ontology/birthPlace"),
             ResourceFactory.createResource("http://dbpedia.org/resource/Minneapolis"));
     System.out.print("Result: ");
-    System.out.println(result.getVeracityValue());
+    System.out.println(result.getVeracityValue());*/
   }
 }

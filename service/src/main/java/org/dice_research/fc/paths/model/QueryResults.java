@@ -17,10 +17,10 @@ public class QueryResults {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "Query")
+    @Column(name = "Query" , columnDefinition="TEXT")
     private String query;
 
-    @Column(name = "Response")
+    @Column(name = "Response" , columnDefinition="TEXT")
     private String response;
 
     @Column(name = "IsDone")

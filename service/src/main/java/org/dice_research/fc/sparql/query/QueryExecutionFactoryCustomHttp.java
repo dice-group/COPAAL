@@ -8,6 +8,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryFactory;
+import org.dice_research.fc.paths.repository.IQueryResultsRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class is factory for custom http query execution .
@@ -17,20 +19,43 @@ import org.apache.jena.query.QueryFactory;
  */
 
 public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
+
+  /**
+   * the reposotory need for use QueryEngineCustomHTTPSaveDb
+   */
+  protected IQueryResultsRepository repository;
+
+  /**
+   * the type of QueryEngineCustomHttp
+   * default : QueryEngineCustomHttp
+   * useDb : QueryEngineCustomHTTPSaveDb
+   */
+  private String type;
+
   /**
    * The url of SPARQL endpoint
    */
   private String service;
   private CloseableHttpClient client;
 
-  /**
+/*  *//**
    * Constructor.
    * 
    * @param service The URL of the SPARQL endpoint.
-   */
-  public QueryExecutionFactoryCustomHttp(String service) {
-    this(service, 0);
+   * @param type of QueryEngineCustomHttp
+   *//*
+  public QueryExecutionFactoryCustomHttp(String service, String type) {
+    this(service, 0,type);
   }
+
+  *//**
+   * Constructor.
+   *
+   * @param service The URL of the SPARQL endpoint.
+   *//*
+  public QueryExecutionFactoryCustomHttp(String service,IQueryResultsRepository repository) {
+    this(service, 0,repository);
+  }*/
 
   /**
    * Constructor.
@@ -38,8 +63,10 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
    * @param service The URL of the SPARQL endpoint.
    * @param timeout The time out for running a query.
    */
-  public QueryExecutionFactoryCustomHttp(String service, int timeout) {
+  public QueryExecutionFactoryCustomHttp(String service, int timeout, IQueryResultsRepository repository, String type) {
     this.service = service;
+    this.repository = repository;
+    this.type = type;
     HttpClientBuilder builder = HttpClientBuilder.create();
     if (timeout > 0) {
       RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout)
@@ -57,9 +84,10 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
    *        factory will take over the ownership of the client, i.e., it will close the client if
    *        the factory is closed.
    */
-  public QueryExecutionFactoryCustomHttp(String service, CloseableHttpClient client) {
+  public QueryExecutionFactoryCustomHttp(String service, CloseableHttpClient client,IQueryResultsRepository repository) {
     this.service = service;
     this.client = client;
+    this.repository = repository;
   }
 
   @Override
@@ -74,15 +102,20 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
 
   @Override
   public QueryExecution createQueryExecution(Query query) {
-    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTPSaveDb(query, client, service);
+    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTP(query, client, service);
+    if(type.equalsIgnoreCase("useDb")){
+      if(repository==null){
+        //throw new Exception("the IQueryResultsRepository is null , it is impossible to use database");
+      }
+      qe = new QueryEngineCustomHTTPSaveDb(query, client, service, repository);
+    }
     return qe;
   }
 
   @Override
   public QueryExecution createQueryExecution(String queryString) {
     Query query = QueryFactory.create(queryString);
-    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTPSaveDb(query, client, service);
-    return qe;
+    return createQueryExecution(query);
   }
 
   @Override

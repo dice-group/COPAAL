@@ -7,12 +7,14 @@ import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.dice_research.fc.data.QRestrictedPath;
+import org.dice_research.fc.paths.repository.IQueryResultsRepository;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttp;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Tests the verbalization feature.
@@ -38,7 +40,7 @@ public class VerbalizerTest {
   private boolean isEmptyExpected;
 
   private final QueryExecutionFactory qef =
-      new QueryExecutionFactoryCustomHttp("https://dbpedia.org/sparql");
+      new QueryExecutionFactoryCustomHttp("https://dbpedia.org/sparql",0, null,"default");
 
   public VerbalizerTest(Resource subject, Resource object, QRestrictedPath path,
       boolean isEmptyExpected) {

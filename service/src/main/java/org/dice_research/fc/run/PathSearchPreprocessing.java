@@ -35,8 +35,8 @@ public class PathSearchPreprocessing {
 
   public static void main(String[] args) throws JsonProcessingException {
     // TODO Get the necessary parameters and start the preprocessing method
-
-    QueryExecutionFactory qef =
+    //TODO
+    /*QueryExecutionFactory qef =
         new QueryExecutionFactoryCustomHttp("https://synthg-fact.dice-research.org/sparql");// "https://dbpedia.org/sparql");
     qef = new QueryExecutionFactoryCustomHttpTimeout(qef, 30000);
 
@@ -64,7 +64,7 @@ public class PathSearchPreprocessing {
     Entry<Property, List<QRestrictedPath>> pair = new AbstractMap.SimpleEntry<Property, List<QRestrictedPath>>(ResourceFactory.createProperty(property), paths);
     IPathExporter exporter = new DefaultExporter("paths/");
     String savedIn = exporter.exportPaths(pair);
-    System.out.println(savedIn);
+    System.out.println(savedIn);*/
   }
 
 }

@@ -11,6 +11,7 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.dice_research.fc.data.Predicate;
@@ -79,7 +80,11 @@ public class PredicateFactory implements FactPreprocessor {
     Set<String> types = new HashSet<String>();
     SelectBuilder selectBuilder = new SelectBuilder();
     selectBuilder.addWhere(subject, predicate, NodeFactory.createVariable("x"));
+    try {
+      selectBuilder.addFilter("strstarts(str(?x), \"http://dbpedia.org/ontology\")");
+    }catch (Exception ex){
 
+    }
     Query query = selectBuilder.build();
     try (QueryExecution queryExecution = executioner.createQueryExecution(query)) {
       ResultSet resultSet = queryExecution.execSelect();

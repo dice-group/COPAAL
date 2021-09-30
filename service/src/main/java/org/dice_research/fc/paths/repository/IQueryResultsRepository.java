@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface IQueryResultsRepository extends JpaRepository<QueryResults, Long> {
-    List<QueryResults> findByQueryAndIsdoneTrue(String query);
+    List<QueryResults> findByQuery(String query);
+    List<QueryResults> findByQueryAndIsdone(String query,boolean isDone);
 }

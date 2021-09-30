@@ -5,16 +5,17 @@ import org.apache.jena.query.Query;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFactory;
 import org.dice_research.fc.paths.model.QueryResults;
-import org.dice_research.fc.paths.repository.IPathRepository;
 import org.dice_research.fc.paths.repository.IQueryResultsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.util.List;
 
 public class QueryEngineCustomHTTPSaveDb extends QueryEngineCustomHTTP{
 
-    @Autowired
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueryEngineCustomHTTPSaveDb.class);
+
     protected IQueryResultsRepository repository;
 
     /**
@@ -24,8 +25,9 @@ public class QueryEngineCustomHTTPSaveDb extends QueryEngineCustomHTTP{
      * @param client
      * @param service is a url of a SPARQL endpoint
      */
-    public QueryEngineCustomHTTPSaveDb(Query query, HttpClient client, String service) {
+    public QueryEngineCustomHTTPSaveDb(Query query, HttpClient client, String service,IQueryResultsRepository repository) {
         super(query, client, service);
+        this.repository = repository;
     }
 
     @Override
@@ -35,12 +37,17 @@ public class QueryEngineCustomHTTPSaveDb extends QueryEngineCustomHTTP{
             // nothing found in db then do query
             queryResult = createRequest();
             // the result is not a valid XML then replace with an empty XML
+            QueryResults forSave;
             if(queryResult.length()<10) {
-                QueryResults forSave = new QueryResults(query.toString(),"",false);
-                repository.save(forSave);
+                forSave = new QueryResults(query.toString(),"",false);
                 queryResult = emptyXML();
             }else{
-                QueryResults forSave = new QueryResults(query.toString(),queryResult,true);
+                forSave = new QueryResults(query.toString(),queryResult,true);
+                repository.save(forSave);
+            }
+
+            // if this query is not in the DB then insert it
+            if(repository.findByQuery(query.toString()).size()==0){
                 repository.save(forSave);
             }
 
@@ -53,9 +60,10 @@ public class QueryEngineCustomHTTPSaveDb extends QueryEngineCustomHTTP{
     }
 
     private String searchDb(Query query) {
-        List<QueryResults> q = repository.findByQueryAndIsdoneTrue(query.toString());
+        List<QueryResults> q = repository.findByQueryAndIsdone(query.toString(),true);
         if(q.size()>0){
-            return q.get(0).getQuery();
+            LOGGER.debug("Found query in DB ");
+            return q.get(0).getResponse();
         }else{
             return "";
         }
