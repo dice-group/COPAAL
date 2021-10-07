@@ -4,6 +4,7 @@ package org.dice_research.fc.config;
 //import java.util.*;
 
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -67,6 +68,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.h2.tools.Server;
+
+
 
 import javax.management.MXBean;
 
@@ -407,6 +411,15 @@ public class Config {
     } else {
       return new NoopVerbalizer();
     }
+  }
+
+  /**
+   * create a server for host database then It can accessed from another application (here: Updater)
+   */
+  @Bean(initMethod = "start", destroyMethod = "stop")
+  public Server inMemoryH2DatabaseaServer() throws SQLException {
+    return Server.createTcpServer(
+            "-tcp", "-tcpAllowOthers", "-tcpPort", "9090");
   }
 }
 // TODO: we can also use reflection instead of switch case statements?
