@@ -61,4 +61,14 @@ public class RESTController {
           throws InterruptedException, FileNotFoundException, ParseException {
     return validate(subject,object,property,details).getRdfStarVersion();
   }
+
+  @GetMapping("/validaterdfsar")
+  public String validaterdfsar(
+          @RequestParam(value = "subject", required = true) String subject,
+          @RequestParam(value = "object", required = true) String object,
+          @RequestParam(value = "property", required = true) String property,
+          RequestParameters details)
+          throws InterruptedException, FileNotFoundException, ParseException {
+    return validate(subject,object,property,details).getRdfStarVersionAR();
+  }
 }

@@ -191,5 +191,61 @@ public class FactCheckingResult {
     return sb;
   }
 
-  
+/*  t    :veracityValue 0.6;
+     :hasEvidence _:1, _:2, _:3 .
+
+  _:1 :copaal:score -0.1;
+     :evidence "evidence 1";
+     :explanation "explanation is disabled".
+
+  _:2 :copaal:score 0.6;
+     :evidence "evidence 2";
+     :explanation "explanation is disabled".*/
+  //additional resources
+  public String getRdfStarVersionAR(){
+    StringBuilder rdfStarResult = new StringBuilder();
+    rdfStarResult = addFact(rdfStarResult);
+    rdfStarResult.append(System.getProperty("line.separator"));
+    rdfStarResult.append(":hasEvidence");
+    rdfStarResult = addEvidencesResourcesId(rdfStarResult);
+    rdfStarResult.append(System.getProperty("line.separator"));
+    Iterator<IPieceOfEvidence> iterator = (Iterator<IPieceOfEvidence>) piecesOfEvidence.iterator();
+    int counter = 1;
+    while (iterator.hasNext()){
+      IPieceOfEvidence piece = iterator.next();
+      rdfStarResult = addResource(rdfStarResult,piece,counter);
+      counter = counter + 1;
+    }
+    return rdfStarResult.toString();
+  }
+
+  private StringBuilder addResource(StringBuilder sb, IPieceOfEvidence piece, int counter) {
+    sb.append(" _:");
+    sb.append(counter);
+    sb.append(" :copaal:score ");
+    sb.append(piece.getScore());
+    sb.append(";");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(" :copaal:evidence \"");
+    sb.append(piece.getEvidence());
+    sb.append("\";");
+    sb.append(System.getProperty("line.separator"));
+    sb.append(" :copaal:explanation \"");
+    sb.append(piece.getVerbalizedOutput());
+    sb.append("\".");
+    sb.append(System.getProperty("line.separator"));
+    return sb;
+  }
+
+  private StringBuilder addEvidencesResourcesId(StringBuilder sb) {
+    for(int i = 0 ; i < piecesOfEvidence.size() ; i++){
+      sb.append(" _:");
+      sb.append(i+1);
+      if(i+1<piecesOfEvidence.size()){
+        sb.append(",");
+      }
+      sb.append(".");
+    }
+    return sb;
+  }
 }
