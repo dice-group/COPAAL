@@ -21,35 +21,44 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*", allowCredentials = "true")
 @RequestMapping("/api/v1/")
 public class RESTController {
-  
+
   @Autowired
   ApplicationContext ctx;
 
   @GetMapping("/test")
-  public String ping(){
+  public String ping() {
     return "OK!";
   }
 
   @GetMapping("/validate")
   public FactCheckingResult validate(
-      @RequestParam(value = "subject", required = true) String subject,
-      @RequestParam(value = "object", required = true) String object,
-      @RequestParam(value = "property", required = true) String property,
-      RequestParameters details)
-      throws InterruptedException, FileNotFoundException, ParseException {
+          @RequestParam(value = "subject", required = true) String subject,
+          @RequestParam(value = "object", required = true) String object,
+          @RequestParam(value = "property", required = true) String property,
+          RequestParameters details)
+          throws InterruptedException, FileNotFoundException, ParseException {
 
     Resource subjectURI = ResourceFactory.createResource(subject);
     Resource objectURI = ResourceFactory.createResource(object);
     Property propertyURI = ResourceFactory.createProperty(property);
-    
+
     // perform fact-check
     IFactChecker factChecker = ctx.getBean(IFactChecker.class);
     FactCheckingResult result = factChecker.check(subjectURI, propertyURI, objectURI);
-    
+
     // verbalize result
     IPathVerbalizer verbalizer = ctx.getBean(IPathVerbalizer.class, ctx.getBean(QueryExecutionFactory.class), details);
     verbalizer.verbalizeResult(result);
     return result;
   }
 
+  @GetMapping("/validaterdfs")
+  public String validaterdfs(
+          @RequestParam(value = "subject", required = true) String subject,
+          @RequestParam(value = "object", required = true) String object,
+          @RequestParam(value = "property", required = true) String property,
+          RequestParameters details)
+          throws InterruptedException, FileNotFoundException, ParseException {
+    return validate(subject,object,property,details).getRdfStarVersion();
+  }
 }
