@@ -89,18 +89,17 @@ public class FactCheckingResult {
      :explanation "explanation is disabled".*/
     rdfStarResult = addFact(rdfStarResult);
     rdfStarResult.append(System.getProperty("line.separator"));
-    rdfStarResult = addVeracityValue(rdfStarResult);
+    rdfStarResult = addVeracityValue(rdfStarResult,false);
     rdfStarResult.append(System.getProperty("line.separator"));
-    rdfStarResult = addScores(rdfStarResult);
+    rdfStarResult = addScores(rdfStarResult,false);
     rdfStarResult.append(System.getProperty("line.separator"));
-    rdfStarResult = addEvidences(rdfStarResult);
+    rdfStarResult = addEvidences(rdfStarResult,false);
     rdfStarResult.append(System.getProperty("line.separator"));
     if(explanationsAreSimilar()){
-      rdfStarResult = addSingleExplanation(rdfStarResult);
+      rdfStarResult = addSingleExplanation(rdfStarResult,true);
     }else{
-      rdfStarResult = addExplanation(rdfStarResult);
+      rdfStarResult = addExplanation(rdfStarResult,true);
     }
-    rdfStarResult.append(System.getProperty("line.separator"));
     return rdfStarResult.toString();
   }
 
@@ -112,27 +111,32 @@ public class FactCheckingResult {
     IPieceOfEvidence piece1 = iterator.next();
     while(iterator.hasNext()){
       IPieceOfEvidence piece2 = iterator.next();
-      if(!piece1.toString().equals(piece2.toString())){
-        return true;
+      if(!piece1.getVerbalizedOutput().equals(piece2.getVerbalizedOutput())){
+        return false;
       }
       piece1 = piece2;
     }
-    return false;
+    return true;
   }
 
-  private StringBuilder addSingleExplanation(StringBuilder sb) {
-    sb.append("\n:copaal:explanation \"");
+  private StringBuilder addSingleExplanation(StringBuilder sb, boolean isTheFinalPart) {
+    sb.append(":explanation \"");
     Iterator<IPieceOfEvidence> iterator = (Iterator<IPieceOfEvidence>) piecesOfEvidence.iterator();
     if(iterator.hasNext()){
       IPieceOfEvidence piece = iterator.next();
       sb.append(piece.getVerbalizedOutput());
     }
-    sb.append("\";");
+    sb.append("\"");
+    if(isTheFinalPart){
+      sb.append(".");
+    }else{
+      sb.append(";");
+    }
     return sb;
   }
 
-  private StringBuilder addExplanation(StringBuilder sb) {
-    sb.append(":copaal:explanation \"");
+  private StringBuilder addExplanation(StringBuilder sb, boolean isTheFinalPart) {
+    sb.append(":explanation \"");
     Iterator<IPieceOfEvidence> iterator = (Iterator<IPieceOfEvidence>) piecesOfEvidence.iterator();
     while(iterator.hasNext()){
       IPieceOfEvidence piece = iterator.next();
@@ -141,12 +145,17 @@ public class FactCheckingResult {
         sb.append("\", \"");
       }
     }
-    sb.append("\";");
+    sb.append("\"");
+    if(isTheFinalPart){
+      sb.append(".");
+    }else{
+      sb.append(";");
+    }
     return sb;
   }
 
-  private StringBuilder addEvidences(StringBuilder sb) {
-    sb.append("\n:copaal:evidence \"");
+  private StringBuilder addEvidences(StringBuilder sb, boolean isTheFinalPart) {
+    sb.append("\n:evidence \"");
     Iterator<IPieceOfEvidence> iterator = (Iterator<IPieceOfEvidence>) piecesOfEvidence.iterator();
     while(iterator.hasNext()){
       IPieceOfEvidence piece = iterator.next();
@@ -155,11 +164,16 @@ public class FactCheckingResult {
         sb.append("\", \"");
       }
     }
-    sb.append("\";");
+    sb.append("\"");
+    if(isTheFinalPart){
+      sb.append(".");
+    }else{
+      sb.append(";");
+    }
     return sb;
   }
 
-  private StringBuilder addScores(StringBuilder sb) {
+  private StringBuilder addScores(StringBuilder sb, boolean isTheFinalPart) {
     sb.append("\n:copaal:score ");
     Iterator<IPieceOfEvidence> iterator = (Iterator<IPieceOfEvidence>) piecesOfEvidence.iterator();
     while(iterator.hasNext()){
@@ -169,14 +183,22 @@ public class FactCheckingResult {
         sb.append("\", \"");
       }
     }
-    sb.append(";");
+    if(isTheFinalPart){
+      sb.append(".");
+    }else{
+      sb.append(";");
+    }
     return sb;
   }
 
-  public StringBuilder addVeracityValue(StringBuilder sb ){
+  public StringBuilder addVeracityValue(StringBuilder sb ,boolean isTheFinalPart){
     sb.append(":veracityValue ");
     sb.append(veracityValue);
-    sb.append(";");
+    if(isTheFinalPart){
+      sb.append(".");
+    }else{
+      sb.append(";");
+    }
     return sb;
   }
 
@@ -226,11 +248,11 @@ public class FactCheckingResult {
     sb.append(piece.getScore());
     sb.append(";");
     sb.append(System.getProperty("line.separator"));
-    sb.append(" :copaal:evidence \"");
+    sb.append(" :evidence \"");
     sb.append(piece.getEvidence());
     sb.append("\";");
     sb.append(System.getProperty("line.separator"));
-    sb.append(" :copaal:explanation \"");
+    sb.append(" :explanation \"");
     sb.append(piece.getVerbalizedOutput());
     sb.append("\".");
     sb.append(System.getProperty("line.separator"));

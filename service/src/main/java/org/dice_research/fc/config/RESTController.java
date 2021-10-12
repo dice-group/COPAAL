@@ -1,6 +1,8 @@
 package org.dice_research.fc.config;
 
 import java.io.FileNotFoundException;
+import java.util.Map;
+
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
@@ -11,11 +13,7 @@ import org.dice_research.fc.data.FactCheckingResult;
 import org.dice_research.fc.paths.verbalizer.IPathVerbalizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin(origins = "*", allowCredentials = "true")
@@ -49,10 +47,11 @@ public class RESTController {
     // verbalize result
     IPathVerbalizer verbalizer = ctx.getBean(IPathVerbalizer.class, ctx.getBean(QueryExecutionFactory.class), details);
     verbalizer.verbalizeResult(result);
+
     return result;
   }
 
-  @GetMapping("/validaterdfs")
+  @RequestMapping(value = "/validate", method = RequestMethod.GET, headers="Accept=application/rdfstar")
   public String validaterdfs(
           @RequestParam(value = "subject", required = true) String subject,
           @RequestParam(value = "object", required = true) String object,
