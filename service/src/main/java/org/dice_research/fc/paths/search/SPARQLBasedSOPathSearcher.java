@@ -94,6 +94,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
   @Override
   public Collection<QRestrictedPath> search(Resource subject, Predicate predicate,
       Resource object) {
+    LOGGER.debug("Search for paths with this triple ({} {} {} )",subject.getURI() ,predicate.getProperty().getURI(),object.getURI());
     // Generate queries
     List<SearchQuery> queries = generateSearchQueries(subject, predicate, object);
     LOGGER.info("Generated {} queries for the triple ({}, {}, {})", queries.size(),
@@ -146,6 +147,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
    */
   protected void generateSearchQueries(int length, Resource subject, Predicate predicate,
       Resource object, List<SearchQuery> queries) {
+    LOGGER.trace("generate search queries for length \"{}\"", length);
     // Generate the SELECT part
     StringBuilder selectBuilder = new StringBuilder();
     selectBuilder.append("SELECT DISTINCT ");
@@ -162,11 +164,12 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
     }
     // Fill the builders recursively
     generateSearchQuery_Recursion(1, length, subject, predicate, object, builders);
-    
+    LOGGER.trace("In total there are {} builders in the generateSearchQueries exist",builders.length);
     // Add the built queries to the result
     for (int i = 0; i < builders.length; ++i) {
       builders[i].getQueryBuilder().append("}");
       queries.add(builders[i].build());
+      LOGGER.trace("the query No. {} in the generateSearchQueries generated and it is \"{}\"", i ,builders[i].build().getQuery());
     }
   }
 
@@ -274,7 +277,9 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
     for (SearchQuery query : queries) {
       long time = System.currentTimeMillis();
       LOGGER.info("Executing query \"{}\"", query.getQuery());
+      LOGGER.trace("details of query direction:{}, length:{}",query.getDirections() ,query.getLength());
       try (QueryExecution qe = qef.createQueryExecution(query.getQuery())) {
+        LOGGER.trace("QueryExecution timeout:{} ,",qe.getTimeout1());
         directions = query.getDirections();
         rs = qe.execSelect();
         int count = 0;
@@ -282,11 +287,14 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
           qs = rs.next();
           // collect the properties of the path and their direction
           pathElements = new ArrayList<>(query.getLength());
+          LOGGER.trace("list of path elements");
           for (int i = 0; i < query.getLength(); ++i) {
             pathElements.add(new Pair<Property, Boolean>(
                 ResourceFactory.createProperty(qs.getResource(propertyVariables[i]).getURI()),
                 directions.get(i)));
+            LOGGER.trace("direction is {} and property is {}",directions.get(i),qs.getResource(propertyVariables[i]).getURI());
           }
+          LOGGER.trace("end of list of path elements");
           paths.add(new QRestrictedPath(pathElements));
           ++count;
         }

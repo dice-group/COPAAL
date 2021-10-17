@@ -27,7 +27,7 @@ public interface ITypeRestriction {
   /**
    * Returns {@code true} if adding the restriction to a query will not change the content of the
    * query.
-   * 
+   *
    * @return {@code true} if the restriction has not effect, else {@code false}
    */
   public boolean isEmpty();

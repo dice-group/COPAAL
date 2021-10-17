@@ -7,21 +7,20 @@ package org.dice_research.fc.sparql.restrict;
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
-public class VirtualTypeRestriction implements ITypeRestriction {
+public class BGPBasedVirtualTypeRestriction implements ITypeRestriction {
 
   private static final String VARIABLE_NAME = "random";
 
   private boolean variableIsSubject;
   private String propertyIri;
 
-  public VirtualTypeRestriction(boolean variableIsSubject, String propertyIri) {
+  public BGPBasedVirtualTypeRestriction(boolean variableIsSubject, String propertyIri) {
     this.variableIsSubject = variableIsSubject;
     this.propertyIri = propertyIri;
   }
 
   @Override
   public void addRestrictionToQuery(String variable, StringBuilder builder) {
-    builder.append("FILTER EXISTS { ");
     if (variableIsSubject) {
       builder.append(" ?");
       builder.append(variable);
@@ -41,7 +40,7 @@ public class VirtualTypeRestriction implements ITypeRestriction {
       builder.append(" ?");
       builder.append(variable);
     }
-    builder.append(" . } \n");
+    builder.append(" .");
   }
 
   @Override
@@ -67,7 +66,7 @@ public class VirtualTypeRestriction implements ITypeRestriction {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    VirtualTypeRestriction other = (VirtualTypeRestriction) obj;
+    BGPBasedVirtualTypeRestriction other = (BGPBasedVirtualTypeRestriction) obj;
     if (propertyIri == null) {
       if (other.propertyIri != null)
         return false;

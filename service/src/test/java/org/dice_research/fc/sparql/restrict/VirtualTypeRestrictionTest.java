@@ -49,26 +49,26 @@ public class VirtualTypeRestrictionTest extends AbstractRestrictionTest {
             new HashSet<String>(Arrays.asList("http://example.org/r1", "http://example.org/r5",
                 "http://example.org/r9", "http://example.org/r11",
                 sBlankNode.getId().getLabelString())),
-            new VirtualTypeRestriction(true, "http://example.org/p1")});
+            new BGPBasedVirtualTypeRestriction(true, "http://example.org/p1")});
     // Select subjects with p2
     parameters.add(new Object[] {qef,
         new HashSet<String>(Arrays.asList("http://example.org/r3", "http://example.org/r7")),
-        new VirtualTypeRestriction(true, "http://example.org/p2")});
+        new BGPBasedVirtualTypeRestriction(true, "http://example.org/p2")});
     // Select subjects with p3
     parameters.add(new Object[] {qef, Collections.EMPTY_SET,
-        new VirtualTypeRestriction(true, "http://example.org/p3")});
+        new BGPBasedVirtualTypeRestriction(true, "http://example.org/p3")});
     // Select objects with p1
     parameters.add(new Object[] {qef,
         new HashSet<String>(Arrays.asList("http://example.org/r2", "http://example.org/r6", "Text",
             "http://example.org/r10", oBlankNode.getId().getLabelString())),
-        new VirtualTypeRestriction(false, "http://example.org/p1")});
+        new BGPBasedVirtualTypeRestriction(false, "http://example.org/p1")});
     // Select objects with p2
     parameters.add(new Object[] {qef,
         new HashSet<String>(Arrays.asList("http://example.org/r4", "http://example.org/r8")),
-        new VirtualTypeRestriction(false, "http://example.org/p2")});
+        new BGPBasedVirtualTypeRestriction(false, "http://example.org/p2")});
     // Select objects with p3
     parameters.add(new Object[] {qef, Collections.EMPTY_SET,
-        new VirtualTypeRestriction(false, "http://example.org/p3")});
+        new BGPBasedVirtualTypeRestriction(false, "http://example.org/p3")});
 
     return parameters;
   }

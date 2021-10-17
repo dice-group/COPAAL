@@ -32,6 +32,8 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
   public AbstractSPARQLBasedCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
     this.qef = qef;
     this.maxCounter = maxCounter;
+    LOGGER.trace("in AbstractSPARQLBasedCountRetriever QueryExecutionFactory is : {}",QueryExecutionFactory.class.getName());
+    LOGGER.trace("in AbstractSPARQLBasedCountRetriever MaxCounter is : {}",maxCounter.getClass().getName());
   }
 
   public long deriveMaxCount(Predicate predicate) {

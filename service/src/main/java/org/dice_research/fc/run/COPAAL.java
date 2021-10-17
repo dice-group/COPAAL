@@ -9,13 +9,12 @@ import org.aksw.jena_sparql_api.timeout.QueryExecutionFactoryTimeout;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.dice_research.fc.data.FactCheckingResult;
 import org.dice_research.fc.paths.PathBasedFactChecker;
-import org.dice_research.fc.paths.PredicateFactory;
+import org.dice_research.fc.paths.VirtualTypePredicateFactory;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
-import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
+import org.dice_research.fc.paths.scorer.count.PropPathBasedPairCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
 import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
-import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
 import org.dice_research.fc.sum.FixedSummarist;
 
@@ -27,24 +26,34 @@ import org.dice_research.fc.sum.FixedSummarist;
  */
 public class COPAAL {
 
-  protected static final String[] FILTERED_PROPERTIES =
-      new String[] {"http://dbpedia.org/ontology/wikiPageExternalLink", "http://dbpedia.org/ontology/wikiPageWikiLink"};
-  protected static final String FILTERED_NAMESPACE = "http://dbpedia.org/ontology/";
+  //protected static final String[] FILTERED_PROPERTIES =
+  //    new String[] {"http://dbpedia.org/ontology/wikiPageExternalLink",
+  //        "http://dbpedia.org/ontology/wikiPageWikiLink"};
+  protected static final String FILTERED_NAMESPACES[] = new String[] {
+      "http://linkedlifedata.com/resource/drugcentral/", "http://rdf.frockg.eu/frockg/ontology/"};
 
-  public static void main(String[] args) {    
-    QueryExecutionFactory qef = new QueryExecutionFactoryHttp("https://synthg-fact.dice-research.org/sparql");//"https://dbpedia.org/sparql");
+  public static void main(String[] args) {
+    QueryExecutionFactory qef =
+        new QueryExecutionFactoryHttp("https://frockg.ontotext.com/repositories/data_v3");// "https://dbpedia.org/sparql");//https://synthg-fact.dice-research.org/sparql
     qef = new QueryExecutionFactoryDelay(qef, 200);
-    //qef = new QueryExecutionFactoryPaginated(qef, 10000);
+    // qef = new QueryExecutionFactoryPaginated(qef, 10000);
     qef = new QueryExecutionFactoryTimeout(qef, 30, TimeUnit.SECONDS, 30, TimeUnit.SECONDS);
 
-    PathBasedFactChecker checker = new PathBasedFactChecker(new PredicateFactory(qef),
-        new SPARQLBasedSOPathSearcher(qef, 3,
-            Arrays.asList(new NamespaceFilter("http://dbpedia.org/ontology", false),
-                new EqualsFilter(FILTERED_PROPERTIES))),
-        new NPMIBasedScorer(new CachingCountRetrieverDecorator(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef)))), new FixedSummarist());
+    PathBasedFactChecker checker =
+        new PathBasedFactChecker(new VirtualTypePredicateFactory(),
+            new SPARQLBasedSOPathSearcher(qef, 3, Arrays.asList(
+                new NamespaceFilter(new String[] {"http://linkedlifedata.com/resource/drugcentral/",
+                    "http://rdf.frockg.eu/frockg/ontology/"}, false)/*,
+                new EqualsFilter(FILTERED_PROPERTIES)*/)),
+            new NPMIBasedScorer(new CachingCountRetrieverDecorator(
+                new PropPathBasedPairCountRetriever(qef, new DefaultMaxCounter(qef)))),
+            new FixedSummarist());
 
-    FactCheckingResult result = checker.check(ResourceFactory.createResource("http://dbpedia.org/resource/Tay_Zonday"), ResourceFactory.createProperty("http://dbpedia.org/ontology/birthPlace"),
-        ResourceFactory.createResource("http://dbpedia.org/resource/Minneapolis"));
+    FactCheckingResult result = checker.check(
+        ResourceFactory
+            .createResource("http://linkedlifedata.com/resource/drugcentral/structure/95"),
+        ResourceFactory.createProperty("http://rdf.frockg.eu/frockg/ontology/hasAdverseReaction"),
+        ResourceFactory.createResource("http://rdf.frockg.eu/resource/umls/id/C0000737"));
     System.out.print("Result: ");
     System.out.println(result.getVeracityValue());
   }

@@ -8,12 +8,7 @@ import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.dice_research.fc.IFactChecker;
-import org.dice_research.fc.paths.EmptyPredicateFactory;
-import org.dice_research.fc.paths.FactPreprocessor;
-import org.dice_research.fc.paths.IPathScorer;
-import org.dice_research.fc.paths.IPathSearcher;
-import org.dice_research.fc.paths.PathBasedFactChecker;
-import org.dice_research.fc.paths.PredicateFactory;
+import org.dice_research.fc.paths.*;
 import org.dice_research.fc.paths.export.DefaultExporter;
 import org.dice_research.fc.paths.export.IPathExporter;
 import org.dice_research.fc.paths.imprt.DefaultImporter;
@@ -288,7 +283,7 @@ public class Config {
   @Bean
   public FactPreprocessor getPreprocessor(QueryExecutionFactory qef) {
     if (isVirtualTypes) {
-      return new EmptyPredicateFactory();
+      return new VirtualTypePredicateFactory();
     } else {
       return new PredicateFactory(qef);
     }

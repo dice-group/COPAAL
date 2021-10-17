@@ -5,7 +5,7 @@ import org.apache.jena.vocabulary.RDF;
 
 /**
  * A type restriction which is based on a set of given type IRIs.
- * 
+ *
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
