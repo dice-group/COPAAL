@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class QueryCounter {
     private static final AtomicInteger count = new AtomicInteger();
-    /* main method and other methods here */
+    /* add method */
     public static void add(){
         if(count.get()+1<Integer.MAX_VALUE){
             count.getAndIncrement();
