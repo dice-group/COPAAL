@@ -6,7 +6,11 @@ public class QueryCounter {
     private static final AtomicInteger count = new AtomicInteger();
     /* main method and other methods here */
     public static void add(){
-        count.getAndIncrement();
+        if(count.get()+1<Integer.MAX_VALUE){
+            count.getAndIncrement();
+        }else{
+            count.set(0);
+        }
     }
     public static int show(){
         return count.get();

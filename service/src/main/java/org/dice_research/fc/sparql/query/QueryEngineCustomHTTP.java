@@ -40,6 +40,8 @@ import java.util.concurrent.TimeUnit;
 public class QueryEngineCustomHTTP implements QueryExecution {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryEngineCustomHTTP.class);
+
+    private boolean isPostRequest;
     /**
      * The query which should run
      */
@@ -64,13 +66,31 @@ public class QueryEngineCustomHTTP implements QueryExecution {
     /**
      * constructor of the class
      * @param query is a query to run
+     * @param client is a HttpClient
      * @param service is a url of a SPARQL endpoint
+     * it uses Get as a default
      */
 
     public QueryEngineCustomHTTP(Query query, HttpClient client, String service) {
         this.query = query;
         this.client = client;
         this.service = service;
+        this.isPostRequest = false;
+    }
+
+    /**
+     * constructor of the class
+     * @param query is a query to run
+     * @param client is a HttpClient
+     * @param service is a url of a SPARQL endpoint
+     * @param isPostRequest is a flag , if it is true then the client uses post if not uses get
+     */
+
+    public QueryEngineCustomHTTP(Query query, HttpClient client, String service, boolean isPostRequest) {
+        this.query = query;
+        this.client = client;
+        this.service = service;
+        this.isPostRequest = isPostRequest;
     }
 
     @Override
@@ -114,6 +134,9 @@ public class QueryEngineCustomHTTP implements QueryExecution {
     }
 
     private String createRequest() {
+        if(isPostRequest){
+            return createRequestPost(0);
+        }
         return createRequest(0);
     }
 
@@ -126,32 +149,82 @@ public class QueryEngineCustomHTTP implements QueryExecution {
 
         HttpResponse response = null;
         try {
-            LOGGER.info("--------Start Reqest------------");
+            LOGGER.info("--------Start Reqest GET------------");
             LOGGER.info(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
-            //HttpGet get = new HttpGet(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
-            HttpPost post = new HttpPost(service );
-            //post.addHeader(new BasicHeader("Content-Type",""));
+            HttpGet get = new HttpGet(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
             if(timeout > 0) {
                 RequestConfig config = RequestConfig.custom()
                         .setConnectTimeout(timeout)
                         .setConnectionRequestTimeout(timeout)
                         .setSocketTimeout(timeout).build();
-                //get.setConfig(config);
+                get.setConfig(config);
+            }
+            get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
+            if(LOGGER.isDebugEnabled()){
+                QueryCounter.add();
+            }
+            response = client.execute(get);
+            String result = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+            LOGGER.debug("http response code is {} query number is {}",String.valueOf(response.getStatusLine().getStatusCode()),QueryCounter.show());
+            if(result.contains("404 File not found") && tryNumber < 5){
+                // face error try one more time
+                LOGGER.info("----------try one more -------------"+tryNumber+"---");
+                TimeUnit.SECONDS.sleep(3);
+                createRequest(tryNumber+1);
+            }
+            LOGGER.debug(result);
+            if(response.getStatusLine().getStatusCode()==404){
+                throw new RuntimeException("There is an error , response is 404");
+            }
+            return result;
+        }
+        catch(SocketTimeoutException e) {
+            LOGGER.debug("Timeout this query: "+query.toString());
+            return "";
+        }
+        catch(ConnectionPoolTimeoutException e) {
+            LOGGER.debug("Timeout this query: "+query.toString());
+            return "";
+        }
+        catch(Exception e){
+            LOGGER.error(e.getMessage() + e.getStackTrace());
+            throw new RuntimeException("There is an error while running the query",e);
+        }finally {
+            // If we received a response, we need to ensure that its entity is consumed correctly to free
+            // all resources
+            if (response != null) {
+                EntityUtils.consumeQuietly(response.getEntity());
+            }
+            close();
+        }
+    }
+
+    private String createRequestPost(int tryNumber) {
+
+        HttpResponse response = null;
+        try {
+            LOGGER.info("--------Start Reqest POST------------");
+            LOGGER.info(service + "?query=" + URLEncoder.encode(query.toString(), "UTF-8"));
+            HttpPost post = new HttpPost(service );
+            if(timeout > 0) {
+                RequestConfig config = RequestConfig.custom()
+                        .setConnectTimeout(timeout)
+                        .setConnectionRequestTimeout(timeout)
+                        .setSocketTimeout(timeout).build();
                 post.setConfig(config);
             }
-            //get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
             String body = query.toString();
             StringEntity stringEntity = new StringEntity(body);
             post.setEntity(stringEntity);
             post.setHeader("Content-Type", "application/sparql-update");
             post.setHeader("Accept", "application/sparql-results+xml");
-           // post.setEntity(new StringEntity("query="+query.toString()));
-            QueryCounter.add();
+            if(LOGGER.isDebugEnabled()){
+                QueryCounter.add();
+            }
             response = client.execute(post);
             String result = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             LOGGER.debug("http response code is {} query number is {}",String.valueOf(response.getStatusLine().getStatusCode()),QueryCounter.show());
             if(result.contains("404 File not found") && tryNumber < 5){
-                // face error try one more time
                 LOGGER.info("----------try one more -------------"+tryNumber+"---");
                 TimeUnit.SECONDS.sleep(3);
                 createRequest(tryNumber+1);

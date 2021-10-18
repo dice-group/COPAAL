@@ -21,15 +21,33 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
    * The url of SPARQL endpoint
    */
   private String service;
+
+  /**
+   * Http client
+   */
   private CloseableHttpClient client;
 
+  /**
+   * this flag show is it should use Post or Get
+   */
+  private boolean isPostRequest;
   /**
    * Constructor.
    * 
    * @param service The URL of the SPARQL endpoint.
    */
   public QueryExecutionFactoryCustomHttp(String service) {
-    this(service, 0);
+    this(service, 0, false);
+  }
+
+  /**
+   * Constructor.
+   *
+   * @param service The URL of the SPARQL endpoint.
+   * @param isPostRequest this flag show is it should use Post or Get
+   */
+  public QueryExecutionFactoryCustomHttp(String service,boolean isPostRequest) {
+    this(service, 0, isPostRequest);
   }
 
   /**
@@ -37,9 +55,11 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
    * 
    * @param service The URL of the SPARQL endpoint.
    * @param timeout The time out for running a query.
+   * @param isPostRequest this flag show is it should use Post or Get
    */
-  public QueryExecutionFactoryCustomHttp(String service, int timeout) {
+  public QueryExecutionFactoryCustomHttp(String service, int timeout,boolean isPostRequest) {
     this.service = service;
+    this.isPostRequest = isPostRequest;
     HttpClientBuilder builder = HttpClientBuilder.create();
     if (timeout > 0) {
       RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout)
@@ -56,10 +76,12 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
    * @param client The HTTP client that will be used to send requests. It should be noted that this
    *        factory will take over the ownership of the client, i.e., it will close the client if
    *        the factory is closed.
+   * @param isPostRequest this flag show is it should use Post or Get
    */
-  public QueryExecutionFactoryCustomHttp(String service, CloseableHttpClient client) {
+  public QueryExecutionFactoryCustomHttp(String service, CloseableHttpClient client,boolean isPostRequest) {
     this.service = service;
     this.client = client;
+    this.isPostRequest = isPostRequest;
   }
 
   @Override
@@ -74,14 +96,14 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
 
   @Override
   public QueryExecution createQueryExecution(Query query) {
-    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTP(query, client, service);
+    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTP(query, client, service,isPostRequest);
     return qe;
   }
 
   @Override
   public QueryExecution createQueryExecution(String queryString) {
     Query query = QueryFactory.create(queryString);
-    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTP(query, client, service);
+    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTP(query, client, service,isPostRequest);
     return qe;
   }
 
