@@ -35,7 +35,7 @@ public class PathDeserializer extends StdDeserializer<QRestrictedPath> {
     String propertyPath = node.get("evidence").asText();
     String verbalization = node.get("verbalization").asText();
     double score = Double.NaN;
-    if (number != null && !number.isBlank()) {
+    if (number != null && !number.isEmpty()) {
       score = Double.parseDouble(number);
     }
     return QRestrictedPath.create(propertyPath, verbalization, score);

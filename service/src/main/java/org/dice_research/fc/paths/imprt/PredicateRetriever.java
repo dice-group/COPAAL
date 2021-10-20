@@ -42,9 +42,9 @@ public class PredicateRetriever {
   public PredicateRetriever(QueryExecutionFactory qef, NamespaceFilter filter) {
     this.qef = qef;
     if (filter.isExcludeMatch()) {
-      this.filter = k -> k.contains(filter.getNamespace());
+      this.filter = k -> k.contains(filter.getNamespaces()[0]); // FIXME!!!
     } else {
-      this.filter = k -> !k.contains(filter.getNamespace());
+      this.filter = k -> !k.contains(filter.getNamespaces()[0]); // FIXME!!!
     }
   }
 

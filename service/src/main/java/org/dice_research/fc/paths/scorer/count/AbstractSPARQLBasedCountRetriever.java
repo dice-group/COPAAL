@@ -47,7 +47,10 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
     queryBuilder.append(COUNT_VARIABLE_NAME);
     queryBuilder.append(") WHERE { ?s <");
     queryBuilder.append(predicate.getProperty().getURI());
-    queryBuilder.append("> ?o }");
+    queryBuilder.append("> ?o . ");
+    predicate.getDomain().addRestrictionToQuery("s", queryBuilder);
+    predicate.getRange().addRestrictionToQuery("o", queryBuilder);
+    queryBuilder.append(" }");
     return executeCountQuery(queryBuilder);
   }
 
@@ -58,7 +61,10 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
    * 
    * @param path the path that should be added to the query
    * @param queryBuilder the builder for the query to which the path should be added
+   * 
+   * @deprecated Use a {@link org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator} instead.
    */
+  @Deprecated
   protected void addAsPropertyPath(QRestrictedPath path, StringBuilder queryBuilder) {
     boolean first = true;
     for (Pair<Property, Boolean> p : path.getPathElements()) {

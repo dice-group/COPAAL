@@ -16,12 +16,16 @@ import org.apache.jena.vocabulary.RDFS;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PredicateFactory implements FactPreprocessor {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(PredicateFactory.class);
+  
   private QueryExecutionFactory executioner;
 
   @Autowired
@@ -32,7 +36,9 @@ public class PredicateFactory implements FactPreprocessor {
   @Override
   public Predicate generatePredicate(Statement triple) {
     Set<String> dTypes = getDomain(triple);
+    LOGGER.trace("Found the following classes for the domain: {}", dTypes);
     Set<String> rTypes = getRange(triple);
+    LOGGER.trace("Found the following classes for the range: {}", rTypes);
 
     ITypeRestriction domain = new TypeBasedRestriction(dTypes);
     ITypeRestriction range = new TypeBasedRestriction(rTypes);

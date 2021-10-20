@@ -19,7 +19,7 @@ import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CountRetrieverTest {
+public class PropPathBasedPairCountRetrieverTest {
 
   @Test
   public void test() {
@@ -40,7 +40,7 @@ public class CountRetrieverTest {
     pathElements.add(new Pair<Property, Boolean>(ResourceFactory.createProperty("http://www.example.org/P1"), true));
     QRestrictedPath path = new QRestrictedPath(pathElements);
 
-    ICountRetriever appCountRetriever = new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef));
+    ICountRetriever appCountRetriever = new PropPathBasedPairCountRetriever(qef, new DefaultMaxCounter(qef));
     long predCount = appCountRetriever.countPredicateInstances(predicate);
     long maxCount = appCountRetriever.deriveMaxCount(predicate);
 

@@ -314,7 +314,7 @@ public class Config {
   @Bean
   public FactPreprocessor getPreprocessor(QueryExecutionFactory qef) {
     if (isVirtualTypes) {
-      return new EmptyPredicateFactory();
+      return new VirtualTypePredicateFactory();
     } else {
       return new PredicateFactory(qef);
     }
