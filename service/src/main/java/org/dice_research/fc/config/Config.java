@@ -1,22 +1,36 @@
 package org.dice_research.fc.config;
 
+
+//import java.util.*;
+
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
+import org.apache.commons.math3.util.Pair;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+
+import org.apache.jena.rdf.model.Property;
+import org.dice_research.fc.IBidirectionalMapper;
 import org.dice_research.fc.IFactChecker;
+import org.dice_research.fc.IMapper;
+import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.*;
+
 import org.dice_research.fc.paths.export.DefaultExporter;
 import org.dice_research.fc.paths.export.IPathExporter;
-import org.dice_research.fc.paths.imprt.DefaultImporter;
-import org.dice_research.fc.paths.imprt.EstherPathProcessor;
-import org.dice_research.fc.paths.imprt.IPathImporter;
-import org.dice_research.fc.paths.imprt.ImportedFactChecker;
-import org.dice_research.fc.paths.imprt.MetaPathsProcessor;
-import org.dice_research.fc.paths.imprt.NoopPathProcessor;
+import org.dice_research.fc.paths.imprt.*;
+
+import org.dice_research.fc.paths.map.PathMapper;
+import org.dice_research.fc.paths.map.PropertyElementMapper;
+import org.dice_research.fc.paths.map.PropertyMapper;
+import org.dice_research.fc.paths.model.Path;
+import org.dice_research.fc.paths.model.PathElement;
+
 import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.PNPMIBasedScorer;
@@ -27,6 +41,7 @@ import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.VirtualTypesMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
+import org.dice_research.fc.paths.search.CachingPathSearcherDecorator;
 import org.dice_research.fc.paths.verbalizer.DefaultPathVerbalizer;
 import org.dice_research.fc.paths.verbalizer.IPathVerbalizer;
 import org.dice_research.fc.paths.verbalizer.NoopVerbalizer;
@@ -137,6 +152,11 @@ public class Config {
    */
   @Value("${dataset.file.metapaths:false}")
   private boolean isPathsLoad;
+  /**
+   * The PathSearcher
+   */
+  @Value("${dataset.pathsearcher.type:}")
+  private String pathSearcher;
 
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -185,8 +205,19 @@ public class Config {
    * @return The desired {@link IPathSearcher} implementation.
    */
   @Bean
-  public IPathSearcher getPathSearcher(QueryExecutionFactory qef, Collection<IRIFilter> filter) {
-    return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
+  public IPathSearcher getPathSearcher(QueryExecutionFactory qef, Collection<IRIFilter> filter,IMapper<Path, QRestrictedPath> mapper,
+                                       IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper,ICountRetriever counterRetrieverClass,
+                                       FactPreprocessor factPreprocessorClass, IPathScorer pathScorerClass) {
+    switch (pathSearcher){
+      case "loadSaveDecorator" :
+        String counterRetriever = counterRetrieverClass.getClass().getName();
+        String factPreprocessor = factPreprocessorClass.getClass().getName();
+        String pathScorer = pathScorerClass.getClass().getName();
+        return new CachingPathSearcherDecorator(new SPARQLBasedSOPathSearcher(qef, maxLength, filter),mapper,propertyElementMapper,counterRetriever,factPreprocessor,pathScorer);
+
+      default:
+        return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
+    }
   }
 
   /**
@@ -314,6 +345,26 @@ public class Config {
     }
   }
 
+  /**
+   * @return {@link PathMapper} .
+   */
+  @Bean
+  public IMapper<Path, QRestrictedPath> getPathMapper(){
+    return new PathMapper();
+  }
+
+  /**
+   * @return {@link PropertyMapper} .
+   */
+  @Bean
+  public IBidirectionalMapper<Property,String> getPropertyMapper(){
+    return new PropertyMapper();
+  }
+
+  @Bean
+  public IMapper<Pair<Property, Boolean>, PathElement> getPropertyElementMapper(){
+    return new PropertyElementMapper();
+  }
   /**
    * @return The desired {@link IPathImporter} implementation.
    */
