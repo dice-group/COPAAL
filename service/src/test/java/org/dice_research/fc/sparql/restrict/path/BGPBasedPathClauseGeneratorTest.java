@@ -34,11 +34,6 @@ public class BGPBasedPathClauseGeneratorTest {
         Property property1 = model.createProperty("http://example.org/property1");
         boolean property1Inverted = true;
 
-        // The second Property
-        //Property
-        Property property2 = model.createProperty("http://example.org/property2");
-        boolean property2Inverted = true;
-
         pathElements.add(new Pair<>(property1,property1Inverted));
         //pathElements.add(new Pair<>(property2,property2Inverted));
 
@@ -123,7 +118,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?x1; ?x1 <http://example.org/property1> ?o.";
+        String expected = "?s <http://example.org/property1> ?x1 . ?x1 <http://example.org/property2> ?o .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -160,7 +155,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?x1 <http://example.org/property1> ?s; ?x1 <http://example.org/property1> ?o.";
+        String expected = "?x1 <http://example.org/property1> ?s . ?x1 <http://example.org/property2> ?o .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -197,7 +192,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?x1; ?o <http://example.org/property1> ?x1.";
+        String expected = "?s <http://example.org/property1> ?x1 . ?o <http://example.org/property2> ?x1 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -234,7 +229,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?x1 <http://example.org/property1> ?s; ?o <http://example.org/property1> ?x1.";
+        String expected = "?x1 <http://example.org/property1> ?s . ?o <http://example.org/property2> ?x1 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -262,6 +257,7 @@ public class BGPBasedPathClauseGeneratorTest {
 
         pathElements.add(new Pair<>(property1,property1Inverted));
         pathElements.add(new Pair<>(property2,property2Inverted));
+        pathElements.add(new Pair<>(property3,property3Inverted));
 
         double score = 0.5;
 
@@ -276,7 +272,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?x1; ?x1 <http://example.org/property2> ?x2; ?x2 <http://example.org/property2> ?o.";
+        String expected = "?s <http://example.org/property1> ?x1 . ?x1 <http://example.org/property2> ?x2 . ?x2 <http://example.org/property3> ?o .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -304,6 +300,7 @@ public class BGPBasedPathClauseGeneratorTest {
 
         pathElements.add(new Pair<>(property1,property1Inverted));
         pathElements.add(new Pair<>(property2,property2Inverted));
+        pathElements.add(new Pair<>(property3,property3Inverted));
 
         double score = 0.5;
 
@@ -318,7 +315,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?x1 <http://example.org/property1> ?s; ?x1 <http://example.org/property2> ?x2; ?x2 <http://example.org/property2> ?o.";
+        String expected = "?x1 <http://example.org/property1> ?s . ?x1 <http://example.org/property2> ?x2 . ?x2 <http://example.org/property3> ?o .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -346,6 +343,7 @@ public class BGPBasedPathClauseGeneratorTest {
 
         pathElements.add(new Pair<>(property1,property1Inverted));
         pathElements.add(new Pair<>(property2,property2Inverted));
+        pathElements.add(new Pair<>(property3,property3Inverted));
 
         double score = 0.5;
 
@@ -360,7 +358,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?x1; ?x2 <http://example.org/property2> ?x1; ?x2 <http://example.org/property2> ?o.";
+        String expected = "?s <http://example.org/property1> ?x1 . ?x2 <http://example.org/property2> ?x1 . ?x2 <http://example.org/property3> ?o .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -388,6 +386,7 @@ public class BGPBasedPathClauseGeneratorTest {
 
         pathElements.add(new Pair<>(property1,property1Inverted));
         pathElements.add(new Pair<>(property2,property2Inverted));
+        pathElements.add(new Pair<>(property3,property3Inverted));
 
         double score = 0.5;
 
@@ -402,7 +401,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?x1; ?x1 <http://example.org/property2> ?x2; ?o <http://example.org/property2> ?x2.";
+        String expected = "?s <http://example.org/property1> ?x1 . ?x1 <http://example.org/property2> ?x2 . ?o <http://example.org/property3> ?x2 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -429,6 +428,7 @@ public class BGPBasedPathClauseGeneratorTest {
 
         pathElements.add(new Pair<>(property1,property1Inverted));
         pathElements.add(new Pair<>(property2,property2Inverted));
+        pathElements.add(new Pair<>(property3,property3Inverted));
 
         double score = 0.5;
 
@@ -443,7 +443,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?x1 <http://example.org/property1> ?s; ?x2 <http://example.org/property2> ?x1; ?x2 <http://example.org/property2> ?o.";
+        String expected = "?x1 <http://example.org/property1> ?s . ?x2 <http://example.org/property2> ?x1 . ?x2 <http://example.org/property3> ?o .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -470,6 +470,7 @@ public class BGPBasedPathClauseGeneratorTest {
 
         pathElements.add(new Pair<>(property1,property1Inverted));
         pathElements.add(new Pair<>(property2,property2Inverted));
+        pathElements.add(new Pair<>(property3,property3Inverted));
 
         double score = 0.5;
 
@@ -484,7 +485,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?x1 <http://example.org/property1> ?s; ?x1 <http://example.org/property2> ?x2; ?o <http://example.org/property2> ?x2.";
+        String expected = "?x1 <http://example.org/property1> ?s . ?x1 <http://example.org/property2> ?x2 . ?o <http://example.org/property3> ?x2 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -511,6 +512,7 @@ public class BGPBasedPathClauseGeneratorTest {
 
         pathElements.add(new Pair<>(property1,property1Inverted));
         pathElements.add(new Pair<>(property2,property2Inverted));
+        pathElements.add(new Pair<>(property3,property3Inverted));
 
         double score = 0.5;
 
@@ -525,7 +527,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?x1; ?x2 <http://example.org/property2> ?x1; ?o <http://example.org/property2> ?x2.";
+        String expected = "?s <http://example.org/property1> ?x1 . ?x2 <http://example.org/property2> ?x1 . ?o <http://example.org/property3> ?x2 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -552,6 +554,7 @@ public class BGPBasedPathClauseGeneratorTest {
 
         pathElements.add(new Pair<>(property1,property1Inverted));
         pathElements.add(new Pair<>(property2,property2Inverted));
+        pathElements.add(new Pair<>(property3,property3Inverted));
 
         double score = 0.5;
 
@@ -566,9 +569,115 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?x1 <http://example.org/property1> ?s; ?x2 <http://example.org/property2> ?x1; ?o <http://example.org/property2> ?x2.";
+        String expected = "?x1 <http://example.org/property1> ?s . ?x2 <http://example.org/property2> ?x1 . ?o <http://example.org/property3> ?x2 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
-    //TODO : write test for the version without intermediateName
+    @Test
+    public void pathLen1NoInvertedNoIntermediateNodeShouldReturnExpectedResult(){
+
+        List<Pair<Property, Boolean>> pathElements = new ArrayList<>();
+
+        Model model = ModelFactory.createDefaultModel();
+
+        // The First Property
+        //Property
+        Property property1 = model.createProperty("http://example.org/property1");
+        boolean property1Inverted = true;
+
+        pathElements.add(new Pair<>(property1,property1Inverted));
+        //pathElements.add(new Pair<>(property2,property2Inverted));
+
+        double score = 0.5;
+
+        QRestrictedPath path = new QRestrictedPath(pathElements,score);
+
+        StringBuilder queryBuilder = new StringBuilder();
+        String subjectVariable = "s";
+        String objectVariable = "o";
+
+        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        generator.addPath(path, queryBuilder, subjectVariable,objectVariable);
+
+        System.out.println(queryBuilder.toString());
+        String expected = "?s <http://example.org/property1> ?o .";
+        Assert.assertEquals(expected,queryBuilder.toString());
+    }
+
+    @Test
+    public void pathLen2secondPropertyWithInvertedNoIntermediateNodeShouldReturnExpectedResult(){
+
+        List<Pair<Property, Boolean>> pathElements = new ArrayList<>();
+
+        Model model = ModelFactory.createDefaultModel();
+
+        // The First Property
+        //Property
+        Property property1 = model.createProperty("http://example.org/property1");
+        boolean property1Inverted = true;
+
+        // The second Property
+        //Property
+        Property property2 = model.createProperty("http://example.org/property2");
+        boolean property2Inverted = false;
+
+        pathElements.add(new Pair<>(property1,property1Inverted));
+        pathElements.add(new Pair<>(property2,property2Inverted));
+
+        double score = 0.5;
+
+        QRestrictedPath path = new QRestrictedPath(pathElements,score);
+
+        StringBuilder queryBuilder = new StringBuilder();
+        String subjectVariable = "s";
+        String objectVariable = "o";
+
+        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        generator.addPath(path, queryBuilder, subjectVariable,objectVariable);
+
+        System.out.println(queryBuilder.toString());
+        String expected = "?s <http://example.org/property1> ?in1 . ?o <http://example.org/property2> ?in1 .";
+        Assert.assertEquals(expected,queryBuilder.toString());
+    }
+
+    @Test
+    public void pathLen3FirstAndThirdPropertiesWithInvertedNoIntermediateNodeShouldReturnExpectedResult(){
+        List<Pair<Property, Boolean>> pathElements = new ArrayList<>();
+
+        Model model = ModelFactory.createDefaultModel();
+
+        // The First Property
+        //Property
+        Property property1 = model.createProperty("http://example.org/property1");
+        boolean property1Inverted = false;
+
+        // The second Property
+        //Property
+        Property property2 = model.createProperty("http://example.org/property2");
+        boolean property2Inverted = true;
+
+        // The third Property
+        //Property
+        Property property3 = model.createProperty("http://example.org/property3");
+        boolean property3Inverted = false;
+
+        pathElements.add(new Pair<>(property1,property1Inverted));
+        pathElements.add(new Pair<>(property2,property2Inverted));
+        pathElements.add(new Pair<>(property3,property3Inverted));
+
+        double score = 0.5;
+
+        QRestrictedPath path = new QRestrictedPath(pathElements,score);
+
+        StringBuilder queryBuilder = new StringBuilder();
+        String subjectVariable = "s";
+        String objectVariable = "o";
+
+        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        generator.addPath(path, queryBuilder, subjectVariable,objectVariable);
+
+        System.out.println(queryBuilder.toString());
+        String expected = "?in1 <http://example.org/property1> ?s . ?in1 <http://example.org/property2> ?in2 . ?o <http://example.org/property3> ?in2 .";
+        Assert.assertEquals(expected,queryBuilder.toString());
+    }
 }
