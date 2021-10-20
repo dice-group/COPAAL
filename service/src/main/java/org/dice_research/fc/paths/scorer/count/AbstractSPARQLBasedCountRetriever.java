@@ -61,7 +61,10 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
    * 
    * @param path the path that should be added to the query
    * @param queryBuilder the builder for the query to which the path should be added
+   * 
+   * @deprecated Use a {@link org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator} instead.
    */
+  @Deprecated
   protected void addAsPropertyPath(QRestrictedPath path, StringBuilder queryBuilder) {
     boolean first = true;
     for (Pair<Property, Boolean> p : path.getPathElements()) {
