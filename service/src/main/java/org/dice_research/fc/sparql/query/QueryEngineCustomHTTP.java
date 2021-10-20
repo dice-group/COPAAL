@@ -168,7 +168,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
             }
             LOGGER.debug(result);
             if(response.getStatusLine().getStatusCode()==404){
-                throw new RuntimeException("There is an error , response is 404");
+                throw new Exception("There is an error , response is 404");
             }
             return result;
         }
@@ -225,7 +225,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
             }
             LOGGER.debug(result);
             if(response.getStatusLine().getStatusCode()==404){
-                throw new RuntimeException("There is an error , response is 404");
+                throw new Exception("There is an error , response is 404");
             }
             return result;
         }
