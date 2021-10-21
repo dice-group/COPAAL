@@ -35,7 +35,7 @@ import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.PNPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
-import org.dice_research.fc.paths.scorer.count.PropPathBasedPairCountRetriever;
+import org.dice_research.fc.paths.scorer.count.PairCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
 import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
@@ -232,11 +232,11 @@ public class Config {
       case "ApproximatingCountRetriever":
         countRetriever = new ApproximatingCountRetriever(qef, maxCounter);
         break;
-      case "PropPathBasedPairCountRetriever":
-        countRetriever = new PropPathBasedPairCountRetriever(qef, maxCounter);
+      case "PairCountRetriever":
+        countRetriever = new PairCountRetriever(qef, maxCounter);
         break;
       default:
-        countRetriever = new PropPathBasedPairCountRetriever(qef, maxCounter);
+        countRetriever = new PairCountRetriever(qef, maxCounter);
         break;
     }
     if (isCache) {

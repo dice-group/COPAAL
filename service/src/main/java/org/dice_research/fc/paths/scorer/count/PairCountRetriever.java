@@ -19,18 +19,18 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public class PropPathBasedPairCountRetriever extends AbstractSPARQLBasedCountRetriever {
+public class PairCountRetriever extends AbstractSPARQLBasedCountRetriever {
 
   protected PathClauseGenerator pathClauseGenerator;
 
   @Autowired
-  public PropPathBasedPairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
+  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
     this(qef, maxCounter, new PropPathBasedPathClauseGenerator());
   }
 
   @Autowired
-  public PropPathBasedPairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter,
-      PathClauseGenerator pathClauseGenerator) {
+  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter,
+                            PathClauseGenerator pathClauseGenerator) {
     super(qef, maxCounter);
     this.pathClauseGenerator = pathClauseGenerator;
   }

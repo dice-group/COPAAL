@@ -15,7 +15,7 @@ import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.FactPreprocessor;
 import org.dice_research.fc.paths.PredicateFactory;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
-import org.dice_research.fc.paths.scorer.count.PropPathBasedPairCountRetriever;
+import org.dice_research.fc.paths.scorer.count.PairCountRetriever;
 import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.junit.Assert;
 import org.junit.Test;
@@ -86,6 +86,6 @@ public class SamplingCountRetrieverDecoratorTest {
 
   protected ICountRetriever createCountRetriever(long seed, QueryExecutionFactory qef) {
     return new SamplingCountRetrieverDecorator(
-        new PropPathBasedPairCountRetriever(qef, new DefaultMaxCounter(qef)), seed, 3, qef);
+        new PairCountRetriever(qef, new DefaultMaxCounter(qef)), seed, 3, qef);
   }
 }

@@ -11,7 +11,7 @@ import org.dice_research.fc.data.FactCheckingResult;
 import org.dice_research.fc.paths.PathBasedFactChecker;
 import org.dice_research.fc.paths.VirtualTypePredicateFactory;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
-import org.dice_research.fc.paths.scorer.count.PropPathBasedPairCountRetriever;
+import org.dice_research.fc.paths.scorer.count.PairCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
 import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
@@ -46,7 +46,7 @@ public class COPAAL {
                     "http://rdf.frockg.eu/frockg/ontology/"}, false)/*,
                 new EqualsFilter(FILTERED_PROPERTIES)*/)),
             new NPMIBasedScorer(new CachingCountRetrieverDecorator(
-                new PropPathBasedPairCountRetriever(qef, new DefaultMaxCounter(qef)))),
+                new PairCountRetriever(qef, new DefaultMaxCounter(qef)))),
             new FixedSummarist());
 
     FactCheckingResult result = checker.check(
