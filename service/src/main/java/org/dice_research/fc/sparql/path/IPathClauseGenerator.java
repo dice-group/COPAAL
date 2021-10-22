@@ -9,7 +9,7 @@ import org.dice_research.fc.data.QRestrictedPath;
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
-public interface PathClauseGenerator {
+public interface IPathClauseGenerator {
 
   public static final String DEFAULT_INTERMEDIATE_VARIABLE_NAME = "in";
 

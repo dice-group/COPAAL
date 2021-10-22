@@ -5,13 +5,13 @@ import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.data.QRestrictedPath;
 
 /**
- * This implementation of a {@link PathClauseGenerator} uses basic graph patterns (BGPs) to express
+ * This implementation of a {@link IPathClauseGenerator} uses basic graph patterns (BGPs) to express
  * the given q-retricted paths. Hence, it works with SPARQL 1.0 endpoints.
  * 
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
-public class BGPBasedPathClauseGenerator implements PathClauseGenerator {
+public class BGPBasedPathClauseGenerator implements IPathClauseGenerator {
 
   @Override
   public void addPath(QRestrictedPath path, StringBuilder queryBuilder, String subjectVariable,

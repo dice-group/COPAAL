@@ -38,6 +38,7 @@ import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.PairCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
 import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
+import org.dice_research.fc.paths.scorer.count.max.HybridMaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.VirtualTypesMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
@@ -48,6 +49,9 @@ import org.dice_research.fc.paths.verbalizer.NoopVerbalizer;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
+import org.dice_research.fc.sparql.path.BGPBasedPathClauseGenerator;
+import org.dice_research.fc.sparql.path.IPathClauseGenerator;
+import org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttp;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttpTimeout;
 import org.dice_research.fc.sum.AdaptedRootMeanSquareSummarist;
@@ -108,8 +112,14 @@ public class Config {
   /**
    * Virtual types flag
    */
-  @Value("${dataset.virtual-types:false}")
-  private boolean isVirtualTypes;
+  @Value("${copaal.factpreprocessor.type}")
+  private String factPreprocessorType;
+  /**
+   * This flag indicate that use BGPVirtualTypeRestriction if it is true
+   */
+  @Value("${copaal.factpreprocessor.ShouldUseBGPVirtualTypeRestriction}")
+  private boolean ShouldUseBGPVirtualTypeRestriction;
+
 
   /**
    * Path's maximum length
@@ -158,6 +168,12 @@ public class Config {
   @Value("${dataset.pathsearcher.type:}")
   private String pathSearcher;
 
+  /**
+   * The Path Clause Generator Type
+   */
+  @Value("${copaal.pathclausegenerator.type:}")
+  private String pathClauseGeneratorType;
+
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
     return new PropertySourcesPlaceholderConfigurer();
@@ -170,8 +186,8 @@ public class Config {
    */
   @Bean
   public MetaPathsProcessor getMetaPathsProcessor(QueryExecutionFactory qef) {
-    switch (metaPaths) {
-      case "EstherPathProcessor":
+    switch (metaPaths.toLowerCase()) {
+      case "estherpathprocessor":
         return new EstherPathProcessor(preprocessedPaths, qef);
       default:
         return new NoopPathProcessor(preprocessedPaths, qef);
@@ -208,8 +224,8 @@ public class Config {
   public IPathSearcher getPathSearcher(QueryExecutionFactory qef, Collection<IRIFilter> filter,IMapper<Path, QRestrictedPath> mapper,
                                        IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper,ICountRetriever counterRetrieverClass,
                                        FactPreprocessor factPreprocessorClass, IPathScorer pathScorerClass) {
-    switch (pathSearcher){
-      case "loadSaveDecorator" :
+    switch (pathSearcher.toLowerCase()){
+      case "loadsavedecorator" :
         String counterRetriever = counterRetrieverClass.getClass().getName();
         String factPreprocessor = factPreprocessorClass.getClass().getName();
         String pathScorer = pathScorerClass.getClass().getName();
@@ -226,17 +242,17 @@ public class Config {
    * @return The desired {@link ICountRetriever} implementation.
    */
   @Bean
-  public ICountRetriever getCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
+  public ICountRetriever getCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IPathClauseGenerator pathClauseGenerator) {
     ICountRetriever countRetriever;
-    switch (counter) {
-      case "ApproximatingCountRetriever":
+    switch (counter.toLowerCase()) {
+      case "approximatingcountretriever":
         countRetriever = new ApproximatingCountRetriever(qef, maxCounter);
         break;
-      case "PairCountRetriever":
-        countRetriever = new PairCountRetriever(qef, maxCounter);
+      case "paircountretriever":
+        countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
         break;
       default:
-        countRetriever = new PairCountRetriever(qef, maxCounter);
+        countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
         break;
     }
     if (isCache) {
@@ -253,12 +269,17 @@ public class Config {
   @Bean
   public MaxCounter getMaxCounter(QueryExecutionFactory qef) {
     MaxCounter maxCounter;
-    if (isVirtualTypes) {
-      maxCounter = new VirtualTypesMaxCounter(qef);
-    } else {
-      maxCounter = new DefaultMaxCounter(qef);
+
+    switch (factPreprocessorType.toLowerCase()) {
+      case ("predicatefactory"):
+        return new DefaultMaxCounter(qef);
+      case ("virtualtypepredicatefactory"):
+        return new VirtualTypesMaxCounter(qef);
+      case ("hybridpredicatefactory"):
+        return new HybridMaxCounter(qef);
+      default:
+        return new DefaultMaxCounter(qef);
     }
-    return maxCounter;
   }
 
   /**
@@ -267,10 +288,10 @@ public class Config {
    */
   @Bean
   public IPathScorer getPathScorer(ICountRetriever countRetriever) {
-    switch (scorer) {
-      case "NPMI":
+    switch (scorer.toLowerCase()) {
+      case "npmi":
         return new NPMIBasedScorer(countRetriever);
-      case "PNPMI":
+      case "pnpmi":
         return new PNPMIBasedScorer(countRetriever);
       default:
         return new NPMIBasedScorer(countRetriever);
@@ -313,10 +334,15 @@ public class Config {
    */
   @Bean
   public FactPreprocessor getPreprocessor(QueryExecutionFactory qef) {
-    if (isVirtualTypes) {
-      return new VirtualTypePredicateFactory();
-    } else {
-      return new PredicateFactory(qef);
+    switch (factPreprocessorType.toLowerCase()) {
+      case ("predicatefactory"):
+        return new PredicateFactory(qef);
+      case ("virtualtypepredicatefactory"):
+        return new VirtualTypePredicateFactory();
+      case ("hybridpredicatefactory"):
+        return new HybridPredicateFactory(qef,ShouldUseBGPVirtualTypeRestriction);
+      default:
+        return new PredicateFactory(qef);
     }
   }
 
@@ -325,20 +351,20 @@ public class Config {
    */
   @Bean
   public ScoreSummarist getSummarist() {
-    switch (summaristType) {
-      case "AdaptedRootMeanSquareSummarist":
+    switch (summaristType.toLowerCase()) {
+      case "adaptedrootmeansquaresummarist":
         return new AdaptedRootMeanSquareSummarist();
-      case "CubicMeanSummarist":
+      case "cubicmeansummarist":
         return new CubicMeanSummarist();
-      case "FixedSummarist":
+      case "fixedsummarist":
         return new FixedSummarist();
-      case "HigherOrderMeanSummarist":
+      case "higherordermeansummarist":
         return new HigherOrderMeanSummarist();
-      case "NegScoresHandlingSummarist":
+      case "negscoreshandlingsummarist":
         return new NegScoresHandlingSummarist();
-      case "OriginalSummarist":
+      case "originalsummarist":
         return new OriginalSummarist();
-      case "SquaredAverageSummarist":
+      case "squaredaveragesummarist":
         return new SquaredAverageSummarist();
       default:
         return new OriginalSummarist();
@@ -379,6 +405,21 @@ public class Config {
   @Bean
   public IPathExporter getExporter() {
     return new DefaultExporter(preprocessedPaths);
+  }
+
+  /**
+   * @return The desired {@link IPathClauseGenerator} implementation.
+   */
+  @Bean
+  IPathClauseGenerator getPathClauseGenerator(){
+    switch (pathClauseGeneratorType.toLowerCase()){
+      case("proppathbasedpathclausegenerator"):
+        return new PropPathBasedPathClauseGenerator();
+      case ("bgpbasedpathclausegenerator"):
+        return new BGPBasedPathClauseGenerator();
+      default:
+        return new PropPathBasedPathClauseGenerator();
+    }
   }
 
   /**

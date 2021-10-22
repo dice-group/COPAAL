@@ -5,13 +5,13 @@ import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.data.QRestrictedPath;
 
 /**
- * This implementation of a {@link PathClauseGenerator} uses property paths as defined in SPARQL 1.1
+ * This implementation of a {@link IPathClauseGenerator} uses property paths as defined in SPARQL 1.1
  * to express the given q-retricted paths.
  * 
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
-public class PropPathBasedPathClauseGenerator implements PathClauseGenerator {
+public class PropPathBasedPathClauseGenerator implements IPathClauseGenerator {
 
   @Override
   public void addPath(QRestrictedPath path, StringBuilder queryBuilder, String subjectVariable,

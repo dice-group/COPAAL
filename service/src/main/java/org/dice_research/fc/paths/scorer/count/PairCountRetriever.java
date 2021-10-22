@@ -4,7 +4,7 @@ import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
-import org.dice_research.fc.sparql.path.PathClauseGenerator;
+import org.dice_research.fc.sparql.path.IPathClauseGenerator;
 import org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PairCountRetriever extends AbstractSPARQLBasedCountRetriever {
 
-  protected PathClauseGenerator pathClauseGenerator;
+  protected IPathClauseGenerator pathClauseGenerator;
 
   @Autowired
   public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
@@ -30,7 +30,7 @@ public class PairCountRetriever extends AbstractSPARQLBasedCountRetriever {
 
   @Autowired
   public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter,
-                            PathClauseGenerator pathClauseGenerator) {
+                            IPathClauseGenerator pathClauseGenerator) {
     super(qef, maxCounter);
     this.pathClauseGenerator = pathClauseGenerator;
   }

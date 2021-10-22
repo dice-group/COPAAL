@@ -1,6 +1,5 @@
 package org.dice_research.fc.sparql.restrict.path;
 
-import com.github.andrewoma.dexx.collection.Set;
 import org.apache.commons.math3.util.Pair;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -8,7 +7,7 @@ import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.run.Application;
 import org.dice_research.fc.sparql.path.BGPBasedPathClauseGenerator;
-import org.dice_research.fc.sparql.path.PathClauseGenerator;
+import org.dice_research.fc.sparql.path.IPathClauseGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +45,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -77,7 +76,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -114,7 +113,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -151,7 +150,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -188,7 +187,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -225,7 +224,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -268,7 +267,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -311,7 +310,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -354,7 +353,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -397,7 +396,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -439,7 +438,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -481,7 +480,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -523,7 +522,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -565,7 +564,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String objectVariable = "o";
         String intermediateName = "x";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
@@ -596,7 +595,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String subjectVariable = "s";
         String objectVariable = "o";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable);
 
         System.out.println(queryBuilder.toString());
@@ -632,7 +631,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String subjectVariable = "s";
         String objectVariable = "o";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable);
 
         System.out.println(queryBuilder.toString());
@@ -673,7 +672,7 @@ public class BGPBasedPathClauseGeneratorTest {
         String subjectVariable = "s";
         String objectVariable = "o";
 
-        PathClauseGenerator generator = new BGPBasedPathClauseGenerator();
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator();
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable);
 
         System.out.println(queryBuilder.toString());
