@@ -2,6 +2,7 @@ package org.dice.FactCheck.preprocess.model;
 
 import org.apache.jena.vocabulary.RDF;
 
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -42,5 +43,19 @@ public class TypeBasedRestriction implements ITypeRestriction {
             builder.append(type);
             builder.append("> . ");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TypeBasedRestriction that = (TypeBasedRestriction) o;
+        return Objects.equals(types, that.types) &&
+                Objects.equals(typeIRI, that.typeIRI);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(types, typeIRI);
     }
 }

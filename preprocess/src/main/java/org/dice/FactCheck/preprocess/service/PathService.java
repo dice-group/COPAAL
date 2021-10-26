@@ -39,7 +39,7 @@ public class PathService implements IPathService{
                     }
                     if(predicateFisrt.getRange().equals(predicateSecond.getRange())){
                         // the range and range are compatible
-                        // P1 range->  P2
+                        // P1 range-> range P2
                         // add as path
                         Path path = new Path();
                         path.addPart(predicateFisrt,false);
@@ -48,6 +48,7 @@ public class PathService implements IPathService{
                     }
                     if(predicateFisrt.getDomain().equals(predicateSecond.getDomain())){
                         // the range and domain are compatible
+                        // Domain P1 -> Domain P2
                         // add as path
                         Path path = new Path();
                         path.addPart(predicateFisrt,true);
@@ -56,6 +57,7 @@ public class PathService implements IPathService{
                     }
                     if(predicateFisrt.getDomain().equals(predicateSecond.getRange())){
                         // the range and domain are compatible
+                        // Domain P1 -> P2 Range
                         // add as path
                         Path path = new Path();
                         path.addPart(predicateFisrt,true);
