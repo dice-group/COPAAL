@@ -1,5 +1,6 @@
 package org.dice.FactCheck.preprocess.service;
 
+import org.apache.commons.math3.util.Pair;
 import org.dice.FactCheck.preprocess.model.Path;
 import org.dice.FactCheck.preprocess.model.Predicate;
 
@@ -20,9 +21,9 @@ public class PathService implements IPathService{
         return allPathWithAllLength;
     }
 
-    public Set<Path> getAllLists(Set<Predicate> elements, int lengthOfList) throws CloneNotSupportedException {
+    public List<Path> getAllLists(List<Predicate> elements, int lengthOfList) throws CloneNotSupportedException {
         //initialize our returned list with the number of elements calculated above
-        Set<Path> allLists = new HashSet<>();
+        List<Path> allLists = new ArrayList<>();
 
         //lists of length 1 are just the original elements
         if(lengthOfList == 1) {
@@ -36,22 +37,23 @@ public class PathService implements IPathService{
         else
         {
             //the recursion--get all lists of length n,..., length 2, all the way up to 1
-            Set<Path> allSubset = getAllLists(elements, lengthOfList - 1);
+            List<Path> allSublists = getAllLists(elements, lengthOfList - 1);
 
-            List<Path> allSublistsList = new ArrayList<>(allSubset);
-            List<Predicate> elementList = new ArrayList<>(elements);
-
-            for(int i = 0; i < elementList.size(); i++)
+            for(int i = 0; i < elements.size(); i++)
             {
-                for(int j = 0; j < allSublistsList.size(); j++)
+                for(int j = 0; j < allSublists.size(); j++)
                 {
                     //add the newly appended combination to the list
-                    Path tempPath1 = (Path) allSublistsList.get(j).clone();
-                    tempPath1.addPart(elementList.get(i),true);
-                    allLists.add(tempPath1);
-                    Path tempPath2 = (Path) allSublistsList.get(j).clone();
-                    tempPath2.addPart(elementList.get(i),false);
-                    allLists.add(tempPath2);
+                    if(newPathCompatibleWithExistingPath(allSublists.get(j), elements.get(i),true)) {
+                        Path tempPath = allSublists.get(j).clone();
+                        tempPath.addPart(elements.get(i),true);
+                        allLists.add(tempPath);
+                    }
+                    if(newPathCompatibleWithExistingPath(allSublists.get(j), elements.get(i),false)){
+                        Path tempPath = allSublists.get(j).clone();
+                        tempPath.addPart(elements.get(i),false);
+                        allLists.add(tempPath);
+                    }
                 }
             }
             allPathWithAllLength.addAll(allLists);
@@ -59,11 +61,41 @@ public class PathService implements IPathService{
         }
     }
 
+    private boolean newPathCompatibleWithExistingPath(Path path, Predicate predicateSecond, boolean secondInverted) {
+         Pair<Predicate,Boolean> lastNode = path.getLastNode();
+        Predicate predicateFisrt = path.getLastNode().getFirst();
+        Boolean firstInverted = path.getLastNode().getSecond();
+
+        if(firstInverted == false && secondInverted == false && predicateFisrt.getRange().equals(predicateSecond.getDomain())){
+            // the range and domain are compatible
+            // P1 range-> domain P2
+            return true;
+        }
+        if(firstInverted == false && secondInverted == true && predicateFisrt.getRange().equals(predicateSecond.getRange())){
+            // the range and range are compatible
+            // P1 range->  P2 range
+            return true;
+        }
+        if(firstInverted == true && secondInverted == false && predicateFisrt.getDomain().equals(predicateSecond.getDomain())){
+            // the range and domain are compatible
+            // domain P1 ->  domain P2
+            return true;
+
+        }
+        if(firstInverted == true && secondInverted == true && predicateFisrt.getDomain().equals(predicateSecond.getRange())){
+            // the range and domain are compatible
+            // domain P1 ->   P2 range
+            return true;
+        }
+        return false;
+    }
+
+
     @Override
-    public Collection<Path> generateAllPaths(Collection<Predicate> predicates, int maximumLengthOfPaths) throws CloneNotSupportedException {
+    public Collection<Path> generateAllPaths(Collection<Predicate> predicates,int maximumLengthOfPaths) throws CloneNotSupportedException {
         // convert to set because we dont want to have duplicated items
         Set<Predicate> setOfPredicates = new HashSet<>(predicates);
-        maximumLengthOfPaths = Math.min(maximumLengthOfPaths,setOfPredicates.size());
-        return getAllLists(setOfPredicates,maximumLengthOfPaths);
+        List<Predicate> listOfPredicates = new ArrayList<>(setOfPredicates);
+        return getAllLists(listOfPredicates,maximumLengthOfPaths);
     }
 }

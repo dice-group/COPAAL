@@ -34,6 +34,11 @@ public class Path implements Cloneable{
         return paths;
     }
 
+    public Pair<Predicate, Boolean> getLastNode(){
+        if(paths.size()==0) return null;
+        return paths.get(paths.size()-1);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
