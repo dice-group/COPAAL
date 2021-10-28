@@ -10,13 +10,20 @@ import java.util.Objects;
  * @author Farshad Afshari
  *
  */
-public class Path {
+public class Path implements Cloneable{
     private LinkedList<Pair<Predicate, Boolean>> paths;
 
     public Path() {this.paths = new LinkedList<>();}
 
     public Path(LinkedList<Pair<Predicate, Boolean>> paths) {
         this.paths = paths;
+    }
+
+    public Path(Predicate predicate , Boolean inverted) {
+        Pair<Predicate,Boolean> pair = new Pair<>(predicate,inverted);
+        LinkedList<Pair<Predicate, Boolean>> ll = new LinkedList<>();
+        ll.add(pair);
+        this.paths = new LinkedList<Pair<Predicate, Boolean>>(ll);
     }
 
     public void addPart(Predicate input,Boolean isInverted){
@@ -38,5 +45,14 @@ public class Path {
     @Override
     public int hashCode() {
         return Objects.hash(getPaths());
+    }
+
+    public Path clone() throws CloneNotSupportedException {
+        LinkedList<Pair<Predicate, Boolean>> clonedPaths = new LinkedList<>();
+        for(Pair<Predicate, Boolean> pair : paths){
+            Pair<Predicate, Boolean> clonedPair = new Pair<Predicate, Boolean>((Predicate) pair.getFirst().clone(), pair.getSecond());
+            clonedPaths.add(clonedPair);
+        }
+        return new Path(clonedPaths);
     }
 }

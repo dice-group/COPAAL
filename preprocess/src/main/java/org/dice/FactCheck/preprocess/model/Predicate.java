@@ -2,6 +2,8 @@ package org.dice.FactCheck.preprocess.model;
 
 import org.apache.jena.rdf.model.Property;
 
+import java.util.Objects;
+
 
 /**
  * The representation of the predicate of a fact that should be checked.
@@ -9,7 +11,7 @@ import org.apache.jena.rdf.model.Property;
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
-public class Predicate {
+public class Predicate implements Cloneable {
 
     /**
      * The property (i.e., IRI) of the predicate
@@ -72,4 +74,22 @@ public class Predicate {
         this.range = range;
     }
 
+    public Object clone()throws CloneNotSupportedException{
+        return super.clone();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Predicate predicate = (Predicate) o;
+        return Objects.equals(getProperty(), predicate.getProperty()) &&
+                Objects.equals(getDomain(), predicate.getDomain()) &&
+                Objects.equals(getRange(), predicate.getRange());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getProperty(), getDomain(), getRange());
+    }
 }

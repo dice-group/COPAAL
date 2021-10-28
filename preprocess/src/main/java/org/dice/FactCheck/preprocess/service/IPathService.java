@@ -4,6 +4,8 @@ import org.dice.FactCheck.preprocess.model.Path;
 import org.dice.FactCheck.preprocess.model.Predicate;
 
 import java.util.Collection;
+import java.util.Set;
+
 /**
  * Interface for a path service
  *
@@ -13,5 +15,6 @@ import java.util.Collection;
 
 
 public interface IPathService {
-    Collection<Path> generateAllPaths(Collection<Predicate> predicates);
+    Set<Path> getAllPathWithAllLength();
+    Collection<Path> generateAllPaths(Collection<Predicate> predicates) throws CloneNotSupportedException;
 }

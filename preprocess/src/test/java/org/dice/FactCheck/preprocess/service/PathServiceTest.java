@@ -22,7 +22,7 @@ import java.util.*;
 public class PathServiceTest {
 
     @Test
-    public void forOnePredicateServiceShouldReturnNoPath(){
+    public void forOnePredicateServiceShouldReturnNoPath() throws CloneNotSupportedException {
         IPathService service = new PathService();
 
         //Property
@@ -71,7 +71,7 @@ public class PathServiceTest {
     * */
 
     @Test
-    public void forTwoPredicateWithSameDomainAndRangeServiceShouldReturnCorrectAnswer(){
+    public void forTwoPredicateWithSameDomainAndRangeServiceShouldReturnCorrectAnswer() throws CloneNotSupportedException {
         IPathService service = new PathService();
 
         // The First Property
@@ -109,9 +109,30 @@ public class PathServiceTest {
         Predicate predicate2 = new Predicate(property2,domain2,range2);
         input.add(predicate2);
 
-        Set<Path> actual = (Set<Path>) service.generateAllPaths(input);
+        // The third Property
+        //Property
+        Property property3 = model.createProperty("http://example.org/property3");
 
-        Assert.assertEquals(16 ,actual.size());
+        Predicate predicate3 = new Predicate(property3,domain2,range2);
+        input.add(predicate2);
+
+        service.generateAllPaths(input);
+
+        Set<Path> actual = service.getAllPathWithAllLength();
+
+        Assert.assertEquals(20 ,actual.size());
+
+        // P1 T
+        Assert.assertEquals(true, theExpectedResultExists(actual , predicate1 , true));
+
+        // P1 F
+        Assert.assertEquals(true, theExpectedResultExists(actual , predicate1 , false));
+
+        // P2 T
+        Assert.assertEquals(true, theExpectedResultExists(actual , predicate2 , true));
+
+        // P2 T
+        Assert.assertEquals(true, theExpectedResultExists(actual , predicate2 , false));
 
         // P1 T P1 T
         Assert.assertEquals(true, theExpectedResultExists(actual , predicate1 , predicate1 , true ,true));
@@ -160,6 +181,18 @@ public class PathServiceTest {
 
         // P2 F P2 F
         Assert.assertEquals(true, theExpectedResultExists(actual , predicate2 , predicate2 , false , false));
+
+        // should not exist
+
+        // P3 T
+        Assert.assertEquals(false, theExpectedResultExists(actual , predicate3 , true));
+    }
+
+    private boolean theExpectedResultExists(Set<Path> actual, Predicate predicate1, boolean inverted1) {
+        LinkedList<Pair<Predicate, Boolean>> ShouldContainsThisSubPaths = new LinkedList<>();
+        ShouldContainsThisSubPaths.add(new Pair<>(predicate1,inverted1));
+        Path shouldContainThisPath = new Path(ShouldContainsThisSubPaths);
+        return actual.contains(shouldContainThisPath);
     }
 
     private boolean theExpectedResultExists(Set<Path> actual, Predicate predicate1, Predicate predicate2, boolean inverted1, boolean inverted2) {
@@ -168,5 +201,46 @@ public class PathServiceTest {
         ShouldContainsThisSubPaths.add(new Pair<>(predicate2,inverted2));
         Path shouldContainThisPath = new Path(ShouldContainsThisSubPaths);
         return actual.contains(shouldContainThisPath);
+    }
+
+    @Test
+    public void howMuchTimeDoesItNeed() throws CloneNotSupportedException {
+        IPathService service = new PathService();
+
+        int numberOfProperties = 6;
+
+        List<Predicate> input = new ArrayList<>();
+
+        long startTime = System.nanoTime();
+
+        for(int i = 0 ; i < numberOfProperties ; i++){
+            //Property
+            Model model = ModelFactory.createDefaultModel();
+            Property property = model.createProperty("http://example.org/property"+i);
+
+            //Domain
+            Set<String> domainSet = new HashSet<String>();
+            domainSet.add("x");
+            ITypeRestriction domain = new TypeBasedRestriction(domainSet);
+
+            //Range
+            Set<String> rangeSet = new HashSet<String>();
+            rangeSet.add("x");
+            ITypeRestriction range = new TypeBasedRestriction(rangeSet);
+
+            Predicate predicate = new Predicate(property,domain,range);
+            input.add(predicate);
+        }
+
+        service.generateAllPaths(input);
+
+        long endTime   = System.nanoTime();
+        long totalTime = endTime - startTime;
+        Set<Path> actual = service.getAllPathWithAllLength();
+        System.out.println("total time "+totalTime/1000000000+ " sec .");
+        System.out.println("number of combination " +actual.size());
+
+
+
     }
 }
