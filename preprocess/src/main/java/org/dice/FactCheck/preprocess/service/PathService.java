@@ -63,26 +63,26 @@ public class PathService implements IPathService{
 
     private boolean newPathCompatibleWithExistingPath(Path path, Predicate predicateSecond, boolean secondInverted) {
          Pair<Predicate,Boolean> lastNode = path.getLastNode();
-        Predicate predicateFisrt = path.getLastNode().getFirst();
+        Predicate predicateFirst = path.getLastNode().getFirst();
         Boolean firstInverted = path.getLastNode().getSecond();
 
-        if(firstInverted == false && secondInverted == false && predicateFisrt.getRange().equals(predicateSecond.getDomain())){
+        if(firstInverted == false && secondInverted == false && predicateFirst.getRange().equals(predicateSecond.getDomain())){
             // the range and domain are compatible
             // P1 range-> domain P2
             return true;
         }
-        if(firstInverted == false && secondInverted == true && predicateFisrt.getRange().equals(predicateSecond.getRange())){
+        if(firstInverted == false && secondInverted == true && predicateFirst.getRange().equals(predicateSecond.getRange())){
             // the range and range are compatible
             // P1 range->  P2 range
             return true;
         }
-        if(firstInverted == true && secondInverted == false && predicateFisrt.getDomain().equals(predicateSecond.getDomain())){
+        if(firstInverted == true && secondInverted == false && predicateFirst.getDomain().equals(predicateSecond.getDomain())){
             // the range and domain are compatible
             // domain P1 ->  domain P2
             return true;
 
         }
-        if(firstInverted == true && secondInverted == true && predicateFisrt.getDomain().equals(predicateSecond.getRange())){
+        if(firstInverted == true && secondInverted == true && predicateFirst.getDomain().equals(predicateSecond.getRange())){
             // the range and domain are compatible
             // domain P1 ->   P2 range
             return true;

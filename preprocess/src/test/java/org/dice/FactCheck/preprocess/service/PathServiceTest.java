@@ -478,8 +478,8 @@ public class PathServiceTest {
     public void howMuchTimeDoesItNeed() throws CloneNotSupportedException {
         IPathService service = new PathService();
 
-        //int numberOfProperties = 60;
-        int numberOfProperties = 6;
+        int numberOfProperties = 32;
+        //int numberOfProperties = 6;
 
         List<Predicate> input = new ArrayList<>();
 
