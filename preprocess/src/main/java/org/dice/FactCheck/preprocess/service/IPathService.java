@@ -16,5 +16,5 @@ import java.util.Set;
 
 public interface IPathService {
     Set<Path> getAllPathWithAllLength();
-    Collection<Path> generateAllPaths(Collection<Predicate> predicates) throws CloneNotSupportedException;
+    Collection<Path> generateAllPaths(Collection<Predicate> predicates, int maximumLengthOfPaths) throws CloneNotSupportedException;
 }

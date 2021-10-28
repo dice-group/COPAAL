@@ -42,7 +42,7 @@ public class PathServiceTest {
         List<Predicate> input = new ArrayList<>();
         input.add(new Predicate(property,domain,range));
 
-        Set<Path> actual = (Set<Path>) service.generateAllPaths(input);
+        Set<Path> actual = (Set<Path>) service.generateAllPaths(input,1);
 
         Assert.assertEquals(0, actual.size());
     }
@@ -116,7 +116,7 @@ public class PathServiceTest {
         Predicate predicate3 = new Predicate(property3,domain2,range2);
         input.add(predicate2);
 
-        service.generateAllPaths(input);
+        service.generateAllPaths(input,2);
 
         Set<Path> actual = service.getAllPathWithAllLength();
 
@@ -207,7 +207,7 @@ public class PathServiceTest {
     public void howMuchTimeDoesItNeed() throws CloneNotSupportedException {
         IPathService service = new PathService();
 
-        int numberOfProperties = 6;
+        int numberOfProperties = 60;
 
         List<Predicate> input = new ArrayList<>();
 
@@ -232,7 +232,7 @@ public class PathServiceTest {
             input.add(predicate);
         }
 
-        service.generateAllPaths(input);
+        service.generateAllPaths(input, 3);
 
         long endTime   = System.nanoTime();
         long totalTime = endTime - startTime;

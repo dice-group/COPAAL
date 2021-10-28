@@ -20,9 +20,9 @@ public class PathService implements IPathService{
         return allPathWithAllLength;
     }
 
-    public List<Path> getAllLists(List<Predicate> elements, int lengthOfList) throws CloneNotSupportedException {
+    public Set<Path> getAllLists(Set<Predicate> elements, int lengthOfList) throws CloneNotSupportedException {
         //initialize our returned list with the number of elements calculated above
-        List<Path> allLists = new ArrayList<>();
+        Set<Path> allLists = new HashSet<>();
 
         //lists of length 1 are just the original elements
         if(lengthOfList == 1) {
@@ -36,18 +36,21 @@ public class PathService implements IPathService{
         else
         {
             //the recursion--get all lists of length n,..., length 2, all the way up to 1
-            List<Path> allSublists = getAllLists(elements, lengthOfList - 1);
+            Set<Path> allSubset = getAllLists(elements, lengthOfList - 1);
 
-            for(int i = 0; i < elements.size(); i++)
+            List<Path> allSublistsList = new ArrayList<>(allSubset);
+            List<Predicate> elementList = new ArrayList<>(elements);
+
+            for(int i = 0; i < elementList.size(); i++)
             {
-                for(int j = 0; j < allSublists.size(); j++)
+                for(int j = 0; j < allSublistsList.size(); j++)
                 {
                     //add the newly appended combination to the list
-                    Path tempPath1 = (Path) allSublists.get(j).clone();
-                    tempPath1.addPart(elements.get(i),true);
+                    Path tempPath1 = (Path) allSublistsList.get(j).clone();
+                    tempPath1.addPart(elementList.get(i),true);
                     allLists.add(tempPath1);
-                    Path tempPath2 = (Path) allSublists.get(j).clone();
-                    tempPath2.addPart(elements.get(i),false);
+                    Path tempPath2 = (Path) allSublistsList.get(j).clone();
+                    tempPath2.addPart(elementList.get(i),false);
                     allLists.add(tempPath2);
                 }
             }
@@ -57,10 +60,10 @@ public class PathService implements IPathService{
     }
 
     @Override
-    public Collection<Path> generateAllPaths(Collection<Predicate> predicates) throws CloneNotSupportedException {
+    public Collection<Path> generateAllPaths(Collection<Predicate> predicates, int maximumLengthOfPaths) throws CloneNotSupportedException {
         // convert to set because we dont want to have duplicated items
         Set<Predicate> setOfPredicates = new HashSet<>(predicates);
-        List<Predicate> listOfPredicates = new ArrayList<>(setOfPredicates);
-        return getAllLists(listOfPredicates,listOfPredicates.size());
+        maximumLengthOfPaths = Math.min(maximumLengthOfPaths,setOfPredicates.size());
+        return getAllLists(setOfPredicates,maximumLengthOfPaths);
     }
 }
