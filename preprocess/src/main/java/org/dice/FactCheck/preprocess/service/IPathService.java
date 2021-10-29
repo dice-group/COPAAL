@@ -1,7 +1,7 @@
 package org.dice.FactCheck.preprocess.service;
 
 import org.dice.FactCheck.preprocess.model.Path;
-import org.dice.FactCheck.preprocess.model.Predicate;
+import org.dice_research.fc.data.Predicate;
 
 import java.util.Collection;
 import java.util.Set;

@@ -3,7 +3,7 @@ package org.dice.FactCheck.preprocess.model;
 import org.apache.commons.math3.util.Pair;
 import java.util.LinkedList;
 import java.util.Objects;
-
+import org.dice_research.fc.data.Predicate;
 /**
  * This class is a Path of predicates and
  *
