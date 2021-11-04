@@ -7,25 +7,32 @@ import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.ResultSet;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.impl.PropertyImpl;
-import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.paths.PredicateFactory;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
-import org.hibernate.tuple.PropertyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.FileReader;
+import java.util.Iterator;
+
 /*
-* this class fetch all predicates from KG
+*
 * */
 
 public class PredicateService implements IPredicateService{
@@ -40,12 +47,53 @@ public class PredicateService implements IPredicateService{
         predicateFacroty = new PredicateFactory(executioner);
     }
 
+    //this method fetch all predicates from KG
     @Override
     public Collection<Predicate> allPredicates(Collection<String> predicateFilter) {
         Set<Predicate> predicates = new HashSet<Predicate>();
         Set<String> predicatesIRIs = (Set<String>) allPredicateIRIs(predicateFilter);
         for(String iri : predicatesIRIs){
             predicates.add(convertToPredicate(iri));
+        }
+        return predicates;
+    }
+
+    @Override
+    public Collection<Predicate> allPredicates(String fileName) {
+        Set<Predicate> predicates = new HashSet<Predicate>();
+        JSONParser parser = new JSONParser();
+        try {
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            InputStream is = classloader.getResourceAsStream(fileName);
+            Object obj = parser.parse(new InputStreamReader(is));
+
+            // A JSON object. Key value pairs are unordered. JSONObject supports java.util.Map interface.
+            JSONArray Predicates = (JSONArray) obj;
+
+            Iterator<JSONObject> iterator = Predicates.iterator();
+            while (iterator.hasNext()) {
+                JSONObject jsonPredicate = iterator.next();
+                // get domain
+                Set<String> domainsSet = new HashSet<>();
+                JSONArray domainsJson = (JSONArray)jsonPredicate.get("Domain") ;
+                for(int i = 0 ; i < domainsJson.size() ; i++){
+                    domainsSet.add(domainsJson.get(i).toString());
+                }
+                TypeBasedRestriction domain = new TypeBasedRestriction(domainsSet);
+                // get range
+                Set<String> rangesSet = new HashSet<>();
+                JSONArray rangesJson = (JSONArray)jsonPredicate.get("Range") ;
+                for(int i = 0 ; i < rangesJson.size() ; i++){
+                    rangesSet.add(rangesJson.get(i).toString());
+                }
+                TypeBasedRestriction range = new TypeBasedRestriction(rangesSet);
+
+                Property p = new PropertyImpl(jsonPredicate.get("Predicate").toString());
+                Predicate predicate = new Predicate(p,domain,range);
+                predicates.add(predicate);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return predicates;
     }
@@ -80,7 +128,6 @@ public class PredicateService implements IPredicateService{
         }
         return sTypes;
     }
-
 
     public Set<String> getObjects(Resource subject, Property predicate) {
         Set<String> types = new HashSet<String>();

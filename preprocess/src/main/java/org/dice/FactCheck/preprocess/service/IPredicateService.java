@@ -7,4 +7,5 @@ import org.dice_research.fc.data.Predicate;
 public interface IPredicateService {
 
     public Collection<Predicate> allPredicates(Collection<String> predicateFilter);
+    public Collection<Predicate> allPredicates(String fileName);
 }
