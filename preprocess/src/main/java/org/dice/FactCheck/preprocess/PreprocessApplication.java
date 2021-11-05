@@ -17,6 +17,10 @@ import org.springframework.context.annotation.ComponentScan;
 
 import java.io.*;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -25,7 +29,9 @@ import java.util.Set;
 public class PreprocessApplication implements CommandLineRunner {
     //http://127.0.0.1:9080/stream?query=SELECT%20%3Fp%20WHERE%20%7B%20%3Fs%20%3Fp%20%3Fo%20.%20%7D
 	//https://dbpedia.org/sparql
+	String dateStr;
 	private String progressFileName;
+	private boolean isIndividual = true;
 	HashMap<Integer,String> progress = new HashMap<>();
 	private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
@@ -41,11 +47,11 @@ public class PreprocessApplication implements CommandLineRunner {
 		if (args.length == 1) {
 			if(args[0].equals("h")){
 				System.out.println("help");
-				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part]: this will read file and run queries in that file");
+				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part] [C for cumulative result or I for individual]: this will read file and run queries in that file");
 			}
 		}
 
-		if(args.length == 4){
+		if(args.length == 5){
 			if(args[0].equals("f")){
 				System.out.println("looking at "+ args[1]+" for a file");
 				/*try {
@@ -82,6 +88,8 @@ public class PreprocessApplication implements CommandLineRunner {
 					return;
 				}
 
+
+
 				//Progress File
 
 				progressFileName = args[1]+".prg";
@@ -106,19 +114,37 @@ public class PreprocessApplication implements CommandLineRunner {
 				}else{
 					System.out.println("progress file does not exist");
 				}
+
+				// how save the result
+				if(args[4].equals("C")){
+					isIndividual = false;
+				}else{
+					if(args[4].equals("I")){
+						isIndividual = true;
+					}else{
+						System.out.println("The 4Th argument should be C or I");
+					}
+				}
+
+				// set date str
+				Date date = Calendar.getInstance().getTime();
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss");
+				dateStr = dateFormat.format(date);
+
 				// read the query file
 				try (BufferedReader br = new BufferedReader(new FileReader(args[1]))) {
 					String line;
 					Integer lineCounter = 1;
 					while ((line = br.readLine()) != null) {
 						// process the line.
+						line = line.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
 						if(!progress.containsKey(lineCounter))
 						{
 							// check fact
 							String result = doQuery(line, args[3]);
 							if(!result.equals("")) {
 								//long resultNumber = countTheLines(result);
-								save(line,result,args[2]);
+								save(line,result,args[2],isIndividual);
 								System.out.println("running query was successful");
 								progress.put(lineCounter, "successful");
 							}else {
@@ -152,15 +178,37 @@ public class PreprocessApplication implements CommandLineRunner {
 			pw.close();
 		}
 	}
-	private void save(String query, String result, String path)  {
-		String oldQuery = new String(query);
-		query = query.replace(" ","").replace("\n","");
-		String filePath = path+DigestUtils.md5Hex(query).toUpperCase()+".tsv";
-		System.out.println("save result at "+filePath);
-		try {
-			writeToFile(result, filePath, oldQuery);
-		}catch(Exception ex){
-			System.out.println(ex);
+
+	// save each file or save all result in one file
+
+	private void save(String query, String result, String path, Boolean individual)  {
+		if(individual){
+			String oldQuery = new String(query);
+			query = query.replace(" ","").replace("\n","");
+			String filePath = path+DigestUtils.md5Hex(query).toUpperCase()+".tsv";
+			System.out.println("save result at "+filePath);
+			try {
+				writeToFile(result, filePath, oldQuery);
+			}catch(Exception ex){
+				System.out.println(ex);
+			}
+		}else{
+			// write result in one File
+			try
+			{
+				String filename= path+"cumulativeResult"+dateStr+".tsv";
+				FileWriter fw = new FileWriter(filename,true); //the true will append the new data
+				fw.write(result.replace("\n",""));
+				fw.write("\t");
+				fw.write(query);
+				fw.write("\n");
+				fw.close();
+			}
+			catch(IOException ioe)
+			{
+				System.err.println("IOException: " + ioe.getMessage());
+			}
+
 		}
 
 	}
@@ -195,7 +243,6 @@ public class PreprocessApplication implements CommandLineRunner {
 		//String endpoint = "https://synthg-fact.dice-research.org/sparql";
 
 		try{
-			query = query.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
 			String url = endpoint+ URLEncoder.encode(query, "UTF-8");
 			System.out.println(url);
 			HttpGet request = new HttpGet(url);
