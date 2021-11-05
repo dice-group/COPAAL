@@ -16,3 +16,6 @@
 # Maven
 log/
 target/
+
+#progress files
+*.prg
