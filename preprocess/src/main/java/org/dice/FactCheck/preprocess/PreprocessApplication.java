@@ -23,8 +23,8 @@ import java.util.Set;
 @SpringBootApplication
 @ComponentScan("org.dice.FactCheck.preprocess.config")
 public class PreprocessApplication implements CommandLineRunner {
-
-	String endpoint = "https://dbpedia.org/sparql";
+    //http://127.0.0.1:9080/stream?query=SELECT%20%3Fp%20WHERE%20%7B%20%3Fs%20%3Fp%20%3Fo%20.%20%7D
+	//https://dbpedia.org/sparql
 	private String ProgressFileName;
 	HashMap<Integer,String> progress = new HashMap<>();
 	private final CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -41,11 +41,11 @@ public class PreprocessApplication implements CommandLineRunner {
 		if (args.length == 1) {
 			if(args[0].equals("h")){
 				System.out.println("help");
-				System.out.println("f [FileName] [directory for save results]: this will read file and run queries in that file");
+				System.out.println("f [FileName] [directory for save results] [endpoint with stream? or query? part]: this will read file and run queries in that file");
 			}
 		}
 
-		if(args.length == 3){
+		if(args.length == 4){
 			if(args[0].equals("f")){
 				System.out.println("looking at "+ args[1]+" for a file");
 				/*try {
@@ -110,7 +110,7 @@ public class PreprocessApplication implements CommandLineRunner {
 						if(!progress.containsKey(lineCounter))
 						{
 							// check fact
-							String result = doQuery(line);
+							String result = doQuery(line, args[3]);
 							if(!result.equals("")) {
 								save(line,result,args[2]);
 								progress.put(lineCounter, "successful");
@@ -178,13 +178,13 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	}
 
-	private String doQuery(String query)  {
+	private String doQuery(String query,String endpoint)  {
 		//query = query.replace("  ","");
 		//query = query.replace("\n"," ");
 		//String endpoint = "https://synthg-fact.dice-research.org/sparql";
 
 		try{
-			String url = endpoint+"?query="+ URLEncoder.encode(query, "UTF-8");
+			String url = endpoint+ URLEncoder.encode(query, "UTF-8");
 			System.out.println(url);
 			HttpGet request = new HttpGet(url);
 			//request.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
