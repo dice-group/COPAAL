@@ -25,7 +25,7 @@ import java.util.Set;
 public class PreprocessApplication implements CommandLineRunner {
     //http://127.0.0.1:9080/stream?query=SELECT%20%3Fp%20WHERE%20%7B%20%3Fs%20%3Fp%20%3Fo%20.%20%7D
 	//https://dbpedia.org/sparql
-	private String ProgressFileName;
+	private String progressFileName;
 	HashMap<Integer,String> progress = new HashMap<>();
 	private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
@@ -41,7 +41,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		if (args.length == 1) {
 			if(args[0].equals("h")){
 				System.out.println("help");
-				System.out.println("f [FileName] [directory for save results] [endpoint with stream? or query? part]: this will read file and run queries in that file");
+				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part]: this will read file and run queries in that file");
 			}
 		}
 
@@ -84,24 +84,29 @@ public class PreprocessApplication implements CommandLineRunner {
 
 				//Progress File
 
-				ProgressFileName = args[1]+".prg";
-				File prf = new File(ProgressFileName);
-
+				progressFileName = args[1]+".prg";
+				File prf = new File(progressFileName);
+				System.out.println("looking for progress file at "+ progressFileName);
 				if(prf.exists()){
+					System.out.println("progress file exists");
 					try {
-						FileInputStream fileIn = new FileInputStream(ProgressFileName);
+						FileInputStream fileIn = new FileInputStream(progressFileName);
 						ObjectInputStream in = new ObjectInputStream(fileIn);
 						progress = (HashMap) in.readObject();
 						in.close();
 						fileIn.close();
+						System.out.println("progress file loaded it has "+progress.size()+" items");
 					} catch (IOException i) {
+						System.out.println("error reading progress file");
 						i.printStackTrace();
 					} catch (ClassNotFoundException c) {
-						System.out.println("Employee class not found");
+						System.out.println("error reading progress file class");
 						c.printStackTrace();
 					}
+				}else{
+					System.out.println("progress file does not exist");
 				}
-
+				// read the query file
 				try (BufferedReader br = new BufferedReader(new FileReader(args[1]))) {
 					String line;
 					Integer lineCounter = 1;
@@ -113,12 +118,13 @@ public class PreprocessApplication implements CommandLineRunner {
 							String result = doQuery(line, args[3]);
 							if(!result.equals("")) {
 								save(line,result,args[2]);
+								System.out.println("running query was successful");
 								progress.put(lineCounter, "successful");
-								updateProgress();
 							}else {
+								System.out.println("running query was unsuccessful");
 								progress.put(lineCounter, "unsuccessful");
-								updateProgress();
 							}
+							updateProgress();
 						}
 						lineCounter = lineCounter + 1;
 					}
@@ -131,23 +137,27 @@ public class PreprocessApplication implements CommandLineRunner {
 			}
 		}
 	}
-	public static void writeToFile(String str, String path) throws Exception {
+	public static void writeToFile(String str, String path, String query) throws Exception {
 		PrintWriter pw = null;
 		try {
 			pw = new PrintWriter(
 					new OutputStreamWriter(new FileOutputStream(path), "UTF-8"));
-				pw.println(str);
+				pw.print(str.replace("\n",""));
+				pw.print("\t");
+				pw.print(query);
+				pw.println("");
 			pw.flush();
 		} finally {
 			pw.close();
 		}
 	}
-	private void save(String line, String result, String path)  {
-		line = line.replace(" ","");
-		String filePath = path+DigestUtils.md5Hex(line).toUpperCase()+".txt";
+	private void save(String query, String result, String path)  {
+		String oldQuery = new String(query);
+		query = query.replace(" ","").replace("\n","");
+		String filePath = path+DigestUtils.md5Hex(query).toUpperCase()+".tsv";
 		System.out.println("save result at "+filePath);
 		try {
-			writeToFile(result, filePath);
+			writeToFile(result, filePath, oldQuery);
 		}catch(Exception ex){
 			System.out.println(ex);
 		}
@@ -158,12 +168,12 @@ public class PreprocessApplication implements CommandLineRunner {
 		FileOutputStream fileOut = null;
 		try {
 			fileOut =
-					new FileOutputStream(ProgressFileName);
+					new FileOutputStream(progressFileName);
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(progress);
 			out.close();
 			fileOut.close();
-			System.out.println("Serialized data is saved in"+ ProgressFileName+ "progress size is :"+progress.size());
+			System.out.println("Serialized data is saved in"+ progressFileName+ " progress size is :"+progress.size());
 		} catch (IOException i) {
 			i.printStackTrace();
 		}finally {
