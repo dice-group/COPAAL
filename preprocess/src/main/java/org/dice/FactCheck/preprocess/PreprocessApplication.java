@@ -117,6 +117,7 @@ public class PreprocessApplication implements CommandLineRunner {
 							// check fact
 							String result = doQuery(line, args[3]);
 							if(!result.equals("")) {
+								//long resultNumber = countTheLines(result);
 								save(line,result,args[2]);
 								System.out.println("running query was successful");
 								progress.put(lineCounter, "successful");
@@ -194,6 +195,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		//String endpoint = "https://synthg-fact.dice-research.org/sparql";
 
 		try{
+			query = query.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
 			String url = endpoint+ URLEncoder.encode(query, "UTF-8");
 			System.out.println(url);
 			HttpGet request = new HttpGet(url);
