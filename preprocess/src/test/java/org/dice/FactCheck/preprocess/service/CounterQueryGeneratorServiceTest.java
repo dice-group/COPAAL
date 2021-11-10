@@ -196,13 +196,16 @@ public class CounterQueryGeneratorServiceTest {
         //Property
         Model model = ModelFactory.createDefaultModel();
 
-        Property property1 = model.createProperty("http://dbpedia.org/ontology/nationality");
+        //Property property1 = model.createProperty("http://dbpedia.org/ontology/nationality");
+        Property property1 = model.createProperty("http://dbpedia.org/ontology/birthPlace");
 
         //Domain
-        ITypeRestriction domain1 = utilities.makeITypeRestriction("http://dbpedia.org/ontology/Person");
+        //ITypeRestriction domain1 = utilities.makeITypeRestriction("http://dbpedia.org/ontology/Person");
+        ITypeRestriction domain1 = utilities.makeITypeRestriction("http://dbpedia.org/ontology/Animal");
 
         //Range
-        ITypeRestriction range1 = utilities.makeITypeRestriction("http://dbpedia.org/ontology/Country");
+        //ITypeRestriction range1 = utilities.makeITypeRestriction("http://dbpedia.org/ontology/Country");
+        ITypeRestriction range1 = utilities.makeITypeRestriction("http://dbpedia.org/ontology/Place");
 
         Predicate predicate1 = new Predicate(property1, domain1, range1);
 
@@ -211,15 +214,15 @@ public class CounterQueryGeneratorServiceTest {
         Collection<Predicate> predicates = predicateService.allPredicates("collected_predicates.json");
 
         PathService pathService = new PathService();
-        Collection<Path> paths = pathService.generateAllPaths(predicates , 3);
+        Collection<Path> paths = pathService.generateAllPaths(predicates , 1);
 
-        try {
+/*        try {
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("paths3.ser"));
             out.writeObject(paths);
             out.close();
         }catch(Exception ex){
             System.out.println(ex);
-        }
+        }*/
 
 
 /*       try {
@@ -237,7 +240,7 @@ public class CounterQueryGeneratorServiceTest {
 
         System.out.println(queries.size());
         try {
-            save(queries, "queriesNationality.txt");
+            save(queries, "queriesBirthPlace1.txt");
         }catch (Exception ex){
             System.out.println(ex.getMessage());
         }

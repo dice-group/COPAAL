@@ -14,9 +14,6 @@ import java.util.*;
 * */
 public class CounterQueryGeneratorService implements ICounterQueryGenerator {
 
-
-    protected static final String COUNT_VARIABLE_NAME = "sum";
-
     /*
     * this method generate all queries
     * */
@@ -67,9 +64,8 @@ public class CounterQueryGeneratorService implements ICounterQueryGenerator {
 
     private String generateQuery(Predicate predicate, Path path) {
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT (count(DISTINCT *) AS ?");
-        queryBuilder.append(COUNT_VARIABLE_NAME);
-        queryBuilder.append(") WHERE { ?s <");
+        queryBuilder.append("SELECT DISTINCT ?s ?o ");
+        queryBuilder.append("WHERE { ?s <");
         queryBuilder.append(predicate.getProperty().getURI());
         queryBuilder.append("> ?o . ");
         predicate.getDomain().addRestrictionToQuery("s", queryBuilder);
@@ -95,7 +91,7 @@ public class CounterQueryGeneratorService implements ICounterQueryGenerator {
                 tempObject = objectVariable;
             }
 
-            if(!pair.getSecond()){
+            if(pair.getSecond()){
                 String temp = tempSubject;
                 tempSubject = tempObject ;
                 tempObject = temp;
