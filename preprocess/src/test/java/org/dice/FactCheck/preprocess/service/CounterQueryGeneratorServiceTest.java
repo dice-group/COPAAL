@@ -1,5 +1,6 @@
 package org.dice.FactCheck.preprocess.service;
 
+import ch.qos.logback.core.net.ObjectWriter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
@@ -193,13 +194,14 @@ public class CounterQueryGeneratorServiceTest {
         // The First Property
         //Property
         Model model = ModelFactory.createDefaultModel();
-        Property property1 = model.createProperty("http://dbpedia.org/ontology/birthPlace");
+
+        Property property1 = model.createProperty("http://dbpedia.org/ontology/nationality");
 
         //Domain
-        ITypeRestriction domain1 = utilities.makeITypeRestriction("http://dbpedia.org/ontology/Animal");
+        ITypeRestriction domain1 = utilities.makeITypeRestriction("http://dbpedia.org/ontology/Person");
 
         //Range
-        ITypeRestriction range1 = utilities.makeITypeRestriction("http://dbpedia.org/ontology/Place");
+        ITypeRestriction range1 = utilities.makeITypeRestriction("http://dbpedia.org/ontology/Country");
 
         Predicate predicate1 = new Predicate(property1, domain1, range1);
 
@@ -214,18 +216,10 @@ public class CounterQueryGeneratorServiceTest {
 
         System.out.println(queries.size());
         try {
-            save(queries, "queries.txt");
+            save(queries, "queriesNationality.txt");
         }catch (Exception ex){
             System.out.println(ex.getMessage());
         }
-        try {
-            save(predicates, "predicates.txt");
-        }catch (Exception ex){
-            System.out.println(ex.getMessage());
-        }
-
-
-
     }
 
     public static void save(Set<String> obj, String path) throws Exception {

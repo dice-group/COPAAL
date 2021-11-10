@@ -98,6 +98,38 @@ public class PredicateService implements IPredicateService{
         return predicates;
     }
 
+    public Collection<String> allDomainAndRanges(String fileName){
+        Set<String> allDomainAndRange = new HashSet<String>();
+        JSONParser parser = new JSONParser();
+        try {
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            InputStream is = classloader.getResourceAsStream(fileName);
+            Object obj = parser.parse(new InputStreamReader(is));
+
+            // A JSON object. Key value pairs are unordered. JSONObject supports java.util.Map interface.
+            JSONArray Predicates = (JSONArray) obj;
+
+            Iterator<JSONObject> iterator = Predicates.iterator();
+            while (iterator.hasNext()) {
+                JSONObject jsonPredicate = iterator.next();
+                // get domain
+                JSONArray domainsJson = (JSONArray)jsonPredicate.get("Domain") ;
+                for(int i = 0 ; i < domainsJson.size() ; i++){
+                    allDomainAndRange.add(domainsJson.get(i).toString());
+                }
+
+                // get range
+                JSONArray rangesJson = (JSONArray)jsonPredicate.get("Range") ;
+                for(int i = 0 ; i < rangesJson.size() ; i++){
+                    allDomainAndRange.add(rangesJson.get(i).toString());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return allDomainAndRange;
+    }
+
     private Predicate convertToPredicate(String iri) {
         // get domain
         TypeBasedRestriction domain = new TypeBasedRestriction(getDomain(iri));
