@@ -58,6 +58,8 @@ public class PredicateService implements IPredicateService{
         return predicates;
     }
 
+
+    // return all predicates read from a file
     @Override
     public Collection<Predicate> allPredicates(String fileName) {
         Set<Predicate> predicates = new HashSet<Predicate>();

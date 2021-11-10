@@ -1,6 +1,7 @@
 package org.dice.FactCheck.preprocess.service;
 
 import ch.qos.logback.core.net.ObjectWriter;
+import javassist.bytecode.stackmap.BasicBlock;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
@@ -211,6 +212,26 @@ public class CounterQueryGeneratorServiceTest {
 
         PathService pathService = new PathService();
         Collection<Path> paths = pathService.generateAllPaths(predicates , 3);
+
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("paths3.ser"));
+            out.writeObject(paths);
+            out.close();
+        }catch(Exception ex){
+            System.out.println(ex);
+        }
+
+
+/*       try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream("paths3.ser"));
+           Collection<Path> paths = (Collection<Path>) in.readObject();
+            in.close();
+           HashSet<String> queries = (HashSet<String>) service.cooccurenceCount(predicate1, paths);
+
+           System.out.println(queries.size());
+        }catch(Exception ex){
+            System.out.println(ex);
+        }*/
 
         HashSet<String> queries = (HashSet<String>) service.cooccurenceCount(predicate1, paths);
 

@@ -28,6 +28,9 @@ public class PathService implements IPathService{
         //lists of length 1 are just the original elements
         if(lengthOfList == 1) {
             for(Predicate p : elements){
+                if(p.getProperty().getURI().toLowerCase().contains("nationality")){
+                    String hh= "s";
+                }
                 allLists.add(new Path(p,true));
                 allLists.add(new Path(p,false));
             }
@@ -96,6 +99,7 @@ public class PathService implements IPathService{
         // convert to set because we dont want to have duplicated items
         Set<Predicate> setOfPredicates = new HashSet<>(predicates);
         List<Predicate> listOfPredicates = new ArrayList<>(setOfPredicates);
-        return getAllLists(listOfPredicates,maximumLengthOfPaths);
+        getAllLists(listOfPredicates,maximumLengthOfPaths);
+        return allPathWithAllLength;
     }
 }
