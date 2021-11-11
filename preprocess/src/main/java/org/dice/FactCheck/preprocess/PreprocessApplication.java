@@ -35,8 +35,11 @@ public class PreprocessApplication implements CommandLineRunner {
     //http://127.0.0.1:9080/stream?query=SELECT%20%3Fp%20WHERE%20%7B%20%3Fs%20%3Fp%20%3Fo%20.%20%7D
 	//https://dbpedia.org/sparql
 	String dateStr;
+	private String fileName ;
 	private String progressFileName;
 	private boolean isIndividual = true;
+	private boolean isLiteVersion = true;
+	private boolean isCompleteVersion = true;
 	HashMap<Integer,String> progress = new HashMap<>();
 	private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
@@ -52,7 +55,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		if (args.length == 1) {
 			if(args[0].equals("h")){
 				System.out.println("help");
-				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part] [C for cumulative result or I for individual]: this will read file and run queries in that file");
+				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part] ['C' for cumulative result(both Lite and Complete version), 'CL' just lite version, 'CC' just Complete version , 'I' for individual]: this will read file and run queries in that file");
 			}
 		}
 
@@ -76,6 +79,8 @@ public class PreprocessApplication implements CommandLineRunner {
 					System.out.println(args[1] + " is not a file");
 					return;
 				}
+
+				fileName = args[1].split(".")[0];
 
 				f = new File(args[2]);
 				if (!f.exists()) {
@@ -121,19 +126,33 @@ public class PreprocessApplication implements CommandLineRunner {
 				}
 
 				// how save the result
-				if(args[4].equals("C")){
-					isIndividual = false;
+				if(args[4].equals("I")){
+					isIndividual = true;
 				}else{
-					if(args[4].equals("I")){
-						isIndividual = true;
+					if(args[4].equals("C")){
+						isIndividual = false;
+						isCompleteVersion = true;
+						isLiteVersion = true;
 					}else{
-						System.out.println("The 4Th argument should be C or I");
+						if(args[4].equals("CL")){
+							isIndividual = false;
+							isCompleteVersion = false;
+							isLiteVersion = true;
+						}else {
+							if(args[4].equals("CC")){
+								isIndividual = false;
+								isCompleteVersion = true;
+								isLiteVersion = false;
+							}else {
+								System.out.println("The 4Th argument should be C or I or CC or CL , see the help");
+							}
+						}
 					}
 				}
 
 				// set date str
 				Date date = Calendar.getInstance().getTime();
-				DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd-hh-mm-ss");
+				DateFormat dateFormat = new SimpleDateFormat("mm-dd_hh-mm");
 				dateStr = dateFormat.format(date);
 
 				// read the query file
@@ -149,7 +168,7 @@ public class PreprocessApplication implements CommandLineRunner {
 							String result = doQuery(line, args[3]);
 							if(!result.equals("")) {
 								long resultNumber = countTheReturnedBindings(result);
-								save(line, result, resultNumber, args[2],isIndividual);
+								save(line, result, resultNumber, args[2], isIndividual, isLiteVersion, isCompleteVersion, fileName);
 								System.out.println("running query was successful");
 								progress.put(lineCounter, "successful");
 							}else {
@@ -183,7 +202,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		return -1;
 	}
 
-	public static void writeToFile(String str, String path, String query) throws Exception {
+	public static void writeToFile(String str, String path, String query, long CountResult) throws Exception {
 		PrintWriter pw = null;
 		try {
 			pw = new PrintWriter(
@@ -191,6 +210,8 @@ public class PreprocessApplication implements CommandLineRunner {
 				pw.print(str.replace("\n",""));
 				pw.print("\t");
 				pw.print(query);
+				pw.write("\t");
+				pw.write(String.valueOf(CountResult));
 				pw.println("");
 			pw.flush();
 		} finally {
@@ -200,36 +221,54 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	// save each file or save all result in one file
 
-	private void save(String query, String result,long CountResult ,String path, Boolean individual)  {
+	private void save(String query, String result,long CountResult ,String path, Boolean individual, Boolean isLiteVersion , Boolean isCompleteVersion, String queriesFileName)  {
 		if(individual){
 			String oldQuery = new String(query);
 			query = query.replace(" ","").replace("\n","");
 			String filePath = path+DigestUtils.md5Hex(query).toUpperCase()+".tsv";
 			System.out.println("save result at "+filePath);
 			try {
-				writeToFile(result, filePath, oldQuery);
+				writeToFile(result, filePath, oldQuery, CountResult);
 			}catch(Exception ex){
 				System.out.println(ex);
 			}
 		}else{
 			// write result in one File
-			try
-			{
-				String filename= path+"cumulativeResult"+dateStr+".tsv";
-				FileWriter fw = new FileWriter(filename,true); //the true will append the new data
-				fw.write(result.replace("\n",""));
-				fw.write("\t");
-				fw.write(query);
-				fw.write("\t");
-				fw.write(String.valueOf(CountResult));
-				fw.write("\n");
-				fw.close();
-			}
-			catch(IOException ioe)
-			{
-				System.err.println("IOException: " + ioe.getMessage());
+			if(isCompleteVersion){
+				try
+				{
+					String filename= path+queriesFileName+"CumulativeResult-"+dateStr+".tsv";
+					FileWriter fw = new FileWriter(filename,true); //the true will append the new data
+					fw.write(result.replace("\n",""));
+					fw.write("\t");
+					fw.write(query);
+					fw.write("\t");
+					fw.write(String.valueOf(CountResult));
+					fw.write("\n");
+					fw.close();
+				}
+				catch(IOException ioe)
+				{
+					System.err.println("IOException: " + ioe.getMessage());
+				}
 			}
 
+			if(isLiteVersion){
+				try
+				{
+					String filename= path+queriesFileName+"LiteCumulativeResult-"+dateStr+".tsv";
+					FileWriter fw = new FileWriter(filename,true); //the true will append the new data
+					fw.write(query);
+					fw.write("\t");
+					fw.write(String.valueOf(CountResult));
+					fw.write("\n");
+					fw.close();
+				}
+				catch(IOException ioe)
+				{
+					System.err.println("IOException: " + ioe.getMessage());
+				}
+			}
 		}
 
 	}
@@ -270,20 +309,15 @@ public class PreprocessApplication implements CommandLineRunner {
 			//request.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
 			try (CloseableHttpResponse response = httpClient.execute(request)) {
 				// Get HttpResponse Status
-				System.out.println(response.getStatusLine().toString());
 				System.out.println(response.getStatusLine().getStatusCode());
 				if(response.getStatusLine().getStatusCode()!=200 ){
 					return "";
 				}
 				HttpEntity entity = response.getEntity();
 				Header headers = entity.getContentType();
-				System.out.println(headers);
-
 				if (entity != null) {
 					// return it as a String
-					String result = EntityUtils.toString(entity);
-					System.out.println(result);
-					return result;
+					return EntityUtils.toString(entity);
 				}
 			}
 
