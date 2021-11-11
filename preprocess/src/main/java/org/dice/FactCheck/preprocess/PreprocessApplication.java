@@ -29,6 +29,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 
+import static org.semanticweb.elk.io.FileUtils.getFileName;
+
 @SpringBootApplication
 @ComponentScan("org.dice.FactCheck.preprocess.config")
 public class PreprocessApplication implements CommandLineRunner {
@@ -80,7 +82,7 @@ public class PreprocessApplication implements CommandLineRunner {
 					return;
 				}
 
-				fileName = args[1].split(".")[0];
+				fileName = getFileName(args[1]);
 
 				f = new File(args[2]);
 				if (!f.exists()) {
@@ -160,6 +162,7 @@ public class PreprocessApplication implements CommandLineRunner {
 					String line;
 					Integer lineCounter = 1;
 					while ((line = br.readLine()) != null) {
+						System.out.println(lineCounter);
 						// process the line.
 						line = line.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
 						if(!progress.containsKey(lineCounter))
