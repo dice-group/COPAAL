@@ -10,11 +10,16 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
+import javax.json.Json;
+import javax.json.JsonObject;
 import java.io.*;
 import java.net.URLEncoder;
 import java.text.DateFormat;
@@ -143,8 +148,8 @@ public class PreprocessApplication implements CommandLineRunner {
 							// check fact
 							String result = doQuery(line, args[3]);
 							if(!result.equals("")) {
-								//long resultNumber = countTheLines(result);
-								save(line,result,args[2],isIndividual);
+								long resultNumber = countTheReturnedBindings(result);
+								save(line, result, resultNumber, args[2],isIndividual);
 								System.out.println("running query was successful");
 								progress.put(lineCounter, "successful");
 							}else {
@@ -164,6 +169,20 @@ public class PreprocessApplication implements CommandLineRunner {
 			}
 		}
 	}
+
+	private long countTheReturnedBindings(String jsonText) {
+		try {
+			JSONObject jsonObject = new JSONObject(jsonText);
+			JSONObject results = jsonObject.getJSONObject("results");
+			JSONArray bindings = results.getJSONArray("bindings");
+			return bindings.length();
+
+		}catch (JSONException err){
+			System.out.println(err.getMessage());
+		}
+		return -1;
+	}
+
 	public static void writeToFile(String str, String path, String query) throws Exception {
 		PrintWriter pw = null;
 		try {
@@ -181,7 +200,7 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	// save each file or save all result in one file
 
-	private void save(String query, String result, String path, Boolean individual)  {
+	private void save(String query, String result,long CountResult ,String path, Boolean individual)  {
 		if(individual){
 			String oldQuery = new String(query);
 			query = query.replace(" ","").replace("\n","");
@@ -201,6 +220,8 @@ public class PreprocessApplication implements CommandLineRunner {
 				fw.write(result.replace("\n",""));
 				fw.write("\t");
 				fw.write(query);
+				fw.write("\t");
+				fw.write(String.valueOf(CountResult));
 				fw.write("\n");
 				fw.close();
 			}
