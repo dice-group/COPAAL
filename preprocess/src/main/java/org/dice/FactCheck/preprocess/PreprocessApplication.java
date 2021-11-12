@@ -36,13 +36,11 @@ public class PreprocessApplication implements CommandLineRunner {
     //http://127.0.0.1:9080/stream?query=SELECT%20%3Fp%20WHERE%20%7B%20%3Fs%20%3Fp%20%3Fo%20.%20%7D
 	//https://dbpedia.org/sparql
 	String dateStr;
-	private String progressFileName;
 	private boolean isIndividual = true;
 	private boolean isLiteVersion = true;
 	private boolean isCompleteVersion = true;
 	// show the input was a single file or a folder , for folder all the files in the folder will process
 	private boolean isFolder = false;
-	HashMap<Integer,String> progress = new HashMap<>();
 	private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
 	public static void main(String[] args) {
@@ -99,30 +97,6 @@ public class PreprocessApplication implements CommandLineRunner {
 					return;
 				}
 
-/*				//Progress File
-
-				progressFileName = args[1]+".prg";
-				File prf = new File(progressFileName);*/
-				/*System.out.println("looking for progress file at "+ progressFileName);
-				if(prf.exists()){
-					System.out.println("progress file exists");
-					try {
-						FileInputStream fileIn = new FileInputStream(progressFileName);
-						ObjectInputStream in = new ObjectInputStream(fileIn);
-						progress = (HashMap) in.readObject();
-						in.close();
-						fileIn.close();
-						System.out.println("progress file loaded it has "+progress.size()+" items");
-					} catch (IOException i) {
-						System.out.println("error reading progress file");
-						i.printStackTrace();
-					} catch (ClassNotFoundException c) {
-						System.out.println("error reading progress file class");
-						c.printStackTrace();
-					}
-				}else{
-					System.out.println("progress file does not exist");
-				}*/
 
 				// how save the result
 				if(args[4].equals("I")){
@@ -154,6 +128,7 @@ public class PreprocessApplication implements CommandLineRunner {
 				DateFormat dateFormat = new SimpleDateFormat("mm-dd_hh-mm");
 				dateStr = dateFormat.format(date);
 
+
 				if(!isFolder) {
 					processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3]);
 				}else{
@@ -161,12 +136,12 @@ public class PreprocessApplication implements CommandLineRunner {
 					for (int i = 0; i < listOfFiles.length; i++) {
 						if (listOfFiles[i].isFile()) {
 							processTheFile(listOfFiles[i].getPath(), args[2], listOfFiles[i].getName(), args[3]);
+							System.out.println("Done File"+listOfFiles[i].getName());
 						} else if (listOfFiles[i].isDirectory()) {
 							System.out.println("Directory " + listOfFiles[i].getName());
 						}
 					}
 				}
-
 			}
 		}
 	}
@@ -177,25 +152,16 @@ public class PreprocessApplication implements CommandLineRunner {
 			String line;
 			Integer lineCounter = 1;
 			while ((line = br.readLine()) != null) {
-				System.out.println(lineCounter);
+				System.out.println(filePath+" "+lineCounter);
 				// process the line.
 				line = line.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
-				if(!progress.containsKey(lineCounter))
-				{
 					// check fact
 					String result = doQuery(line, endpoint);
 					if(!result.equals("")) {
 						long resultNumber = countTheReturnedBindings(result);
 						save(line, result, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName);
 						System.out.println("running query was successful");
-						progress.put(lineCounter, "successful");
-
-					}else {
-						System.out.println("running query was unsuccessful");
-						progress.put(lineCounter, "unsuccessful");
 					}
-					//updateProgress();
-				}
 				lineCounter = lineCounter + 1;
 			}
 		} catch (FileNotFoundException e) {
@@ -289,29 +255,6 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	}
 
-	/*private void updateProgress() {
-		FileOutputStream fileOut = null;
-		try {
-			fileOut =
-					new FileOutputStream(progressFileName);
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(progress);
-			out.close();
-			fileOut.close();
-			System.out.println("Serialized data is saved in"+ progressFileName+ " progress size is :"+progress.size());
-		} catch (IOException i) {
-			i.printStackTrace();
-		}finally {
-			try {
-				if (fileOut != null) {
-					fileOut.close();
-				}
-			}catch (Exception ex){
-				ex.printStackTrace();
-			}
-		}
-
-	}*/
 
 	private String doQuery(String query,String endpoint)  {
 		//query = query.replace("  ","");
