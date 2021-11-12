@@ -194,7 +194,7 @@ public class PreprocessApplication implements CommandLineRunner {
 						System.out.println("running query was unsuccessful");
 						progress.put(lineCounter, "unsuccessful");
 					}
-					updateProgress();
+					//updateProgress();
 				}
 				lineCounter = lineCounter + 1;
 			}
@@ -289,7 +289,7 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	}
 
-	private void updateProgress() {
+	/*private void updateProgress() {
 		FileOutputStream fileOut = null;
 		try {
 			fileOut =
@@ -311,7 +311,7 @@ public class PreprocessApplication implements CommandLineRunner {
 			}
 		}
 
-	}
+	}*/
 
 	private String doQuery(String query,String endpoint)  {
 		//query = query.replace("  ","");
