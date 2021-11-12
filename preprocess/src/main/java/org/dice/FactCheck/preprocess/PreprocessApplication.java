@@ -1,10 +1,10 @@
 package org.dice.FactCheck.preprocess;
 
-import net.sf.extjwnl.data.Exc;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
+
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -18,8 +18,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
-import javax.json.Json;
-import javax.json.JsonObject;
+
 import java.io.*;
 import java.net.URLEncoder;
 import java.text.DateFormat;
@@ -27,9 +26,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Set;
 
-import static org.semanticweb.elk.io.FileUtils.getFileName;
+
+
 
 @SpringBootApplication
 @ComponentScan("org.dice.FactCheck.preprocess.config")
@@ -82,7 +81,7 @@ public class PreprocessApplication implements CommandLineRunner {
 					return;
 				}
 
-				fileName = getFileName(args[1]);
+				fileName = f.getName();
 
 				f = new File(args[2]);
 				if (!f.exists()) {
