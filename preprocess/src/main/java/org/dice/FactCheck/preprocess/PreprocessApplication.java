@@ -173,6 +173,7 @@ public class PreprocessApplication implements CommandLineRunner {
 								save(line, result, resultNumber, args[2], isIndividual, isLiteVersion, isCompleteVersion, fileName);
 								System.out.println("running query was successful");
 								progress.put(lineCounter, "successful");
+
 							}else {
 								System.out.println("running query was unsuccessful");
 								progress.put(lineCounter, "unsuccessful");

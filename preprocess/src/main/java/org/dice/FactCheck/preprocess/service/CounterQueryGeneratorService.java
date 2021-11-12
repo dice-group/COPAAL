@@ -2,9 +2,11 @@ package org.dice.FactCheck.preprocess.service;
 
 import org.apache.commons.math3.util.Pair;
 import org.apache.jena.rdf.model.Property;
+import org.dice.FactCheck.preprocess.model.CountQueries;
 import org.dice.FactCheck.preprocess.model.Path;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
+import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 
 
 import java.util.*;
@@ -14,15 +16,23 @@ import java.util.*;
 * */
 public class CounterQueryGeneratorService implements ICounterQueryGenerator {
 
+    /**
+     * The variable name of counts in SPARQL queries.
+     */
+    protected final String COUNT_VARIABLE_NAME = "sum";
+
     /*
     * this method generate all queries
     * */
     @Override
-    public Collection<String> cooccurenceCount(Predicate predicate, Collection<Path> paths) {
-        Set<String> queries = new HashSet<String>();
+    public CountQueries generateCountQueries(Predicate predicate, Collection<Path> paths) {
+        CountQueries queries = new CountQueries();
         for(Path path: paths){
             if(isFitWithPath(predicate, path)) {
-                queries.add(generateQuery(predicate, path));
+                queries.addToCoOccurrenceCountQueries(generateQueryCoOccurrence(predicate, path));
+                queries.addToPathInstancesCountQueries(generateQueryPathInstancesCount(predicate, path));
+                queries.addToMaxCountQueries(generateMaxQuery(predicate.getDomain()));
+                queries.addToMaxCountQueries(generateMaxQuery(predicate.getRange()));
             }
         }
         return queries;
@@ -62,7 +72,7 @@ public class CounterQueryGeneratorService implements ICounterQueryGenerator {
         return isDomainFit & isRangeFit;
     }
 
-    private String generateQuery(Predicate predicate, Path path) {
+    private String generateQueryCoOccurrence(Predicate predicate, Path path) {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT DISTINCT ?s ?o ");
         queryBuilder.append("WHERE { ?s <");
@@ -71,6 +81,26 @@ public class CounterQueryGeneratorService implements ICounterQueryGenerator {
         predicate.getDomain().addRestrictionToQuery("s", queryBuilder);
         predicate.getRange().addRestrictionToQuery("o", queryBuilder);
         addPath(path, queryBuilder, "s", "o","in");
+        queryBuilder.append(" }");
+        return queryBuilder.toString();
+    }
+
+    private String generateQueryPathInstancesCount(Predicate predicate, Path path) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT DISTINCT ?s ?o ");
+        queryBuilder.append("WHERE { ");
+        predicate.getDomain().addRestrictionToQuery("s", queryBuilder);
+        predicate.getRange().addRestrictionToQuery("o", queryBuilder);
+        addPath(path, queryBuilder, "s", "o","in");
+        queryBuilder.append(" }");
+        return queryBuilder.toString();
+    }
+
+    private String generateMaxQuery(ITypeRestriction restriction) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT DISTINCT ?s");
+        queryBuilder.append(" WHERE { ");
+        restriction.addRestrictionToQuery("s", queryBuilder);
         queryBuilder.append(" }");
         return queryBuilder.toString();
     }
@@ -114,5 +144,6 @@ public class CounterQueryGeneratorService implements ICounterQueryGenerator {
             }
         }
     }
+
 
 }
