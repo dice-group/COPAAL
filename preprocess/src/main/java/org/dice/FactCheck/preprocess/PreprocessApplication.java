@@ -77,7 +77,7 @@ public class PreprocessApplication implements CommandLineRunner {
 					return;
 				}
 
-				if (!inputFileOrFolder.isDirectory()) {
+				if (inputFileOrFolder.isDirectory()) {
 					isFolder = true;
 				}else{
 					isFolder = false;
