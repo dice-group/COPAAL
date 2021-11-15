@@ -148,6 +148,7 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint) {
 		// read the query file
+		System.out.println("Start Process the File"+  filePath);
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			String line;
 			Integer lineCounter = 1;
@@ -156,13 +157,26 @@ public class PreprocessApplication implements CommandLineRunner {
 				// process the line.
 				line = line.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
 					// check fact
+					System.out.println("start do the query");
 					String result = doQuery(line, endpoint);
+					System.out.println("query is done");
 					if(!result.equals("")) {
+						System.out.println("Start count the result");
 						long resultNumber = countTheReturnedBindings(result);
-						save(line, result, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName);
-						System.out.println("running query was successful");
+						if(resultNumber == -1){
+							System.out.println("Can not count the result for this line "+ lineCounter);
+						}else{
+							System.out.println("Done counting the result");
+							System.out.println("start save the result");
+							save(line, result, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName);
+							System.out.println("Done saving the result");
+							System.out.println("running query was successful");
+						}
+					}else{
+						System.out.println("result is empty");
 					}
 				lineCounter = lineCounter + 1;
+				System.out.println("read next line");
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -173,6 +187,7 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	private long countTheReturnedBindings(String jsonText) {
 		try {
+			System.out.println("the result size is "+jsonText.length());
 			JSONObject jsonObject = new JSONObject(jsonText);
 			JSONObject results = jsonObject.getJSONObject("results");
 			JSONArray bindings = results.getJSONArray("bindings");
@@ -277,6 +292,8 @@ public class PreprocessApplication implements CommandLineRunner {
 				if (entity != null) {
 					// return it as a String
 					return EntityUtils.toString(entity);
+				}else{
+					System.out.println("entity is null");
 				}
 			}
 
