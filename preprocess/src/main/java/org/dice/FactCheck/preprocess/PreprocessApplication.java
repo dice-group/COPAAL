@@ -186,12 +186,13 @@ public class PreprocessApplication implements CommandLineRunner {
 						System.out.println("result is empty");
 					}
 					// remove do query temp file
-					File forDelete = new File(tempQueryResultFile);
+					//TODO : uncomment
+					/*File forDelete = new File(tempQueryResultFile);
 					if(forDelete.exists()){
 						System.out.println("deleting "+ forDelete);
 						forDelete.delete();
 						System.out.println("deleted ");
-					}
+					}*/
 				lineCounter = lineCounter + 1;
 				System.out.println("read next line");
 			}
