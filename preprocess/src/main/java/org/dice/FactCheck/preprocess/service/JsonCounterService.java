@@ -7,15 +7,16 @@ import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.map.MappingJsonFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.io.*;
 
 @Component
 public class JsonCounterService implements ICounter{
     public long count(String fileName) {
         try {
             long count = 0;
+            InputStream in = new ObjectInputStream(new FileInputStream(fileName));
             JsonFactory f = new MappingJsonFactory();
-            JsonParser jp = f.createJsonParser(new File(fileName));
+            JsonParser jp = f.createJsonParser(in);
             JsonToken current;
 
             current = jp.nextToken();
@@ -45,7 +46,7 @@ public class JsonCounterService implements ICounter{
                         jp.skipChildren();
                     }
                 } else {
-                    System.out.println("Unprocessed property: " + fieldName);
+                    //System.out.println("Unprocessed property: " + fieldName);
                     jp.skipChildren();
                 }
             }
