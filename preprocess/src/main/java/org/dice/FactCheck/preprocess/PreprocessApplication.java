@@ -288,6 +288,7 @@ public class PreprocessApplication implements CommandLineRunner {
 					return "";
 				}
 				HttpEntity entity = response.getEntity();
+				System.out.println("the entity is ready");
 				Header headers = entity.getContentType();
 				if (entity != null) {
 					// return it as a String
