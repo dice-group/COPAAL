@@ -9,18 +9,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonToken;
-import org.codehaus.jackson.map.MappingJsonFactory;
-import org.dice.FactCheck.preprocess.service.ICounter;
 import org.dice.FactCheck.preprocess.service.JsonCounterService;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -186,16 +175,16 @@ public class PreprocessApplication implements CommandLineRunner {
 						System.out.println("result is empty");
 					}
 					// remove do query temp file
-					//TODO : uncomment
-					/*File forDelete = new File(tempQueryResultFile);
+					File forDelete = new File(tempQueryResultFile);
 					if(forDelete.exists()){
 						System.out.println("deleting "+ forDelete);
 						forDelete.delete();
 						System.out.println("deleted ");
-					}*/
+					}
 				lineCounter = lineCounter + 1;
 				System.out.println("read next line");
 			}
+			System.out.println("Done for this File");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
