@@ -10,9 +10,17 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonToken;
+import org.codehaus.jackson.map.MappingJsonFactory;
+import org.dice.FactCheck.preprocess.service.ICounter;
+import org.dice.FactCheck.preprocess.service.JsonCounterService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,8 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-
-
+import java.util.UUID;
 
 
 @SpringBootApplication
@@ -43,12 +50,15 @@ public class PreprocessApplication implements CommandLineRunner {
 	private boolean isFolder = false;
 	private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
+	JsonCounterService counterservice;
+
 	public static void main(String[] args) {
 		SpringApplication.run(PreprocessApplication.class, args);
 	}
 
 	@Override
 	public void run(String... args) {
+		counterservice = new JsonCounterService();
 		if (args.length == 0){
 			System.out.println("h : use this to get Help  'java -jar [jarfile] h '");
 		}
@@ -158,22 +168,29 @@ public class PreprocessApplication implements CommandLineRunner {
 				line = line.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
 					// check fact
 					System.out.println("start do the query");
-					String result = doQuery(line, endpoint);
-					System.out.println("query is done");
-					if(!result.equals("")) {
+					String tempQueryResultFile = doQuery(line, endpoint);
+					System.out.println("query is done and result save at :"+tempQueryResultFile);
+					if(!tempQueryResultFile.equals("")) {
 						System.out.println("Start count the result");
-						long resultNumber = countTheReturnedBindings(result);
+						long resultNumber = counterservice.count(tempQueryResultFile);
 						if(resultNumber == -1){
 							System.out.println("Can not count the result for this line "+ lineCounter);
 						}else{
 							System.out.println("Done counting the result");
 							System.out.println("start save the result");
-							save(line, result, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName);
+							save(line, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName);
 							System.out.println("Done saving the result");
 							System.out.println("running query was successful");
 						}
 					}else{
 						System.out.println("result is empty");
+					}
+					// remove do query temp file
+					File forDelete = new File(tempQueryResultFile);
+					if(forDelete.exists()){
+						System.out.println("deleting "+ forDelete);
+						forDelete.delete();
+						System.out.println("deleted ");
 					}
 				lineCounter = lineCounter + 1;
 				System.out.println("read next line");
@@ -185,27 +202,12 @@ public class PreprocessApplication implements CommandLineRunner {
 		}
 	}
 
-	private long countTheReturnedBindings(String jsonText) {
-		try {
-			System.out.println("the result size is "+jsonText.length());
-			JSONObject jsonObject = new JSONObject(jsonText);
-			JSONObject results = jsonObject.getJSONObject("results");
-			JSONArray bindings = results.getJSONArray("bindings");
-			return bindings.length();
+	public static void writeToFile(String path, String query, long CountResult) throws Exception {
 
-		}catch (JSONException err){
-			System.out.println(err.getMessage());
-		}
-		return -1;
-	}
-
-	public static void writeToFile(String str, String path, String query, long CountResult) throws Exception {
 		PrintWriter pw = null;
 		try {
 			pw = new PrintWriter(
 					new OutputStreamWriter(new FileOutputStream(path), "UTF-8"));
-				pw.print(str.replace("\n",""));
-				pw.print("\t");
 				pw.print(query);
 				pw.write("\t");
 				pw.write(String.valueOf(CountResult));
@@ -218,14 +220,14 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	// save each file or save all result in one file
 
-	private void save(String query, String result,long CountResult ,String path, Boolean individual, Boolean isLiteVersion , Boolean isCompleteVersion, String queriesFileName)  {
+	private void save(String query,long CountResult ,String path, Boolean individual, Boolean isLiteVersion , Boolean isCompleteVersion, String queriesFileName)  {
 		if(individual){
 			String oldQuery = new String(query);
 			query = query.replace(" ","").replace("\n","");
 			String filePath = path+DigestUtils.md5Hex(query).toUpperCase()+".tsv";
 			System.out.println("save result at "+filePath);
 			try {
-				writeToFile(result, filePath, oldQuery, CountResult);
+				writeToFile(filePath, oldQuery, CountResult);
 			}catch(Exception ex){
 				System.out.println(ex);
 			}
@@ -236,8 +238,6 @@ public class PreprocessApplication implements CommandLineRunner {
 				{
 					String filename= path+queriesFileName+"CumulativeResult-"+dateStr+".tsv";
 					FileWriter fw = new FileWriter(filename,true); //the true will append the new data
-					fw.write(result.replace("\n",""));
-					fw.write("\t");
 					fw.write(query);
 					fw.write("\t");
 					fw.write(String.valueOf(CountResult));
@@ -270,7 +270,7 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	}
 
-
+	// run a query save in a file return the file name as a result
 	private String doQuery(String query,String endpoint)  {
 		//query = query.replace("  ","");
 		//query = query.replace("\n"," ");
@@ -292,7 +292,13 @@ public class PreprocessApplication implements CommandLineRunner {
 				Header headers = entity.getContentType();
 				if (entity != null) {
 					// return it as a String
-					return EntityUtils.toString(entity);
+					String fileName = "tempQueryResults/"+UUID.randomUUID().toString()+".tmp";
+					System.out.println("save the results at ");
+					OutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
+					entity.writeTo(out);
+					out.close();
+					return fileName;
+					//return EntityUtils.toString(entity);
 				}else{
 					System.out.println("entity is null");
 				}
