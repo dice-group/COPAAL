@@ -20,8 +20,8 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
   protected static final String OBJECT_VARIABLE_NAME = "o";
 
   @Autowired
-  public ApproximatingCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
-    super(qef, maxCounter);
+  public ApproximatingCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, Boolean isPreProcessed, IPreProcessCounter preProcessCounter) {
+    super(qef, maxCounter, isPreProcessed,preProcessCounter);
   }
 
   @Override

@@ -40,14 +40,14 @@ public class PairCountRetrieverTest {
     pathElements.add(new Pair<Property, Boolean>(ResourceFactory.createProperty("http://www.example.org/P1"), true));
     QRestrictedPath path = new QRestrictedPath(pathElements);
 
-    ICountRetriever appCountRetriever = new PairCountRetriever(qef, new DefaultMaxCounter(qef));
+    ICountRetriever appCountRetriever = new PairCountRetriever(qef, new DefaultMaxCounter(qef, false, null));
     long predCount = appCountRetriever.countPredicateInstances(predicate);
     long maxCount = appCountRetriever.deriveMaxCount(predicate);
 
     long pathCount = appCountRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     long predPathCount = appCountRetriever.countCooccurrences(predicate, path);
 
-    ICountRetriever propPathRetriever = new PairCountRetriever(qef, new DefaultMaxCounter(qef));
+    ICountRetriever propPathRetriever = new PairCountRetriever(qef, new DefaultMaxCounter(qef, false, null));
     long pathCount2 = propPathRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     long predPathCount2 = propPathRetriever.countCooccurrences(predicate, path);
     

@@ -86,6 +86,6 @@ public class SamplingCountRetrieverDecoratorTest {
 
   protected ICountRetriever createCountRetriever(long seed, QueryExecutionFactory qef) {
     return new SamplingCountRetrieverDecorator(
-        new PairCountRetriever(qef, new DefaultMaxCounter(qef)), seed, 3, qef);
+        new PairCountRetriever(qef, new DefaultMaxCounter(qef, false, null)), seed, 3, qef);
   }
 }

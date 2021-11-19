@@ -31,4 +31,10 @@ public interface ITypeRestriction {
    * @return {@code true} if the restriction has not effect, else {@code false}
    */
   public boolean isEmpty();
+
+  /**
+   *
+   * @return this return the restriction as object while the restriction may has different type in different implementations
+   */
+  public Object getRestriction();
 }

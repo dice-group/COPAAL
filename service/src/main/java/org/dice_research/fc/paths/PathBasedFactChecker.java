@@ -1,7 +1,14 @@
 package org.dice_research.fc.paths;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
@@ -59,7 +66,9 @@ public class PathBasedFactChecker implements IFactChecker {
    * The score if no paths were found.
    */
   protected double pathsNotFoundResult = 0;
-  
+
+  protected Map<String,Long> queryResultMap = new HashMap<>();
+
   /**
    * Constructor.
    * 

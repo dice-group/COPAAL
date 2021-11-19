@@ -1,0 +1,2 @@
+SELECT DISTINCT ?s WHERE {  ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Animal> .  }	2705982
+SELECT DISTINCT ?s WHERE {  ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Place> .  }	1149513

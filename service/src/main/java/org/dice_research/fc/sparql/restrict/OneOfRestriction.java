@@ -49,6 +49,11 @@ public class OneOfRestriction implements ITypeRestriction {
   }
 
   @Override
+  public Object getRestriction() {
+    return this.values;
+  }
+
+  @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;

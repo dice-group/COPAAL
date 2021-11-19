@@ -2,6 +2,7 @@ package org.dice_research.fc.paths.scorer.count.max;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.dice_research.fc.data.Predicate;
+import org.dice_research.fc.paths.scorer.count.IPreProcessCounter;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 /**
  * Maximum count retriever class , when can not retrieve from domain and range then used the Virtual type
@@ -12,8 +13,8 @@ import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 public class HybridMaxCounter extends MaxCounter{
 
 
-    public HybridMaxCounter(QueryExecutionFactory qef) {
-        super(qef);
+    public HybridMaxCounter(QueryExecutionFactory qef, Boolean isPreProcessed, IPreProcessCounter preProcessCounter) {
+        super(qef, isPreProcessed, preProcessCounter);
     }
 
     @Override

@@ -86,14 +86,14 @@ public class MaxCounterTest {
 
     List<Object[]> testConfigs = new ArrayList<Object[]>();
     // virtual types
-    testConfigs.add(new Object[] {new EmptyPredicateFactory(), new VirtualTypesMaxCounter(qef), fact, 2});
-    testConfigs.add(new Object[] {new EmptyPredicateFactory(), new VirtualTypesMaxCounter(qef2), fact, 4});
-    testConfigs.add(new Object[] {new EmptyPredicateFactory(), new VirtualTypesMaxCounter(qef3), fact, 0});
+    testConfigs.add(new Object[] {new EmptyPredicateFactory(), new VirtualTypesMaxCounter(qef,false,null), fact, 2});
+    testConfigs.add(new Object[] {new EmptyPredicateFactory(), new VirtualTypesMaxCounter(qef2,false,null), fact, 4});
+    testConfigs.add(new Object[] {new EmptyPredicateFactory(), new VirtualTypesMaxCounter(qef3,false,null), fact, 0});
 
     // no virtual types
-    testConfigs.add(new Object[] {new PredicateFactory(qef), new DefaultMaxCounter(qef), fact, 1});
-    testConfigs.add(new Object[] {new PredicateFactory(qef2), new DefaultMaxCounter(qef2), fact, 3});
-    testConfigs.add(new Object[] {new PredicateFactory(qef3), new DefaultMaxCounter(qef3), fact, 0});
+    testConfigs.add(new Object[] {new PredicateFactory(qef), new DefaultMaxCounter(qef,false,null), fact, 1});
+    testConfigs.add(new Object[] {new PredicateFactory(qef2), new DefaultMaxCounter(qef2,false,null), fact, 3});
+    testConfigs.add(new Object[] {new PredicateFactory(qef3), new DefaultMaxCounter(qef3,false,null), fact, 0});
 
     return testConfigs;
   }

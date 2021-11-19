@@ -25,13 +25,13 @@ public class PairCountRetriever extends AbstractSPARQLBasedCountRetriever {
 
   @Autowired
   public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
-    this(qef, maxCounter, new PropPathBasedPathClauseGenerator());
+    this(qef, maxCounter, new PropPathBasedPathClauseGenerator(),false,null);
   }
 
   @Autowired
   public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter,
-                            IPathClauseGenerator pathClauseGenerator) {
-    super(qef, maxCounter);
+                            IPathClauseGenerator pathClauseGenerator,Boolean isPreProcessed,IPreProcessCounter preProcessCounter) {
+    super(qef, maxCounter, isPreProcessed, preProcessCounter);
     this.pathClauseGenerator = pathClauseGenerator;
   }
 

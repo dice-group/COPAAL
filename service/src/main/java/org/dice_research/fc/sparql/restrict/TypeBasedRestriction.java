@@ -49,6 +49,11 @@ public class TypeBasedRestriction implements ITypeRestriction {
   }
 
   @Override
+  public Object getRestriction() {
+    return this.types;
+  }
+
+  @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;

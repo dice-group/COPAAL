@@ -1,5 +1,7 @@
 package org.dice_research.fc.sparql.restrict;
 
+import org.apache.xpath.operations.Bool;
+
 /**
  * This restriction enforces that the give variable has to occur in a certain position in at least
  * one triple. For the object position, it can be further restricted to be a resource.
@@ -65,6 +67,12 @@ public class TriplePositionRestriction implements ITypeRestriction {
   public boolean isEmpty() {
     // The restriction is empty if non of the flags is true
     return !(mustBeSubject || mustBePredicate || mustBeObject);
+  }
+
+  @Override
+  public Object getRestriction() {
+    boolean[] returnVal =new boolean[]{this.mustBeSubject, this.mustBePredicate, this.mustBeObject, this.mustBeResource};
+    return returnVal;
   }
 
   @Override
