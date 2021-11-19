@@ -34,3 +34,4 @@ build/
 
 *.old
 *.ser
+!ancestorsMap.ser

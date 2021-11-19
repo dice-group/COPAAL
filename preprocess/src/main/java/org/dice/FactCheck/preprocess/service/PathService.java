@@ -33,7 +33,7 @@ public class PathService implements IPathService{
             in.close();
             allSharedPaths = new HashSet<>();
         }catch (Exception ex){
-            System.out.println("Error in read map of ancestors");
+            System.out.println("Error in read map of ancestors"+ex.getStackTrace() + ex.getMessage());
         }
     }
 
