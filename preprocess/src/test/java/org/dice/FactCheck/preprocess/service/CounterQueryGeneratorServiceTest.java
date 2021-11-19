@@ -231,7 +231,7 @@ public class CounterQueryGeneratorServiceTest {
         Collection<Predicate> predicates = predicateService.allPredicates("collected_predicates.json");
 
         PathService pathService = new PathService();
-        Collection<Path> paths = pathService.generateAllPaths(predicates , len);
+        Collection<Path> paths = pathService.generateAllPaths(predicates , len,null,false);
 
         SaveAllPathInAFileAsText(paths);
 
