@@ -190,11 +190,11 @@ public class CounterQueryGeneratorServiceTest {
     }
 
 
-    //@Test uncomment if need to run
+    @Test //uncomment if need to run
     public void howManyQueriesDoWeHave() throws CloneNotSupportedException {
         howManyQueriesDoWeHave("http://dbpedia.org/ontology/nationality","Nationality","http://dbpedia.org/ontology/Person","http://dbpedia.org/ontology/Country",3);
 
-        howManyQueriesDoWeHave("http://dbpedia.org/ontology/birthPlace","BirthPlace","http://dbpedia.org/ontology/Animal","http://dbpedia.org/ontology/Place",3);
+    /*    howManyQueriesDoWeHave("http://dbpedia.org/ontology/birthPlace","BirthPlace","http://dbpedia.org/ontology/Animal","http://dbpedia.org/ontology/Place",3);
 
         howManyQueriesDoWeHave("http://dbpedia.org/ontology/deathPlace","DeathPlace","http://dbpedia.org/ontology/Animal","http://dbpedia.org/ontology/Place",3);
 
@@ -204,7 +204,7 @@ public class CounterQueryGeneratorServiceTest {
 
         howManyQueriesDoWeHave("http://dbpedia.org/ontology/starring","Starring","http://dbpedia.org/ontology/Work","http://dbpedia.org/ontology/Actor",3);
 
-        howManyQueriesDoWeHave("http://dbpedia.org/ontology/subsidiary","Subsidiary","http://dbpedia.org/ontology/Company","http://dbpedia.org/ontology/Company",3);
+        howManyQueriesDoWeHave("http://dbpedia.org/ontology/subsidiary","Subsidiary","http://dbpedia.org/ontology/Company","http://dbpedia.org/ontology/Company",3);*/
     }
 
     public void howManyQueriesDoWeHave(String propertyURI, String propertyName, String domain, String range, int len ) throws CloneNotSupportedException {
@@ -233,14 +233,32 @@ public class CounterQueryGeneratorServiceTest {
         PathService pathService = new PathService();
         Collection<Path> paths = pathService.generateAllPaths(predicates , len);
 
-        CountQueries queries = service.generateCountQueries(predicate1, paths);
+        SaveAllPathInAFileAsText(paths);
+
+        /*CountQueries queries = service.generateCountQueries(predicate1, paths);
 
         try {
             save(queries.getCoOccurrenceCountQueries(), "queriesCoOccurrence"+propertyName+len+".txt");
             save(queries.getMaxCountQueries(), "queriesMaxCount"+propertyName+len+".txt");
             save(queries.getPathInstancesCountQueries(), "queriesPathInstances"+propertyName+len+".txt");
+            save(queries.getPredicateInstancesCountQueries(),"queriesPredicateInstances"+propertyName+len+".txt");
+            save(queries.getTypeInstancesCountQueries(),"queriesTypeInstances"+propertyName+len+".txt");
         }catch (Exception ex){
             System.out.println(ex.getMessage());
+        }*/
+    }
+
+    private void SaveAllPathInAFileAsText(Collection<Path> paths) {
+        try{
+            FileWriter myWriter = new FileWriter("AllPossiblePredicateCombinations.txt");
+
+            for (Iterator<Path> iterator = paths.iterator(); iterator.hasNext();) {
+                Path p = iterator.next();
+                myWriter.write(p.toString());
+            }
+            myWriter.close();
+        }catch (Exception ex){
+
         }
     }
 

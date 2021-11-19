@@ -66,8 +66,8 @@ public class PredicateService implements IPredicateService{
         JSONParser parser = new JSONParser();
         try {
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream is = classloader.getResourceAsStream(fileName);
-            Object obj = parser.parse(new InputStreamReader(is));
+            //InputStream is = classloader.getResourceAsStream(fileName);
+            Object obj = parser.parse(new FileReader(fileName));
 
             // A JSON object. Key value pairs are unordered. JSONObject supports java.util.Map interface.
             JSONArray Predicates = (JSONArray) obj;

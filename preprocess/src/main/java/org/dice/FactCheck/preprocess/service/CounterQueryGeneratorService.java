@@ -33,6 +33,9 @@ public class CounterQueryGeneratorService implements ICounterQueryGenerator {
                 queries.addToPathInstancesCountQueries(generateQueryPathInstancesCount(predicate, path));
                 queries.addToMaxCountQueries(generateMaxQuery(predicate.getDomain()));
                 queries.addToMaxCountQueries(generateMaxQuery(predicate.getRange()));
+                queries.addToPredicateInstancesCountQueries(generateCountPredicateInstances(predicate));
+                queries.addToTypeInstancesCountQueries(generateCountTypeInstances(predicate.getDomain()));
+                queries.addToTypeInstancesCountQueries(generateCountTypeInstances(predicate.getRange()));
             }
         }
         return queries;
@@ -96,10 +99,31 @@ public class CounterQueryGeneratorService implements ICounterQueryGenerator {
         return queryBuilder.toString();
     }
 
+    public String generateCountPredicateInstances(Predicate predicate) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT DISTINCT ?s ?o ");
+        queryBuilder.append("WHERE { ?s <");
+        queryBuilder.append(predicate.getProperty().getURI());
+        queryBuilder.append("> ?o . ");
+        predicate.getDomain().addRestrictionToQuery("s", queryBuilder);
+        predicate.getRange().addRestrictionToQuery("o", queryBuilder);
+        queryBuilder.append(" }");
+        return queryBuilder.toString();
+    }
+
     private String generateMaxQuery(ITypeRestriction restriction) {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT DISTINCT ?s");
         queryBuilder.append(" WHERE { ");
+        restriction.addRestrictionToQuery("s", queryBuilder);
+        queryBuilder.append(" }");
+        return queryBuilder.toString();
+    }
+
+    protected String generateCountTypeInstances(ITypeRestriction restriction) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT DISTINCT ?s ");
+        queryBuilder.append("WHERE { ");
         restriction.addRestrictionToQuery("s", queryBuilder);
         queryBuilder.append(" }");
         return queryBuilder.toString();

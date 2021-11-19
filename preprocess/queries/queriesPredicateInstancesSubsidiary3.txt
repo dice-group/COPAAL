@@ -1,0 +1,1 @@
+SELECT DISTINCT ?s ?o WHERE { ?s <http://dbpedia.org/ontology/subsidiary> ?o .  ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Company> .  ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Company> .  }

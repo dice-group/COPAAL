@@ -9,7 +9,11 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.dice.FactCheck.preprocess.model.Path;
 import org.dice.FactCheck.preprocess.service.JsonCounterService;
+import org.dice.FactCheck.preprocess.service.PathService;
+import org.dice.FactCheck.preprocess.service.PredicateService;
+import org.dice_research.fc.data.Predicate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,10 +24,7 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 
 @SpringBootApplication
@@ -55,11 +56,12 @@ public class PreprocessApplication implements CommandLineRunner {
 			if(args[0].equals("h")){
 				System.out.println("help");
 				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part] ['C' for cumulative result(both Lite and Complete version), 'CL' just lite version, 'CC' just Complete version , 'I' for individual]: this will read file and run queries in that file");
+				System.out.println("pc [collected_predicates.json] [len] [pathToSaveResult] [PathToSaveSerialization] [true or false for save the result]: this will read file and  generate all combination for predicates by lentgh [len]  ");
 			}
 		}
 
-		if(args.length == 5){
-			if(args[0].equals("f")){
+		if(args[0].equals("f")){
+			if(args.length == 6){
 				System.out.println("looking at "+ args[1]+" for a file");
 				/*try {
 					String tempPath = new File(PreprocessApplication.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getPath();
@@ -142,6 +144,40 @@ public class PreprocessApplication implements CommandLineRunner {
 					}
 				}
 			}
+		}
+
+		if(args[0].equals("pc")){
+			System.out.println("run predicate combination generator");
+			if(args.length == 6) {
+			try {
+				PredicateService predicateService = new PredicateService(null);
+
+				Collection<Predicate> predicates = predicateService.allPredicates(args[1]);
+
+				PathService pathService = new PathService();
+				Collection<Path> paths = pathService.generateAllPaths(predicates, Integer.valueOf(args[2]), args[4],Boolean.parseBoolean(args[5]));
+
+				SaveAllPathInAFileAsText(paths, args[3]);
+			}catch (Exception ex){
+				System.out.println(ex);
+			}
+			}else{
+				System.out.println("the arguments are not enough");
+			}
+		}
+	}
+
+	private void SaveAllPathInAFileAsText(Collection<Path> paths,String pathToSave) {
+		try{
+			FileWriter myWriter = new FileWriter(pathToSave);
+
+			for (Iterator<Path> iterator = paths.iterator(); iterator.hasNext();) {
+				Path p = iterator.next();
+				myWriter.write(p.toString());
+			}
+			myWriter.close();
+		}catch (Exception ex){
+
 		}
 	}
 

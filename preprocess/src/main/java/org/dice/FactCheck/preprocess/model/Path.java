@@ -60,4 +60,19 @@ public class Path implements Cloneable{
         }
         return new Path(clonedPaths);
     }
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        for(Pair<Predicate, Boolean> p : paths){
+            if(p.getSecond()){
+                sb.append("^");
+            }
+            sb.append("<");
+            sb.append(p.getFirst().getProperty().getURI());
+            sb.append(">");
+        }
+        sb.append("\n");
+        return sb.toString();
+    }
 }

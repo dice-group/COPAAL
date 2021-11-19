@@ -15,9 +15,13 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
-@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class)
 @SpringBootTest(classes = PreprocessApplication.class)
 public class PathServiceTest {
 
@@ -42,7 +46,7 @@ public class PathServiceTest {
         List<Predicate> input = new ArrayList<>();
         input.add(new Predicate(property,domain,range));
 
-        List<Path> actual = (List<Path>) service.generateAllPaths(input,1);
+        List<Path> actual = (List<Path>) service.generateAllPaths(input,1, null, false);
 
         Assert.assertEquals(2, actual.size());
     }
@@ -116,7 +120,7 @@ public class PathServiceTest {
         Predicate predicate3 = new Predicate(property3,domain2,range2);
         input.add(predicate2);
 
-        service.generateAllPaths(input,2);
+        service.generateAllPaths(input,2, null, false);
 
         Set<Path> actual = service.getAllPathWithAllLength();
 
@@ -229,7 +233,7 @@ public class PathServiceTest {
         Predicate predicate2 = new Predicate(property2,domain2,range2);
         input.add(predicate2);
 
-        service.generateAllPaths(input,2);
+        service.generateAllPaths(input,2, null, false);
 
         Set<Path> actual = service.getAllPathWithAllLength();
 
@@ -348,7 +352,7 @@ public class PathServiceTest {
         Predicate predicate2 = new Predicate(property2,domain2,range2);
         input.add(predicate2);
 
-        service.generateAllPaths(input,2);
+        service.generateAllPaths(input,2, null, false);
 
         Set<Path> actual = service.getAllPathWithAllLength();
 
@@ -454,7 +458,7 @@ public class PathServiceTest {
         Predicate predicate2 = new Predicate(property2,domain2,range2);
         input.add(predicate2);
 
-        service.generateAllPaths(input,3);
+        service.generateAllPaths(input,3, null, false);
 
         Set<Path> actual = service.getAllPathWithAllLength();
 
@@ -476,9 +480,24 @@ public class PathServiceTest {
 
     @Test
     public void howMuchTimeDoesItNeed() throws CloneNotSupportedException {
+
+
+        // Get current size of heap in bytes
+        long heapSize = Runtime.getRuntime().totalMemory();
+        System.out.println("heapSize: "+heapSize);
+
+
+        // Get maximum size of heap in bytes. The heap cannot grow beyond this size.// Any attempt will result in an OutOfMemoryException.
+        long heapMaxSize = Runtime.getRuntime().maxMemory();
+        System.out.println("heapMaxSize: "+heapMaxSize);
+
+        // Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
+        long heapFreeSize = Runtime.getRuntime().freeMemory();
+        System.out.println("heapFreeSize: "+heapFreeSize);
+
         IPathService service = new PathService();
 
-        int numberOfProperties = 32;
+        int numberOfProperties = 750;
         //int numberOfProperties = 6;
 
         List<Predicate> input = new ArrayList<>();
@@ -504,7 +523,7 @@ public class PathServiceTest {
             input.add(predicate);
         }
 
-        service.generateAllPaths(input, 3);
+        service.generateAllPaths(input, 3, null, false);
 
         long endTime   = System.nanoTime();
         long totalTime = endTime - startTime;
@@ -529,5 +548,53 @@ public class PathServiceTest {
         ShouldContainsThisSubPaths.add(new Pair<>(predicate2,inverted2));
         Path shouldContainThisPath = new Path(ShouldContainsThisSubPaths);
         return actual.contains(shouldContainThisPath);
+    }
+
+    @Test
+    public void runService() throws CloneNotSupportedException, IOException {
+        PredicateService predicateService = new PredicateService(null);
+
+        Collection<Predicate> predicates = predicateService.allPredicates("collected_predicates.json");
+
+        PathService pathService = new PathService();
+        pathService.generateAllPaths(predicates , 3, null, false);
+        Set<Path> paths = pathService.getAllPathWithAllLength();
+
+        FileWriter fw = new FileWriter("allPathsWithAncestorsCalculated.txt");
+
+        try {
+            Iterator<Path> iterator = paths.iterator();
+            while (iterator.hasNext()) {
+                fw.write(iterator.next().toString());
+                fw.write("\n");
+            }
+            fw.close();
+        }catch(Exception ex){
+
+        }
+
+
+        FileOutputStream fileOut = null;
+        try {
+            fileOut =
+                    new FileOutputStream("allPathsWithAncestorsCalculatedItIsSetOfPaths.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(paths);
+            out.close();
+            fileOut.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+        }finally {
+            System.out.println("Any body here ...");
+            try {
+                if (fileOut != null) {
+                    System.out.println("CloseConn");
+                    fileOut.close();
+                    System.out.println("CloseConnDone");
+                }
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+        }
     }
 }
