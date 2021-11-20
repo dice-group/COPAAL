@@ -7,6 +7,7 @@ import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -154,9 +155,9 @@ public class PathService implements IPathService{
         }
 
         // have share parent
-        //if(hasSharedPoint(firstAncestors, secondAncestors)){
-//            return true;
-//        }
+        if(hasSharedPoint(firstAncestors, secondAncestors)){
+            return true;
+        }
 
         return false;
     }
@@ -209,6 +210,11 @@ public class PathService implements IPathService{
     }
 
     private void SaveAllSharedPaths(String FileName) throws IOException {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
+        Date date = new Date();
+        FileName = FileName+formatter.format(date);
+
         FileWriter fw = new FileWriter(FileName+".txt");
 
         try {
@@ -221,6 +227,8 @@ public class PathService implements IPathService{
         }catch(Exception ex){
 
         }
+
+
 
         FileOutputStream fileOut = null;
         try {
