@@ -9,11 +9,18 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.dice.FactCheck.preprocess.model.CountQueries;
 import org.dice.FactCheck.preprocess.model.Path;
+import org.dice.FactCheck.preprocess.service.CounterQueryGeneratorService;
 import org.dice.FactCheck.preprocess.service.JsonCounterService;
 import org.dice.FactCheck.preprocess.service.PathService;
 import org.dice.FactCheck.preprocess.service.PredicateService;
 import org.dice_research.fc.data.Predicate;
+import org.dice_research.fc.sparql.restrict.ITypeRestriction;
+import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,6 +32,7 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @SpringBootApplication
@@ -47,7 +55,7 @@ public class PreprocessApplication implements CommandLineRunner {
 	}
 
 	@Override
-	public void run(String... args) {
+	public void run(String... args) throws Exception {
 		counterservice = new JsonCounterService();
 		if (args.length == 0){
 			System.out.println("h : use this to get Help  'java -jar [jarfile] h '");
@@ -57,6 +65,7 @@ public class PreprocessApplication implements CommandLineRunner {
 				System.out.println("help");
 				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part] ['C' for cumulative result(both Lite and Complete version), 'CL' just lite version, 'CC' just Complete version , 'I' for individual]: this will read file and run queries in that file");
 				System.out.println("pc [collected_predicates.json] [len] [pathToSaveResult] [PathToSaveSerialization] [true or false for save the result]: this will read file and  generate all combination for predicates by lentgh [len]  ");
+				System.out.println("gq [predicate] [domain] [range] [predicate combination files] [pathToSaveResults]: this will read the predicate path and generate all queries]  ");
 			}
 		}
 
@@ -126,7 +135,7 @@ public class PreprocessApplication implements CommandLineRunner {
 
 				// set date str
 				Date date = Calendar.getInstance().getTime();
-				DateFormat dateFormat = new SimpleDateFormat("mm-dd_hh-mm");
+				DateFormat dateFormat = new SimpleDateFormat("MM-dd_hh-mm");
 				dateStr = dateFormat.format(date);
 
 
@@ -165,6 +174,93 @@ public class PreprocessApplication implements CommandLineRunner {
 				System.out.println("the arguments are not enough");
 			}
 		}
+
+		if(args[0].equals("gq")){
+			System.out.println("generating queries");
+			if(args.length == 6){
+				System.out.println("Start generating the queries");
+				CounterQueryGeneratorService service = new CounterQueryGeneratorService();
+
+				// read all predicates
+				PredicateService predicateService = new PredicateService(null);
+
+				HashSet<Predicate> predicates = (HashSet<Predicate>) predicateService.allPredicates("collected_predicates.json");
+
+				Map<String,Predicate> predicatesMap = predicates.stream().collect(Collectors.toMap(p->p.getProperty().getURI(),p->p));
+
+				System.out.println("map of predicates loaded"+predicates.size());
+
+				// The First Property
+				//Property
+				Model model = ModelFactory.createDefaultModel();
+				Property property = model.createProperty(args[1]);
+
+				//Domain
+				Set<String> domainSet = new HashSet<String>();
+				domainSet.add(args[2]);
+				ITypeRestriction domain = new TypeBasedRestriction(domainSet);
+
+				//Range
+				Set<String> rangeSet = new HashSet<String>();
+				rangeSet.add(args[3]);
+				ITypeRestriction range = new TypeBasedRestriction(rangeSet);
+
+				Predicate predicate = new Predicate(property,domain,range);
+
+				Collection<Path> paths = readPredicateCombinationFromFile(args[4], predicatesMap);
+
+				System.out.println("paths are loaded "+paths.size());
+
+				CountQueries queries = service.generateCountQueries(predicate,paths);
+
+				try {
+					System.out.println("queries are loaded "+queries.whatIsTheSize());
+				}catch (Exception ex){
+					System.out.println(ex);
+				}
+				saveTheCountQueriesInFile(queries, args[5],predicate.getProperty().getLocalName());
+			}
+		}
+	}
+
+	private Collection<Path> readPredicateCombinationFromFile(String filePath, Map<String,Predicate> predicatesMap) throws Exception {
+		Set<Path> returnSet = new HashSet<>();
+		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+			String line;
+			long lineCounter = 1;
+			while ((line = br.readLine()) != null) {
+				Path path = convertTextToPath(line, predicatesMap);
+				returnSet.add(path);
+			}
+		}catch (Exception ex){
+			System.out.println(ex);
+			throw ex;
+		}
+		return returnSet;
+	}
+
+	private Path convertTextToPath(String line, Map<String,Predicate> predicatesMap) throws Exception {
+		Path path = new Path();
+		String[] parts = line.split(">");
+		for(int i = 0 ; i < parts.length ; i++){
+			parts[i] = parts[i].replace("<","");
+			if(parts[i].charAt(0)=='^'){
+				// is inverted
+				parts[i] = parts[i].replace("^","");
+				path.addPart(makePredicateFromTextGerDomainAndRangeFromFile(parts[i], predicatesMap),true);
+			}else{
+				path.addPart(makePredicateFromTextGerDomainAndRangeFromFile(parts[i], predicatesMap),false);
+			}
+		}
+		return path;
+	}
+
+	private Predicate makePredicateFromTextGerDomainAndRangeFromFile(String predicateURI, Map<String,Predicate> predicatesMap) throws Exception {
+
+		if(predicatesMap.containsKey(predicateURI)){
+			return predicatesMap.get(predicateURI);
+		}
+		throw new Exception("the predicate is not in the json file "+predicateURI + "map size is :"+predicatesMap.size());
 	}
 
 	private void SaveAllPathInAFileAsText(Collection<Path> paths,String pathToSave) {
@@ -294,6 +390,73 @@ public class PreprocessApplication implements CommandLineRunner {
 			}
 		}
 
+	}
+
+	private void saveTheCountQueriesInFile(CountQueries queries, String pathTosave,String predicate) {
+		String filename= pathTosave+"CoOccurrenceCountQueries-"+predicate+"-"+dateStr+".tsv";
+		try {
+			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
+
+			for(String s : queries.getCoOccurrenceCountQueries()){
+				fw.write(s);
+				fw.write("\n");
+			}
+			fw.close();
+		}catch (Exception ex){
+			System.out.println(ex);
+		}
+
+		filename= pathTosave+"PathInstancesCountQueries-"+predicate+"-"+dateStr+".tsv";
+		try {
+			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
+
+			for(String s : queries.getPathInstancesCountQueries()){
+				fw.write(s);
+				fw.write("\n");
+			}
+			fw.close();
+		}catch (Exception ex){
+			System.out.println(ex);
+		}
+
+		filename= pathTosave+"MaxCountQueries-"+predicate+"-"+dateStr+".tsv";
+		try {
+			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
+
+			for(String s : queries.getMaxCountQueries()){
+				fw.write(s);
+				fw.write("\n");
+			}
+			fw.close();
+		}catch (Exception ex){
+			System.out.println(ex);
+		}
+
+		filename= pathTosave+"PredicateInstancesCountQueries-"+predicate+"-"+dateStr+".tsv";
+		try {
+			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
+
+			for(String s : queries.getPredicateInstancesCountQueries()){
+				fw.write(s);
+				fw.write("\n");
+			}
+			fw.close();
+		}catch (Exception ex){
+			System.out.println(ex);
+		}
+
+		filename= pathTosave+"TypeInstancesCountQueries-"+predicate+"-"+dateStr+".tsv";
+		try {
+			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
+
+			for(String s : queries.getTypeInstancesCountQueries()){
+				fw.write(s);
+				fw.write("\n");
+			}
+			fw.close();
+		}catch (Exception ex){
+			System.out.println(ex);
+		}
 	}
 
 	// run a query save in a file return the file name as a result

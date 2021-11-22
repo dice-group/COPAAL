@@ -20,6 +20,7 @@ import org.apache.jena.rdf.model.impl.PropertyImpl;
 import org.apache.jena.vocabulary.RDFS;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.paths.PredicateFactory;
+import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,7 @@ public class PredicateService implements IPredicateService{
     public PredicateService(QueryExecutionFactory executioner) {
         this.executioner = executioner;
         predicateFacroty = new PredicateFactory(executioner);
+
     }
 
     //this method fetch all predicates from KG

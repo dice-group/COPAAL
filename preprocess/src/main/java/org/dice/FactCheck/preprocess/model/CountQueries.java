@@ -51,4 +51,9 @@ public class CountQueries {
     public Set<String> getPredicateInstancesCountQueries() { return PredicateInstancesCountQueries; }
 
     public Set<String> getTypeInstancesCountQueries() {return TypeInstancesCountQueries;}
+
+    public String whatIsTheSize(){
+        return "CoOccurrenceCountQueries size is :\n"+CoOccurrenceCountQueries.size()+"\nPathInstancesCountQueries size is :\n" +PathInstancesCountQueries.size()+
+                "\nMaxCountQueries\n"+MaxCountQueries.size()+"\nPredicateInstancesCountQueries\n"+PredicateInstancesCountQueries.size()+"\nTypeInstancesCountQueries\n"+TypeInstancesCountQueries.size();
+    }
 }
