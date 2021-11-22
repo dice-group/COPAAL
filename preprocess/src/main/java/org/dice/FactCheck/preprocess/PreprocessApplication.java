@@ -65,7 +65,7 @@ public class PreprocessApplication implements CommandLineRunner {
 				System.out.println("help");
 				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part] ['C' for cumulative result(both Lite and Complete version), 'CL' just lite version, 'CC' just Complete version , 'I' for individual]: this will read file and run queries in that file");
 				System.out.println("pc [collected_predicates.json] [len] [pathToSaveResult] [PathToSaveSerialization] [true or false for save the result]: this will read file and  generate all combination for predicates by lentgh [len]  ");
-				System.out.println("gq [predicate] [domain] [range] [predicate combination files] [pathToSaveResults]: this will read the predicate path and generate all queries]  ");
+				System.out.println("gq [predicate] [domain] [range] [predicate combination files] [pathToSaveResults] [collected_predicates.json]: this will read the predicate path and generate all queries]  ");
 			}
 		}
 
@@ -177,14 +177,14 @@ public class PreprocessApplication implements CommandLineRunner {
 
 		if(args[0].equals("gq")){
 			System.out.println("generating queries");
-			if(args.length == 6){
+			if(args.length == 7){
 				System.out.println("Start generating the queries");
 				CounterQueryGeneratorService service = new CounterQueryGeneratorService();
 
 				// read all predicates
 				PredicateService predicateService = new PredicateService(null);
 
-				HashSet<Predicate> predicates = (HashSet<Predicate>) predicateService.allPredicates("collected_predicates.json");
+				HashSet<Predicate> predicates = (HashSet<Predicate>) predicateService.allPredicates(args[6]);
 
 				Map<String,Predicate> predicatesMap = predicates.stream().collect(Collectors.toMap(p->p.getProperty().getURI(),p->p));
 
