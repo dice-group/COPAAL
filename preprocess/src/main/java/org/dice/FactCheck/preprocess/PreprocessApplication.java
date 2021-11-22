@@ -76,7 +76,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		}
 
 		if(args[0].equals("f")){
-			if(args.length == 6){
+			if(args.length == 5){
 				System.out.println("looking at "+ args[1]+" for a file");
 				/*try {
 					String tempPath = new File(PreprocessApplication.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getPath();
