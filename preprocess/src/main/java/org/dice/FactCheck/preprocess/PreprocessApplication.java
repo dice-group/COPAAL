@@ -218,7 +218,9 @@ public class PreprocessApplication implements CommandLineRunner {
 				}catch (Exception ex){
 					System.out.println(ex);
 				}
+				System.out.println("start save the results ");
 				saveTheCountQueriesInFile(queries, args[5],predicate.getProperty().getLocalName());
+				System.out.println(" results saved");
 			}
 		}
 	}
