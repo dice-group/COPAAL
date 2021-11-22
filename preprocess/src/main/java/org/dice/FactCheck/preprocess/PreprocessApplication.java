@@ -57,6 +57,12 @@ public class PreprocessApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		counterservice = new JsonCounterService();
+
+		// set date str
+		Date date = Calendar.getInstance().getTime();
+		DateFormat dateFormat = new SimpleDateFormat("MM-dd_hh-mm");
+		dateStr = dateFormat.format(date);
+
 		if (args.length == 0){
 			System.out.println("h : use this to get Help  'java -jar [jarfile] h '");
 		}
@@ -132,12 +138,6 @@ public class PreprocessApplication implements CommandLineRunner {
 						}
 					}
 				}
-
-				// set date str
-				Date date = Calendar.getInstance().getTime();
-				DateFormat dateFormat = new SimpleDateFormat("MM-dd_hh-mm");
-				dateStr = dateFormat.format(date);
-
 
 				if(!isFolder) {
 					processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3]);
@@ -283,15 +283,20 @@ public class PreprocessApplication implements CommandLineRunner {
 		// read the query file
 		System.out.println("Start Process the File"+  filePath);
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-			String line;
+			String query;
+			String queryAndPath;
 			Integer lineCounter = 1;
-			while ((line = br.readLine()) != null) {
+			while ((queryAndPath = br.readLine()) != null) {
 				System.out.println(filePath+" "+lineCounter);
+
+				String[] parts = queryAndPath.split("\t");
+				query = parts[0];
+
 				// process the line.
-				line = line.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
+				query = query.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
 					// check fact
 					System.out.println("start do the query");
-					String tempQueryResultFile = doQuery(line, endpoint);
+					String tempQueryResultFile = doQuery(query, endpoint);
 					System.out.println("query is done and result save at :"+tempQueryResultFile);
 					if(!tempQueryResultFile.equals("")) {
 						System.out.println("Start count the result");
@@ -301,7 +306,7 @@ public class PreprocessApplication implements CommandLineRunner {
 						}else{
 							System.out.println("Done counting the result");
 							System.out.println("start save the result");
-							save(line, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName);
+							save(query, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName , parts[1],parts[2]);
 							System.out.println("Done saving the result");
 							System.out.println("running query was successful");
 						}
@@ -326,7 +331,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		}
 	}
 
-	public static void writeToFile(String path, String query, long CountResult) throws Exception {
+	public static void writeToFile(String path, String query, long CountResult, String pathOfQuery , String predicate) throws Exception {
 
 		PrintWriter pw = null;
 		try {
@@ -335,6 +340,10 @@ public class PreprocessApplication implements CommandLineRunner {
 				pw.print(query);
 				pw.write("\t");
 				pw.write(String.valueOf(CountResult));
+				pw.write("\t");
+				pw.write(pathOfQuery);
+				pw.write("\t");
+				pw.write(predicate);
 				pw.println("");
 			pw.flush();
 		} finally {
@@ -344,14 +353,14 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	// save each file or save all result in one file
 
-	private void save(String query,long CountResult ,String path, Boolean individual, Boolean isLiteVersion , Boolean isCompleteVersion, String queriesFileName)  {
+	private void save(String query,long CountResult ,String pathForSaveFile, Boolean individual, Boolean isLiteVersion , Boolean isCompleteVersion, String queriesFileName, String pathOfQuery , String predicate)  {
 		if(individual){
 			String oldQuery = new String(query);
 			query = query.replace(" ","").replace("\n","");
-			String filePath = path+DigestUtils.md5Hex(query).toUpperCase()+".tsv";
+			String filePath = pathForSaveFile+DigestUtils.md5Hex(query).toUpperCase()+".tsv";
 			System.out.println("save result at "+filePath);
 			try {
-				writeToFile(filePath, oldQuery, CountResult);
+				writeToFile(filePath, oldQuery, CountResult,pathOfQuery,predicate);
 			}catch(Exception ex){
 				System.out.println(ex);
 			}
@@ -360,11 +369,15 @@ public class PreprocessApplication implements CommandLineRunner {
 			if(isCompleteVersion){
 				try
 				{
-					String filename= path+queriesFileName+"CumulativeResult-"+dateStr+".tsv";
+					String filename= pathForSaveFile+queriesFileName+"CumulativeResult-"+dateStr+".tsv";
 					FileWriter fw = new FileWriter(filename,true); //the true will append the new data
 					fw.write(query);
 					fw.write("\t");
 					fw.write(String.valueOf(CountResult));
+					fw.write("\t");
+					fw.write(pathOfQuery);
+					fw.write("\t");
+					fw.write(predicate);
 					fw.write("\n");
 					fw.close();
 				}
@@ -377,11 +390,15 @@ public class PreprocessApplication implements CommandLineRunner {
 			if(isLiteVersion){
 				try
 				{
-					String filename= path+queriesFileName+"LiteCumulativeResult-"+dateStr+".tsv";
+					String filename= pathForSaveFile+queriesFileName+"LiteCumulativeResult-"+dateStr+".tsv";
 					FileWriter fw = new FileWriter(filename,true); //the true will append the new data
 					fw.write(query);
 					fw.write("\t");
 					fw.write(String.valueOf(CountResult));
+					fw.write("\t");
+					fw.write(pathOfQuery);
+					fw.write("\t");
+					fw.write(predicate);
 					fw.write("\n");
 					fw.close();
 				}
