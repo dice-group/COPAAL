@@ -72,7 +72,6 @@ public class Path implements Cloneable{
             sb.append(p.getFirst().getProperty().getURI());
             sb.append(">");
         }
-        sb.append("\n");
         return sb.toString();
     }
 }

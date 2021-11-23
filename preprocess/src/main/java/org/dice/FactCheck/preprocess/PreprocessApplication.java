@@ -290,6 +290,7 @@ public class PreprocessApplication implements CommandLineRunner {
 				System.out.println(filePath+" "+lineCounter);
 
 				String[] parts = queryAndPath.split(",");
+				terminalWrite("parts Size is : "+parts.length);
 				if(parts.length!=3){
 					terminalWrite("Error the parts are not 3 "+ queryAndPath);
 				}
