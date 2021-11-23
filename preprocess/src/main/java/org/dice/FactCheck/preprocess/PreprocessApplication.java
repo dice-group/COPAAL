@@ -289,7 +289,10 @@ public class PreprocessApplication implements CommandLineRunner {
 			while ((queryAndPath = br.readLine()) != null) {
 				System.out.println(filePath+" "+lineCounter);
 
-				String[] parts = queryAndPath.split("\t");
+				String[] parts = queryAndPath.split(",");
+				if(parts.length!=3){
+					terminalWrite("Error the parts are not 3 "+ queryAndPath);
+				}
 				query = parts[0];
 
 				// process the line.
