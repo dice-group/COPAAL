@@ -341,11 +341,11 @@ public class PreprocessApplication implements CommandLineRunner {
 			pw = new PrintWriter(
 					new OutputStreamWriter(new FileOutputStream(path), "UTF-8"));
 				pw.print(query);
-				pw.write("\t");
+				pw.write(",");
 				pw.write(String.valueOf(CountResult));
-				pw.write("\t");
+				pw.write(",");
 				pw.write(pathOfQuery);
-				pw.write("\t");
+				pw.write(",");
 				pw.write(predicate);
 				pw.println("");
 			pw.flush();
@@ -361,7 +361,7 @@ public class PreprocessApplication implements CommandLineRunner {
 			System.out.println("it is individual");
 			String oldQuery = new String(query);
 			query = query.replace(" ","").replace("\n","");
-			String filePath = pathForSaveFile+DigestUtils.md5Hex(query).toUpperCase()+".tsv";
+			String filePath = pathForSaveFile+DigestUtils.md5Hex(query).toUpperCase()+".csv";
 			System.out.println("save result at "+filePath);
 			try {
 				writeToFile(filePath, oldQuery, CountResult,pathOfQuery,predicate);
@@ -373,14 +373,14 @@ public class PreprocessApplication implements CommandLineRunner {
 			if(isCompleteVersion){
 				try
 				{
-					String filename= pathForSaveFile+queriesFileName+"CumulativeResult-"+dateStr+".tsv";
+					String filename= pathForSaveFile+queriesFileName+"CumulativeResult-"+dateStr+".csv";
 					FileWriter fw = new FileWriter(filename,true); //the true will append the new data
 					fw.write(query);
-					fw.write("\t");
+					fw.write(",");
 					fw.write(String.valueOf(CountResult));
-					fw.write("\t");
+					fw.write(",");
 					fw.write(pathOfQuery);
-					fw.write("\t");
+					fw.write(",");
 					fw.write(predicate);
 					fw.write("\n");
 					fw.close();
@@ -395,15 +395,15 @@ public class PreprocessApplication implements CommandLineRunner {
 				System.out.println("lite version");
 				try
 				{
-					String filename= pathForSaveFile+queriesFileName+"LiteCumulativeResult-"+dateStr+".tsv";
+					String filename= pathForSaveFile+queriesFileName+"LiteCumulativeResult-"+dateStr+".csv";
 					System.out.println("file pass is " + filename);
 					FileWriter fw = new FileWriter(filename,true); //the true will append the new data
 					fw.write(query);
-					fw.write("\t");
+					fw.write(",");
 					fw.write(String.valueOf(CountResult));
-					fw.write("\t");
+					fw.write(",");
 					fw.write(pathOfQuery);
-					fw.write("\t");
+					fw.write(",");
 					fw.write(predicate);
 					fw.write("\n");
 					fw.close();
@@ -425,7 +425,7 @@ public class PreprocessApplication implements CommandLineRunner {
 
 		terminalWrite("start save the results in files");
 
-		String filename= pathTosave+"CoOccurrenceCountQueries-"+predicate+"-"+dateStr+".tsv";
+		String filename= pathTosave+"CoOccurrenceCountQueries-"+predicate+"-"+dateStr+".csv";
 		terminalWrite("first path is :"+filename);
 		try {
 			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
@@ -440,7 +440,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		}
 		terminalWrite("Write "+filename+" is done ");
 
-		filename= pathTosave+"PathInstancesCountQueries-"+predicate+"-"+dateStr+".tsv";
+		filename= pathTosave+"PathInstancesCountQueries-"+predicate+"-"+dateStr+".csv";
 		terminalWrite("first path is :"+filename);
 		try {
 			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
@@ -456,7 +456,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		}
 		terminalWrite("Write "+filename+" is done ");
 
-		filename= pathTosave+"MaxCountQueries-"+predicate+"-"+dateStr+".tsv";
+		filename= pathTosave+"MaxCountQueries-"+predicate+"-"+dateStr+".csv";
 		terminalWrite("first path is :"+filename);
 		try {
 			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
@@ -472,7 +472,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		}
 		terminalWrite("Write "+filename+" is done ");
 
-		filename= pathTosave+"PredicateInstancesCountQueries-"+predicate+"-"+dateStr+".tsv";
+		filename= pathTosave+"PredicateInstancesCountQueries-"+predicate+"-"+dateStr+".csv";
 		terminalWrite("first path is :"+filename);
 		try {
 			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
@@ -488,7 +488,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		}
 		terminalWrite("Write "+filename+" is done ");
 
-		filename= pathTosave+"TypeInstancesCountQueries-"+predicate+"-"+dateStr+".tsv";
+		filename= pathTosave+"TypeInstancesCountQueries-"+predicate+"-"+dateStr+".csv";
 		terminalWrite("first path is :"+filename);
 		try {
 			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
