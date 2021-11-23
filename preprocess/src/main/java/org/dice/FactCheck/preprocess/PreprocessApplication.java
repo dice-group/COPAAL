@@ -355,6 +355,7 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	private void save(String query,long CountResult ,String pathForSaveFile, Boolean individual, Boolean isLiteVersion , Boolean isCompleteVersion, String queriesFileName, String pathOfQuery , String predicate)  {
 		if(individual){
+			System.out.println("it is individual");
 			String oldQuery = new String(query);
 			query = query.replace(" ","").replace("\n","");
 			String filePath = pathForSaveFile+DigestUtils.md5Hex(query).toUpperCase()+".tsv";
@@ -388,9 +389,11 @@ public class PreprocessApplication implements CommandLineRunner {
 			}
 
 			if(isLiteVersion){
+				System.out.println("lite version");
 				try
 				{
 					String filename= pathForSaveFile+queriesFileName+"LiteCumulativeResult-"+dateStr+".tsv";
+					System.out.println("file pass is " + filename);
 					FileWriter fw = new FileWriter(filename,true); //the true will append the new data
 					fw.write(query);
 					fw.write("\t");
@@ -411,11 +414,19 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	}
 
+	public void terminalWrite(String str){
+		System.out.println(str);
+	}
+
 	private void saveTheCountQueriesInFile(CountQueries queries, String pathTosave,String predicate) {
+
+		terminalWrite("start save the results in files");
+
 		String filename= pathTosave+"CoOccurrenceCountQueries-"+predicate+"-"+dateStr+".tsv";
+		terminalWrite("first path is :"+filename);
 		try {
 			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
-
+			terminalWrite("will write  :"+queries.getCoOccurrenceCountQueries().size()+" lines");
 			for(String s : queries.getCoOccurrenceCountQueries()){
 				fw.write(s);
 				fw.write("\n");
@@ -424,11 +435,14 @@ public class PreprocessApplication implements CommandLineRunner {
 		}catch (Exception ex){
 			System.out.println(ex);
 		}
+		terminalWrite("Write "+filename+" is done ");
 
 		filename= pathTosave+"PathInstancesCountQueries-"+predicate+"-"+dateStr+".tsv";
+		terminalWrite("first path is :"+filename);
 		try {
 			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
 
+			terminalWrite("will write  :"+queries.getPathInstancesCountQueries().size()+" lines");
 			for(String s : queries.getPathInstancesCountQueries()){
 				fw.write(s);
 				fw.write("\n");
@@ -437,11 +451,14 @@ public class PreprocessApplication implements CommandLineRunner {
 		}catch (Exception ex){
 			System.out.println(ex);
 		}
+		terminalWrite("Write "+filename+" is done ");
 
 		filename= pathTosave+"MaxCountQueries-"+predicate+"-"+dateStr+".tsv";
+		terminalWrite("first path is :"+filename);
 		try {
 			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
 
+			terminalWrite("will write  :"+queries.getMaxCountQueries().size()+" lines");
 			for(String s : queries.getMaxCountQueries()){
 				fw.write(s);
 				fw.write("\n");
@@ -450,11 +467,14 @@ public class PreprocessApplication implements CommandLineRunner {
 		}catch (Exception ex){
 			System.out.println(ex);
 		}
+		terminalWrite("Write "+filename+" is done ");
 
 		filename= pathTosave+"PredicateInstancesCountQueries-"+predicate+"-"+dateStr+".tsv";
+		terminalWrite("first path is :"+filename);
 		try {
 			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
 
+			terminalWrite("will write  :"+queries.getPredicateInstancesCountQueries().size()+" lines");
 			for(String s : queries.getPredicateInstancesCountQueries()){
 				fw.write(s);
 				fw.write("\n");
@@ -463,11 +483,14 @@ public class PreprocessApplication implements CommandLineRunner {
 		}catch (Exception ex){
 			System.out.println(ex);
 		}
+		terminalWrite("Write "+filename+" is done ");
 
 		filename= pathTosave+"TypeInstancesCountQueries-"+predicate+"-"+dateStr+".tsv";
+		terminalWrite("first path is :"+filename);
 		try {
 			FileWriter fw = new FileWriter(filename, true); //the true will append the new data
 
+			terminalWrite("will write  :"+queries.getTypeInstancesCountQueries().size()+" lines");
 			for(String s : queries.getTypeInstancesCountQueries()){
 				fw.write(s);
 				fw.write("\n");
@@ -476,6 +499,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		}catch (Exception ex){
 			System.out.println(ex);
 		}
+		terminalWrite("Write "+filename+" is done ");
 	}
 
 	// run a query save in a file return the file name as a result

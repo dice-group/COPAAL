@@ -45,13 +45,13 @@ public class CounterQueryGeneratorService implements ICounterQueryGenerator {
         CountQueries queries = new CountQueries();
         for(Path path: paths){
             if(isFitWithPath(predicate, path)) {
-                queries.addToCoOccurrenceCountQueries(generateQueryCoOccurrence(predicate, path)+"\t"+path.toString()+"\t"+predicate.getProperty().getURI());
-                queries.addToPathInstancesCountQueries(generateQueryPathInstancesCount(predicate, path)+"\t"+path.toString()+"\t "+predicate.getProperty().getURI());
-                queries.addToMaxCountQueries(generateMaxQuery(predicate.getDomain())+"\t \t"+predicate.getProperty().getURI());
-                queries.addToMaxCountQueries(generateMaxQuery(predicate.getRange())+"\t \t"+predicate.getProperty().getURI());
-                queries.addToPredicateInstancesCountQueries(generateCountPredicateInstances(predicate)+"\t \t"+predicate.getProperty().getURI());
-                queries.addToTypeInstancesCountQueries(generateCountTypeInstances(predicate.getDomain())+"\t \t"+predicate.getProperty().getURI());
-                queries.addToTypeInstancesCountQueries(generateCountTypeInstances(predicate.getRange())+"\t \t"+predicate.getProperty().getURI());
+                queries.addToCoOccurrenceCountQueries(generateQueryCoOccurrence(predicate, path)+","+path.toString()+","+predicate.getProperty().getURI());
+                queries.addToPathInstancesCountQueries(generateQueryPathInstancesCount(predicate, path)+","+path.toString()+","+predicate.getProperty().getURI());
+                queries.addToMaxCountQueries(generateMaxQuery(predicate.getDomain())+", ,"+predicate.getProperty().getURI());
+                queries.addToMaxCountQueries(generateMaxQuery(predicate.getRange())+", ,"+predicate.getProperty().getURI());
+                queries.addToPredicateInstancesCountQueries(generateCountPredicateInstances(predicate)+", ,"+predicate.getProperty().getURI());
+                queries.addToTypeInstancesCountQueries(generateCountTypeInstances(predicate.getDomain())+", ,"+predicate.getProperty().getURI());
+                queries.addToTypeInstancesCountQueries(generateCountTypeInstances(predicate.getRange())+", ,"+predicate.getProperty().getURI());
             }
         }
         return queries;
