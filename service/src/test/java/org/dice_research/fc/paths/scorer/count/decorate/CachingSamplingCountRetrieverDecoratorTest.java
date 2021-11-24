@@ -11,7 +11,7 @@ public class CachingSamplingCountRetrieverDecoratorTest
   @Override
   protected ICountRetriever createCountRetriever(long seed, QueryExecutionFactory qef) {
     return new CachingSamplingCountRetrieverDecorator(
-        new PairCountRetriever(qef, new DefaultMaxCounter(qef, false, null)), seed, 3, qef);
+        new PairCountRetriever(qef, new DefaultMaxCounter(qef)), seed, 3, qef);
   }
 
 }

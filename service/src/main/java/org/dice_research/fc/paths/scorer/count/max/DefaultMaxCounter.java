@@ -3,7 +3,6 @@ package org.dice_research.fc.paths.scorer.count.max;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.paths.PredicateFactory;
-import org.dice_research.fc.paths.scorer.count.IPreProcessCounter;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 
 /**
@@ -15,8 +14,8 @@ import org.dice_research.fc.sparql.restrict.ITypeRestriction;
  */
 public class DefaultMaxCounter extends MaxCounter {
 
-  public DefaultMaxCounter(QueryExecutionFactory qef, Boolean isPreProcessed, IPreProcessCounter preProcessCounter) {
-    super(qef, isPreProcessed, preProcessCounter);
+  public DefaultMaxCounter(QueryExecutionFactory qef) {
+    super(qef);
   }
 
   @Override

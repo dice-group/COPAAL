@@ -52,7 +52,7 @@ public class PathSearchPreprocessing {
                 Arrays.asList(filter,
                     new EqualsFilter(FILTERED_PROPERTIES))),
             new NPMIBasedScorer(
-                new CachingCountRetrieverDecorator(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef, false, null),false,null))));
+                new CachingCountRetrieverDecorator(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef)))));
 
     // gets one of the most frequent predicates in the graph
     String property = "http://dbpedia.org/ontology/birthPlace";

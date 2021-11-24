@@ -37,10 +37,9 @@ import org.dice_research.fc.paths.model.PathElement;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.PNPMIBasedScorer;
+import org.dice_research.fc.paths.scorer.PreCalculationScorer;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
-import org.dice_research.fc.paths.scorer.count.IPreProcessCounter;
 import org.dice_research.fc.paths.scorer.count.PairCountRetriever;
-import org.dice_research.fc.paths.scorer.count.PreProcessCounter;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
 import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.HybridMaxCounter;
@@ -179,7 +178,17 @@ public class Config {
   @Value("${copaal.pathclausegenerator.type:}")
   private String pathClauseGeneratorType;
 
-  private Boolean isPreProcessed = true;
+  @Value("${copaal.preprocess.addressOfPathInstancesCountFile:}")
+  private String addressOfPathInstancesCountFile;
+
+  @Value("${copaal.preprocess.addressOfPredicateInstancesCountFile:}")
+  private String addressOfPredicateInstancesCountFile;
+
+  @Value("${copaal.preprocess.addressOfCoOccurrenceCountFile:}")
+  private String addressOfCoOccurrenceCountFile;
+
+  @Value("${copaal.preprocess.addressOfMaxCountFile:}")
+  private String addressOfMaxCountFile;
 
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -249,17 +258,19 @@ public class Config {
    * @return The desired {@link ICountRetriever} implementation.
    */
   @Bean
-  public ICountRetriever getCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IPathClauseGenerator pathClauseGenerator,IPreProcessCounter preProcessCounter) {
+  public ICountRetriever getCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IPathClauseGenerator pathClauseGenerator,IPreProcessProvider preProcessProvider) {
     ICountRetriever countRetriever;
     switch (counter.toLowerCase()) {
       case "approximatingcountretriever":
-        countRetriever = new ApproximatingCountRetriever(qef, maxCounter, isPreProcessed, preProcessCounter);
+        countRetriever = new ApproximatingCountRetriever(qef, maxCounter);
         break;
       case "paircountretriever":
-        countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator,isPreProcessed, preProcessCounter);
+        countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
         break;
+      case "preProcess":
+        countRetriever = new PreCalculationScorer(preProcessProvider);
       default:
-        countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator,isPreProcessed, preProcessCounter);
+        countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
         break;
     }
     if (isCache) {
@@ -274,18 +285,18 @@ public class Config {
    * @return The desired {@link MaxCounter} implementation.
    */
   @Bean
-  public MaxCounter getMaxCounter(QueryExecutionFactory qef, IPreProcessCounter preProcessCounter) {
+  public MaxCounter getMaxCounter(QueryExecutionFactory qef) {
     MaxCounter maxCounter;
 
     switch (factPreprocessorType.toLowerCase()) {
       case ("predicatefactory"):
-        return new DefaultMaxCounter(qef, isPreProcessed, preProcessCounter);
+        return new DefaultMaxCounter(qef);
       case ("virtualtypepredicatefactory"):
-        return new VirtualTypesMaxCounter(qef, isPreProcessed, preProcessCounter);
+        return new VirtualTypesMaxCounter(qef);
       case ("hybridpredicatefactory"):
-        return new HybridMaxCounter(qef, isPreProcessed, preProcessCounter);
+        return new HybridMaxCounter(qef);
       default:
-        return new DefaultMaxCounter(qef, isPreProcessed, preProcessCounter);
+        return new DefaultMaxCounter(qef);
     }
   }
 
@@ -429,59 +440,16 @@ public class Config {
     }
   }
 
-
-  private Map<String,Long> queryResultMap;
-
   @Bean
-  IPreProcessCounter getPreProcessCounter(){
-    queryResultMap = new HashMap<>();
+  IPreProcessProvider getPreProcessProvider(){
 
-    // load the pre pre process files
-    String here  = PathBasedFactChecker.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-    //home/farshad/repos/COPAAL_new/COPAAL/service/target/classes/
-    URL resource = getClass().getClassLoader().getResource("preProcessFiles");
+    File pathInstancesCountFile = new File(addressOfPathInstancesCountFile);
+    File predicateInstancesCountFile = new File(addressOfPredicateInstancesCountFile);
+    File coOccurrenceCountFile = new File(addressOfCoOccurrenceCountFile);
+    File maxCountFile = new File(addressOfMaxCountFile);
 
-    if (resource == null) {
-      throw new IllegalArgumentException("file not found!");
-    } else {
-
-      // failed if files have whitespaces or special characters
-      //return new File(resource.getFile());
-      try {
-        File preProcessFolder = new File(resource.toURI());
-        File[] allFiles = preProcessFolder.listFiles();
-        for(File f:allFiles){
-          updateMap(f);
-        }
-      }catch(Exception e){
-
-      }
-    }
-
-    IPreProcessCounter counter = new PreProcessCounter(queryResultMap);
-    return counter;
+    return new PreProcessProvider(pathInstancesCountFile, predicateInstancesCountFile,coOccurrenceCountFile,maxCountFile);
   }
-
-  private void updateMap(File file) {
-    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-      String line;
-      while ((line = br.readLine()) != null) {
-        String[] parts = line.split("\t");
-        long count = Long.parseLong(parts[1]);
-        String query = parts[0].replace(" ","");
-        if(queryResultMap.containsKey(query)){
-          System.out.println("This key is dublicated"+query);
-          System.out.println(" the old value is "+ queryResultMap.get(query));
-          System.out.println("new value is "+count);
-        }else{
-          queryResultMap.put(query, count);
-        }
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
 
   /**
    * @return The desired {@link IPathVerbalizer} implementation based on HTTP request parameters.

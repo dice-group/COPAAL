@@ -47,7 +47,7 @@ public class PathBasedFactCheckerTest {
   public void test() {
     IFactChecker factChecker = new PathBasedFactChecker(new PredicateFactory(qef),
         new SPARQLBasedSOPathSearcher(qef, maximumLength, propertyFilter),
-        new NPMIBasedScorer(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef, false, null),false,null)),
+        new NPMIBasedScorer(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef))),
         new CubicMeanSummarist());
     FactCheckingResult result = factChecker.check(triple);
     Assert.assertEquals(expectedScore, result.getVeracityValue(), 0.001);

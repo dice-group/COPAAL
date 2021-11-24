@@ -45,11 +45,11 @@ public class NPMITest {
     FactPreprocessor preprocessor = new PredicateFactory(qef);
     Predicate predicate = preprocessor.generatePredicate(triple);
 
-    IPathScorer pathScorer = new NPMIBasedScorer(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef, false, null),false,null));
+    IPathScorer pathScorer = new NPMIBasedScorer(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef)));
     pathScorer.score(triple.getSubject(), predicate, triple.getObject().asResource(), path);
     Assert.assertEquals(expectedScore, path.getScore(), 0.0001);
 
-    IPathScorer pathScorer2 = new NPMIBasedScorer(new PairCountRetriever(qef, new DefaultMaxCounter(qef, false, null)));
+    IPathScorer pathScorer2 = new NPMIBasedScorer(new PairCountRetriever(qef, new DefaultMaxCounter(qef)));
     pathScorer2.score(triple.getSubject(), predicate, triple.getObject().asResource(), path);
     Assert.assertEquals(expectedScore, path.getScore(), 0.0001);
 

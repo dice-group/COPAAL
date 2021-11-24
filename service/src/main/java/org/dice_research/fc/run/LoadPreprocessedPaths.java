@@ -40,7 +40,7 @@ public class LoadPreprocessedPaths {
             Arrays.asList(new NamespaceFilter("http://dbpedia.org/ontology", false),
                 new EqualsFilter(FILTERED_PROPERTIES))),
         new NPMIBasedScorer(new CachingCountRetrieverDecorator(
-            new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef,false, null),false,null))),
+            new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef)))),
         new FixedSummarist(), new EstherPathProcessor("./paths/", qef));
 
     FactCheckingResult result =

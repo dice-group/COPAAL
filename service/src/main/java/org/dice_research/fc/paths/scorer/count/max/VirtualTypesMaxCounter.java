@@ -3,7 +3,6 @@ package org.dice_research.fc.paths.scorer.count.max;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.paths.VirtualTypePredicateFactory;
-import org.dice_research.fc.paths.scorer.count.IPreProcessCounter;
 
 /**
  * Maximum count retriever class for the virtual types configuration. This is meant to be used with
@@ -17,8 +16,8 @@ public class VirtualTypesMaxCounter extends MaxCounter {
   /**
    * Constructor.
    */
-  public VirtualTypesMaxCounter(QueryExecutionFactory qef, Boolean isPreProcessed, IPreProcessCounter preProcessCounter) {
-    super(qef, isPreProcessed, preProcessCounter);
+  public VirtualTypesMaxCounter(QueryExecutionFactory qef) {
+    super(qef);
   }
 
   /**

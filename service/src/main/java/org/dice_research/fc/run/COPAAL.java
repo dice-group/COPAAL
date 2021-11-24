@@ -46,7 +46,7 @@ public class COPAAL {
                     "http://rdf.frockg.eu/frockg/ontology/"}, false)/*,
                 new EqualsFilter(FILTERED_PROPERTIES)*/)),
             new NPMIBasedScorer(new CachingCountRetrieverDecorator(
-                new PairCountRetriever(qef, new DefaultMaxCounter(qef, false , null)))),
+                new PairCountRetriever(qef, new DefaultMaxCounter(qef)))),
             new FixedSummarist());
 
     FactCheckingResult result = checker.check(
