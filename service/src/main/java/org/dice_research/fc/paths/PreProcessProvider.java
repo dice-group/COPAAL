@@ -48,10 +48,13 @@ public class PreProcessProvider implements IPreProcessProvider{
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(separator);
-                if(parts.length!=6){
+                //TODO
+                //if(parts.length!=6){
+                if(parts.length!=4){
                     LOGGER.error("the line in PathInstancesCountFile is not parsable it is not 6 parts : {}"+line);
                 }
-                String key = keyForPathInstancesCount(parts[0],parts[4],parts[5]);
+                // TODO :
+                String key = keyForPathInstancesCount(parts[2],"http://dbpedia.org/ontology/Animal","http://dbpedia.org/ontology/Place");
                 map.put(key, Long.parseLong(parts[1]));
             }
         } catch (FileNotFoundException e) {
@@ -75,7 +78,7 @@ public class PreProcessProvider implements IPreProcessProvider{
         }
         String domain = (String)domainSet.iterator().next();
         String range = (String)rangeSet.iterator().next();
-        return keyForPathInstancesCount(path.toString(), domain, range);
+        return keyForPathInstancesCount(path.toStringWithTag(), domain, range);
     }
 
     private String keyForPathInstancesCount(String path, String domainRestriction, String rangeRestriction){
@@ -142,7 +145,7 @@ public class PreProcessProvider implements IPreProcessProvider{
     }
 
     private String keyForCoOccurrenceCount(QRestrictedPath path, Predicate predicate) {
-        return keyForCoOccurrenceCount(path.toString(),predicate.getProperty().getURI());
+        return keyForCoOccurrenceCount(path.toStringWithTag(),predicate.getProperty().getURI());
     }
 
     private String keyForCoOccurrenceCount(String path, String predicate) {
@@ -202,6 +205,6 @@ public class PreProcessProvider implements IPreProcessProvider{
         }
 
         LOGGER.error("the map does not contain key, key is : "+ key);
-        return -1;
+        return 0;
     }
 }

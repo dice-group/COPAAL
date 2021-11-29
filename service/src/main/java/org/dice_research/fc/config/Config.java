@@ -267,8 +267,9 @@ public class Config {
       case "paircountretriever":
         countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
         break;
-      case "preProcess":
+      case "preprocess":
         countRetriever = new PreCalculationScorer(preProcessProvider);
+        break;
       default:
         countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
         break;
