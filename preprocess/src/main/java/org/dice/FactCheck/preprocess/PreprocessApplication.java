@@ -300,7 +300,8 @@ public class PreprocessApplication implements CommandLineRunner {
 		validPaths = selectThePathsWithScoreMoreThanZeroFromFile(pathOfSourceFileForCheckShouldRunQueryOrNot);
 
 		terminalWrite("we have  "+  validPaths.size()+" valid paths");
-
+		long numberOfNotFinds = 0;
+		long numberOfFinds = 0;
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			String query;
 			String queryAndPath;
@@ -319,13 +320,15 @@ public class PreprocessApplication implements CommandLineRunner {
 					// process the line.
 					query = query.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
 					runTheQuery(query, endpoint, lineCounter, pathForSaveResults, fileName, parts[1], parts[2]);
+					numberOfFinds = numberOfFinds + 1;
 				}else{
-					terminalWrite("can not find this path in source file :"+ parts[1]);
+					//terminalWrite("can not find this path in source file :"+ parts[1]);
+					numberOfNotFinds = numberOfNotFinds+1;
 				}
 				lineCounter = lineCounter + 1;
 				//System.out.println("read next line");
 			}
-			System.out.println("Done for this File");
+			System.out.println("Done for this File" + " LINE COUNTER :"+ lineCounter+ " numberOfFinds "+numberOfFinds +"numberOf not Finds:"+numberOfNotFinds+" map of valid paths :"+validPaths.size());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -597,22 +600,23 @@ public class PreprocessApplication implements CommandLineRunner {
 
 		try{
 			String url = endpoint+ URLEncoder.encode(query, "UTF-8");
-			System.out.println(url);
+			//System.out.println(url);
 			HttpGet request = new HttpGet(url);
 			//request.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
 			try (CloseableHttpResponse response = httpClient.execute(request)) {
 				// Get HttpResponse Status
-				System.out.println(response.getStatusLine().getStatusCode());
+				//System.out.println(response.getStatusLine().getStatusCode());
 				if(response.getStatusLine().getStatusCode()!=200 ){
+					terminalWrite("response is not 200" + query);
 					return "";
 				}
 				HttpEntity entity = response.getEntity();
-				System.out.println("the entity is ready");
+				//System.out.println("the entity is ready");
 				Header headers = entity.getContentType();
 				if (entity != null) {
 					// return it as a String
 					String fileName = "tempQueryResults/"+UUID.randomUUID().toString()+".tmp";
-					System.out.println("save the results at ");
+					//System.out.println("save the results at ");
 					OutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
 					entity.writeTo(out);
 					out.close();
