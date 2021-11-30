@@ -143,7 +143,7 @@ public class PreprocessApplication implements CommandLineRunner {
 
 				if(args.length == 6){
 					if(isFolder){
-						terminalWrite("you provide the file to check each path to run or not (6tharguments) in this situation the input could not be a folder , it must be a file");
+						terminalWrite("you provide the file to check each path to run or not (6th arguments) in this situation the input could not be a folder , it must be a file");
 					}else{
 						// is file
 						processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3],args[5]);
@@ -163,8 +163,9 @@ public class PreprocessApplication implements CommandLineRunner {
 						}
 					}
 				}
+			}else {
+				terminalWrite("for f the arguments are not correct");
 			}
-			terminalWrite("for f the arguments are not correct");
 		}
 
 		if(args[0].equals("pc")){
@@ -293,20 +294,22 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint, String pathOfSourceFileForCheckShouldRunQueryOrNot) {
 		// read the query file
-		System.out.println("Start Process the File "+  filePath+" and reference file :"+pathOfSourceFileForCheckShouldRunQueryOrNot);
+		terminalWrite("Start Process the File "+  filePath+" and reference file :"+pathOfSourceFileForCheckShouldRunQueryOrNot);
 		Set<String> validPaths = new HashSet<>();
 
 		validPaths = selectThePathsWithScoreMoreThanZeroFromFile(pathOfSourceFileForCheckShouldRunQueryOrNot);
+
+		terminalWrite("we have  "+  validPaths.size()+" valid paths");
 
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			String query;
 			String queryAndPath;
 			Integer lineCounter = 1;
 			while ((queryAndPath = br.readLine()) != null) {
-				System.out.println(filePath+" "+lineCounter);
+				//System.out.println(filePath+" "+lineCounter);
 
 				String[] parts = queryAndPath.split(",");
-				terminalWrite("parts Size is : "+parts.length);
+				//terminalWrite("parts Size is : "+parts.length);
 				if(parts.length!=3){
 					terminalWrite("Error the parts are not 3 "+ queryAndPath);
 				}
@@ -316,9 +319,11 @@ public class PreprocessApplication implements CommandLineRunner {
 					// process the line.
 					query = query.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
 					runTheQuery(query, endpoint, lineCounter, pathForSaveResults, fileName, parts[1], parts[2]);
+				}else{
+					terminalWrite("can not find this path in source file :"+ parts[1]);
 				}
 				lineCounter = lineCounter + 1;
-				System.out.println("read next line");
+				//System.out.println("read next line");
 			}
 			System.out.println("Done for this File");
 		} catch (FileNotFoundException e) {
@@ -361,10 +366,10 @@ public class PreprocessApplication implements CommandLineRunner {
 			String queryAndPath;
 			Integer lineCounter = 1;
 			while ((queryAndPath = br.readLine()) != null) {
-				System.out.println(filePath+" "+lineCounter);
+				//System.out.println(filePath+" "+lineCounter);
 
 				String[] parts = queryAndPath.split(",");
-				terminalWrite("parts Size is : "+parts.length);
+				//terminalWrite("parts Size is : "+parts.length);
 				if(parts.length!=3){
 					terminalWrite("Error the parts are not 3 "+ queryAndPath);
 				}
@@ -374,7 +379,7 @@ public class PreprocessApplication implements CommandLineRunner {
 				query = query.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
 				runTheQuery(query, endpoint, lineCounter, pathForSaveResults, fileName, parts[1], parts[2]);
 				lineCounter = lineCounter + 1;
-				System.out.println("read next line");
+				//System.out.println("read next line");
 			}
 			System.out.println("Done for this File");
 		} catch (FileNotFoundException e) {
@@ -386,20 +391,20 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	private void runTheQuery(String query, String endpoint, Integer lineCounter, String pathForSaveResults, String fileName, String pathOfQuery , String predicate) {
 		// check fact
-		System.out.println("start do the query");
+		//System.out.println("start do the query");
 		String tempQueryResultFile = doQuery(query, endpoint);
-		System.out.println("query is done and result save at :"+tempQueryResultFile);
+		//System.out.println("query is done and result save at :"+tempQueryResultFile);
 		if(!tempQueryResultFile.equals("")) {
-			System.out.println("Start count the result");
+//			System.out.println("Start count the result");
 			long resultNumber = counterservice.count(tempQueryResultFile);
 			if(resultNumber == -1){
 				System.out.println("Can not count the result for this line "+ lineCounter);
 			}else{
-				System.out.println("Done counting the result");
-				System.out.println("start save the result");
+				//System.out.println("Done counting the result");
+				//System.out.println("start save the result");
 				save(query, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName , pathOfQuery,predicate);
-				System.out.println("Done saving the result");
-				System.out.println("running query was successful");
+				//System.out.println("Done saving the result");
+				//System.out.println("running query was successful");
 			}
 		}else{
 			System.out.println("result is empty");
@@ -407,9 +412,9 @@ public class PreprocessApplication implements CommandLineRunner {
 		// remove do query temp file
 		File forDelete = new File(tempQueryResultFile);
 		if(forDelete.exists()){
-			System.out.println("deleting "+ forDelete);
+			//System.out.println("deleting "+ forDelete);
 			forDelete.delete();
-			System.out.println("deleted ");
+			//System.out.println("deleted ");
 		}
 	}
 
@@ -437,11 +442,11 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	private void save(String query,long CountResult ,String pathForSaveFile, Boolean individual, Boolean isLiteVersion , Boolean isCompleteVersion, String queriesFileName, String pathOfQuery , String predicate)  {
 		if(individual){
-			System.out.println("it is individual");
+			//System.out.println("it is individual");
 			String oldQuery = new String(query);
 			query = query.replace(" ","").replace("\n","");
 			String filePath = pathForSaveFile+DigestUtils.md5Hex(query).toUpperCase()+".csv";
-			System.out.println("save result at "+filePath);
+			//System.out.println("save result at "+filePath);
 			try {
 				writeToFile(filePath, oldQuery, CountResult,pathOfQuery,predicate);
 			}catch(Exception ex){
@@ -471,11 +476,11 @@ public class PreprocessApplication implements CommandLineRunner {
 			}
 
 			if(isLiteVersion){
-				System.out.println("lite version");
+//				terminalWrite("lite version");
 				try
 				{
 					String filename= pathForSaveFile+queriesFileName+"LiteCumulativeResult-"+dateStr+".csv";
-					System.out.println("file pass is " + filename);
+					//terminalWrite(("file pass is " + filename);
 					FileWriter fw = new FileWriter(filename,true); //the true will append the new data
 					fw.write(query);
 					fw.write(",");
@@ -489,7 +494,7 @@ public class PreprocessApplication implements CommandLineRunner {
 				}
 				catch(IOException ioe)
 				{
-					System.err.println("IOException: " + ioe.getMessage());
+					terminalWrite("IOException: " + ioe.getMessage());
 				}
 			}
 		}
@@ -502,7 +507,7 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	private void saveTheCountQueriesInFile(CountQueries queries, String pathTosave,String predicate) {
 
-		terminalWrite("start save the results in files");
+		//terminalWrite("start save the results in files");
 
 		String filename= pathTosave+"CoOccurrenceCountQueries-"+predicate+"-"+dateStr+".csv";
 		terminalWrite("first path is :"+filename);
