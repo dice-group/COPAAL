@@ -410,7 +410,7 @@ public class PreprocessApplication implements CommandLineRunner {
 				//System.out.println("running query was successful");
 			}
 		}else{
-			System.out.println("result is empty");
+			System.out.println("result is empty for this query"+ query);
 		}
 		// remove do query temp file
 		File forDelete = new File(tempQueryResultFile);
