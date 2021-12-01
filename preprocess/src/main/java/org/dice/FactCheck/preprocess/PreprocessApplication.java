@@ -69,7 +69,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		if (args.length == 1) {
 			if(args[0].equals("h")){
 				System.out.println("help");
-				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part] ['C' for cumulative result(both Lite and Complete version), 'CL' just lite version, 'CC' just Complete version , 'I' for individual] [optional : file to check if the same path in this file has result then run query for the path in provided file , just useable for file not for folder]: this will read file and run queries in that file");
+				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part] ['C' for cumulative result(both Lite and Complete version), 'CL' just lite version, 'CC' just Complete version , 'I' for individual] [folder for save temp files] [optional : file to check if the same path in this file has result then run query for the path in provided file , just useable for file not for folder]: this will read file and run queries in that file");
 				System.out.println("pc [collected_predicates.json] [len] [pathToSaveResult] [PathToSaveSerialization] [true or false for save the result]: this will read file and  generate all combination for predicates by lentgh [len]  ");
 				System.out.println("gq [predicate] [domain] [range] [predicate combination files] [pathToSaveResults] [collected_predicates.json]: this will read the predicate path and generate all queries]  ");
 			}
@@ -78,7 +78,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		terminalWrite("first arg is :"+args[0]+" and size is "+ args.length);
 
 		if(args[0].equals("f")){
-			if(args.length == 5 || args.length == 6){
+			if(args.length == 6 || args.length == 7){
 				System.out.println("looking at "+ args[1]+" for a file");
 				/*try {
 					String tempPath = new File(PreprocessApplication.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getPath();
@@ -141,21 +141,23 @@ public class PreprocessApplication implements CommandLineRunner {
 					}
 				}
 
-				if(args.length == 6){
+				String tempQueryFolderAddress = args[6];
+
+				if(args.length == 7){
 					if(isFolder){
 						terminalWrite("you provide the file to check each path to run or not (6th arguments) in this situation the input could not be a folder , it must be a file");
 					}else{
 						// is file
-						processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3],args[5]);
+						processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3],tempQueryFolderAddress,args[6]);
 					}
 				}else{
 					if(!isFolder) {
-						processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3]);
+						processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3],tempQueryFolderAddress);
 					}else{
 						File[] listOfFiles = inputFileOrFolder.listFiles();
 						for (int i = 0; i < listOfFiles.length; i++) {
 							if (listOfFiles[i].isFile()) {
-								processTheFile(listOfFiles[i].getPath(), args[2], listOfFiles[i].getName(), args[3]);
+								processTheFile(listOfFiles[i].getPath(), args[2], listOfFiles[i].getName(), args[3],tempQueryFolderAddress);
 								System.out.println("Done File"+listOfFiles[i].getName());
 							} else if (listOfFiles[i].isDirectory()) {
 								System.out.println("Directory " + listOfFiles[i].getName());
@@ -292,7 +294,63 @@ public class PreprocessApplication implements CommandLineRunner {
 		}
 	}
 
-	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint, String pathOfSourceFileForCheckShouldRunQueryOrNot) {
+	private Set<String> selectThePathsWithScoreMoreThanZeroFromFile(String pathOfSourceFileForCheckShouldRunQueryOrNot) {
+		Set<String> returnSet = new HashSet<>();
+
+		try (BufferedReader br = new BufferedReader(new FileReader(pathOfSourceFileForCheckShouldRunQueryOrNot))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				//SELECT DISTINCT ?s ?o WHERE { ?s <http://dbpedia.org/ontology/birthPlace> ?o .  ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Animal> .  ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Place> . ?s <http://dbpedia.org/ontology/birthPlace> ?in1 . ?in1 <http://dbpedia.org/ontology/landeshauptmann> ?in2 . ?in2 <http://dbpedia.org/ontology/deathPlace> ?o . },0,<http://dbpedia.org/ontology/birthPlace><http://dbpedia.org/ontology/landeshauptmann><http://dbpedia.org/ontology/deathPlace>,http://dbpedia.org/ontology/birthPlace
+				String[] parts = line.split(",");
+				if(parts.length!=4){
+					terminalWrite("Error the parts are not 4 "+ line);
+				}
+				if(Long.parseLong(parts[1])>0) {
+					returnSet.add(parts[2]);
+				}
+			}
+			System.out.println("Done for this File");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		terminalWrite("we have "+returnSet.size()+" paths to check in this file");
+		return returnSet;
+	}
+
+	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint,String tempQueryFolderAddress) {
+		// read the query file
+		System.out.println("Start Process the File"+  filePath);
+		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+			String query;
+			String queryAndPath;
+			Integer lineCounter = 1;
+			while ((queryAndPath = br.readLine()) != null) {
+				//System.out.println(filePath+" "+lineCounter);
+
+				String[] parts = queryAndPath.split(",");
+				//terminalWrite("parts Size is : "+parts.length);
+				if(parts.length!=3){
+					terminalWrite("Error the parts are not 3 "+ queryAndPath);
+				}
+				query = parts[0];
+
+				// process the line.
+				query = query.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
+				runTheQuery(query, endpoint, lineCounter, pathForSaveResults, fileName, parts[1], parts[2],tempQueryFolderAddress);
+				lineCounter = lineCounter + 1;
+				//System.out.println("read next line");
+			}
+			System.out.println("Done for this File");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint, String tempQueryFolderAddress,String pathOfSourceFileForCheckShouldRunQueryOrNot) {
 		// read the query file
 		terminalWrite("Start Process the File "+  filePath+" and reference file :"+pathOfSourceFileForCheckShouldRunQueryOrNot);
 		Set<String> validPaths = new HashSet<>();
@@ -319,13 +377,16 @@ public class PreprocessApplication implements CommandLineRunner {
 				if(validPaths.contains(parts[1])) {
 					// process the line.
 					query = query.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
-					runTheQuery(query, endpoint, lineCounter, pathForSaveResults, fileName, parts[1], parts[2]);
+					runTheQuery(query, endpoint, lineCounter, pathForSaveResults, fileName, parts[1], parts[2],tempQueryFolderAddress);
 					numberOfFinds = numberOfFinds + 1;
 				}else{
 					//terminalWrite("can not find this path in source file :"+ parts[1]);
 					numberOfNotFinds = numberOfNotFinds+1;
 				}
 				lineCounter = lineCounter + 1;
+				if(lineCounter % 500 == 0){
+					terminalWrite(lineCounter.toString());
+				}
 				//System.out.println("read next line");
 			}
 			System.out.println("Done for this File" + " LINE COUNTER :"+ lineCounter+ " numberOfFinds "+numberOfFinds +"numberOf not Finds:"+numberOfNotFinds+" map of valid paths :"+validPaths.size());
@@ -336,66 +397,11 @@ public class PreprocessApplication implements CommandLineRunner {
 		}
 	}
 
-	private Set<String> selectThePathsWithScoreMoreThanZeroFromFile(String pathOfSourceFileForCheckShouldRunQueryOrNot) {
-		Set<String> returnSet = new HashSet<>();
 
-		try (BufferedReader br = new BufferedReader(new FileReader(pathOfSourceFileForCheckShouldRunQueryOrNot))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				//SELECT DISTINCT ?s ?o WHERE { ?s <http://dbpedia.org/ontology/birthPlace> ?o .  ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Animal> .  ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://dbpedia.org/ontology/Place> . ?s <http://dbpedia.org/ontology/birthPlace> ?in1 . ?in1 <http://dbpedia.org/ontology/landeshauptmann> ?in2 . ?in2 <http://dbpedia.org/ontology/deathPlace> ?o . },0,<http://dbpedia.org/ontology/birthPlace><http://dbpedia.org/ontology/landeshauptmann><http://dbpedia.org/ontology/deathPlace>,http://dbpedia.org/ontology/birthPlace
-				String[] parts = line.split(",");
-				if(parts.length!=4){
-					terminalWrite("Error the parts are not 4 "+ line);
-				}
-				if(Long.parseLong(parts[1])>0) {
-					returnSet.add(parts[2]);
-				}
-			}
-			System.out.println("Done for this File");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		terminalWrite("we have "+returnSet.size()+" paths to check in this file");
-		return returnSet;
-	}
-
-	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint) {
-		// read the query file
-		System.out.println("Start Process the File"+  filePath);
-		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-			String query;
-			String queryAndPath;
-			Integer lineCounter = 1;
-			while ((queryAndPath = br.readLine()) != null) {
-				//System.out.println(filePath+" "+lineCounter);
-
-				String[] parts = queryAndPath.split(",");
-				//terminalWrite("parts Size is : "+parts.length);
-				if(parts.length!=3){
-					terminalWrite("Error the parts are not 3 "+ queryAndPath);
-				}
-				query = parts[0];
-
-				// process the line.
-				query = query.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
-				runTheQuery(query, endpoint, lineCounter, pathForSaveResults, fileName, parts[1], parts[2]);
-				lineCounter = lineCounter + 1;
-				//System.out.println("read next line");
-			}
-			System.out.println("Done for this File");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void runTheQuery(String query, String endpoint, Integer lineCounter, String pathForSaveResults, String fileName, String pathOfQuery , String predicate) {
+	private void runTheQuery(String query, String endpoint, Integer lineCounter, String pathForSaveResults, String fileName, String pathOfQuery , String predicate,String tempQueryFolderAddress) {
 		// check fact
 		//System.out.println("start do the query");
-		String tempQueryResultFile = doQuery(query, endpoint);
+		String tempQueryResultFile = doQuery(query, endpoint, tempQueryFolderAddress);
 		//System.out.println("query is done and result save at :"+tempQueryResultFile);
 		if(!tempQueryResultFile.equals("")) {
 //			System.out.println("Start count the result");
@@ -418,6 +424,16 @@ public class PreprocessApplication implements CommandLineRunner {
 			//System.out.println("deleting "+ forDelete);
 			forDelete.delete();
 			//System.out.println("deleted ");
+		}
+
+		File allRemainingFiles	= new File(tempQueryFolderAddress);
+		File[] listOfFiles = allRemainingFiles.listFiles();
+
+		for (int i = 0; i < listOfFiles.length; i++) {
+			if(listOfFiles[i].isFile()){
+				terminalWrite("deleting "+listOfFiles[i]);
+				listOfFiles[i].delete();
+			}
 		}
 	}
 
@@ -593,7 +609,7 @@ public class PreprocessApplication implements CommandLineRunner {
 	}
 
 	// run a query save in a file return the file name as a result
-	private String doQuery(String query,String endpoint)  {
+	private String doQuery(String query,String endpoint, String tempQueryFolderAddress)  {
 		//query = query.replace("  ","");
 		//query = query.replace("\n"," ");
 		//String endpoint = "https://synthg-fact.dice-research.org/sparql";
@@ -615,7 +631,7 @@ public class PreprocessApplication implements CommandLineRunner {
 				Header headers = entity.getContentType();
 				if (entity != null) {
 					// return it as a String
-					String fileName = "tempQueryResults/"+UUID.randomUUID().toString()+".tmp";
+					String fileName = tempQueryFolderAddress+UUID.randomUUID().toString()+".tmp";
 					//System.out.println("save the results at ");
 					OutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
 					entity.writeTo(out);
