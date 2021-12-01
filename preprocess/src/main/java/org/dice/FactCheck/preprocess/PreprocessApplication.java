@@ -142,6 +142,7 @@ public class PreprocessApplication implements CommandLineRunner {
 				}
 
 				String tempQueryFolderAddress = args[6];
+				terminalWrite("temp folder is :"+tempQueryFolderAddress);
 
 				if(args.length == 7){
 					if(isFolder){
@@ -427,13 +428,19 @@ public class PreprocessApplication implements CommandLineRunner {
 		}
 
 		File allRemainingFiles	= new File(tempQueryFolderAddress);
-		File[] listOfFiles = allRemainingFiles.listFiles();
+		if(allRemainingFiles!=null) {
+			File[] listOfFiles = allRemainingFiles.listFiles();
 
-		for (int i = 0; i < listOfFiles.length; i++) {
-			if(listOfFiles[i].isFile()){
-				terminalWrite("deleting "+listOfFiles[i]);
-				listOfFiles[i].delete();
+			if(listOfFiles!=null){
+				for (int i = 0; i < listOfFiles.length; i++) {
+					if (listOfFiles[i].isFile()) {
+						terminalWrite("deleting " + listOfFiles[i]);
+						listOfFiles[i].delete();
+					}
+				}
 			}
+		}else{
+			terminalWrite("can not find folder at "+tempQueryFolderAddress);
 		}
 	}
 
