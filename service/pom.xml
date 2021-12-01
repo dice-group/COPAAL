@@ -4,9 +4,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.dice.FactCheck</groupId>
-	<artifactId>Corraborative</artifactId>
-	<version>0.2.2</version>
+	<groupId>org.dice-research.fc</groupId>
+	<artifactId>copaal</artifactId>
+	<version>0.3.0-glisten</version>
 	<packaging>jar</packaging>
 
 	<name>Corraborative</name>
@@ -38,7 +38,6 @@
 	</repositories>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -198,7 +197,12 @@
 					</execution>
 				</executions>
 			</plugin>
-        </plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.2.0</version>
+			</plugin>
+		</plugins>
 	</build>
 	<dependencyManagement>
 		<dependencies>
