@@ -3,7 +3,6 @@ package org.dice_research.fc.paths.scorer;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.IPreProcessProvider;
-import org.dice_research.fc.paths.PreProcessProvider;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 
 public class PreCalculationScorer implements ICountRetriever{
