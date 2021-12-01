@@ -43,7 +43,7 @@ import org.dice_research.fc.paths.scorer.count.PairCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
 import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.HybridMaxCounter;
-import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
+import org.dice_research.fc.paths.scorer.count.max.AbstractMaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.VirtualTypesMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.paths.search.CachingPathSearcherDecorator;
@@ -258,7 +258,7 @@ public class Config {
    * @return The desired {@link ICountRetriever} implementation.
    */
   @Bean
-  public ICountRetriever getCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IPathClauseGenerator pathClauseGenerator,IPreProcessProvider preProcessProvider) {
+  public ICountRetriever getCountRetriever(QueryExecutionFactory qef, AbstractMaxCounter maxCounter, IPathClauseGenerator pathClauseGenerator,IPreProcessProvider preProcessProvider) {
     ICountRetriever countRetriever;
     switch (counter.toLowerCase()) {
       case "approximatingcountretriever":
@@ -282,11 +282,11 @@ public class Config {
   /**
    * 
    * @param qef
-   * @return The desired {@link MaxCounter} implementation.
+   * @return The desired {@link AbstractMaxCounter} implementation.
    */
   @Bean
-  public MaxCounter getMaxCounter(QueryExecutionFactory qef) {
-    MaxCounter maxCounter;
+  public AbstractMaxCounter getMaxCounter(QueryExecutionFactory qef) {
+    AbstractMaxCounter maxCounter;
 
     switch (factPreprocessorType.toLowerCase()) {
       case ("predicatefactory"):

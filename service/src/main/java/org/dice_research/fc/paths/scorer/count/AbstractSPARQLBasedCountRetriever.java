@@ -10,7 +10,7 @@ import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
-import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
+import org.dice_research.fc.paths.scorer.count.max.AbstractMaxCounter;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +29,16 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
   /**
    * The max count retriever.
    */
-  protected MaxCounter maxCounter;
+  protected AbstractMaxCounter maxCounter;
 
-  public AbstractSPARQLBasedCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
+  public AbstractSPARQLBasedCountRetriever(QueryExecutionFactory qef,
+      AbstractMaxCounter maxCounter) {
     this.qef = qef;
     this.maxCounter = maxCounter;
-    LOGGER.trace("in AbstractSPARQLBasedCountRetriever QueryExecutionFactory is : {}",QueryExecutionFactory.class.getName());
-    LOGGER.trace("in AbstractSPARQLBasedCountRetriever MaxCounter is : {}",maxCounter.getClass().getName());
+    LOGGER.trace("in AbstractSPARQLBasedCountRetriever QueryExecutionFactory is : {}",
+        qef != null ? qef.getClass().getName() : qef);
+    LOGGER.trace("in AbstractSPARQLBasedCountRetriever MaxCounter is : {}",
+        maxCounter != null ? maxCounter.getClass().getName() : null);
   }
 
   public long deriveMaxCount(Predicate predicate) {
@@ -64,7 +67,8 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
    * @param path the path that should be added to the query
    * @param queryBuilder the builder for the query to which the path should be added
    * 
-   * @deprecated Use a {@link org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator} instead.
+   * @deprecated Use a {@link org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator}
+   *             instead.
    */
   @Deprecated
   protected void addAsPropertyPath(QRestrictedPath path, StringBuilder queryBuilder) {
@@ -108,8 +112,8 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
       Literal count = qs.getLiteral(COUNT_VARIABLE_NAME);
       if (result.hasNext()) {
         LOGGER.info(
-                "Got a query with more than 1 result line (\"{}\"). The remaining lines will be ignored.",
-                query);
+            "Got a query with more than 1 result line (\"{}\"). The remaining lines will be ignored.",
+            query);
       }
       long n = count.getLong();
       LOGGER.debug("Got a query result ({}) after {}ms.", n, System.currentTimeMillis() - time);

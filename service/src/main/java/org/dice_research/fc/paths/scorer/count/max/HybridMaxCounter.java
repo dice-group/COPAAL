@@ -9,7 +9,7 @@ import org.dice_research.fc.sparql.restrict.ITypeRestriction;
  * @author Farshad Afshari
  *
  */
-public class HybridMaxCounter extends MaxCounter{
+public class HybridMaxCounter extends AbstractMaxCounter{
 
 
     public HybridMaxCounter(QueryExecutionFactory qef) {

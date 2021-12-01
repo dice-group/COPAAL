@@ -11,7 +11,7 @@ import org.dice_research.fc.paths.VirtualTypePredicateFactory;
  * @author Alexandra Silva
  *
  */
-public class VirtualTypesMaxCounter extends MaxCounter {
+public class VirtualTypesMaxCounter extends AbstractMaxCounter {
 
   /**
    * Constructor.

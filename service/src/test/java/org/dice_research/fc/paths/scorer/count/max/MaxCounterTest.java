@@ -30,11 +30,11 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class MaxCounterTest {
   private FactPreprocessor preprocessor;
-  private MaxCounter maxCounter;
+  private AbstractMaxCounter maxCounter;
   private Statement fact;
   private double expectedScore;
 
-  public MaxCounterTest(FactPreprocessor preprocessor, MaxCounter maxCounter, Statement fact,
+  public MaxCounterTest(FactPreprocessor preprocessor, AbstractMaxCounter maxCounter, Statement fact,
       double expectedScore) {
     this.preprocessor = preprocessor;
     this.maxCounter = maxCounter;

@@ -12,7 +12,7 @@ import org.dice_research.fc.sparql.restrict.ITypeRestriction;
  * @author Alexandra Silva
  *
  */
-public class DefaultMaxCounter extends MaxCounter {
+public class DefaultMaxCounter extends AbstractMaxCounter {
 
   public DefaultMaxCounter(QueryExecutionFactory qef) {
     super(qef);

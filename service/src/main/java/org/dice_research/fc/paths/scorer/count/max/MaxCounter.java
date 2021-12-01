@@ -5,8 +5,6 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Literal;
-import org.dice_research.fc.data.Predicate;
-import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +12,9 @@ import org.slf4j.LoggerFactory;
  * Class responsible for the maximum count calculation.
  *
  */
-public abstract class MaxCounter {
+public abstract class AbstractMaxCounter implements IMaxCounter {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MaxCounter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMaxCounter.class);
 
   protected QueryExecutionFactory qef;
 
@@ -30,18 +28,9 @@ public abstract class MaxCounter {
    * 
    * @param qef The {@link QueryExecutionFactory} object to execute queries with.
    */
-  public MaxCounter(QueryExecutionFactory qef) {
+  public AbstractMaxCounter(QueryExecutionFactory qef) {
     this.qef = qef;
   }
-
-  /**
-   * Derives a maximum count that can be used to create probabilities from the counts retrieved by
-   * the other methods of the {@link ICountRetriever} interface.
-   * 
-   * @param predicate the predicate for which the counts should be normalized
-   * @return a maximum count
-   */
-  public abstract long deriveMaxCount(Predicate predicate);
 
   protected long executeCountQuery(StringBuilder queryBuilder) {
     String query = queryBuilder.toString();

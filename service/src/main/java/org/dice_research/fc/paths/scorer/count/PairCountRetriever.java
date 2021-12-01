@@ -3,7 +3,7 @@ package org.dice_research.fc.paths.scorer.count;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
-import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
+import org.dice_research.fc.paths.scorer.count.max.AbstractMaxCounter;
 import org.dice_research.fc.sparql.path.IPathClauseGenerator;
 import org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
@@ -24,12 +24,12 @@ public class PairCountRetriever extends AbstractSPARQLBasedCountRetriever {
   protected IPathClauseGenerator pathClauseGenerator;
 
   @Autowired
-  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
+  public PairCountRetriever(QueryExecutionFactory qef, AbstractMaxCounter maxCounter) {
     this(qef, maxCounter, new PropPathBasedPathClauseGenerator());
   }
 
   @Autowired
-  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter,IPathClauseGenerator pathClauseGenerator) {
+  public PairCountRetriever(QueryExecutionFactory qef, AbstractMaxCounter maxCounter,IPathClauseGenerator pathClauseGenerator) {
     super(qef, maxCounter);
     this.pathClauseGenerator = pathClauseGenerator;
   }
