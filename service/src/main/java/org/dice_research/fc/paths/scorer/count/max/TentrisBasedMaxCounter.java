@@ -1,38 +1,34 @@
 package org.dice_research.fc.paths.scorer.count.max;
 
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.dice_research.fc.data.Predicate;
-import org.dice_research.fc.paths.scorer.count.stream.AbstractStreamingBasedCountRetriever;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
+import org.dice_research.fc.tentris.TentrisAdapter;
 
 /**
- * This extension of the {@link AbstractStreamingBasedCountRetriever} is an
- * {@link IMaxCounter} implementation which is optimized for the Tentris triple
- * store.
+ * This extension of the {@link AbstractStreamingBasedCountRetriever} is an {@link IMaxCounter}
+ * implementation which is optimized for the Tentris triple store.
  * 
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
-public class TentrisBasedMaxCounter extends AbstractStreamingBasedCountRetriever implements IMaxCounter {
+public class TentrisBasedMaxCounter implements IMaxCounter {
 
-    public TentrisBasedMaxCounter(String endpoint) {
-        super(endpoint);
-    }
+  protected TentrisAdapter adapter;
 
-    public TentrisBasedMaxCounter(CloseableHttpClient httpClient, String endpoint) {
-        super(httpClient, endpoint);
-    }
+  public TentrisBasedMaxCounter(TentrisAdapter adapter) {
+    this.adapter = adapter;
+  }
 
-    @Override
-    public long deriveMaxCount(Predicate predicate) {
-        return countTypeInstances(predicate.getDomain()) * countTypeInstances(predicate.getRange());
-    }
+  @Override
+  public long deriveMaxCount(Predicate predicate) {
+    return countTypeInstances(predicate.getDomain()) * countTypeInstances(predicate.getRange());
+  }
 
-    protected long countTypeInstances(ITypeRestriction restriction) {
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("SELECT DISTINCT ?s WHERE { ");
-        restriction.addRestrictionToQuery("s", queryBuilder);
-        queryBuilder.append(" }");
-        return executeCountQuery(queryBuilder);
-    }
+  protected long countTypeInstances(ITypeRestriction restriction) {
+    StringBuilder queryBuilder = new StringBuilder();
+    queryBuilder.append("SELECT DISTINCT ?s WHERE { ");
+    restriction.addRestrictionToQuery("s", queryBuilder);
+    queryBuilder.append(" }");
+    return adapter.executeCountQuery(queryBuilder);
+  }
 }
