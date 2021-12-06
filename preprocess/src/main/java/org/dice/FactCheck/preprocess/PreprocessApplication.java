@@ -2,6 +2,7 @@ package org.dice.FactCheck.preprocess;
 
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileSystemUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 
@@ -69,7 +70,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		if (args.length == 1) {
 			if(args[0].equals("h")){
 				System.out.println("help");
-				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part] ['C' for cumulative result(both Lite and Complete version), 'CL' just lite version, 'CC' just Complete version , 'I' for individual] [folder for save temp files] [optional : file to check if the same path in this file has result then run query for the path in provided file , just useable for file not for folder]: this will read file and run queries in that file");
+				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part] ['C' for cumulative result(both Lite and Complete version), 'CL' just lite version, 'CC' just Complete version , 'I' for individual] [folder for save temp files] [number of line to start] [optional : file to check if the same path in this file has result then run query for the path in provided file , just useable for file not for folder]: this will read file and run queries in that file");
 				System.out.println("pc [collected_predicates.json] [len] [pathToSaveResult] [PathToSaveSerialization] [true or false for save the result]: this will read file and  generate all combination for predicates by lentgh [len]  ");
 				System.out.println("gq [predicate] [domain] [range] [predicate combination files] [pathToSaveResults] [collected_predicates.json]: this will read the predicate path and generate all queries]  ");
 			}
@@ -78,7 +79,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		terminalWrite("first arg is :"+args[0]+" and size is "+ args.length);
 
 		if(args[0].equals("f")){
-			if(args.length == 6 || args.length == 7){
+			if(args.length == 7 || args.length == 8){
 				System.out.println("looking at "+ args[1]+" for a file");
 				/*try {
 					String tempPath = new File(PreprocessApplication.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getPath();
@@ -144,21 +145,23 @@ public class PreprocessApplication implements CommandLineRunner {
 				String tempQueryFolderAddress = args[6];
 				terminalWrite("temp folder is :"+tempQueryFolderAddress);
 
-				if(args.length == 7){
+				long fromThisLineStartToProcess = Long.parseLong(args[7]);
+
+				if(args.length == 8){
 					if(isFolder){
-						terminalWrite("you provide the file to check each path to run or not (6th arguments) in this situation the input could not be a folder , it must be a file");
+						terminalWrite("you provide the file to check each path to run or not (8th arguments) in this situation the input could not be a folder , it must be a file");
 					}else{
 						// is file
-						processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3],tempQueryFolderAddress,args[6]);
+						processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3],tempQueryFolderAddress,fromThisLineStartToProcess,args[7]);
 					}
 				}else{
 					if(!isFolder) {
-						processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3],tempQueryFolderAddress);
+						processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3],tempQueryFolderAddress,fromThisLineStartToProcess);
 					}else{
 						File[] listOfFiles = inputFileOrFolder.listFiles();
 						for (int i = 0; i < listOfFiles.length; i++) {
 							if (listOfFiles[i].isFile()) {
-								processTheFile(listOfFiles[i].getPath(), args[2], listOfFiles[i].getName(), args[3],tempQueryFolderAddress);
+								processTheFile(listOfFiles[i].getPath(), args[2], listOfFiles[i].getName(), args[3],tempQueryFolderAddress,fromThisLineStartToProcess);
 								System.out.println("Done File"+listOfFiles[i].getName());
 							} else if (listOfFiles[i].isDirectory()) {
 								System.out.println("Directory " + listOfFiles[i].getName());
@@ -320,7 +323,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		return returnSet;
 	}
 
-	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint,String tempQueryFolderAddress) {
+	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint,String tempQueryFolderAddress, long fromThisLineStartToProcess) {
 		// read the query file
 		System.out.println("Start Process the File"+  filePath);
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -329,6 +332,16 @@ public class PreprocessApplication implements CommandLineRunner {
 			Integer lineCounter = 1;
 			while ((queryAndPath = br.readLine()) != null) {
 				//System.out.println(filePath+" "+lineCounter);
+
+				if(lineCounter< fromThisLineStartToProcess){
+					lineCounter = lineCounter + 1;
+					continue;
+				}
+
+				if(!diskSpaceIsEnough()){
+					terminalWrite("this line note processed " + lineCounter);
+					break;
+				}
 
 				String[] parts = queryAndPath.split(",");
 				//terminalWrite("parts Size is : "+parts.length);
@@ -351,11 +364,10 @@ public class PreprocessApplication implements CommandLineRunner {
 		}
 	}
 
-	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint, String tempQueryFolderAddress,String pathOfSourceFileForCheckShouldRunQueryOrNot) {
+	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint, String tempQueryFolderAddress, long fromThisLineStartToProcess , String pathOfSourceFileForCheckShouldRunQueryOrNot) {
 		// read the query file
-		terminalWrite("Start Process the File "+  filePath+" and reference file :"+pathOfSourceFileForCheckShouldRunQueryOrNot);
+		terminalWrite("Start Process the File "+  filePath+" and reference file :"+pathOfSourceFileForCheckShouldRunQueryOrNot+" start from this line :"+String.valueOf(fromThisLineStartToProcess));
 		Set<String> validPaths = new HashSet<>();
-
 		validPaths = selectThePathsWithScoreMoreThanZeroFromFile(pathOfSourceFileForCheckShouldRunQueryOrNot);
 
 		terminalWrite("we have  "+  validPaths.size()+" valid paths");
@@ -367,6 +379,16 @@ public class PreprocessApplication implements CommandLineRunner {
 			Integer lineCounter = 1;
 			while ((queryAndPath = br.readLine()) != null) {
 				//System.out.println(filePath+" "+lineCounter);
+
+				if(lineCounter< fromThisLineStartToProcess){
+					lineCounter = lineCounter + 1;
+					continue;
+				}
+
+				if(!diskSpaceIsEnough()){
+					terminalWrite("this line note processed " + lineCounter);
+					break;
+				}
 
 				String[] parts = queryAndPath.split(",");
 				//terminalWrite("parts Size is : "+parts.length);
@@ -395,6 +417,19 @@ public class PreprocessApplication implements CommandLineRunner {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private boolean diskSpaceIsEnough() {
+		try {
+			Long freeSpace = new File("/").getFreeSpace();
+			if(freeSpace > 5368709120L){
+				return true;
+			}
+			return false;
+		}catch (Exception ex){
+			terminalWrite(ex.getMessage());
+			return false;
 		}
 	}
 
