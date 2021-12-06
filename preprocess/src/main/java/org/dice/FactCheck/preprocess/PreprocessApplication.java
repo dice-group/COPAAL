@@ -10,6 +10,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
@@ -438,9 +439,12 @@ public class PreprocessApplication implements CommandLineRunner {
 	private void runTheQuery(String query, String endpoint, Integer lineCounter, String pathForSaveResults, String fileName, String pathOfQuery , String predicate,String tempQueryFolderAddress) {
 		// check fact
 		//System.out.println("start do the query");
-		String tempQueryResultFile = doQuery(query, endpoint, tempQueryFolderAddress);
+		long resultNumber = doQuery(query, endpoint, tempQueryFolderAddress);
+
+		save(query, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName , pathOfQuery,predicate);
+
 		//System.out.println("query is done and result save at :"+tempQueryResultFile);
-		if(!tempQueryResultFile.equals("")) {
+		/*if(!tempQueryResultFile.equals("")) {
 //			System.out.println("Start count the result");
 			long resultNumber = counterservice.count(tempQueryResultFile);
 			if(resultNumber == -1){
@@ -454,16 +458,16 @@ public class PreprocessApplication implements CommandLineRunner {
 			}
 		}else{
 			System.out.println("result is empty for this query"+ query);
-		}
-		// remove do query temp file
+		}*/
+		/*// remove do query temp file
 		File forDelete = new File(tempQueryResultFile);
 		if(forDelete.exists()){
 			//System.out.println("deleting "+ forDelete);
 			forDelete.delete();
 			//System.out.println("deleted ");
-		}
+		}*/
 
-		File allRemainingFiles	= new File(tempQueryFolderAddress);
+		/*File allRemainingFiles	= new File(tempQueryFolderAddress);
 		if(allRemainingFiles!=null) {
 			File[] listOfFiles = allRemainingFiles.listFiles();
 
@@ -477,7 +481,7 @@ public class PreprocessApplication implements CommandLineRunner {
 			}
 		}else{
 			terminalWrite("can not find folder at "+tempQueryFolderAddress);
-		}
+		}*/
 	}
 
 	public static void writeToFile(String path, String query, long CountResult, String pathOfQuery , String predicate) throws Exception {
@@ -652,7 +656,7 @@ public class PreprocessApplication implements CommandLineRunner {
 	}
 
 	// run a query save in a file return the file name as a result
-	private String doQuery(String query,String endpoint, String tempQueryFolderAddress)  {
+	private long doQuery(String query,String endpoint, String tempQueryFolderAddress)  {
 		//query = query.replace("  ","");
 		//query = query.replace("\n"," ");
 		//String endpoint = "https://synthg-fact.dice-research.org/sparql";
@@ -667,20 +671,20 @@ public class PreprocessApplication implements CommandLineRunner {
 				//System.out.println(response.getStatusLine().getStatusCode());
 				if(response.getStatusLine().getStatusCode()!=200 ){
 					terminalWrite("response is not 200" + query);
-					return "";
+					return 0;
 				}
 				HttpEntity entity = response.getEntity();
 				//System.out.println("the entity is ready");
 				Header headers = entity.getContentType();
 				if (entity != null) {
-					// return it as a String
+					/*// return it as a String
 					String fileName = tempQueryFolderAddress+UUID.randomUUID().toString()+".tmp";
 					//System.out.println("save the results at ");
 					OutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
 					entity.writeTo(out);
 					out.close();
-					return fileName;
-					//return EntityUtils.toString(entity);
+					return fileName;*/
+					return Long.parseLong(EntityUtils.toString(entity));
 				}else{
 					System.out.println("entity is null");
 				}
@@ -689,6 +693,6 @@ public class PreprocessApplication implements CommandLineRunner {
 		}catch (Exception ex){
 			System.out.println(ex.getMessage());
 		}
-		return "";
+		return 0;
 	}
 }
