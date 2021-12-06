@@ -142,10 +142,10 @@ public class PreprocessApplication implements CommandLineRunner {
 					}
 				}
 
-				String tempQueryFolderAddress = args[6];
+				String tempQueryFolderAddress = args[5];
 				terminalWrite("temp folder is :"+tempQueryFolderAddress);
 
-				long fromThisLineStartToProcess = Long.parseLong(args[7]);
+				long fromThisLineStartToProcess = Long.parseLong(args[6]);
 
 				if(args.length == 8){
 					if(isFolder){
