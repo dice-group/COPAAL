@@ -409,6 +409,7 @@ public class PreprocessApplication implements CommandLineRunner {
 				lineCounter = lineCounter + 1;
 				if(lineCounter % 500 == 0){
 					terminalWrite(lineCounter.toString());
+					terminalWrite("free space is :"+new File("/").getFreeSpace());
 				}
 				//System.out.println("read next line");
 			}
