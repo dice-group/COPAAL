@@ -3,12 +3,10 @@ package org.dice_research.fc.config;
 
 //import java.util.*;
 
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
@@ -18,9 +16,11 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
 import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.impl.PropertyImpl;
 import org.dice_research.fc.IBidirectionalMapper;
 import org.dice_research.fc.IFactChecker;
 import org.dice_research.fc.IMapper;
+import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.*;
 
@@ -45,6 +45,7 @@ import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.HybridMaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
 import org.dice_research.fc.paths.scorer.count.max.VirtualTypesMaxCounter;
+import org.dice_research.fc.paths.search.PreProcessPathSearcher;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.paths.search.CachingPathSearcherDecorator;
 import org.dice_research.fc.paths.verbalizer.DefaultPathVerbalizer;
@@ -58,6 +59,9 @@ import org.dice_research.fc.sparql.path.IPathClauseGenerator;
 import org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttp;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttpTimeout;
+import org.dice_research.fc.sparql.restrict.BGPBasedVirtualTypeRestriction;
+import org.dice_research.fc.sparql.restrict.ITypeRestriction;
+import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
 import org.dice_research.fc.sum.AdaptedRootMeanSquareSummarist;
 import org.dice_research.fc.sum.CubicMeanSummarist;
 import org.dice_research.fc.sum.FixedSummarist;
@@ -66,6 +70,10 @@ import org.dice_research.fc.sum.NegScoresHandlingSummarist;
 import org.dice_research.fc.sum.OriginalSummarist;
 import org.dice_research.fc.sum.ScoreSummarist;
 import org.dice_research.fc.sum.SquaredAverageSummarist;
+import org.dice_research.fc.tentris.TentrisAdapter;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
@@ -88,6 +96,12 @@ public class Config {
    */
   @Value("${info.service.url.default:}")
   private String serviceURL;
+
+  /**
+   * The SPARQL endpoint URL
+   */
+  @Value("${copaal.tentris.endpoint:}")
+  private String tentrisURL;
 
   /**
    * The desired score summarist. It should have the same name as the class names.
@@ -172,6 +186,9 @@ public class Config {
   @Value("${dataset.pathsearcher.type:}")
   private String pathSearcher;
 
+  @Value("${copaal.preprocess.NPMIthreshold:}")
+  private double preProcessPathNPMIThreshold;
+
   /**
    * The Path Clause Generator Type
    */
@@ -239,17 +256,25 @@ public class Config {
   @Bean
   public IPathSearcher getPathSearcher(QueryExecutionFactory qef, Collection<IRIFilter> filter,IMapper<Path, QRestrictedPath> mapper,
                                        IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper,ICountRetriever counterRetrieverClass,
-                                       FactPreprocessor factPreprocessorClass, IPathScorer pathScorerClass) {
+                                       FactPreprocessor factPreprocessorClass, IPathScorer pathScorerClass, IPreProcessProvider preProcessProvider, TentrisAdapter adapter) {
     switch (pathSearcher.toLowerCase()){
       case "loadsavedecorator" :
         String counterRetriever = counterRetrieverClass.getClass().getName();
         String factPreprocessor = factPreprocessorClass.getClass().getName();
         String pathScorer = pathScorerClass.getClass().getName();
         return new CachingPathSearcherDecorator(new SPARQLBasedSOPathSearcher(qef, maxLength, filter),mapper,propertyElementMapper,counterRetriever,factPreprocessor,pathScorer);
-
+      case "preprocess":
+        return new PreProcessPathSearcher(preProcessProvider, adapter);
       default:
         return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
     }
+  }
+
+  @Bean
+  public TentrisAdapter getTentrisAdapter()
+  {
+    TentrisAdapter adapter = new TentrisAdapter(tentrisURL);
+    return adapter;
   }
 
   /**
@@ -360,9 +385,52 @@ public class Config {
         return new VirtualTypePredicateFactory();
       case ("hybridpredicatefactory"):
         return new HybridPredicateFactory(qef,ShouldUseBGPVirtualTypeRestriction);
+      case ("hybridpredicatetentrisfactory"):
+        return new HybridPredicateTentrisFactory(allPredicates("collected_predicates.json"));
       default:
         return new PredicateFactory(qef);
     }
+  }
+
+
+  // read a json file with name [filename] and extract all predicates in the json array
+  public Set<Predicate> allPredicates(String fileName) {
+    Set<Predicate> predicates = new HashSet<Predicate>();
+    JSONParser parser = new JSONParser();
+    try {
+      ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+      InputStream is = classloader.getResourceAsStream(fileName);
+      Object obj = parser.parse( new InputStreamReader(is));
+
+      // A JSON object. Key value pairs are unordered. JSONObject supports java.util.Map interface.
+      JSONArray Predicates = (JSONArray) obj;
+
+      Iterator<JSONObject> iterator = Predicates.iterator();
+      while (iterator.hasNext()) {
+        JSONObject jsonPredicate = iterator.next();
+        // get domain
+        Set<String> domainsSet = new HashSet<>();
+        JSONArray domainsJson = (JSONArray)jsonPredicate.get("Domain") ;
+        for(int i = 0 ; i < domainsJson.size() ; i++){
+          domainsSet.add(domainsJson.get(i).toString());
+        }
+        TypeBasedRestriction domain = new TypeBasedRestriction(domainsSet);
+        // get range
+        Set<String> rangesSet = new HashSet<>();
+        JSONArray rangesJson = (JSONArray)jsonPredicate.get("Range") ;
+        for(int i = 0 ; i < rangesJson.size() ; i++){
+          rangesSet.add(rangesJson.get(i).toString());
+        }
+        TypeBasedRestriction range = new TypeBasedRestriction(rangesSet);
+
+        Property p = new PropertyImpl(jsonPredicate.get("Predicate").toString());
+        Predicate predicate = new Predicate(p,domain,range);
+        predicates.add(predicate);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return predicates;
   }
 
   /**
@@ -448,8 +516,13 @@ public class Config {
     File predicateInstancesCountFile = new File(addressOfPredicateInstancesCountFile);
     File coOccurrenceCountFile = new File(addressOfCoOccurrenceCountFile);
     File maxCountFile = new File(addressOfMaxCountFile);
+    List<Predicate> validPredicates = allValidPredicates();
+    return new PreProcessProvider(pathInstancesCountFile, predicateInstancesCountFile, coOccurrenceCountFile, maxCountFile, preProcessPathNPMIThreshold, validPredicates);
+  }
 
-    return new PreProcessProvider(pathInstancesCountFile, predicateInstancesCountFile,coOccurrenceCountFile,maxCountFile);
+  private List<Predicate> allValidPredicates() {
+    List<Predicate> predicates = new ArrayList<Predicate>(allPredicates("validPredicates.json"));
+    return predicates;
   }
 
   /**

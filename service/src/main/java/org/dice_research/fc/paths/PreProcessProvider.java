@@ -8,18 +8,25 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
-
-public class PreProcessProvider implements IPreProcessProvider{
+/**
+ *
+ * implementation for this interface{@link IPreProcessProvider} .
+ * this class accept 4 file , convert them to maps and provide methods to get numbers for each path/predicate
+ * also it has {@param threshold} which tha path with score more than this will return from {@link #allPathsForThePredicate(Predicate)}
+ *
+ */
+ public class PreProcessProvider implements IPreProcessProvider{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PathBasedFactChecker.class);
     private String separator = ",";
-
+    private double  threshold;
     private Map<String,Long> pathInstancesCount;
     private Map<String,Long> predicateInstancesCount;
     private Map<String,Long> coOccurrenceCount;
     private Map<String,Long> maxCount;
+    private Map<Predicate,Set<String>> mapPathForPredicates;
 
-    public PreProcessProvider(File pathInstancesCountFile, File predicateInstancesCountFile, File coOccurrenceCountFile, File maxCountFile){
+    public PreProcessProvider(File pathInstancesCountFile, File predicateInstancesCountFile, File coOccurrenceCountFile, File maxCountFile, double  threshold, List<Predicate> validPredicates){
         LOGGER.info("start load the preprocessing file");
 
         LOGGER.info("start process pathInstancesCount from {}",pathInstancesCountFile.getAbsolutePath());
@@ -37,12 +44,22 @@ public class PreProcessProvider implements IPreProcessProvider{
         LOGGER.info("start process maxCount from {}",maxCountFile.getAbsolutePath());
         this.maxCount = processTheMaxCount(maxCountFile);
         LOGGER.info("done, the maxCount map has size : {}",maxCount.size());
+
+        mapPathForPredicates = new HashMap<>();
+
+        for(Predicate predicate:validPredicates){
+            mapPathForPredicates.put(predicate ,calculatePathsForThePredicate(predicate));
+        }
+
+        this.threshold = threshold;
     }
+
+
 
     private Map<String, Long> processThePathInstancesCountFile(File pathInstancesCountFile) {
         Map<String, Long> map = new HashMap<>();
         // read file line by line
-        // each line contain these part and comma seperated
+        // each line contain these part and comma separated
         // query,count,path,predicate,domain,range
         try (BufferedReader br = new BufferedReader(new FileReader(pathInstancesCountFile))) {
             String line;
@@ -179,24 +196,108 @@ public class PreProcessProvider implements IPreProcessProvider{
         return map;
     }
 
-    private String keyForMaxCount(Predicate predicate){
-        return predicate.getProperty().getURI();
+    private String keyForMaxCount(ITypeRestriction predicate){
+        return predicate.getRestriction().toString().replace("[","").replace("]","");
     }
 
+    @Override
     public long getPathInstances(QRestrictedPath path, ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction) {
         return getFromMap(pathInstancesCount, keyForPathInstancesCount(path, domainRestriction, rangeRestriction));
     }
 
+    @Override
     public long getPredicateInstances(Predicate predicate) {
         return getFromMap(predicateInstancesCount, keyForPredicateInstancesCount(predicate));
     }
 
+    @Override
     public long getCooccurrences(Predicate predicate, QRestrictedPath path) {
         return getFromMap(coOccurrenceCount, keyForCoOccurrenceCount(path, predicate));
     }
 
+    @Override
     public long getMaxCount(Predicate predicate) {
-        return getFromMap(maxCount, keyForMaxCount(predicate));
+        return getFromMap(maxCount, keyForMaxCount(predicate.getDomain())) * getFromMap(maxCount, keyForMaxCount(predicate.getRange()));
+    }
+
+    private Set<String> calculatePathsForThePredicate(Predicate predicate) {
+        // from coOccurrenceCount map
+        // select all paths with they are matched with predicate
+
+        Set<String> resultset = new HashSet<>();
+
+        for (Map.Entry<String, Long> entry : coOccurrenceCount.entrySet()) {
+            double score = calculateScoreForCoOccurrencePath(entry.getKey().split(",")[0], predicate);
+            if(score>threshold) {
+                if (theKeyIsMatchedWithPredicate(entry.getKey(), predicate.getProperty().getURI())) {
+                    resultset.add(getPathFromcoOccurrenceCountKey(entry.getKey()));
+                }
+            }
+        }
+        LOGGER.info("for the predicate "+predicate+" found "+ resultset.size()+" paths in map");
+        return resultset;
+    }
+
+    @Override
+    public Set<String> allPathsForThePredicate(Predicate predicate) {
+        if(mapPathForPredicates.containsKey(predicate)){
+            return mapPathForPredicates.get(predicate);
+        }
+        return null;
+    }
+
+    private double calculateScoreForCoOccurrencePath(String path, Predicate predicate) {
+        double pathCounts = getFromMap(pathInstancesCount, keyForPathInstancesCount(path, predicate.getDomain().getRestriction().toString().replace("[","").replace("]",""),predicate.getRange().getRestriction().toString().replace("[","").replace("]","")));
+        if(pathCounts == 0){
+            return 0;
+        }
+
+        double predicateCounts = getFromMap(predicateInstancesCount, keyForPredicateInstancesCount(predicate));
+        if(predicateCounts == 0){
+            return 0;
+        }
+
+        double cooccurrenceCounts = getFromMap(coOccurrenceCount, keyForCoOccurrenceCount(path, predicate.getProperty().getURI()));
+        if(cooccurrenceCounts == 0){
+            return 0;
+        }
+
+        double deriveMaxCount =getFromMap(maxCount, keyForMaxCount(predicate.getDomain())) * getFromMap(maxCount, keyForMaxCount(predicate.getRange()));
+        if(deriveMaxCount == 0){
+            return 0;
+        }
+
+        return calculateScore(pathCounts, predicateCounts, cooccurrenceCounts, deriveMaxCount);
+    }
+
+    private double calculateScore(double pathCounts, double predicateCounts,
+                                    double cooccurrenceCounts, double deriveMaxCount) {
+        // P - probability, c - count
+        // PMI (without log) = P(p,path) / P(p)*P(path)
+        // = (c(p,path)/c(max)) / (c(p)/c(max))*(c(path)/c(max))
+        // = c(p,path)*c(max) / c(p)*(c(path)
+        double npmi = Math.log((cooccurrenceCounts * deriveMaxCount) / (predicateCounts * pathCounts))
+                / -Math.log(cooccurrenceCounts / deriveMaxCount);
+        if (npmi > 1) {
+            return 1;
+        } else if (npmi < -1) {
+            return -1;
+        } else {
+            return npmi;
+        }
+    }
+
+    private String getPathFromcoOccurrenceCountKey(String key) {
+        String[] parts = key.split(",");
+        return parts[0];
+    }
+
+    private boolean theKeyIsMatchedWithPredicate(String key, String uri) {
+        String[] parts = key.split(",");
+        if(parts[1].equals(uri)){
+            return true;
+        }
+        return false;
     }
 
     private long getFromMap(Map<String, Long> map, String key) {
@@ -204,7 +305,8 @@ public class PreProcessProvider implements IPreProcessProvider{
             return map.get(key);
         }
 
-        LOGGER.error("the map does not contain key, key is : "+ key);
+        LOGGER.trace("the map does not contain key, key is : "+ key);
         return 0;
     }
+
 }
