@@ -3,8 +3,6 @@ package org.dice_research.fc.paths.imprt;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
-
-import net.sf.extjwnl.data.Exc;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;

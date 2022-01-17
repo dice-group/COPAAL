@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.aksw.jena_sparql_api.cache.extra.Cache;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
@@ -98,7 +96,7 @@ public class SamplingPathExtractor implements IPathExtractor {
       // Preprocess the data
       fact = ResourceFactory.createStatement(subject, ResourceFactory.createProperty(propertyURI),
           object);
-        preparedPredicate = factPreprocessor.generatePredicate(fact);
+      preparedPredicate = factPreprocessor.generatePredicate(fact);
 
       // Get potential paths
       paths.addAll(pathSearcher.search(subject, preparedPredicate, object));

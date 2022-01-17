@@ -56,9 +56,7 @@ public abstract class MaxCounter {
       QuerySolution qs = result.next();
       Literal count = qs.getLiteral(COUNT_VARIABLE_NAME);
       if (result.hasNext()) {
-        LOGGER.info(
-                "Got a query with more than 1 result line (\"{}\"). The remaining lines will be ignored.",
-                query);
+        LOGGER.info("Got a query with more than 1 result line (\"{}\"). The remaining lines will be ignored.", query);
       }
       long n = count.getLong();
       LOGGER.debug("Got a query result ({}) after {}ms.", n, System.currentTimeMillis() - time);

@@ -1,10 +1,5 @@
 package org.dice_research.fc.paths.search;
 
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Resource;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
@@ -15,6 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+
+/**
+ * this class use a Tentris adapter and preProcessProvider to find the path between
+ */
 
 public class PreProcessPathSearcher implements IPathSearcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(PreProcessPathSearcher.class);
@@ -47,22 +46,6 @@ public class PreProcessPathSearcher implements IPathSearcher {
             if(isPathExistadapter>0){
                 returnSet.add(QRestrictedPath.toQRestrictedPathFromStringWithTag(path));
             }
-
-            /*try (QueryExecution qe = qef.createQueryExecution(query)) {
-                ResultSet result = qe.execSelect();
-                if (!result.hasNext()) {
-                    continue;
-                }
-
-                QuerySolution qs = result.next();
-                Literal count = qs.getLiteral("sum");
-                if(count.getLong()>0){
-                    returnSet.add(QRestrictedPath.toQRestrictedPathFromStringWithTag(path));
-                }
-            } catch (Exception e) {
-                LOGGER.error("Got an exception while running count query \"" + query + "\". Returning 0.", e);
-                continue;
-            }*/
         }
 
         return returnSet;

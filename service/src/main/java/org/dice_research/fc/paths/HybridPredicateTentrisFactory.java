@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  * This class returns a {@link Predicate} , Hybrid mean it use both {@link PathBasedFactChecker} and {@link VirtualTypePredicateFactory}.
- * This class similar {@link HybridPredicateFactory} just it use Tentris then instead  QueryExecutionFactory it use TentrisAdapter
+ * This class similar {@link HybridPredicateFactory} just it accept list of predicate in initialization phase in future it will use Tentris then instead  QueryExecutionFactory it will use TentrisAdapter
  *
  */
 

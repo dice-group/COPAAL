@@ -4,7 +4,7 @@ import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 /**
- * Maximum count retriever class , when can not retrieve from domain and range then used the Virtual type
+ * Maximum count retriever class , when can not retrieve from domain and range, then use the Virtual type
  *
  * @author Farshad Afshari
  *

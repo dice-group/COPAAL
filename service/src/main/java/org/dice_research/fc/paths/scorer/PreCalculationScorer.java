@@ -5,6 +5,12 @@ import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.IPreProcessProvider;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 
+/**
+ * An precalculated path scorer .
+ * it use the {@IPreProcessProvider } as a service
+ *
+ */
+
 public class PreCalculationScorer implements ICountRetriever{
 
     IPreProcessProvider service;
