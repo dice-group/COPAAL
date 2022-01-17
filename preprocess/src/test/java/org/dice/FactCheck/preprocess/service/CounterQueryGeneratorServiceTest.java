@@ -1,7 +1,5 @@
 package org.dice.FactCheck.preprocess.service;
 
-import ch.qos.logback.core.net.ObjectWriter;
-import javassist.bytecode.stackmap.BasicBlock;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;

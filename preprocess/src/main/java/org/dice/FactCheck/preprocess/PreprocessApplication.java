@@ -2,7 +2,6 @@ package org.dice.FactCheck.preprocess;
 
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FileSystemUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 
@@ -17,7 +16,6 @@ import org.apache.jena.rdf.model.Property;
 import org.dice.FactCheck.preprocess.model.CountQueries;
 import org.dice.FactCheck.preprocess.model.Path;
 import org.dice.FactCheck.preprocess.service.CounterQueryGeneratorService;
-import org.dice.FactCheck.preprocess.service.JsonCounterService;
 import org.dice.FactCheck.preprocess.service.PathService;
 import org.dice.FactCheck.preprocess.service.PredicateService;
 import org.dice_research.fc.data.Predicate;
@@ -42,15 +40,18 @@ import java.util.stream.Collectors;
 public class PreprocessApplication implements CommandLineRunner {
     //http://127.0.0.1:9080/stream?query=SELECT%20%3Fp%20WHERE%20%7B%20%3Fs%20%3Fp%20%3Fo%20.%20%7D
 	//https://dbpedia.org/sparql
+
+	// this variable will save the String formated date to use in file names while saving on disk
 	String dateStr;
+
+	// flags which come from cmd arguments
 	private boolean isIndividual = true;
 	private boolean isLiteVersion = true;
 	private boolean isCompleteVersion = true;
 	// show the input was a single file or a folder , for folder all the files in the folder will process
 	private boolean isFolder = false;
-	private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
-	JsonCounterService counterservice;
+	private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
 	public static void main(String[] args) {
 		SpringApplication.run(PreprocessApplication.class, args);
@@ -58,9 +59,8 @@ public class PreprocessApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		counterservice = new JsonCounterService();
 
-		// set date str
+		// set date string
 		Date date = Calendar.getInstance().getTime();
 		DateFormat dateFormat = new SimpleDateFormat("MM-dd_hh-mm");
 		dateStr = dateFormat.format(date);
@@ -82,12 +82,6 @@ public class PreprocessApplication implements CommandLineRunner {
 		if(args[0].equals("f")){
 			if(args.length == 7 || args.length == 8){
 				System.out.println("looking at "+ args[1]+" for a file");
-				/*try {
-					String tempPath = new File(PreprocessApplication.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getPath();
-					System.out.println("working directory is "+ tempPath);
-				}catch (Exception ex){
-					System.out.println(ex);
-				}*/
 
 				File inputFileOrFolder = new File(args[1]);
 				if (!inputFileOrFolder.exists()) {
@@ -249,7 +243,6 @@ public class PreprocessApplication implements CommandLineRunner {
 		Set<Path> returnSet = new HashSet<>();
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			String line;
-			long lineCounter = 1;
 			while ((line = br.readLine()) != null) {
 				Path path = convertTextToPath(line, predicatesMap);
 				returnSet.add(path);
@@ -443,45 +436,6 @@ public class PreprocessApplication implements CommandLineRunner {
 
 		save(query, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName , pathOfQuery,predicate);
 
-		//System.out.println("query is done and result save at :"+tempQueryResultFile);
-		/*if(!tempQueryResultFile.equals("")) {
-//			System.out.println("Start count the result");
-			long resultNumber = counterservice.count(tempQueryResultFile);
-			if(resultNumber == -1){
-				System.out.println("Can not count the result for this line "+ lineCounter);
-			}else{
-				//System.out.println("Done counting the result");
-				//System.out.println("start save the result");
-				save(query, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName , pathOfQuery,predicate);
-				//System.out.println("Done saving the result");
-				//System.out.println("running query was successful");
-			}
-		}else{
-			System.out.println("result is empty for this query"+ query);
-		}*/
-		/*// remove do query temp file
-		File forDelete = new File(tempQueryResultFile);
-		if(forDelete.exists()){
-			//System.out.println("deleting "+ forDelete);
-			forDelete.delete();
-			//System.out.println("deleted ");
-		}*/
-
-		/*File allRemainingFiles	= new File(tempQueryFolderAddress);
-		if(allRemainingFiles!=null) {
-			File[] listOfFiles = allRemainingFiles.listFiles();
-
-			if(listOfFiles!=null){
-				for (int i = 0; i < listOfFiles.length; i++) {
-					if (listOfFiles[i].isFile()) {
-						terminalWrite("deleting " + listOfFiles[i]);
-						listOfFiles[i].delete();
-					}
-				}
-			}
-		}else{
-			terminalWrite("can not find folder at "+tempQueryFolderAddress);
-		}*/
 	}
 
 	public static void writeToFile(String path, String query, long CountResult, String pathOfQuery , String predicate) throws Exception {
