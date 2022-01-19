@@ -15,7 +15,7 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.dice.FactCheck.Corraborative.Config.Config;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory.PathGeneratorType;
-import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
+import org.dice.FactCheck.Corraborative.Query.RemoteQueryExecutioner;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class FactCheckingTest {
 
-  @Autowired private QueryExecutioner queryExecutioner;
+  @Autowired private RemoteQueryExecutioner queryExecutioner;
 
   @Autowired private FactChecking factChecking;
 
