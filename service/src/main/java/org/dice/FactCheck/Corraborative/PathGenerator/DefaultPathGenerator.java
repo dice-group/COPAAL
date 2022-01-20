@@ -8,6 +8,7 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Statement;
 import org.dice.FactCheck.Corraborative.PathQuery;
 import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
+import org.semarglproject.vocab.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public class DefaultPathGenerator implements IPathGenerator {
   HashMap<String, Integer> paths = new HashMap<String, Integer>();
   HashMap<String, String> intermediateNodes = new HashMap<String, String>();
   public PathQuery pathQuery;
-  public String ontology = "\'http://dbpedia.org/ontology\'";
+  public String ontology = "''";//"\'http://dbpedia.org/ontology\'";
 
   public DefaultPathGenerator(
       String queryBuilder, Statement input, int pathLength, QueryExecutioner queryExecutioner) {
@@ -88,12 +89,12 @@ public class DefaultPathGenerator implements IPathGenerator {
                   + querySequence[1]
                   + "."
                   + "\n"
-                  + "FILTER(strstarts(str(?p1),"
-                  + ontology
-                  + "))"
-                  + "FILTER(strstarts(str(?p2),"
-                  + ontology
-                  + "))"
+                  + "FILTER(?p1 != <"
+                  + RDF.TYPE
+                  + ">)"
+                  + "FILTER(?p2 != <"
+                  + RDF.TYPE
+                  + ">)"
                   + "FILTER(!ISLITERAL(?x1))"
                   + "\n "
                   + "}");
@@ -135,15 +136,15 @@ public class DefaultPathGenerator implements IPathGenerator {
                   + "FILTER(?x2 != <"
                   + input.getSubject().asNode()
                   + ">) \n"
-                  + "FILTER(strstarts(str(?p1),"
-                  + ontology
-                  + "))"
-                  + "FILTER(strstarts(str(?p2),"
-                  + ontology
-                  + "))"
-                  + "FILTER(strstarts(str(?p3),"
-                  + ontology
-                  + "))"
+                  + "FILTER(?p1 != <"
+                  + RDF.TYPE
+                  + ">)"
+                  + "FILTER(?p2 != <"
+                  + RDF.TYPE
+                  + ">)"
+                  + "FILTER(?p3 != <"
+                  + RDF.TYPE
+                  + ">)"
                   + "}");
       paraPathQuery.setParam("s", input.getSubject());
       paraPathQuery.setParam("o", input.getObject());

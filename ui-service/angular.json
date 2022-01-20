@@ -140,5 +140,8 @@
       }
     }
   },
-  "defaultProject": "cg-ui"
+  "defaultProject": "cg-ui",
+  "cli": {
+    "analytics": false
+  }
 }

@@ -10,24 +10,21 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.apache.jena.datatypes.RDFDatatype;
-import org.apache.jena.graph.Node;
-import org.apache.jena.graph.NodeFactory;
-import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.ResourceF;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
 import org.apache.jena.vocabulary.RDF;
-import org.apache.jena.vocabulary.RDFS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DatasetGenerator {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(DatasetGenerator.class);
 	
 	public static void generateDataset(File inputFile, File outputFile) throws IOException
 	{
@@ -40,7 +37,7 @@ public class DatasetGenerator {
 		br.readLine();
 		while((line=br.readLine())!=null)
 		{
-			System.out.println(line);
+			LOGGER.info(line);
 			String[] fact = line.split("\t");
 			Resource subject = ResourceFactory.createResource("http://dbpedia.org/resource/"+fact[1].trim());
 			Resource object = ResourceFactory.createResource("http://dbpedia.org/resource/"+fact[5].trim());

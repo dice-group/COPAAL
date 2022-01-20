@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,12 +14,16 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
 public class TSVtoTripleGenerator {
 	
 	public static String line;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(TSVtoTripleGenerator.class);
 
 	public static void tsvToTriple(File sourcetsv, File outputTriple) throws IOException 
 	{
@@ -53,7 +56,7 @@ public class TSVtoTripleGenerator {
 			object = st.nextToken().split(":")[1].replaceAll(">", "");
 			
 			if(subject=="" || object=="" || predicate=="") {
-				System.out.println("found empty");
+				LOGGER.info("found empty");
 			}
 			Statement statement = ResourceFactory.createStatement(ResourceFactory.createResource("http://dbpedia.org/resource/"+subject), 
 					ResourceFactory.createProperty("http://dbpedia.org/ontology/"
@@ -78,7 +81,7 @@ public class TSVtoTripleGenerator {
 
 			//model.write(new FileOutputStream(outputTriple), "N-TRIPLES");
 
-		System.out.println("Wrote "+i+" triples to file");
+		LOGGER.info("Wrote "+i+" triples to file");
 		pw.flush();
 		pw.close();
 		

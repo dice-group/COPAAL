@@ -11,7 +11,7 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.dice.FactCheck.Corraborative.PathGenerator.DefaultPathGeneratorFactory;
 import org.dice.FactCheck.Corraborative.PathGenerator.IPathGeneratorFactory.PathGeneratorType;
-import org.dice.FactCheck.Corraborative.Query.QueryExecutioner;
+import org.dice.FactCheck.Corraborative.Query.RemoteQueryExecutioner;
 import org.dice.FactCheck.Corraborative.Query.SparqlQueryGenerator;
 import org.dice.FactCheck.Corraborative.UIResult.CorroborativeGraph;
 import org.dice.FactCheck.Corraborative.UIResult.create.DefaultPathFactory;
@@ -29,7 +29,7 @@ public class FactCheckingDemo {
     FactChecking factChecking =
         new FactChecking(
             new SparqlQueryGenerator(),
-            new QueryExecutioner(),
+            new RemoteQueryExecutioner(),
             new CorroborativeGraph(),
             new DefaultPathFactory(),
             new DefaultPathGeneratorFactory());
