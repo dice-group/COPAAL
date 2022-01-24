@@ -18,7 +18,7 @@ import java.util.*;
 public class CounterQueryGeneratorServiceTest {
     @Test
     public void ServiceShouldForPredicateAndPathWithLengthTwoWorksFine(){
-        CounterQueryGeneratorService service = new CounterQueryGeneratorService();
+        CounterQueryGeneratorService service = new CounterQueryGeneratorService(new PathService());
 
         // The First Property
         //Property
@@ -85,7 +85,7 @@ public class CounterQueryGeneratorServiceTest {
 
     @Test
     public void ServiceShouldForPredicateAndPathWithLengthTwoAndDiffrentDomainRangeWorksFine(){
-        CounterQueryGeneratorService service = new CounterQueryGeneratorService();
+        CounterQueryGeneratorService service = new CounterQueryGeneratorService(new PathService());
 
         // The First Property
         //Property
@@ -137,7 +137,7 @@ public class CounterQueryGeneratorServiceTest {
 
     @Test
     public void ServiceShouldForPredicateAndPathWithLengthTwoAndsameDomainRangeWorksFine(){
-        CounterQueryGeneratorService service = new CounterQueryGeneratorService();
+        CounterQueryGeneratorService service = new CounterQueryGeneratorService(new PathService());
 
         // The First Property
         //Property
@@ -187,12 +187,11 @@ public class CounterQueryGeneratorServiceTest {
         Assert.assertEquals(1, queries.getCoOccurrenceCountQueries().size());
     }
 
-
     @Test //uncomment if need to run
     public void howManyQueriesDoWeHave() throws CloneNotSupportedException {
-        howManyQueriesDoWeHave("http://dbpedia.org/ontology/nationality","Nationality","http://dbpedia.org/ontology/Person","http://dbpedia.org/ontology/Country",3);
+    /*    howManyQueriesDoWeHave("http://dbpedia.org/ontology/nationality","Nationality","http://dbpedia.org/ontology/Person","http://dbpedia.org/ontology/Country",3);
 
-    /*    howManyQueriesDoWeHave("http://dbpedia.org/ontology/birthPlace","BirthPlace","http://dbpedia.org/ontology/Animal","http://dbpedia.org/ontology/Place",3);
+        howManyQueriesDoWeHave("http://dbpedia.org/ontology/birthPlace","BirthPlace","http://dbpedia.org/ontology/Animal","http://dbpedia.org/ontology/Place",3);
 
         howManyQueriesDoWeHave("http://dbpedia.org/ontology/deathPlace","DeathPlace","http://dbpedia.org/ontology/Animal","http://dbpedia.org/ontology/Place",3);
 
@@ -206,7 +205,7 @@ public class CounterQueryGeneratorServiceTest {
     }
 
     public void howManyQueriesDoWeHave(String propertyURI, String propertyName, String domain, String range, int len ) throws CloneNotSupportedException {
-        CounterQueryGeneratorService service = new CounterQueryGeneratorService();
+        CounterQueryGeneratorService service = new CounterQueryGeneratorService(new PathService());
 
         // The First Property
         //Property

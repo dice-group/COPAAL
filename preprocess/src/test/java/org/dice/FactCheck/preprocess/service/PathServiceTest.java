@@ -11,9 +11,7 @@ import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -533,6 +531,250 @@ public class PathServiceTest {
 
 
 
+    }
+
+    @Test
+    public void doesHaveOverlapShouldWorkWhenOneTheSubclassIsJustOWLThing(){
+        PathService service = new PathService();
+
+        Set<String> firstRestrictionSet = new HashSet<String>();
+        firstRestrictionSet.add("http://dbpedia.org/ontology/Work");
+        ITypeRestriction firstRestriction = new TypeBasedRestriction(firstRestrictionSet);
+
+        Set<String> secondRestrictionSet = new HashSet<>();
+        secondRestrictionSet.add("http://dbpedia.org/ontology/Newspaper");
+        ITypeRestriction secondRestriction = new TypeBasedRestriction(secondRestrictionSet);
+
+        boolean actual  = service.doesHaveOverlap(firstRestriction, secondRestriction);
+
+        Assert.assertEquals(false, actual);
+    }
+
+    @Test
+    public void predicateCompatibleWithExistingPathShouldWorkWellRealUri(){
+
+        theFirstPartOfPath();
+        theSecondPartOfPath();
+        theThirdPartOfPath();
+        theFourthPartOfPath();
+    }
+
+    private void theFirstPartOfPath() {
+        PathService service = new PathService();
+
+        Path mockPath = new Path();
+        mockPath.addPart(makePredicate("http://dbpedia.org/ontology/starring","http://dbpedia.org/ontology/Work","http://dbpedia.org/ontology/Actor"),true);
+
+        Predicate predicateToAddInPath = makePredicate("http://dbpedia.org/ontology/sisterNewspaper","http://dbpedia.org/ontology/Newspaper","http://dbpedia.org/ontology/Newspaper");
+
+        boolean actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,false);
+        Assert.assertEquals(true, actual);
+    }
+
+    private void theSecondPartOfPath() {
+        PathService service = new PathService();
+
+        Path mockPath = new Path();
+        mockPath.addPart(makePredicate("http://dbpedia.org/ontology/starring","http://dbpedia.org/ontology/Work","http://dbpedia.org/ontology/Actor"),true);
+        mockPath.addPart(makePredicate("http://dbpedia.org/ontology/sisterNewspaper","http://dbpedia.org/ontology/Newspaper","http://dbpedia.org/ontology/Newspaper"),false);
+
+        Predicate predicateToAddInPath = makePredicate("http://dbpedia.org/ontology/magazine","http://dbpedia.org/ontology/WrittenWork","http://dbpedia.org/ontology/Magazine");
+
+        boolean actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,false);
+        Assert.assertEquals(true, actual);
+    }
+
+    private void theThirdPartOfPath() {
+        PathService service = new PathService();
+
+        Path mockPath = new Path();
+        mockPath.addPart(makePredicate("http://dbpedia.org/ontology/starring","http://dbpedia.org/ontology/Work","http://dbpedia.org/ontology/Actor"),true);
+        mockPath.addPart(makePredicate("http://dbpedia.org/ontology/sisterNewspaper","http://dbpedia.org/ontology/Newspaper","http://dbpedia.org/ontology/Newspaper"),true);
+        mockPath.addPart(makePredicate("http://dbpedia.org/ontology/magazine","http://dbpedia.org/ontology/WrittenWork","http://dbpedia.org/ontology/Magazine"),false);
+
+        Predicate predicateToAddInPath = makePredicate("http://dbpedia.org/ontology/composer","http://dbpedia.org/ontology/Work","http://dbpedia.org/ontology/Person");
+
+        boolean actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,false);
+        Assert.assertEquals(true, actual);
+
+        //if the added predicate in inverted it should return false
+        actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,true);
+        Assert.assertEquals(false, actual);
+    }
+
+    private void theFourthPartOfPath() {
+        PathService service = new PathService();
+
+        Path mockPath = new Path();
+        mockPath.addPart(makePredicate("http://dbpedia.org/ontology/starring","http://dbpedia.org/ontology/Work","http://dbpedia.org/ontology/Actor"),true);
+        mockPath.addPart(makePredicate("http://dbpedia.org/ontology/sisterNewspaper","http://dbpedia.org/ontology/Newspaper","http://dbpedia.org/ontology/Newspaper"),true);
+        mockPath.addPart(makePredicate("http://dbpedia.org/ontology/magazine","http://dbpedia.org/ontology/WrittenWork","http://dbpedia.org/ontology/Magazine"),false);
+        mockPath.addPart(makePredicate("http://dbpedia.org/ontology/composer","http://dbpedia.org/ontology/Work","http://dbpedia.org/ontology/Person"),false);
+
+        Predicate predicateToAddInPath = makePredicate("http://dbpedia.org/ontology/starring","http://dbpedia.org/ontology/Work","http://dbpedia.org/ontology/Actor");
+
+        boolean actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,false);
+        Assert.assertEquals(true, actual);
+
+        //if the added predicate in inverted it should return false
+        actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,true);
+        Assert.assertEquals(false, actual);
+    }
+
+    @Test
+    public void predicateCompatibleWithExistingPathShouldWorkandConsiderCaseSensivity() {
+        //http://dbpedia.org/ontology/work:[]
+        //http://dbpedia.org/ontology/Work:[http://www.w3.org/2002/07/owl#Thing]
+        PathService service = new PathService();
+
+        Path mockPath = new Path();
+        mockPath.addPart(makePredicate("p1","http://dbpedia.org/ontology/work","http://dbpedia.org/ontology/work"), false);
+
+        Predicate predicateToAddInPath = makePredicate("p2","http://dbpedia.org/ontology/Work","http://dbpedia.org/ontology/Work");
+
+        boolean actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,false);
+        Assert.assertEquals(false, actual);
+    }
+
+    @Test
+    public void predicateCompatibleWithExistingPathShouldWorkWhenDomainAndRangeParentsAreNull() {
+        //http://dbpedia.org/ontology/work:[]
+        //http://dbpedia.org/ontology/Architect:[http://dbpedia.org/ontology/Person,http://dbpedia.org/ontology/Animal,http://dbpedia.org/ontology/Eukaryote,http://dbpedia.org/ontology/Species,http://www.w3.org/2002/07/owl#Thing]
+        //http://dbpedia.org/ontology/Monastry:[]
+        PathService service = new PathService();
+
+        Path mockPath = new Path();
+        mockPath.addPart(makePredicate("p1","http://dbpedia.org/ontology/work","http://dbpedia.org/ontology/work"), false);
+
+        Predicate predicateToAddInPath = makePredicate("p2","http://dbpedia.org/ontology/Architect","http://dbpedia.org/ontology/Architect");
+
+        boolean actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,false);
+        Assert.assertEquals(false, actual);
+
+
+        predicateToAddInPath = makePredicate("p2","http://dbpedia.org/ontology/Monastry","http://dbpedia.org/ontology/Monastry");
+        actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,false);
+        Assert.assertEquals(false, actual);
+    }
+
+    @Test
+    public void predicateCompatibleWithExistingPathShouldWorkForSameDomainAndRange() {
+        //http://dbpedia.org/ontology/Architect:[http://dbpedia.org/ontology/Person,http://dbpedia.org/ontology/Animal,http://dbpedia.org/ontology/Eukaryote,http://dbpedia.org/ontology/Species,http://www.w3.org/2002/07/owl#Thing]
+
+        PathService service = new PathService();
+
+        Path mockPath = new Path();
+        mockPath.addPart(makePredicate("p1","http://dbpedia.org/ontology/Architect","http://dbpedia.org/ontology/Architect"), false);
+
+        Predicate predicateToAddInPath = makePredicate("p2","http://dbpedia.org/ontology/Architect","http://dbpedia.org/ontology/Architect");
+
+        boolean actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,false);
+        Assert.assertEquals(true, actual);
+    }
+
+    @Test
+    public void predicateCompatibleWithExistingPathShouldWorkWhenOneOfDomainAndRangeIsAnotherParent() {
+        //http://dbpedia.org/ontology/Architect:[http://dbpedia.org/ontology/Person,http://dbpedia.org/ontology/Animal,http://dbpedia.org/ontology/Eukaryote,http://dbpedia.org/ontology/Species,http://www.w3.org/2002/07/owl#Thing]
+        //http://dbpedia.org/ontology/Person:[http://dbpedia.org/ontology/Animal,http://dbpedia.org/ontology/Eukaryote,http://dbpedia.org/ontology/Species,http://www.w3.org/2002/07/owl#Thing]
+        // here the Person is the parent for Architect
+
+        PathService service = new PathService();
+
+        Path mockPath = new Path();
+        mockPath.addPart(makePredicate("p1","http://dbpedia.org/ontology/Architect","http://dbpedia.org/ontology/Architect"), false);
+
+        Predicate predicateToAddInPath = makePredicate("p2","http://dbpedia.org/ontology/Person","http://dbpedia.org/ontology/Person");
+
+        boolean actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,false);
+        Assert.assertEquals(true, actual);
+    }
+
+    @Test
+    public void isNewPredicateCompatibleWithExistingPathShouldWorkForCommonParentInALlInvertedDirection() {
+
+        //http://dbpedia.org/ontology/Architect:[http://dbpedia.org/ontology/Person,http://dbpedia.org/ontology/Animal,http://dbpedia.org/ontology/Eukaryote,http://dbpedia.org/ontology/Species,http://www.w3.org/2002/07/owl#Thing]
+        //http://dbpedia.org/ontology/Judge:[http://dbpedia.org/ontology/Person,http://dbpedia.org/ontology/Animal,http://dbpedia.org/ontology/Eukaryote,http://dbpedia.org/ontology/Species,http://www.w3.org/2002/07/owl#Thing]
+        //http://dbpedia.org/ontology/Software:[http://dbpedia.org/ontology/Work,http://www.w3.org/2002/07/owl#Thing]
+        //http://dbpedia.org/ontology/Letter:[http://dbpedia.org/ontology/WrittenWork,http://dbpedia.org/ontology/Work,http://www.w3.org/2002/07/owl#Thing]
+        // here two by two has common parents
+        PathService service = new PathService();
+
+        Path mockPath = new Path();
+        mockPath.addPart(makePredicate("p1","http://dbpedia.org/ontology/Architect","http://dbpedia.org/ontology/Software"), false);
+
+        Predicate predicateToAddInPath = makePredicate("p2","http://dbpedia.org/ontology/Judge","http://dbpedia.org/ontology/Letter");
+
+        boolean actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,false);
+        Assert.assertEquals(false, actual);
+        actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,true);
+        Assert.assertEquals(true, actual);
+
+        mockPath = new Path();
+        mockPath.addPart(makePredicate("p1","http://dbpedia.org/ontology/Architect","http://dbpedia.org/ontology/Software"), true);
+
+        actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,false);
+        Assert.assertEquals(true, actual);
+        actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,true);
+        Assert.assertEquals(false, actual);
+    }
+
+    @Test
+    public void isNewPredicateCompatibleWithExistingPathShouldWorkWhenDomainAndRangeHaveCommonParent() {
+
+        //http://dbpedia.org/ontology/Architect:[http://dbpedia.org/ontology/Person,http://dbpedia.org/ontology/Animal,http://dbpedia.org/ontology/Eukaryote,http://dbpedia.org/ontology/Species,http://www.w3.org/2002/07/owl#Thing]
+        //http://dbpedia.org/ontology/Judge:[http://dbpedia.org/ontology/Person,http://dbpedia.org/ontology/Animal,http://dbpedia.org/ontology/Eukaryote,http://dbpedia.org/ontology/Species,http://www.w3.org/2002/07/owl#Thing]
+        // Here ThePerson is common parent for Architect and Judge
+        PathService service = new PathService();
+
+        Path mockPath = new Path();
+        mockPath.addPart(makePredicate("p1","http://dbpedia.org/ontology/Architect","http://dbpedia.org/ontology/Architect"), false);
+
+        Predicate predicateToAddInPath = makePredicate("p2","http://dbpedia.org/ontology/Judge","http://dbpedia.org/ontology/Judge");
+
+        boolean actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,false);
+        Assert.assertEquals(true, actual);
+        actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,true);
+        Assert.assertEquals(true, actual);
+    }
+
+    @Test
+    public void isNewPredicateCompatibleWithExistingPathShouldWorkWhenDomainAndRangeHaveNotCommonParent() {
+
+        //http://dbpedia.org/ontology/Architect:[http://dbpedia.org/ontology/Person,http://dbpedia.org/ontology/Animal,http://dbpedia.org/ontology/Eukaryote,http://dbpedia.org/ontology/Species,http://www.w3.org/2002/07/owl#Thing]
+        //http://dbpedia.org/ontology/Software:[http://dbpedia.org/ontology/Work,http://www.w3.org/2002/07/owl#Thing]
+        // Here Software and Architect does not have a shared parent
+        // we dont consider http://www.w3.org/2002/07/owl#Thing
+        PathService service = new PathService();
+
+        Path mockPath = new Path();
+        mockPath.addPart(makePredicate("p1","http://dbpedia.org/ontology/Architect","http://dbpedia.org/ontology/Architect"), false);
+
+        Predicate predicateToAddInPath = makePredicate("p2","http://dbpedia.org/ontology/Software","http://dbpedia.org/ontology/Software");
+
+        boolean actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,false);
+        Assert.assertEquals(false, actual);
+        actual = service.isNewPredicateCompatibleWithExistingPath(mockPath,predicateToAddInPath,true);
+        Assert.assertEquals(false, actual);
+    }
+
+
+    private Predicate makePredicate(String uri, String domainUri, String rangeUri) {
+        //Property
+        Model model = ModelFactory.createDefaultModel();
+        Property property = model.createProperty(uri);
+
+        //Domain
+        Set<String> domainSet = new HashSet<String>();
+        domainSet.add(domainUri);
+        ITypeRestriction domain = new TypeBasedRestriction(domainSet);
+
+        //Range
+        Set<String> rangeSet = new HashSet<String>();
+        rangeSet.add(rangeUri);
+        ITypeRestriction range = new TypeBasedRestriction(rangeSet);
+
+        Predicate predicate = new Predicate(property,domain,range);
+        return predicate;
     }
 
     private boolean theExpectedResultExists(Set<Path> actual, Predicate predicate1, boolean inverted1) {

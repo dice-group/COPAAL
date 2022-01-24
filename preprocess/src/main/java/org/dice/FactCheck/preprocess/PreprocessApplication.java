@@ -80,6 +80,18 @@ public class PreprocessApplication implements CommandLineRunner {
 		terminalWrite("first arg is :"+args[0]+" and size is "+ args.length);
 
 		if(args[0].equals("f")){
+
+			/*
+			* args[1][FileName]
+			* args[2][directory for save results]
+			* args[3][endpoint with ?stream= or sparql?query= part]
+			* args[4]['C' for cumulative result(both Lite and Complete version), 'CL' just lite version, 'CC' just Complete version , 'I' for individual]
+			* args[5][folder for save temp files]
+			* args[6][number of line to start]
+			* args[7][optional : file to check if the same path in this file has result then run query for the path in provided file , just useable for file not for folder]
+			* */
+
+
 			if(args.length == 7 || args.length == 8){
 				System.out.println("looking at "+ args[1]+" for a file");
 
@@ -193,7 +205,7 @@ public class PreprocessApplication implements CommandLineRunner {
 			System.out.println("generating queries");
 			if(args.length == 7){
 				System.out.println("Start generating the queries");
-				CounterQueryGeneratorService service = new CounterQueryGeneratorService();
+				CounterQueryGeneratorService service = new CounterQueryGeneratorService(new PathService());
 
 				// read all predicates
 				PredicateService predicateService = new PredicateService(null);
@@ -221,6 +233,8 @@ public class PreprocessApplication implements CommandLineRunner {
 
 				Predicate predicate = new Predicate(property,domain,range);
 
+				// read a file of all combinations (it is text file ) then with use the predicateMap
+				// for each combinations make a path which each part of it is a predicate with domain and range
 				Collection<Path> paths = readPredicateCombinationFromFile(args[4], predicatesMap);
 
 				System.out.println("paths are loaded "+paths.size());
@@ -433,7 +447,7 @@ public class PreprocessApplication implements CommandLineRunner {
 		// check fact
 		//System.out.println("start do the query");
 		long resultNumber = doQuery(query, endpoint, tempQueryFolderAddress);
-
+		System.out.println(resultNumber);
 		save(query, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName , pathOfQuery,predicate);
 
 	}
@@ -617,7 +631,8 @@ public class PreprocessApplication implements CommandLineRunner {
 
 		try{
 			String url = endpoint+ URLEncoder.encode(query, "UTF-8");
-			//System.out.println(url);
+			System.out.print(url);
+			System.out.print(":");
 			HttpGet request = new HttpGet(url);
 			//request.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
 			try (CloseableHttpResponse response = httpClient.execute(request)) {
@@ -630,6 +645,7 @@ public class PreprocessApplication implements CommandLineRunner {
 				HttpEntity entity = response.getEntity();
 				//System.out.println("the entity is ready");
 				Header headers = entity.getContentType();
+				System.out.print(entity);
 				if (entity != null) {
 					/*// return it as a String
 					String fileName = tempQueryFolderAddress+UUID.randomUUID().toString()+".tmp";
@@ -643,7 +659,7 @@ public class PreprocessApplication implements CommandLineRunner {
 					System.out.println("entity is null");
 				}
 			}
-
+			System.out.println(" ");
 		}catch (Exception ex){
 			System.out.println(ex.getMessage());
 		}

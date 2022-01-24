@@ -20,9 +20,11 @@ import java.util.stream.Collectors;
 public class CounterQueryGeneratorService implements ICounterQueryGenerator {
 
     Map<String, ArrayList<String>> ancestorsMap;
+    private PathService pathservice;
 
-    public CounterQueryGeneratorService() {
+    public CounterQueryGeneratorService(PathService pathservice) {
         try{
+            this.pathservice = pathservice;
             InputStream is = getClass().getClassLoader().getResourceAsStream("ancestorsMap.ser");
             ObjectInputStream in = new ObjectInputStream(is);
             ancestorsMap = (Map<String, ArrayList<String>>) in.readObject();
@@ -66,24 +68,24 @@ public class CounterQueryGeneratorService implements ICounterQueryGenerator {
 
         if(firstElement.getSecond()){
             // is inverted range should be equal with predicate domain
-            if(doesHaveOverlap(firstElement.getFirst().getRange(),predicate.getDomain())){
+            if(pathservice.doesHaveOverlap(firstElement.getFirst().getRange(),predicate.getDomain())){
                 isDomainFit = true;
             }
         }else{
             // is not inverted domain should be equal with predicate domain
-            if(doesHaveOverlap(firstElement.getFirst().getDomain(),predicate.getDomain())){
+            if(pathservice.doesHaveOverlap(firstElement.getFirst().getDomain(),predicate.getDomain())){
                 isDomainFit = true;
             }
         }
 
         if(lastElement.getSecond()){
             // is inverted domain should be equal with predicate range
-            if(doesHaveOverlap(lastElement.getFirst().getDomain(),predicate.getRange())){
+            if(pathservice.doesHaveOverlap(lastElement.getFirst().getDomain(),predicate.getRange())){
                 isRangeFit = true;
             }
         }else{
             // is not inverted range should be equal with predicate range
-            if(doesHaveOverlap(lastElement.getFirst().getRange(),predicate.getRange())){
+            if(pathservice.doesHaveOverlap(lastElement.getFirst().getRange(),predicate.getRange())){
                 isRangeFit = true;
             }
         }
@@ -184,74 +186,5 @@ public class CounterQueryGeneratorService implements ICounterQueryGenerator {
             }
         }
     }
-
-    private boolean doesHaveOverlap(ITypeRestriction firstRestriction , ITypeRestriction secondRestriction){
-        HashSet firstSet =  (HashSet)firstRestriction.getRestriction();
-        HashSet secondSet =  (HashSet)secondRestriction.getRestriction();
-
-        if(firstSet.size()>1 || secondSet.size()>1){
-            System.out.println("something is not correct");
-        }
-
-        String first = (String)firstSet.iterator().next();
-        String second = (String)secondSet.iterator().next();
-
-        if(first.equals(second)){
-            return true;
-        }
-
-        ArrayList<String> firstAncestors = new ArrayList<>();;
-        if(ancestorsMap.containsKey(first)) {
-            firstAncestors = ancestorsMap.get(first);
-        }else{
-            System.out.println("can not find ancestors for "+first+" in map of ancestors");
-        }
-
-        ArrayList<String> secondAncestors = new ArrayList<>();
-        if(ancestorsMap.containsKey(second)) {
-            secondAncestors = ancestorsMap.get(second);
-        }else{
-            System.out.println("can not find ancestors for "+second+" in map of ancestors");
-        }
-
-        // one is parent of another one
-        if(firstAncestors.contains(second)||secondAncestors.contains(first)){
-            return true;
-        }
-
-        // have share parent
-        if(hasSharedPoint(firstAncestors, secondAncestors)){
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean hasSharedPoint(ArrayList<String> first, ArrayList<String> second) {
-
-        first = deleteExtras(first);
-        second = deleteExtras(second);
-
-        List<String> shared = first.stream()
-                .filter(second::contains)
-                .collect(Collectors.toList());
-
-        if(shared.size()>0){
-            return true;
-        }
-        return false;
-    }
-
-    private ArrayList<String> deleteExtras(ArrayList<String> list) {
-        list.remove("http://www.w3.org/2002/07/owl#Thing");
-        list.removeIf(element -> (element.contains("ontologydesignpatterns")));
-        list.removeIf(element -> (element.contains("yago")));
-        list.removeIf(element -> (element.contains("v1")));
-        list.removeIf(element -> (element.contains("xmlns.com/")));
-        list.removeIf(element -> (element.contains("http://dbpedia.org/ontology/Eukaryote")));
-        list.removeIf(element -> (element.contains("http://dbpedia.org/ontology/Species")));
-        return list;
-    }
-
 
 }

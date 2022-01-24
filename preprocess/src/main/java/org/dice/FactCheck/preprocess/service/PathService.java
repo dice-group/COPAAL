@@ -1,7 +1,5 @@
 package org.dice.FactCheck.preprocess.service;
 
-import org.apache.commons.math3.util.Pair;
-import org.apache.jena.base.Sys;
 import org.dice.FactCheck.preprocess.model.Path;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
@@ -10,7 +8,6 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * implementation of IPathService
@@ -60,7 +57,7 @@ public class PathService implements IPathService{
                 allLists.add(new Path(p,false));
             }
             allPathWithAllLength.addAll(allLists);
-            showAndFreeHeapToMe("1");
+            showAndFreeHeap("1");
             return allLists;
         }
         else
@@ -73,17 +70,17 @@ public class PathService implements IPathService{
                 for(int j = 0; j < allSublists.size(); j++)
                 {
                     //add the newly appended combination to the list
-                    if(newPredicateCompatibleWithExistingPath(allSublists.get(j), elements.get(i),true)) {
+                    if(isNewPredicateCompatibleWithExistingPath(allSublists.get(j), elements.get(i),true)) {
                         Path tempPath = allSublists.get(j).clone();
                         tempPath.addPart(elements.get(i),true);
                         allLists.add(tempPath);
                     }
-                    if(newPredicateCompatibleWithExistingPath(allSublists.get(j), elements.get(i),false)){
+                    if(isNewPredicateCompatibleWithExistingPath(allSublists.get(j), elements.get(i),false)){
                         Path tempPath = allSublists.get(j).clone();
                         tempPath.addPart(elements.get(i),false);
                         allLists.add(tempPath);
                     }
-                    showAndFreeHeapToMe("2");
+                    showAndFreeHeap("2");
                 }
             }
             allPathWithAllLength.addAll(allLists);
@@ -91,7 +88,7 @@ public class PathService implements IPathService{
         }
     }
 
-    private boolean newPredicateCompatibleWithExistingPath(Path path, Predicate predicateSecond, boolean secondInverted) {
+    protected boolean isNewPredicateCompatibleWithExistingPath(Path path, Predicate predicateSecond, boolean secondInverted) {
          //Pair<Predicate,Boolean> lastNode = path.getLastNode();
         Predicate predicateFirst = path.getLastNode().getFirst();
         Boolean firstInverted = path.getLastNode().getSecond();
@@ -120,7 +117,7 @@ public class PathService implements IPathService{
         return false;
     }
 
-    private boolean doesHaveOverlap(ITypeRestriction firstRestriction , ITypeRestriction secondRestriction){
+    public boolean doesHaveOverlap(ITypeRestriction firstRestriction , ITypeRestriction secondRestriction){
         HashSet firstSet =  (HashSet)firstRestriction.getRestriction();
         HashSet secondSet =  (HashSet)secondRestriction.getRestriction();
 
@@ -228,8 +225,6 @@ public class PathService implements IPathService{
 
         }
 
-
-
         FileOutputStream fileOut = null;
         try {
             fileOut =
@@ -253,7 +248,7 @@ public class PathService implements IPathService{
         }
     }
 
-    private void showAndFreeHeapToMe(String position){
+    private void showAndFreeHeap(String position){
 
         // Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
         long heapFreeSize = Runtime.getRuntime().freeMemory();
