@@ -82,7 +82,7 @@ import java.util.stream.Collectors;
 
     public PreProcessProvider(File pathInstancesCountFile, File predicateInstancesCountFile, File coOccurrenceCountFile, File maxCountFile, double  threshold, List<Predicate> validPredicates){
         LOGGER.info("start load the preprocessing file");
-
+        this.threshold = threshold;
         LOGGER.info("start process pathInstancesCount from {}",pathInstancesCountFile.getAbsolutePath());
         this.pathInstancesCount = processThePathInstancesCountFile(pathInstancesCountFile, validPredicates);
         LOGGER.info("done, the pathInstancesCount map has size : {}",pathInstancesCount.size());
@@ -105,7 +105,7 @@ import java.util.stream.Collectors;
             mapPathForPredicates.put(predicate ,calculatePathsForThePredicate(predicate));
         }
 
-        this.threshold = threshold;
+
     }
 
 
@@ -286,7 +286,7 @@ import java.util.stream.Collectors;
 
     private Set<String> calculatePathsForThePredicate(Predicate predicate) {
         // from coOccurrenceCount map
-        // select all paths with they are matched with predicate
+        // select all paths that they are matched with predicate
 
         Set<String> resultset = new HashSet<>();
 
@@ -311,7 +311,7 @@ import java.util.stream.Collectors;
     }
 
     private double calculateScoreForCoOccurrencePath(String path, Predicate predicate) {
-        double pathCounts = getFromMap(pathInstancesCount, keyForPathInstancesCount(path, predicate.getDomain().getRestriction().toString().replace("[","").replace("]",""),predicate.getRange().getRestriction().toString().replace("[","").replace("]","")));
+        double pathCounts = getFromMap(pathInstancesCount, keyForPathInstancesCount(path, predicate.getDomain().getRestriction().toString(),predicate.getRange().getRestriction().toString()));
         if(pathCounts == 0){
             return 0;
         }
