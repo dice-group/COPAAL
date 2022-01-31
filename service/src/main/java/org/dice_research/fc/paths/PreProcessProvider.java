@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
         LOGGER.info("start load the preprocessing folders");
         LOGGER.info("we have {} valid predicates",validPredicates.size());
         LOGGER.info("start process pathInstancesCount from {}",pathInstancesCountFolder);
+        this.threshold = threshold;
         this.pathInstancesCount = new HashMap<>();
         File[] pathInstancesCountFiles = getAllFileInThisFolder(pathInstancesCountFolder);
         for(File pathInstancesCountFile:pathInstancesCountFiles) {
@@ -71,8 +72,6 @@ import java.util.stream.Collectors;
         for(Predicate predicate:validPredicates){
             mapPathForPredicates.put(predicate ,calculatePathsForThePredicate(predicate));
         }
-
-        this.threshold = threshold;
     }
 
     private File[] getAllFileInThisFolder(String pathInstancesCountFolder) {
