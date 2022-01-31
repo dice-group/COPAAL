@@ -31,12 +31,13 @@ import java.util.stream.Collectors;
     // accept 4 folders each folder contains some files for each predicate
     //
     public PreProcessProvider(String pathInstancesCountFolder, String predicateInstancesCountFolder, String coOccurrenceCountFolder, String maxCountFolder, double  threshold, List<Predicate> validPredicates) {
-        LOGGER.info("start load the preprocessing file");
-
+        LOGGER.info("start load the preprocessing folders");
+        LOGGER.info("we have {} valid predicates",validPredicates.size());
         LOGGER.info("start process pathInstancesCount from {}",pathInstancesCountFolder);
         this.pathInstancesCount = new HashMap<>();
         File[] pathInstancesCountFiles = getAllFileInThisFolder(pathInstancesCountFolder);
         for(File pathInstancesCountFile:pathInstancesCountFiles) {
+            LOGGER.info("processing  {}",pathInstancesCountFile.getAbsolutePath());
             this.pathInstancesCount.putAll(processThePathInstancesCountFile(pathInstancesCountFile, validPredicates));
         }
         LOGGER.info("done, the pathInstancesCount map has size : {}",pathInstancesCount.size());
@@ -129,9 +130,10 @@ import java.util.stream.Collectors;
                 }
 
                 String predicate = parts[3];
+                String path = parts[2];
 
                 if(validPredicatesMap.containsKey(predicate)) {
-                    String key = keyForPathInstancesCount(predicate, validPredicatesMap.get(predicate).getDomain().getRestriction().toString(), validPredicatesMap.get(predicate).getRange().getRestriction().toString());
+                    String key = keyForPathInstancesCount(path, validPredicatesMap.get(predicate).getDomain().getRestriction().toString(), validPredicatesMap.get(predicate).getRange().getRestriction().toString());
                     map.put(key, Long.parseLong(parts[1]));
                 }else{
                     LOGGER.error("the predicate is not in valid map :"+predicate);
@@ -297,7 +299,7 @@ import java.util.stream.Collectors;
                 }
             }
         }
-        LOGGER.info("for the predicate "+predicate+" found "+ resultset.size()+" paths in map");
+        LOGGER.info("for the predicate "+predicate.getProperty().getURI()+" found "+ resultset.size()+" paths in map");
         return resultset;
     }
 
