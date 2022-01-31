@@ -49,11 +49,11 @@ public class CounterQueryGeneratorService implements ICounterQueryGenerator {
             if(isFitWithPath(predicate, path)) {
                 queries.addToCoOccurrenceCountQueries(generateQueryCoOccurrence(predicate, path)+","+path.toString()+","+predicate.getProperty().getURI());
                 queries.addToPathInstancesCountQueries(generateQueryPathInstancesCount(predicate, path)+","+path.toString()+","+predicate.getProperty().getURI());
-                queries.addToMaxCountQueries(generateMaxQuery(predicate.getDomain())+", ,"+predicate.getProperty().getURI());
-                queries.addToMaxCountQueries(generateMaxQuery(predicate.getRange())+", ,"+predicate.getProperty().getURI());
+                queries.addToMaxCountQueries(generateMaxQuery(predicate.getDomain())+", ,"+predicate.getDomain());
+                queries.addToMaxCountQueries(generateMaxQuery(predicate.getRange())+", ,"+predicate.getRange());
                 queries.addToPredicateInstancesCountQueries(generateCountPredicateInstances(predicate)+", ,"+predicate.getProperty().getURI());
-                queries.addToTypeInstancesCountQueries(generateCountTypeInstances(predicate.getDomain())+", ,"+predicate.getProperty().getURI());
-                queries.addToTypeInstancesCountQueries(generateCountTypeInstances(predicate.getRange())+", ,"+predicate.getProperty().getURI());
+/*                queries.addToTypeInstancesCountQueries(generateCountTypeInstances(predicate.getDomain())+", ,"+predicate.getProperty().getURI());
+                queries.addToTypeInstancesCountQueries(generateCountTypeInstances(predicate.getRange())+", ,"+predicate.getProperty().getURI());*/
             }
         }
         return queries;

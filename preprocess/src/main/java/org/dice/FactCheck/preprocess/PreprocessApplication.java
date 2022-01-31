@@ -81,7 +81,7 @@ public class PreprocessApplication implements CommandLineRunner {
 
 		if(args[0].equals("f")){
 
-			/*
+			/* this will read file and run queries in that file
 			* args[1][FileName]
 			* args[2][directory for save results]
 			* args[3][endpoint with ?stream= or sparql?query= part]
@@ -449,7 +449,6 @@ public class PreprocessApplication implements CommandLineRunner {
 		long resultNumber = doQuery(query, endpoint, tempQueryFolderAddress);
 		System.out.println(resultNumber);
 		save(query, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName , pathOfQuery,predicate);
-
 	}
 
 	public static void writeToFile(String path, String query, long CountResult, String pathOfQuery , String predicate) throws Exception {

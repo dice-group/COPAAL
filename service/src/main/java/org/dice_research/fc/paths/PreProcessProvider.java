@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
+
 /**
  *
  * implementation for this interface{@link IPreProcessProvider} .
@@ -26,11 +28,59 @@ import java.util.*;
     private Map<String,Long> maxCount;
     private Map<Predicate,Set<String>> mapPathForPredicates;
 
+    // accept 4 folders each folder contains some files for each predicate
+    //
+    public PreProcessProvider(String pathInstancesCountFolder, String predicateInstancesCountFolder, String coOccurrenceCountFolder, String maxCountFolder, double  threshold, List<Predicate> validPredicates) {
+        LOGGER.info("start load the preprocessing file");
+
+        LOGGER.info("start process pathInstancesCount from {}",pathInstancesCountFolder);
+        File[] pathInstancesCountFiles = getAllFileInThisFolder(pathInstancesCountFolder);
+        for(File pathInstancesCountFile:pathInstancesCountFiles) {
+            this.pathInstancesCount.putAll(processThePathInstancesCountFile(pathInstancesCountFile, validPredicates));
+        }
+        LOGGER.info("done, the pathInstancesCount map has size : {}",pathInstancesCount.size());
+
+        LOGGER.info("start process predicateInstancesCount from {}",predicateInstancesCountFolder);
+        File [] predicateInstancesCountFiles = getAllFileInThisFolder(predicateInstancesCountFolder);
+        for(File predicateInstancesCountFile : predicateInstancesCountFiles) {
+            this.predicateInstancesCount.putAll(processThePredicateInstancesCount(predicateInstancesCountFile));
+        }
+        LOGGER.info("done, the predicateInstancesCount map has size : {}",predicateInstancesCount.size());
+
+        LOGGER.info("start process coOccurrenceCount from {}",coOccurrenceCountFolder);
+        File []coOccurrenceCountFiles = getAllFileInThisFolder(coOccurrenceCountFolder);
+        for(File coOccurrenceCountFile:coOccurrenceCountFiles) {
+            this.coOccurrenceCount.putAll(processTheCoOccurrenceCount(coOccurrenceCountFile));
+        }
+        LOGGER.info("done, the coOccurrenceCount map has size : {}",coOccurrenceCount.size());
+
+        LOGGER.info("start process maxCount from {}",maxCountFolder);
+        File[] maxCountFiles = getAllFileInThisFolder(maxCountFolder);
+        for(File maxCountFile:maxCountFiles) {
+            this.maxCount.putAll(processTheMaxCount(maxCountFile));
+        }
+        LOGGER.info("done, the maxCount map has size : {}",maxCount.size());
+
+        mapPathForPredicates = new HashMap<>();
+
+        for(Predicate predicate:validPredicates){
+            mapPathForPredicates.put(predicate ,calculatePathsForThePredicate(predicate));
+        }
+
+        this.threshold = threshold;
+    }
+
+    private File[] getAllFileInThisFolder(String pathInstancesCountFolder) {
+        File folder = new File(pathInstancesCountFolder);
+        File[] listOfFiles = folder.listFiles();
+        return  listOfFiles;
+    }
+
     public PreProcessProvider(File pathInstancesCountFile, File predicateInstancesCountFile, File coOccurrenceCountFile, File maxCountFile, double  threshold, List<Predicate> validPredicates){
         LOGGER.info("start load the preprocessing file");
 
         LOGGER.info("start process pathInstancesCount from {}",pathInstancesCountFile.getAbsolutePath());
-        this.pathInstancesCount = processThePathInstancesCountFile(pathInstancesCountFile);
+        this.pathInstancesCount = processThePathInstancesCountFile(pathInstancesCountFile, validPredicates);
         LOGGER.info("done, the pathInstancesCount map has size : {}",pathInstancesCount.size());
 
         LOGGER.info("start process predicateInstancesCount from {}",predicateInstancesCountFile.getAbsolutePath());
@@ -56,8 +106,11 @@ import java.util.*;
 
 
 
-    private Map<String, Long> processThePathInstancesCountFile(File pathInstancesCountFile) {
+    private Map<String, Long> processThePathInstancesCountFile(File pathInstancesCountFile, List<Predicate> validPredicates) {
         Map<String, Long> map = new HashMap<>();
+        Map<String, Predicate> validPredicatesMap = new HashMap<>();
+        for(Predicate p : validPredicates) validPredicatesMap.put(p.getProperty().getURI(),p);
+
         // read file line by line
         // each line contain these part and comma separated
         // query,count,path,predicate,domain,range
@@ -68,11 +121,17 @@ import java.util.*;
                 //TODO
                 //if(parts.length!=6){
                 if(parts.length!=4){
-                    LOGGER.error("the line in PathInstancesCountFile is not parsable it is not 6 parts : {}"+line);
+                    LOGGER.error("the line in PathInstancesCountFile is not parsable it is not 4 parts : {}"+line);
                 }
-                // TODO :
-                String key = keyForPathInstancesCount(parts[2],"http://dbpedia.org/ontology/Animal","http://dbpedia.org/ontology/Place");
-                map.put(key, Long.parseLong(parts[1]));
+
+                String predicate = parts[2];
+
+                if(validPredicatesMap.containsKey(predicate)) {
+                    String key = keyForPathInstancesCount(predicate, validPredicatesMap.get(predicate).getDomain().getRestriction().toString(), validPredicatesMap.get(predicate).getRange().getRestriction().toString());
+                    map.put(key, Long.parseLong(parts[1]));
+                }else{
+                    LOGGER.error("the predicate is not in valid map :"+predicate);
+                }
             }
         } catch (FileNotFoundException e) {
             LOGGER.error(e.getMessage());
