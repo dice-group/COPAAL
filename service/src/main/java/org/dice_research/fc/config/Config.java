@@ -512,12 +512,13 @@ public class Config {
   @Bean
   IPreProcessProvider getPreProcessProvider(){
 
-    File pathInstancesCountFile = new File(addressOfPathInstancesCountFile);
+    /*File pathInstancesCountFile = new File(addressOfPathInstancesCountFile);
     File predicateInstancesCountFile = new File(addressOfPredicateInstancesCountFile);
     File coOccurrenceCountFile = new File(addressOfCoOccurrenceCountFile);
-    File maxCountFile = new File(addressOfMaxCountFile);
+    File maxCountFile = new File(addressOfMaxCountFile);*/
     List<Predicate> validPredicates = allValidPredicates();
-    return new PreProcessProvider(pathInstancesCountFile, predicateInstancesCountFile, coOccurrenceCountFile, maxCountFile, preProcessPathNPMIThreshold, validPredicates);
+    //return new PreProcessProvider(pathInstancesCountFile, predicateInstancesCountFile, coOccurrenceCountFile, maxCountFile, preProcessPathNPMIThreshold, validPredicates);
+    return new PreProcessProvider(addressOfPathInstancesCountFile, addressOfPredicateInstancesCountFile, addressOfCoOccurrenceCountFile, addressOfMaxCountFile, preProcessPathNPMIThreshold, validPredicates);
   }
 
   private List<Predicate> allValidPredicates() {

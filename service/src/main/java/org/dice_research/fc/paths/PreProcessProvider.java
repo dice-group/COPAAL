@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
         LOGGER.info("start load the preprocessing file");
 
         LOGGER.info("start process pathInstancesCount from {}",pathInstancesCountFolder);
+        this.pathInstancesCount = new HashMap<>();
         File[] pathInstancesCountFiles = getAllFileInThisFolder(pathInstancesCountFolder);
         for(File pathInstancesCountFile:pathInstancesCountFiles) {
             this.pathInstancesCount.putAll(processThePathInstancesCountFile(pathInstancesCountFile, validPredicates));
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
         LOGGER.info("done, the pathInstancesCount map has size : {}",pathInstancesCount.size());
 
         LOGGER.info("start process predicateInstancesCount from {}",predicateInstancesCountFolder);
+        this.predicateInstancesCount = new HashMap<>();
         File [] predicateInstancesCountFiles = getAllFileInThisFolder(predicateInstancesCountFolder);
         for(File predicateInstancesCountFile : predicateInstancesCountFiles) {
             this.predicateInstancesCount.putAll(processThePredicateInstancesCount(predicateInstancesCountFile));
@@ -48,6 +50,7 @@ import java.util.stream.Collectors;
         LOGGER.info("done, the predicateInstancesCount map has size : {}",predicateInstancesCount.size());
 
         LOGGER.info("start process coOccurrenceCount from {}",coOccurrenceCountFolder);
+        this.coOccurrenceCount = new HashMap<>();
         File []coOccurrenceCountFiles = getAllFileInThisFolder(coOccurrenceCountFolder);
         for(File coOccurrenceCountFile:coOccurrenceCountFiles) {
             this.coOccurrenceCount.putAll(processTheCoOccurrenceCount(coOccurrenceCountFile));
@@ -55,6 +58,7 @@ import java.util.stream.Collectors;
         LOGGER.info("done, the coOccurrenceCount map has size : {}",coOccurrenceCount.size());
 
         LOGGER.info("start process maxCount from {}",maxCountFolder);
+        this.maxCount = new HashMap<>();
         File[] maxCountFiles = getAllFileInThisFolder(maxCountFolder);
         for(File maxCountFile:maxCountFiles) {
             this.maxCount.putAll(processTheMaxCount(maxCountFile));
@@ -124,7 +128,7 @@ import java.util.stream.Collectors;
                     LOGGER.error("the line in PathInstancesCountFile is not parsable it is not 4 parts : {}"+line);
                 }
 
-                String predicate = parts[2];
+                String predicate = parts[3];
 
                 if(validPredicatesMap.containsKey(predicate)) {
                     String key = keyForPathInstancesCount(predicate, validPredicatesMap.get(predicate).getDomain().getRestriction().toString(), validPredicatesMap.get(predicate).getRange().getRestriction().toString());
