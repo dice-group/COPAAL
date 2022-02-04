@@ -108,8 +108,6 @@ import java.util.stream.Collectors;
 
     }
 
-
-
     private Map<String, Long> processThePathInstancesCountFile(File pathInstancesCountFile, List<Predicate> validPredicates) {
         Map<String, Long> map = new HashMap<>();
         Map<String, Predicate> validPredicatesMap = new HashMap<>();
@@ -132,7 +130,7 @@ import java.util.stream.Collectors;
                 String path = parts[2];
 
                 if(validPredicatesMap.containsKey(predicate)) {
-                    String key = keyForPathInstancesCount(path, validPredicatesMap.get(predicate).getDomain().getRestriction().toString(), validPredicatesMap.get(predicate).getRange().getRestriction().toString());
+                    String key = keyForPathInstancesCount(path, trim(validPredicatesMap.get(predicate).getDomain().getRestriction().toString()), trim(validPredicatesMap.get(predicate).getRange().getRestriction().toString()));
                     map.put(key, Long.parseLong(parts[1]));
                 }else{
                     LOGGER.error("the predicate is not in valid map :"+predicate);
@@ -157,8 +155,8 @@ import java.util.stream.Collectors;
         if(domainSet.size() != 1 || rangeSet.size() != 1){
             LOGGER.error("range or domain are not parsable");
         }
-        String domain = (String)domainSet.iterator().next();
-        String range = (String)rangeSet.iterator().next();
+        String domain = trim((String)domainSet.iterator().next());
+        String range = trim((String)rangeSet.iterator().next());
         return keyForPathInstancesCount(path.toStringWithTag(), domain, range);
     }
 
@@ -261,7 +259,7 @@ import java.util.stream.Collectors;
     }
 
     private String keyForMaxCount(ITypeRestriction predicate){
-        return predicate.getRestriction().toString().replace("[","").replace("]","");
+        return trim(predicate.getRestriction().toString());
     }
 
     @Override
@@ -307,11 +305,11 @@ import java.util.stream.Collectors;
         if(mapPathForPredicates.containsKey(predicate)){
             return mapPathForPredicates.get(predicate);
         }
-        return null;
+        return new HashSet<String>();
     }
 
     private double calculateScoreForCoOccurrencePath(String path, Predicate predicate) {
-        double pathCounts = getFromMap(pathInstancesCount, keyForPathInstancesCount(path, predicate.getDomain().getRestriction().toString(),predicate.getRange().getRestriction().toString()));
+        double pathCounts = getFromMap(pathInstancesCount, keyForPathInstancesCount(path, trim(predicate.getDomain().getRestriction().toString()),trim(predicate.getRange().getRestriction().toString())));
         if(pathCounts == 0){
             return 0;
         }
@@ -371,6 +369,10 @@ import java.util.stream.Collectors;
 
         LOGGER.trace("the map does not contain key, key is : "+ key);
         return 0;
+    }
+
+    private String trim(String input){
+        return input.trim().replace("[","").replace("]","");
     }
 
 }
