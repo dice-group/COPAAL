@@ -9,7 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Farshad Afshari
  *
  */
-public class QueryCounter {
+public class Counter {
+
     private static final AtomicInteger count = new AtomicInteger();
     /* add method */
     public static void add(){

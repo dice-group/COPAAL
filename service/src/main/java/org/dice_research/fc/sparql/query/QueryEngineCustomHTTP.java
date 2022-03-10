@@ -19,7 +19,6 @@ import org.apache.jena.sparql.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
@@ -174,11 +173,11 @@ public class QueryEngineCustomHTTP implements QueryExecution {
         try{
             HttpRequestBase request = createRequest();
             if(LOGGER.isDebugEnabled()){
-                QueryCounter.add();
+                Counter.add();
             }
             response = client.execute(request);
             String result = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-            LOGGER.debug("http response code is {} query number is {}",String.valueOf(response.getStatusLine().getStatusCode()),QueryCounter.show());
+            LOGGER.debug("http response code is {} query number is {}",String.valueOf(response.getStatusLine().getStatusCode()), Counter.show());
             if(result.contains("404 File not found") && tryNumber < 5){
                 LOGGER.info("----------try one more -------------"+tryNumber+"---");
                 TimeUnit.SECONDS.sleep(3);
@@ -186,7 +185,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
             }
             LOGGER.debug(result);
             if(response.getStatusLine().getStatusCode()==404){
-                throw new Exception("There is an error , response is 404");
+                throw new RuntimeException("There is an error , response is 404");
             }
             return result;
         }

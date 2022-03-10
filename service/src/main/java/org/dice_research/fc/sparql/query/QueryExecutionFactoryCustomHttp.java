@@ -1,6 +1,5 @@
 package org.dice_research.fc.sparql.query;
 
-import java.io.IOException;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactoryBase;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -112,7 +111,7 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
     if (client != null) {
       try {
         client.close();
-      } catch (IOException e) {
+      } catch (Exception e) {
         // Nothing to do
       }
     }
