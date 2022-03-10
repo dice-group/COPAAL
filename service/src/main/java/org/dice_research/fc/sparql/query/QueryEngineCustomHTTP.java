@@ -1,5 +1,6 @@
 package org.dice_research.fc.sparql.query;
 
+import javassist.NotFoundException;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -173,11 +174,11 @@ public class QueryEngineCustomHTTP implements QueryExecution {
         try{
             HttpRequestBase request = createRequest();
             if(LOGGER.isDebugEnabled()){
-                Counter.add();
+                CounterUtils.add();
             }
             response = client.execute(request);
             String result = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-            LOGGER.debug("http response code is {} query number is {}",String.valueOf(response.getStatusLine().getStatusCode()), Counter.show());
+            LOGGER.debug("http response code is {} query number is {}",String.valueOf(response.getStatusLine().getStatusCode()), CounterUtils.show());
             if(result.contains("404 File not found") && tryNumber < 5){
                 LOGGER.info("----------try one more -------------"+tryNumber+"---");
                 TimeUnit.SECONDS.sleep(3);
@@ -185,7 +186,8 @@ public class QueryEngineCustomHTTP implements QueryExecution {
             }
             LOGGER.debug(result);
             if(response.getStatusLine().getStatusCode()==404){
-                throw new RuntimeException("There is an error , response is 404");
+                LOGGER.error("There is an error , response is 404");
+                throw new NotFoundException("There is an error , response is 404");
             }
             return result;
         }

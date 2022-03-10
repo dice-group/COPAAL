@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Farshad Afshari
  *
  */
-public class Counter {
+public class CounterUtils {
 
     private static final AtomicInteger count = new AtomicInteger();
     /* add method */
