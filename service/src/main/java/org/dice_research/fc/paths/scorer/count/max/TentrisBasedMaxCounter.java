@@ -29,6 +29,6 @@ public class TentrisBasedMaxCounter implements IMaxCounter {
     queryBuilder.append("SELECT DISTINCT ?s WHERE { ");
     restriction.addRestrictionToQuery("s", queryBuilder);
     queryBuilder.append(" }");
-    return adapter.executeCountQuery(queryBuilder);
+    return adapter.executeCountQuery(queryBuilder.toString());
   }
 }

@@ -52,7 +52,7 @@ public class TentrisBasedCountRetriever implements ICountRetriever {
     rangeRestriction.addRestrictionToQuery("o", queryBuilder);
     pathClauseGenerator.addPath(path, queryBuilder, "s", "o");
     queryBuilder.append(" }");
-    return adapter.executeCountQuery(queryBuilder);
+    return adapter.executeCountQuery(queryBuilder.toString());
   }
 
   @Override
@@ -65,7 +65,7 @@ public class TentrisBasedCountRetriever implements ICountRetriever {
     predicate.getRange().addRestrictionToQuery("o", queryBuilder);
     pathClauseGenerator.addPath(path, queryBuilder, "s", "o");
     queryBuilder.append(" }");
-    return adapter.executeCountQuery(queryBuilder);
+    return adapter.executeCountQuery(queryBuilder.toString());
   }
 
   @Override
@@ -77,7 +77,7 @@ public class TentrisBasedCountRetriever implements ICountRetriever {
     predicate.getDomain().addRestrictionToQuery("s", queryBuilder);
     predicate.getRange().addRestrictionToQuery("o", queryBuilder);
     queryBuilder.append(" }");
-    return adapter.executeCountQuery(queryBuilder);
+    return adapter.executeCountQuery(queryBuilder.toString());
   }
 
 }
