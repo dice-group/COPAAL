@@ -4,12 +4,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.dice.FactCheck</groupId>
-	<artifactId>Corraborative</artifactId>
+	<groupId>org.dice-research</groupId>
+	<artifactId>fc.paths-service</artifactId>
 	<version>0.2.0</version>
 	<packaging>jar</packaging>
 
-	<name>Corraborative</name>
+	<name>COPAAL Service</name>
 	<url>http://maven.apache.org</url>
 
 	<parent>
@@ -38,7 +38,6 @@
 	</repositories>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
