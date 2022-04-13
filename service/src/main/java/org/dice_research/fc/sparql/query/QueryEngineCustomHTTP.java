@@ -144,7 +144,11 @@ public class QueryEngineCustomHTTP implements QueryExecution {
                         .setSocketTimeout(timeout).build();
                 get.setConfig(config);
             }
-            get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
+            if(typeOfQueryResult.equalsIgnoreCase("json")){
+                get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+json");
+            }else {
+                get.addHeader(HttpHeaders.ACCEPT, "application/sparql-results+xml");
+            }
             response = client.execute(get);
             String result = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
             if(result.contains("404 File not found") && tryNumber < 5){

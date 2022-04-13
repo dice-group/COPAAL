@@ -25,7 +25,9 @@ public class PathBasedFactCheckerTest {
 
     @Autowired
     Collection<IRIFilter> propertyFilter;
-
+    //this method used to extract the paths
+    // at Ontotext clinical trails dataset
+    // actually it is not a test that is why the assert is commented
     @Test
     public void findClinicalTrailsPaths(){
 
@@ -40,7 +42,6 @@ public class PathBasedFactCheckerTest {
         for (QRestrictedPath q: actual) {
             System.out.println(q);
         }
-        Assert.assertTrue(actual.size()  > 0);
-
+        //Assert.assertTrue(actual.size()  > 0);
     }
 }
