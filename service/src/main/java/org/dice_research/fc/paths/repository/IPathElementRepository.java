@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * repository for PathElement
+ * Repository for PathElement
  *
  * @author Farshad Afshari
  *

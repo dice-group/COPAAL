@@ -22,14 +22,19 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
    */
   private String service;
   private CloseableHttpClient client;
+  /**
+   * shows format of the query result it could be xml or json
+   *
+   */
+  private String typeOfQueryResult;
 
   /**
    * Constructor.
    * 
    * @param service The URL of the SPARQL endpoint.
    */
-  public QueryExecutionFactoryCustomHttp(String service) {
-    this(service, 0);
+  public QueryExecutionFactoryCustomHttp(String service, String typeOfQueryResult) {
+    this(service, 0, typeOfQueryResult);
   }
 
   /**
@@ -38,8 +43,9 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
    * @param service The URL of the SPARQL endpoint.
    * @param timeout The time out for running a query.
    */
-  public QueryExecutionFactoryCustomHttp(String service, int timeout) {
+  public QueryExecutionFactoryCustomHttp(String service, int timeout, String typeOfQueryResult) {
     this.service = service;
+    this.typeOfQueryResult = typeOfQueryResult;
     HttpClientBuilder builder = HttpClientBuilder.create();
     if (timeout > 0) {
       RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout)
@@ -57,9 +63,10 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
    *        factory will take over the ownership of the client, i.e., it will close the client if
    *        the factory is closed.
    */
-  public QueryExecutionFactoryCustomHttp(String service, CloseableHttpClient client) {
+  public QueryExecutionFactoryCustomHttp(String service, CloseableHttpClient client, String typeOfQueryResult) {
     this.service = service;
     this.client = client;
+    this.typeOfQueryResult = typeOfQueryResult;
   }
 
   @Override
@@ -74,15 +81,14 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
 
   @Override
   public QueryExecution createQueryExecution(Query query) {
-    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTP(query, client, service);
+    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTP(query, client, service, typeOfQueryResult);
     return qe;
   }
 
   @Override
   public QueryExecution createQueryExecution(String queryString) {
     Query query = QueryFactory.create(queryString);
-    QueryEngineCustomHTTP qe = new QueryEngineCustomHTTP(query, client, service);
-    return qe;
+    return createQueryExecution(query);
   }
 
   @Override

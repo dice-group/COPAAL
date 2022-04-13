@@ -158,6 +158,20 @@ public class Config {
   @Value("${dataset.pathsearcher.type:}")
   private String pathSearcher;
 
+  /**
+  * The typeOfQueryResult could be Json or XML
+  *
+  */
+  @Value("${copaal.query.typeOfQueryResult:}")
+  private String typeOfQueryResult;
+
+  /**
+    * Time out for run sparql queries
+    *
+    */
+  @Value("${copaal.query.timeout:}")
+  private long timeOut = 0;
+
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
     return new PropertySourcesPlaceholderConfigurer();
@@ -283,7 +297,9 @@ public class Config {
   @Bean
   public Collection<IRIFilter> getFilter() {
     List<IRIFilter> filters = new ArrayList<IRIFilter>();
-    filters.add(new EqualsFilter(filteredProperties));
+    if(filteredProperties.length > 0) {
+      filters.add(new EqualsFilter(filteredProperties));
+    }
     for (int i = 0; i < namespaceFilters.length; i++) {
       filters.add(new NamespaceFilter(namespaceFilters[i], false));
     }
@@ -298,13 +314,13 @@ public class Config {
   public QueryExecutionFactory getQueryExecutionFactory() {
     QueryExecutionFactory qef;
     if (filePath == null || filePath.isEmpty()) {
-      qef = new QueryExecutionFactoryCustomHttp(serviceURL);
+      qef = new QueryExecutionFactoryCustomHttp(serviceURL, typeOfQueryResult);
     } else {
       Model model = ModelFactory.createDefaultModel();
       model.read(filePath);
       qef = new QueryExecutionFactoryModel(model);
     }
-    qef = new QueryExecutionFactoryCustomHttpTimeout(qef, 30000);
+    qef = new QueryExecutionFactoryCustomHttpTimeout(qef, timeOut);
     return qef;
   }
 

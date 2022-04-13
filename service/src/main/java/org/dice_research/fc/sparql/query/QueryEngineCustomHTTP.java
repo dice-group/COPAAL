@@ -14,6 +14,8 @@ import org.apache.jena.sparql.resultset.XMLInput;
 import org.apache.jena.sparql.util.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayInputStream;
 import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -52,16 +54,24 @@ public class QueryEngineCustomHTTP implements QueryExecution {
      */
     private int timeout = 0;
 
+
+    /**
+     * shows format of the result of query it could be xml or json
+     *
+     */
+    private String typeOfQueryResult;
+
     /**
      * constructor of the class
      * @param query is a query to run
      * @param service is a url of a SPARQL endpoint
      */
 
-    public QueryEngineCustomHTTP(Query query, HttpClient client, String service) {
+    public QueryEngineCustomHTTP(Query query, HttpClient client, String service, String typeOfQueryResult) {
         this.query = query;
         this.client = client;
         this.service = service;
+        this.typeOfQueryResult = typeOfQueryResult;
     }
 
     @Override
@@ -85,13 +95,20 @@ public class QueryEngineCustomHTTP implements QueryExecution {
     @Override
     public ResultSet execSelect() {
         String result = createRequest();
+        ResultSet resultSet = null;
 
-        // the result is not a valid XML then replace with an empty XML
-        if(result.length()<10) {
-            result = emptyXML();
+        if(typeOfQueryResult.equalsIgnoreCase("xml")) {
+            // the result is not a valid XML then replace with an empty XML
+            if (result.length() < 10) {
+                result = emptyXML();
+            }
+            resultSet = ResultSetFactory.fromXML(result);
         }
 
-        ResultSet resultSet = ResultSetFactory.fromXML(result);
+        if(typeOfQueryResult.equalsIgnoreCase("json")) {
+            // the result is not a valid XML then replace with an empty XML
+            resultSet = ResultSetFactory.fromJSON(new ByteArrayInputStream(result.getBytes()));
+        }
 
         return resultSet;
     }
