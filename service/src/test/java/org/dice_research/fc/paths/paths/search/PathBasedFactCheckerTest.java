@@ -16,8 +16,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collection;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
+//@RunWith(SpringRunner.class)
+//@SpringBootTest(classes = Application.class)
 public class PathBasedFactCheckerTest {
     @Autowired
     QueryExecutionFactory qef;
