@@ -1,5 +1,7 @@
 package org.dice_research.fc.data;
 
+import java.util.Objects;
+
 /**
  * A very simple, {@link String}-based representation of a triple.
  * 
@@ -46,7 +48,17 @@ public class StringTriple {
   }
 
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    StringTriple that = (StringTriple) o;
+    return Objects.equals(getSubject(), that.getSubject()) &&
+            Objects.equals(getPredicate(), that.getPredicate()) &&
+            Objects.equals(getObject(), that.getObject());
+  }
+
+/*  @Override
+  public boolean equalds(Object obj) {
     if (this == obj)
       return true;
     if (obj == null)
@@ -70,7 +82,7 @@ public class StringTriple {
     } else if (!subject.equals(other.subject))
       return false;
     return true;
-  }
+  }*/
 
   /**
    * @return the subject

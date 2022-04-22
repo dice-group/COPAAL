@@ -8,6 +8,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import java.util.Objects;
+
 public class CachingCountRetrieverDecorator extends AbstractCountRetrieverDecorator {
 
   private static final long DEFAULT_MAX_SIZE_PATH_CACHE = 1000;
@@ -123,7 +125,7 @@ public class CachingCountRetrieverDecorator extends AbstractCountRetrieverDecora
       return result;
     }
 
-    @Override
+    /*@Override
     public boolean equals(Object obj) {
       if (this == obj)
         return true;
@@ -148,6 +150,16 @@ public class CachingCountRetrieverDecorator extends AbstractCountRetrieverDecora
       } else if (!rangeRestriction.equals(other.rangeRestriction))
         return false;
       return true;
+    }*/
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      PathInstanceCountQuery that = (PathInstanceCountQuery) o;
+      return Objects.equals(path, that.path) &&
+              Objects.equals(domainRestriction, that.domainRestriction) &&
+              Objects.equals(rangeRestriction, that.rangeRestriction);
     }
   }
 
@@ -176,7 +188,7 @@ public class CachingCountRetrieverDecorator extends AbstractCountRetrieverDecora
       return result;
     }
 
-    @Override
+/*    @Override
     public boolean equals(Object obj) {
       if (this == obj)
         return true;
@@ -196,6 +208,15 @@ public class CachingCountRetrieverDecorator extends AbstractCountRetrieverDecora
       } else if (!predicate.equals(other.predicate))
         return false;
       return true;
+    }*/
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      CooccurrenceCountQuery that = (CooccurrenceCountQuery) o;
+      return Objects.equals(predicate, that.predicate) &&
+              Objects.equals(path, that.path);
     }
   }
 }

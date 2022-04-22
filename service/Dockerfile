@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:latest
+FROM adoptopenjdk/openjdk11:jre-11.0.6_10-alpine
 VOLUME /tmp
 ARG JAR_FILE
 COPY target/*.jar app.jar

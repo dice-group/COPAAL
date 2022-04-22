@@ -8,7 +8,6 @@ import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.run.Application;
 import org.dice_research.fc.sparql.filter.IRIFilter;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class PathBasedFactCheckerTest {
     //this method used to extract the paths
     // at Ontotext clinical trails dataset
     // actually it is not a test that is why the assert is commented
-    @Test
+    //@Test
     public void findClinicalTrailsPaths(){
 
         SPARQLBasedSOPathSearcher service = new SPARQLBasedSOPathSearcher(qef,4,propertyFilter);

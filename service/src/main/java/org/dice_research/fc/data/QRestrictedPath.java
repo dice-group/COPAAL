@@ -118,21 +118,32 @@ public class QRestrictedPath implements IPieceOfEvidence {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj)
+    if (this == obj) {
       return true;
-    if (obj == null)
+    }
+
+    if (obj == null) {
       return false;
-    if (getClass() != obj.getClass())
+    }
+
+    if (getClass() != obj.getClass()) {
       return false;
+    }
+
     QRestrictedPath other = (QRestrictedPath) obj;
+
     if (pathElements == null) {
-      if (other.pathElements != null)
+      if (other.pathElements != null){
         return false;
-    } else if (!pathElements.equals(other.pathElements))
-      return false;
-    if (Double.doubleToLongBits(score) != Double.doubleToLongBits(other.score))
-      return false;
-    return true;
+      }
+    }
+    else {
+      if (!pathElements.equals(other.pathElements)) {
+        return false;
+      }
+    }
+
+    return Double.doubleToLongBits(score) == Double.doubleToLongBits(other.score);
   }
 
 

@@ -12,6 +12,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.jena.sparql.resultset.XMLInput;
 import org.apache.jena.sparql.util.Context;
+import org.apache.tomcat.jni.Error;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +76,9 @@ public class QueryEngineCustomHTTP implements QueryExecution {
     }
 
     @Override
-    public void setInitialBinding(QuerySolution binding) {}
+    public void setInitialBinding(QuerySolution binding) {
+        // empty method
+    }
 
     @Override
     public Dataset getDataset() {
@@ -243,6 +246,7 @@ public class QueryEngineCustomHTTP implements QueryExecution {
      */
     @Override
     public void close() {
+        // empty method
     }
 
     @Override

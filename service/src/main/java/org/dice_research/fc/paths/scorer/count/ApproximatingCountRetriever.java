@@ -54,7 +54,8 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
 
   protected void addTriplePattern(Pair<Property, Boolean> pathElement, String firstVariable,
       String secondVariable, StringBuilder builder) {
-    String subject, object;
+    String subject;
+    String object;
     if (pathElement.getSecond()) {
       object = secondVariable;
       subject = firstVariable;
@@ -96,14 +97,14 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
     }
     queryBuilder.append("1), 0) AS ?" + COUNT_VARIABLE_NAME + ") WHERE { \n");
     // Recursion
-    createPropertyQuery_Recursion(0, path, domainRestriction, rangeRestriction, queryBuilder);
+    createPropertyQueryRecursion(0, path, domainRestriction, rangeRestriction, queryBuilder);
     queryBuilder.append("}");
     return queryBuilder;
   }
 
-  private void createPropertyQuery_Recursion(int propId, QRestrictedPath path,
-      ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction,
-      StringBuilder queryBuilder) {
+  private void createPropertyQueryRecursion(int propId, QRestrictedPath path,
+                                            ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction,
+                                            StringBuilder queryBuilder) {
     if (propId == path.length() - 1) {
       // This is the last property in the list --> recursion ends
       queryBuilder.append("Select (count(*) as ?" + INTERMEDIATE_COUNT_VARIABLE_NAME);
@@ -155,7 +156,7 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
       }
       // Start the recursion
       queryBuilder.append("{\n");
-      createPropertyQuery_Recursion(propId + 1, path, domainRestriction, rangeRestriction,
+      createPropertyQueryRecursion(propId + 1, path, domainRestriction, rangeRestriction,
           queryBuilder);
       queryBuilder.append("}\n");
       // Finalize sub select of this recursion step

@@ -187,7 +187,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
       builders[i] = new SearchQueryBuilder(length);
     }
     // Fill the builders recursively
-    generateSearchQuery_Recursion(1, length, subject, predicate, object, builders);
+    generateSearchQueryRecursion(1, length, subject, predicate, object, builders);
     LOGGER.trace("In total there are {} builders in the generateSearchQueries exist",builders.length);
     // Add the built queries to the result
     for (int i = 0; i < builders.length; ++i) {
@@ -209,8 +209,8 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
    * @param object the object of the given triple
    * @param builders the array of query builders that are used to build the single queries.
    */
-  protected void generateSearchQuery_Recursion(int step, int length, Resource subject,
-      Predicate predicate, Resource object, SearchQueryBuilder[] builders) {
+  protected void generateSearchQueryRecursion(int step, int length, Resource subject,
+                                              Predicate predicate, Resource object, SearchQueryBuilder[] builders) {
     // prepare some stuff
     StringBuilder localBuilder = new StringBuilder();
     String sVariable = step == 1 ? ("<" + subject.getURI() + ">")
@@ -245,7 +245,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
 
     // Recursion
     if (step < length) {
-      generateSearchQuery_Recursion(step + 1, length, subject, predicate, object, builders);
+      generateSearchQueryRecursion(step + 1, length, subject, predicate, object, builders);
     }
 
     // Create a mask for this step to separate the directions
