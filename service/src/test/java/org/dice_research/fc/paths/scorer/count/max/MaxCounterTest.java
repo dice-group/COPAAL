@@ -35,7 +35,7 @@ public class MaxCounterTest {
   private double expectedScore;
 
   public MaxCounterTest(FactPreprocessor preprocessor, MaxCounter maxCounter, Statement fact,
-      double expectedScore) {
+                             double expectedScore) {
     this.preprocessor = preprocessor;
     this.maxCounter = maxCounter;
     this.fact = fact;

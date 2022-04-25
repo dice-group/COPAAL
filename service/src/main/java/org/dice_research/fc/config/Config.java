@@ -158,6 +158,12 @@ public class Config {
   @Value("${dataset.pathsearcher.type:}")
   private String pathSearcher;
 
+  /**
+   * type of http verb at http client for do queries
+   */
+  @Value("${copaal.http.query.type:}")
+  private String isPostRequest;
+
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
     return new PropertySourcesPlaceholderConfigurer();
@@ -298,7 +304,11 @@ public class Config {
   public QueryExecutionFactory getQueryExecutionFactory() {
     QueryExecutionFactory qef;
     if (filePath == null || filePath.isEmpty()) {
-      qef = new QueryExecutionFactoryCustomHttp(serviceURL);
+      if(isPostRequest.equalsIgnoreCase("post")) {
+        qef = new QueryExecutionFactoryCustomHttp(serviceURL, true);
+      }else{
+        qef = new QueryExecutionFactoryCustomHttp(serviceURL, false);
+      }
     } else {
       Model model = ModelFactory.createDefaultModel();
       model.read(filePath);
