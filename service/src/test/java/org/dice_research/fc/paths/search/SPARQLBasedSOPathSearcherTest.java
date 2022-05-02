@@ -29,17 +29,17 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class SPARQLBasedSOPathSearcherTest {
 
-  private QueryExecutionFactory qef;
-  private int maximumLength;
-  private Collection<IRIFilter> propertyFilter;
+  public QueryExecutionFactory qef;
+  public int maximumLength;
+  public Collection<IRIFilter> propertyFilter;
   private Resource subject;
   private Predicate predicate;
   private Resource object;
   private Set<QRestrictedPath> expectedPaths;
 
   public SPARQLBasedSOPathSearcherTest(Dataset dataset, Integer maximumLength,
-      Collection<IRIFilter> propertyFilter, Resource subject, Predicate predicate, Resource object,
-      Set<QRestrictedPath> expectedPaths) {
+                                       Collection<IRIFilter> propertyFilter, Resource subject, Predicate predicate, Resource object,
+                                       Set<QRestrictedPath> expectedPaths) {
     qef = new QueryExecutionFactoryDataset(dataset);
     this.maximumLength = maximumLength;
     this.propertyFilter = propertyFilter;
@@ -52,7 +52,7 @@ public class SPARQLBasedSOPathSearcherTest {
   @Test
   public void test() {
     SPARQLBasedSOPathSearcher searcher =
-        new SPARQLBasedSOPathSearcher(qef, maximumLength, propertyFilter);
+            new SPARQLBasedSOPathSearcher(qef, maximumLength, propertyFilter);
     Collection<QRestrictedPath> paths = searcher.search(subject, predicate, object);
     StringBuilder builder = new StringBuilder();
     for (QRestrictedPath path : paths) {
@@ -108,29 +108,29 @@ public class SPARQLBasedSOPathSearcherTest {
     dataset = DatasetFactory.create(model);
 
     testConfigs.add(new Object[] {dataset, 1, Collections.EMPTY_LIST, subject, predicate, object,
-        new HashSet<QRestrictedPath>(Arrays.asList(
-            QRestrictedPath.create(new Property[] {predicate.getProperty()}, new boolean[] {true}),
-            QRestrictedPath.create(new Property[] {p1}, new boolean[] {true}),
-            QRestrictedPath.create(new Property[] {p2}, new boolean[] {true}),
-            QRestrictedPath.create(new Property[] {p2}, new boolean[] {false})))});
+            new HashSet<QRestrictedPath>(Arrays.asList(
+                    QRestrictedPath.create(new Property[] {predicate.getProperty()}, new boolean[] {true}),
+                    QRestrictedPath.create(new Property[] {p1}, new boolean[] {true}),
+                    QRestrictedPath.create(new Property[] {p2}, new boolean[] {true}),
+                    QRestrictedPath.create(new Property[] {p2}, new boolean[] {false})))});
 
     // Ask again but this time with an IRI filter
     testConfigs.add(new Object[] {dataset, 1,
-        Arrays
-            .asList((IRIFilter) new EqualsFilter(new String[] {predicate.getProperty().getURI()})),
-        subject, predicate, object,
-        new HashSet<QRestrictedPath>(
-            Arrays.asList(QRestrictedPath.create(new Property[] {p1}, new boolean[] {true}),
-                QRestrictedPath.create(new Property[] {p2}, new boolean[] {true}),
-                QRestrictedPath.create(new Property[] {p2}, new boolean[] {false})))});
+            Arrays
+                    .asList((IRIFilter) new EqualsFilter(new String[] {predicate.getProperty().getURI()})),
+            subject, predicate, object,
+            new HashSet<QRestrictedPath>(
+                    Arrays.asList(QRestrictedPath.create(new Property[] {p1}, new boolean[] {true}),
+                            QRestrictedPath.create(new Property[] {p2}, new boolean[] {true}),
+                            QRestrictedPath.create(new Property[] {p2}, new boolean[] {false})))});
 
     // Ask again but this time with a name space filter
     testConfigs.add(new Object[] {dataset, 1,
-        Arrays.asList((IRIFilter) new NamespaceFilter("http://example.org/other/", false)), subject,
-        predicate, object,
-        new HashSet<QRestrictedPath>(
-            Arrays.asList(QRestrictedPath.create(new Property[] {p2}, new boolean[] {true}),
-                QRestrictedPath.create(new Property[] {p2}, new boolean[] {false})))});
+            Arrays.asList((IRIFilter) new NamespaceFilter("http://example.org/other/", false)), subject,
+            predicate, object,
+            new HashSet<QRestrictedPath>(
+                    Arrays.asList(QRestrictedPath.create(new Property[] {p2}, new boolean[] {true}),
+                            QRestrictedPath.create(new Property[] {p2}, new boolean[] {false})))});
 
 
     // Create a simple model and ask for paths of length 2 between s and o
@@ -158,13 +158,13 @@ public class SPARQLBasedSOPathSearcherTest {
     dataset = DatasetFactory.create(model);
 
     testConfigs.add(new Object[] {dataset, 2, Collections.EMPTY_LIST, subject, predicate, object,
-        new HashSet<QRestrictedPath>(Arrays.asList(
-            QRestrictedPath.create(new Property[] {predicate.getProperty()}, new boolean[] {true}),
-            QRestrictedPath.create(new Property[] {p1}, new boolean[] {true}),
-            QRestrictedPath.create(new Property[] {p2}, new boolean[] {true}),
-            QRestrictedPath.create(new Property[] {p2}, new boolean[] {false}),
-            QRestrictedPath.create(new Property[] {p1, p2}, new boolean[] {true, true}),
-            QRestrictedPath.create(new Property[] {p1, p2}, new boolean[] {true, false})))});
+            new HashSet<QRestrictedPath>(Arrays.asList(
+                    QRestrictedPath.create(new Property[] {predicate.getProperty()}, new boolean[] {true}),
+                    QRestrictedPath.create(new Property[] {p1}, new boolean[] {true}),
+                    QRestrictedPath.create(new Property[] {p2}, new boolean[] {true}),
+                    QRestrictedPath.create(new Property[] {p2}, new boolean[] {false}),
+                    QRestrictedPath.create(new Property[] {p1, p2}, new boolean[] {true, true}),
+                    QRestrictedPath.create(new Property[] {p1, p2}, new boolean[] {true, false})))});
 
 
 

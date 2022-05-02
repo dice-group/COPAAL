@@ -130,3 +130,8 @@ fabric.properties
 /cache
 cache.txt
 1cache.txt
+
+#progress files
+*.prg
+#results
+qResults/

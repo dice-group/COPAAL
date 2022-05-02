@@ -15,6 +15,8 @@ import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriever {
 
   private static final Logger LOGGER =
@@ -47,7 +49,10 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
     queryBuilder.append(COUNT_VARIABLE_NAME);
     queryBuilder.append(") WHERE { ?s <");
     queryBuilder.append(predicate.getProperty().getURI());
-    queryBuilder.append("> ?o }");
+    queryBuilder.append("> ?o . ");
+    predicate.getDomain().addRestrictionToQuery("s", queryBuilder);
+    predicate.getRange().addRestrictionToQuery("o", queryBuilder);
+    queryBuilder.append(" }");
     return executeCountQuery(queryBuilder);
   }
 
@@ -58,7 +63,10 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
    * 
    * @param path the path that should be added to the query
    * @param queryBuilder the builder for the query to which the path should be added
+   * 
+   * @deprecated Use a {@link org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator} instead.
    */
+  @Deprecated
   protected void addAsPropertyPath(QRestrictedPath path, StringBuilder queryBuilder) {
     boolean first = true;
     for (Pair<Property, Boolean> p : path.getPathElements()) {
@@ -100,8 +108,8 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
       Literal count = qs.getLiteral(COUNT_VARIABLE_NAME);
       if (result.hasNext()) {
         LOGGER.info(
-            "Got a query with more than 1 result line (\"{}\"). The remaining lines will be ignored.",
-            query);
+                "Got a query with more than 1 result line (\"{}\"). The remaining lines will be ignored.",
+                query);
       }
       long n = count.getLong();
       LOGGER.debug("Got a query result ({}) after {}ms.", n, System.currentTimeMillis() - time);

@@ -4,6 +4,8 @@ import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
+import org.dice_research.fc.sparql.path.IPathClauseGenerator;
+import org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,11 +19,19 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public class PropPathBasedPairCountRetriever extends AbstractSPARQLBasedCountRetriever {
+public class PairCountRetriever extends AbstractSPARQLBasedCountRetriever {
+
+  protected IPathClauseGenerator pathClauseGenerator;
 
   @Autowired
-  public PropPathBasedPairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
+  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
+    this(qef, maxCounter, new PropPathBasedPathClauseGenerator());
+  }
+
+  @Autowired
+  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter,IPathClauseGenerator pathClauseGenerator) {
     super(qef, maxCounter);
+    this.pathClauseGenerator = pathClauseGenerator;
   }
 
   @Override
@@ -33,9 +43,8 @@ public class PropPathBasedPairCountRetriever extends AbstractSPARQLBasedCountRet
     queryBuilder.append(") WHERE { ");
     domainRestriction.addRestrictionToQuery("s", queryBuilder);
     rangeRestriction.addRestrictionToQuery("o", queryBuilder);
-    queryBuilder.append(" ?s ");
-    addAsPropertyPath(path, queryBuilder);
-    queryBuilder.append(" ?o }");
+    pathClauseGenerator.addPath(path, queryBuilder, "s", "o");
+    queryBuilder.append(" }");
     return executeCountQuery(queryBuilder);
   }
 
@@ -49,9 +58,8 @@ public class PropPathBasedPairCountRetriever extends AbstractSPARQLBasedCountRet
     queryBuilder.append("> ?o . ");
     predicate.getDomain().addRestrictionToQuery("s", queryBuilder);
     predicate.getRange().addRestrictionToQuery("o", queryBuilder);
-    queryBuilder.append(" ?s ");
-    addAsPropertyPath(path, queryBuilder);
-    queryBuilder.append(" ?o }");
+    pathClauseGenerator.addPath(path, queryBuilder, "s", "o");
+    queryBuilder.append(" }");
     return executeCountQuery(queryBuilder);
   }
 

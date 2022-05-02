@@ -199,6 +199,36 @@ public class QRestrictedPath implements IPieceOfEvidence {
     return builder.toString();
   }
 
+  public String toStringWithTag() {
+    StringBuilder sb = new StringBuilder();
+    for(Pair<Property, Boolean> p : pathElements){
+      if(p.getSecond()){
+        sb.append("^");
+      }
+      sb.append("<");
+      sb.append(p.getFirst().getURI());
+      sb.append(">");
+    }
+    return sb.toString();
+  }
+
+  public static QRestrictedPath toQRestrictedPathFromStringWithTag(String path){
+    QRestrictedPath temp = new QRestrictedPath();
+    String[] parts = path.split(">");
+    temp.pathElements = new ArrayList<Pair<Property, Boolean>>();
+    for(int i = 0 ; i < parts.length ; i++) {
+      parts[i] = parts[i].replace("<","");
+      if(parts[i].charAt(0) == '^'){
+        parts[i] = parts[i].replace("^","");
+        Property p;
+        temp.pathElements.add(new Pair<>(ResourceFactory.createProperty(parts[i]) , true));
+      }else{
+        temp.pathElements.add(new Pair<>(ResourceFactory.createProperty(parts[i]), false));
+      }
+    }
+    return temp;
+  }
+
   public static QRestrictedPath create(Property properties[], boolean direction[]) {
     if (properties.length != direction.length) {
       throw new IllegalArgumentException("The length of the properties array (" + properties.length

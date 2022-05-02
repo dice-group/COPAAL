@@ -32,7 +32,7 @@ public class LoadPreprocessedPaths {
 
   public static void main(String[] args) {
     QueryExecutionFactory qef =
-        new QueryExecutionFactoryCustomHttp("https://synthg-fact.dice-research.org/sparql","json");// "https://dbpedia.org/sparql");
+        new QueryExecutionFactoryCustomHttp("https://synthg-fact.dice-research.org/sparql",false,"json");// "https://dbpedia.org/sparql");
     qef = new QueryExecutionFactoryCustomHttpTimeout(qef, 30000);
 
     ImportedFactChecker checker = new ImportedFactChecker(new PredicateFactory(qef),

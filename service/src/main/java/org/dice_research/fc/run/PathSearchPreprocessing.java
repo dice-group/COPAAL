@@ -37,7 +37,7 @@ public class PathSearchPreprocessing {
     // TODO Get the necessary parameters and start the preprocessing method
 
     QueryExecutionFactory qef =
-        new QueryExecutionFactoryCustomHttp("https://synthg-fact.dice-research.org/sparql","json");// "https://dbpedia.org/sparql");
+        new QueryExecutionFactoryCustomHttp("https://synthg-fact.dice-research.org/sparql",false,"json");// "https://dbpedia.org/sparql");
     qef = new QueryExecutionFactoryCustomHttpTimeout(qef, 30000);
 
     long seed = 123;

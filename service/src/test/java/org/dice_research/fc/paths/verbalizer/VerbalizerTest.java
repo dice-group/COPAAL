@@ -38,7 +38,7 @@ public class VerbalizerTest {
   private boolean isEmptyExpected;
 
   private final QueryExecutionFactory qef =
-      new QueryExecutionFactoryCustomHttp("https://dbpedia.org/sparql","json");
+      new QueryExecutionFactoryCustomHttp("https://dbpedia.org/sparql",true,"json");
 
   public VerbalizerTest(Resource subject, Resource object, QRestrictedPath path,
       boolean isEmptyExpected) {
