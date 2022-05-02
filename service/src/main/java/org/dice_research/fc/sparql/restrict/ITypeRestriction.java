@@ -4,6 +4,9 @@ package org.dice_research.fc.sparql.restrict;
  * This interface is implemented by classes that express a type-based restriction for a variable in
  * a SPARQL query.
  * 
+ * Instances of this interface <b>must</b> override the {@link #equals(Object)} and
+ * {@link #hashCode()} methods to ensure that they can be used within collections.
+ * 
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
  */
@@ -20,4 +23,18 @@ public interface ITypeRestriction {
    * @param builder the unfinished SPARQL query to which the restriction should be added
    */
   public void addRestrictionToQuery(String variable, StringBuilder builder);
+
+  /**
+   * Returns {@code true} if adding the restriction to a query will not change the content of the
+   * query.
+   *
+   * @return {@code true} if the restriction has not effect, else {@code false}
+   */
+  public boolean isEmpty();
+
+  /**
+   *
+   * @return this return the restriction as object while the restriction may has different type in different implementations
+   */
+  public Object getRestriction();
 }
