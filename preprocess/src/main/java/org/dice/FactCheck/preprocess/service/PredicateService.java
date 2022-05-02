@@ -19,8 +19,6 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.rdf.model.impl.PropertyImpl;
 import org.apache.jena.vocabulary.RDFS;
 import org.dice_research.fc.data.Predicate;
-import org.dice_research.fc.paths.PredicateFactory;
-import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +32,7 @@ import java.util.Iterator;
 
 /*
 *
+*  this class can work with a KG or a file
 * */
 
 public class PredicateService implements IPredicateService{
@@ -41,12 +40,9 @@ public class PredicateService implements IPredicateService{
     private static final Logger LOGGER = LoggerFactory.getLogger(PredicateService.class);
 
     private QueryExecutionFactory executioner;
-    private PredicateFactory predicateFacroty;
 
     public PredicateService(QueryExecutionFactory executioner) {
         this.executioner = executioner;
-        predicateFacroty = new PredicateFactory(executioner);
-
     }
 
     //this method fetch all predicates from KG
@@ -61,18 +57,30 @@ public class PredicateService implements IPredicateService{
     }
 
 
-    // return all predicates read from a file
+    // return all predicates read from a json file
     @Override
     public Collection<Predicate> allPredicates(String fileName) {
         Set<Predicate> predicates = new HashSet<Predicate>();
         JSONParser parser = new JSONParser();
         try {
-            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            //InputStream is = classloader.getResourceAsStream(fileName);
-            Object obj = parser.parse(new FileReader(fileName));
+
+            // if the fileName is a total path load the file
+            // if not trz load it from resources
+            JSONArray Predicates;
+            if(theFileExist(fileName)){
+                Object obj = parser.parse(new FileReader(fileName));
+                Predicates = (JSONArray) obj;
+            }else{
+                ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+                InputStream is = classloader.getResourceAsStream(fileName);
+                JSONParser jsonParser = new JSONParser();
+                Predicates = (JSONArray)jsonParser.parse(
+                        new InputStreamReader(is, "UTF-8"));
+            }
+
 
             // A JSON object. Key value pairs are unordered. JSONObject supports java.util.Map interface.
-            JSONArray Predicates = (JSONArray) obj;
+
 
             Iterator<JSONObject> iterator = Predicates.iterator();
             while (iterator.hasNext()) {
@@ -102,6 +110,20 @@ public class PredicateService implements IPredicateService{
         return predicates;
     }
 
+    private boolean theFileExist(String fileName) {
+        try{
+            File f = new File(fileName);
+            if(f.exists() && !f.isDirectory()) {
+                return true;
+            }else{
+                return false;
+            }
+        }catch (Exception ex){
+            return false;
+        }
+    }
+
+    // return all domain and ranges read from a json file
     public Collection<String> allDomainAndRanges(String fileName){
         Set<String> allDomainAndRange = new HashSet<String>();
         JSONParser parser = new JSONParser();
@@ -158,7 +180,7 @@ public class PredicateService implements IPredicateService{
     public Set<String> getRange(String iri) {
         Set<String> sTypes = getObjects(ResourceFactory.createProperty(iri), RDFS.range);
         if (sTypes.isEmpty()) {
-            // select type of subject for this predicate as domain
+            // select type of subject for this predicate as range
             //sTypes = typeOfSubjectsForPredicate(iri);
             // TODO : what now ?
         }

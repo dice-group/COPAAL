@@ -1,25 +1,25 @@
 package org.dice.FactCheck.preprocess.service;
 
 import org.apache.commons.math3.util.Pair;
-import org.apache.jena.rdf.model.Property;
 import org.dice.FactCheck.preprocess.model.CountQueries;
 import org.dice.FactCheck.preprocess.model.Path;
 import org.dice_research.fc.data.Predicate;
-import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
-
-
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /*
-* this class provide methods for generate queries which their purpose is counting
+* this class provides methods for generating queries which their purpose is counting
+*
+*
+* @author Farshad Afshari
 * */
 public class CounterQueryGeneratorService implements ICounterQueryGenerator {
 
+    // a map of parent classes for each predicate. It will read from the file in the class construction
     Map<String, ArrayList<String>> ancestorsMap;
+
     private PathService pathservice;
 
     public CounterQueryGeneratorService(PathService pathservice) {
@@ -138,6 +138,7 @@ public class CounterQueryGeneratorService implements ICounterQueryGenerator {
         return queryBuilder.toString();
     }
 
+    @Deprecated
     protected String generateCountTypeInstances(ITypeRestriction restriction) {
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT DISTINCT ?s ");

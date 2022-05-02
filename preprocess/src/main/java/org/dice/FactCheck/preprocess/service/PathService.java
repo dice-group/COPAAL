@@ -18,10 +18,17 @@ import java.util.stream.Collectors;
 
 public class PathService implements IPathService{
 
-    public long lastHeapFreeSize = 0;
-
+    // map of parent class for each predicate, it will read from file in the constructor
     Map<String, ArrayList<String>> ancestorsMap;
+
+    // this variable save all shared paths ( mean shared parents here ) and then use the file to find that how much overlap exist between predicates
+    // and which parent classes are exist in all predicates
     Set<String> allSharedPaths;
+
+    // save all path with all length
+    Set<Path> allPathWithAllLength;
+
+    long heapSizeThreshold = 40000000;
 
     public PathService(){
         try{
@@ -30,22 +37,17 @@ public class PathService implements IPathService{
             ancestorsMap = (Map<String, ArrayList<String>>) in.readObject();
             in.close();
             allSharedPaths = new HashSet<>();
+            allPathWithAllLength = new HashSet<>();
         }catch (Exception ex){
             System.out.println("Error in read map of ancestors"+ex.getStackTrace() + ex.getMessage());
         }
     }
 
-    public PathService(Map<String, ArrayList<String>> ancestorsMap){
-        this.ancestorsMap = ancestorsMap;
-    }
-
-
-    Set<Path> allPathWithAllLength = new HashSet<>();
-
     public Set<Path> getAllPathWithAllLength() {
         return allPathWithAllLength;
     }
 
+    // recursively generate all possible combination of predicates
     public List<Path> getAllLists(List<Predicate> elements, int lengthOfList) throws CloneNotSupportedException {
         //initialize our returned list with the number of elements calculated above
         List<Path> allLists = new ArrayList<>();
@@ -190,6 +192,7 @@ public class PathService implements IPathService{
     @Override
     public Collection<Path> generateAllPaths(Collection<Predicate> predicates,int maximumLengthOfPaths,String FileName,boolean SaveTheResultInFile) throws CloneNotSupportedException {
         // convert to set because we dont want to have duplicated items
+        allPathWithAllLength = new HashSet<>();
         Set<Predicate> setOfPredicates = new HashSet<>(predicates);
         List<Predicate> listOfPredicates = new ArrayList<>(setOfPredicates);
         getAllLists(listOfPredicates,maximumLengthOfPaths);
@@ -248,26 +251,25 @@ public class PathService implements IPathService{
         }
     }
 
-    private void showAndFreeHeap(String position){
+    private void showAndFreeHeap(String labelOfWhereIsfunctionCalled){
 
         // Get amount of free memory within the heap in bytes. This size will increase // after garbage collection and decrease as new objects are created.
         long heapFreeSize = Runtime.getRuntime().freeMemory();
 
-        if(heapFreeSize<40000000) {
+        if(heapFreeSize<heapSizeThreshold) {
 
             // Get current size of heap in bytes
             long heapSize = Runtime.getRuntime().totalMemory();
 
-            lastHeapFreeSize  = heapSize;
-            System.out.println(position + " heapSize: " + heapSize);
+            System.out.println(labelOfWhereIsfunctionCalled + " heapSize: " + heapSize);
 
 
             // Get maximum size of heap in bytes. The heap cannot grow beyond this size.// Any attempt will result in an OutOfMemoryException.
             long heapMaxSize = Runtime.getRuntime().maxMemory();
-            System.out.println(position + " heapMaxSize: " + heapMaxSize);
+            System.out.println(labelOfWhereIsfunctionCalled + " heapMaxSize: " + heapMaxSize);
 
 
-            System.out.println(position + " heapFreeSize: " + heapFreeSize);
+            System.out.println(labelOfWhereIsfunctionCalled + " heapFreeSize: " + heapFreeSize);
 
 
             System.out.println("------------------------------");

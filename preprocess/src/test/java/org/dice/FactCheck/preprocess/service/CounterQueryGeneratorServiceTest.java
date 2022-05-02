@@ -247,7 +247,7 @@ public class CounterQueryGeneratorServiceTest {
 
     private void SaveAllPathInAFileAsText(Collection<Path> paths) {
         try{
-            FileWriter myWriter = new FileWriter("AllPossiblePredicateCombinations.txt");
+            FileWriter myWriter = new FileWriter("AllPossiblePredicateCombinations_ThisFileInaTestGenerated.txt");
 
             for (Iterator<Path> iterator = paths.iterator(); iterator.hasNext();) {
                 Path p = iterator.next();

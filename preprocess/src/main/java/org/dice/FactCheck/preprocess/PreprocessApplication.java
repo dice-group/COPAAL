@@ -34,7 +34,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
+/*
+ *   this class runs the program as a command line program
+ * */
 @SpringBootApplication
 @ComponentScan("org.dice.FactCheck.preprocess.config")
 public class PreprocessApplication implements CommandLineRunner {
@@ -67,12 +69,13 @@ public class PreprocessApplication implements CommandLineRunner {
 
 		if (args.length == 0){
 			System.out.println("h : use this to get Help  'java -jar [jarfile] h '");
+			return;
 		}
 		if (args.length == 1) {
 			if(args[0].equals("h")){
 				System.out.println("help");
 				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part] ['C' for cumulative result(both Lite and Complete version), 'CL' just lite version, 'CC' just Complete version , 'I' for individual] [folder for save temp files] [number of line to start] [optional : file to check if the same path in this file has result then run query for the path in provided file , just useable for file not for folder]: this will read file and run queries in that file");
-				System.out.println("pc [collected_predicates.json] [len] [pathToSaveResult] [PathToSaveSerialization] [true or false for save the result]: this will read file and  generate all combination for predicates by lentgh [len]  ");
+				System.out.println("pc [collected_predicates.json] [len] [pathToSaveResult] [PathToSaveSerialization] [true or false for save the result]: this will read file and  generate all combination for predicates by length [len]  ");
 				System.out.println("gq [predicate] [domain] [range] [predicate combination files] [pathToSaveResults] [collected_predicates.json]: this will read the predicate path and generate all queries]  ");
 			}
 		}

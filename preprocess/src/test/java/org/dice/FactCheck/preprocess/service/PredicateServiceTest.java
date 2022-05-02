@@ -5,7 +5,6 @@ import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -15,7 +14,6 @@ import org.apache.jena.rdf.model.Property;
 import org.dice.FactCheck.preprocess.utilities;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
-import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 import org.dice_research.fc.data.Predicate;
 /**
- * This class is a Path of predicates and
+ * This model is a Path of predicates and
  *
  * @author Farshad Afshari
  *
@@ -13,12 +13,15 @@ import org.dice_research.fc.data.Predicate;
 public class Path implements Cloneable{
     private LinkedList<Pair<Predicate, Boolean>> paths;
 
-    public Path() {this.paths = new LinkedList<>();}
+    public Path() {
+        this(new LinkedList<>());
+    }
 
     public Path(LinkedList<Pair<Predicate, Boolean>> paths) {
         this.paths = paths;
     }
 
+    // initiate the class with just one instance
     public Path(Predicate predicate , Boolean inverted) {
         Pair<Predicate,Boolean> pair = new Pair<>(predicate,inverted);
         LinkedList<Pair<Predicate, Boolean>> ll = new LinkedList<>();
@@ -26,6 +29,7 @@ public class Path implements Cloneable{
         this.paths = new LinkedList<Pair<Predicate, Boolean>>(ll);
     }
 
+    // add part to the path
     public void addPart(Predicate input,Boolean isInverted){
         this.paths.add(new Pair<>(input,isInverted));
     }

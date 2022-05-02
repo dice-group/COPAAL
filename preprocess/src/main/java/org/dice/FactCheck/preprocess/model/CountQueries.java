@@ -3,6 +3,13 @@ package org.dice.FactCheck.preprocess.model;
 import java.util.HashSet;
 import java.util.Set;
 
+/*
+ * this model handles the queries for counting for different purposes
+ *
+ * @author Farshad Afshari
+ *
+ * */
+
 public class CountQueries {
     private Set<String> CoOccurrenceCountQueries;
     private Set<String> PathInstancesCountQueries;

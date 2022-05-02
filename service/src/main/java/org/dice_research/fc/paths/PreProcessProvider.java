@@ -37,33 +37,50 @@ import java.util.stream.Collectors;
         this.threshold = threshold;
         this.pathInstancesCount = new HashMap<>();
         File[] pathInstancesCountFiles = getAllFileInThisFolder(pathInstancesCountFolder);
-        for(File pathInstancesCountFile:pathInstancesCountFiles) {
-            LOGGER.info("processing  {}",pathInstancesCountFile.getAbsolutePath());
-            this.pathInstancesCount.putAll(processThePathInstancesCountFile(pathInstancesCountFile, validPredicates));
+        if(pathInstancesCountFiles == null){
+            LOGGER.error("the pathInstancesCountFiles is null , please check if the paths in application.properties are valid");
+        }else {
+            for (File pathInstancesCountFile : pathInstancesCountFiles) {
+                LOGGER.info("processing  {}", pathInstancesCountFile.getAbsolutePath());
+                this.pathInstancesCount.putAll(processThePathInstancesCountFile(pathInstancesCountFile, validPredicates));
+            }
         }
         LOGGER.info("done, the pathInstancesCount map has size : {}",pathInstancesCount.size());
 
         LOGGER.info("start process predicateInstancesCount from {}",predicateInstancesCountFolder);
         this.predicateInstancesCount = new HashMap<>();
         File [] predicateInstancesCountFiles = getAllFileInThisFolder(predicateInstancesCountFolder);
-        for(File predicateInstancesCountFile : predicateInstancesCountFiles) {
-            this.predicateInstancesCount.putAll(processThePredicateInstancesCount(predicateInstancesCountFile));
+
+        if(predicateInstancesCountFiles == null){
+            LOGGER.error("the predicateInstancesCountFiles is null , please check if the paths in application.properties are valid");
+        }else {
+            for (File predicateInstancesCountFile : predicateInstancesCountFiles) {
+                this.predicateInstancesCount.putAll(processThePredicateInstancesCount(predicateInstancesCountFile));
+            }
         }
         LOGGER.info("done, the predicateInstancesCount map has size : {}",predicateInstancesCount.size());
 
         LOGGER.info("start process coOccurrenceCount from {}",coOccurrenceCountFolder);
         this.coOccurrenceCount = new HashMap<>();
         File []coOccurrenceCountFiles = getAllFileInThisFolder(coOccurrenceCountFolder);
-        for(File coOccurrenceCountFile:coOccurrenceCountFiles) {
-            this.coOccurrenceCount.putAll(processTheCoOccurrenceCount(coOccurrenceCountFile));
+        if(coOccurrenceCountFiles == null){
+            LOGGER.error("the coOccurrenceCountFiles is null , please check if the paths in application.properties are valid");
+        }else {
+            for (File coOccurrenceCountFile : coOccurrenceCountFiles) {
+                this.coOccurrenceCount.putAll(processTheCoOccurrenceCount(coOccurrenceCountFile));
+            }
         }
         LOGGER.info("done, the coOccurrenceCount map has size : {}",coOccurrenceCount.size());
 
         LOGGER.info("start process maxCount from {}",maxCountFolder);
         this.maxCount = new HashMap<>();
         File[] maxCountFiles = getAllFileInThisFolder(maxCountFolder);
-        for(File maxCountFile:maxCountFiles) {
-            this.maxCount.putAll(processTheMaxCount(maxCountFile));
+        if(maxCountFiles == null){
+            LOGGER.error("the maxCountFiles is null , please check if the paths in application.properties are valid");
+        }else {
+            for (File maxCountFile : maxCountFiles) {
+                this.maxCount.putAll(processTheMaxCount(maxCountFile));
+            }
         }
         LOGGER.info("done, the maxCount map has size : {}",maxCount.size());
 
