@@ -306,10 +306,8 @@ import java.util.*;
 
         for (Map.Entry<String, Long> entry : coOccurrenceCount.entrySet()) {
             double score = calculateScoreForCoOccurrencePath(entry.getKey().split(",")[0], predicate);
-            if(score>threshold) {
-                if (theKeyIsMatchedWithPredicate(entry.getKey(), predicate.getProperty().getURI())) {
+            if(score>threshold && theKeyIsMatchedWithPredicate(entry.getKey(), predicate.getProperty().getURI())) {
                     resultset.add(getPathFromcoOccurrenceCountKey(entry.getKey()));
-                }
             }
         }
         LOGGER.info("for the predicate "+predicate.getProperty().getURI()+" found "+ resultset.size()+" paths in map");
@@ -372,10 +370,7 @@ import java.util.*;
 
     private boolean theKeyIsMatchedWithPredicate(String key, String uri) {
         String[] parts = key.split(",");
-        if(parts[1].equals(uri)){
-            return true;
-        }
-        return false;
+        return parts[1].equals(uri);
     }
 
     private long getFromMap(Map<String, Long> map, String key) {

@@ -1,4 +1,4 @@
-package org.dice.FactCheck.preprocess.service;
+package org.dice.factcheck.preprocess.service;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import org.apache.jena.rdf.model.Property;
-import org.dice.FactCheck.preprocess.utilities;
+import org.dice.factcheck.preprocess.utilities;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.junit.Assert;

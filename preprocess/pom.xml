@@ -8,7 +8,7 @@
 		<version>2.5.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>org.dice.FactCheck</groupId>
+	<groupId>org.dice.factcheck</groupId>
 	<artifactId>preprocess</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>preprocess</name>

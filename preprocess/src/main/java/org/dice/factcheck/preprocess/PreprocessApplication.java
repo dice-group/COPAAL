@@ -1,4 +1,4 @@
-package org.dice.FactCheck.preprocess;
+package org.dice.factcheck.preprocess;
 
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -13,11 +13,11 @@ import org.apache.http.util.EntityUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
-import org.dice.FactCheck.preprocess.model.CountQueries;
-import org.dice.FactCheck.preprocess.model.Path;
-import org.dice.FactCheck.preprocess.service.CounterQueryGeneratorService;
-import org.dice.FactCheck.preprocess.service.PathService;
-import org.dice.FactCheck.preprocess.service.PredicateService;
+import org.dice.factcheck.preprocess.model.CountQueries;
+import org.dice.factcheck.preprocess.model.Path;
+import org.dice.factcheck.preprocess.service.CounterQueryGeneratorService;
+import org.dice.factcheck.preprocess.service.PathService;
+import org.dice.factcheck.preprocess.service.PredicateService;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  *   this class runs the program as a command line program
  * */
 @SpringBootApplication
-@ComponentScan("org.dice.FactCheck.preprocess.config")
+@ComponentScan("org.dice.factcheck.preprocess.config")
 public class PreprocessApplication implements CommandLineRunner {
     //http://127.0.0.1:9080/stream?query=SELECT%20%3Fp%20WHERE%20%7B%20%3Fs%20%3Fp%20%3Fo%20.%20%7D
 	//https://dbpedia.org/sparql
@@ -71,13 +71,11 @@ public class PreprocessApplication implements CommandLineRunner {
 			System.out.println("h : use this to get Help  'java -jar [jarfile] h '");
 			return;
 		}
-		if (args.length == 1) {
-			if(args[0].equals("h")){
-				System.out.println("help");
-				System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part] ['C' for cumulative result(both Lite and Complete version), 'CL' just lite version, 'CC' just Complete version , 'I' for individual] [folder for save temp files] [number of line to start] [optional : file to check if the same path in this file has result then run query for the path in provided file , just useable for file not for folder]: this will read file and run queries in that file");
-				System.out.println("pc [collected_predicates.json] [len] [pathToSaveResult] [PathToSaveSerialization] [true or false for save the result]: this will read file and  generate all combination for predicates by length [len]  ");
-				System.out.println("gq [predicate] [domain] [range] [predicate combination files] [pathToSaveResults] [collected_predicates.json]: this will read the predicate path and generate all queries]  ");
-			}
+		if (args.length == 1 && args[0].equals("h")) {
+			System.out.println("help");
+			System.out.println("f [FileName] [directory for save results] [endpoint with ?stream= or sparql?query= part] ['C' for cumulative result(both Lite and Complete version), 'CL' just lite version, 'CC' just Complete version , 'I' for individual] [folder for save temp files] [number of line to start] [optional : file to check if the same path in this file has result then run query for the path in provided file , just useable for file not for folder]: this will read file and run queries in that file");
+			System.out.println("pc [collected_predicates.json] [len] [pathToSaveResult] [PathToSaveSerialization] [true or false for save the result]: this will read file and  generate all combination for predicates by length [len]  ");
+			System.out.println("gq [predicate] [domain] [range] [predicate combination files] [pathToSaveResults] [collected_predicates.json]: this will read the predicate path and generate all queries]  ");
 		}
 
 		terminalWrite("first arg is :"+args[0]+" and size is "+ args.length);
@@ -152,26 +150,28 @@ public class PreprocessApplication implements CommandLineRunner {
 					}
 				}
 
-				String tempQueryFolderAddress = args[5];
-				terminalWrite("temp folder is :"+tempQueryFolderAddress);
+				//TODO remove arg 5
+				//String tempQueryFolderAddress = args[5];
+				//terminalWrite("temp folder is :"+tempQueryFolderAddress);
 
-				long fromThisLineStartToProcess = Long.parseLong(args[6]);
+				//TODO remove arg 6
+				//long fromThisLineStartToProcess = Long.parseLong(args[6]);
 
 				if(args.length == 8){
 					if(isFolder){
 						terminalWrite("you provide the file to check each path to run or not (8th arguments) in this situation the input could not be a folder , it must be a file");
 					}else{
 						// is file
-						processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3],tempQueryFolderAddress,fromThisLineStartToProcess,args[7]);
+						processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3], args[7]);
 					}
 				}else{
 					if(!isFolder) {
-						processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3],tempQueryFolderAddress,fromThisLineStartToProcess);
+						processTheFile(args[1], args[2], inputFileOrFolder.getName(), args[3]);
 					}else{
 						File[] listOfFiles = inputFileOrFolder.listFiles();
 						for (int i = 0; i < listOfFiles.length; i++) {
 							if (listOfFiles[i].isFile()) {
-								processTheFile(listOfFiles[i].getPath(), args[2], listOfFiles[i].getName(), args[3],tempQueryFolderAddress,fromThisLineStartToProcess);
+								processTheFile(listOfFiles[i].getPath(), args[2], listOfFiles[i].getName(), args[3]);
 								System.out.println("Done File"+listOfFiles[i].getName());
 							} else if (listOfFiles[i].isDirectory()) {
 								System.out.println("Directory " + listOfFiles[i].getName());
@@ -334,20 +334,17 @@ public class PreprocessApplication implements CommandLineRunner {
 		return returnSet;
 	}
 
-	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint,String tempQueryFolderAddress, long fromThisLineStartToProcess) {
+	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint) {
 		// read the query file
 		System.out.println("Start Process the File"+  filePath);
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			String query;
 			String queryAndPath;
-			Integer lineCounter = 1;
+			long lineCounter = 0L;
 			while ((queryAndPath = br.readLine()) != null) {
 				//System.out.println(filePath+" "+lineCounter);
 
-				if(lineCounter< fromThisLineStartToProcess){
-					lineCounter = lineCounter + 1;
-					continue;
-				}
+				lineCounter = lineCounter + 1;
 
 				if(!diskSpaceIsEnough()){
 					terminalWrite("this line note processed " + lineCounter);
@@ -361,9 +358,9 @@ public class PreprocessApplication implements CommandLineRunner {
 				}
 				query = parts[0];
 
-				// process the line.
+				// process the line. because TENTRIS can not process this query yet
 				query = query.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
-				runTheQuery(query, endpoint, lineCounter, pathForSaveResults, fileName, parts[1], parts[2],tempQueryFolderAddress);
+				runTheQuery(query, endpoint, pathForSaveResults, fileName, parts[1], parts[2]);
 				lineCounter = lineCounter + 1;
 				//System.out.println("read next line");
 			}
@@ -375,9 +372,9 @@ public class PreprocessApplication implements CommandLineRunner {
 		}
 	}
 
-	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint, String tempQueryFolderAddress, long fromThisLineStartToProcess , String pathOfSourceFileForCheckShouldRunQueryOrNot) {
+	private void processTheFile(String filePath, String pathForSaveResults, String fileName, String endpoint,  String pathOfSourceFileForCheckShouldRunQueryOrNot) {
 		// read the query file
-		terminalWrite("Start Process the File "+  filePath+" and reference file :"+pathOfSourceFileForCheckShouldRunQueryOrNot+" start from this line :"+String.valueOf(fromThisLineStartToProcess));
+		terminalWrite("Start Process the File "+  filePath+" and reference file :"+pathOfSourceFileForCheckShouldRunQueryOrNot);
 		Set<String> validPaths = new HashSet<>();
 		validPaths = selectThePathsWithScoreMoreThanZeroFromFile(pathOfSourceFileForCheckShouldRunQueryOrNot);
 
@@ -387,14 +384,11 @@ public class PreprocessApplication implements CommandLineRunner {
 		try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 			String query;
 			String queryAndPath;
-			Integer lineCounter = 1;
+			Long lineCounter = 0L;
 			while ((queryAndPath = br.readLine()) != null) {
 				//System.out.println(filePath+" "+lineCounter);
 
-				if(lineCounter< fromThisLineStartToProcess){
-					lineCounter = lineCounter + 1;
-					continue;
-				}
+				lineCounter = lineCounter + 1;
 
 				if(!diskSpaceIsEnough()){
 					terminalWrite("this line note processed " + lineCounter);
@@ -411,7 +405,7 @@ public class PreprocessApplication implements CommandLineRunner {
 				if(validPaths.contains(parts[1])) {
 					// process the line.
 					query = query.replace("(count(DISTINCT *) AS ?sum)"," DISTINCT ?s ?o ");
-					runTheQuery(query, endpoint, lineCounter, pathForSaveResults, fileName, parts[1], parts[2],tempQueryFolderAddress);
+					runTheQuery(query, endpoint, pathForSaveResults, fileName, parts[1], parts[2]);
 					numberOfFinds = numberOfFinds + 1;
 				}else{
 					//terminalWrite("can not find this path in source file :"+ parts[1]);
@@ -446,10 +440,10 @@ public class PreprocessApplication implements CommandLineRunner {
 	}
 
 
-	private void runTheQuery(String query, String endpoint, Integer lineCounter, String pathForSaveResults, String fileName, String pathOfQuery , String predicate,String tempQueryFolderAddress) {
+	private void runTheQuery(String query, String endpoint, String pathForSaveResults, String fileName, String pathOfQuery , String predicate) {
 		// check fact
 		//System.out.println("start do the query");
-		long resultNumber = doQuery(query, endpoint, tempQueryFolderAddress);
+		long resultNumber = doQuery(query, endpoint);
 		System.out.println(resultNumber);
 		save(query, resultNumber, pathForSaveResults, isIndividual, isLiteVersion, isCompleteVersion, fileName , pathOfQuery,predicate);
 	}
@@ -626,7 +620,7 @@ public class PreprocessApplication implements CommandLineRunner {
 	}
 
 	// run a query save in a file return the file name as a result
-	private long doQuery(String query,String endpoint, String tempQueryFolderAddress)  {
+	private long doQuery(String query,String endpoint)  {
 		//query = query.replace("  ","");
 		//query = query.replace("\n"," ");
 		//String endpoint = "https://synthg-fact.dice-research.org/sparql";
@@ -646,16 +640,8 @@ public class PreprocessApplication implements CommandLineRunner {
 				}
 				HttpEntity entity = response.getEntity();
 				//System.out.println("the entity is ready");
-				Header headers = entity.getContentType();
 				System.out.print(entity);
 				if (entity != null) {
-					/*// return it as a String
-					String fileName = tempQueryFolderAddress+UUID.randomUUID().toString()+".tmp";
-					//System.out.println("save the results at ");
-					OutputStream out = new ObjectOutputStream(new FileOutputStream(fileName));
-					entity.writeTo(out);
-					out.close();
-					return fileName;*/
 					return Long.parseLong(EntityUtils.toString(entity));
 				}else{
 					System.out.println("entity is null");

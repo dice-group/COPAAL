@@ -1,11 +1,11 @@
-package org.dice.FactCheck.preprocess.service;
+package org.dice.factcheck.preprocess.service;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
-import org.dice.FactCheck.preprocess.model.CountQueries;
-import org.dice.FactCheck.preprocess.model.Path;
-import org.dice.FactCheck.preprocess.utilities;
+import org.dice.factcheck.preprocess.model.CountQueries;
+import org.dice.factcheck.preprocess.model.Path;
+import org.dice.factcheck.preprocess.utilities;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
@@ -187,7 +187,8 @@ public class CounterQueryGeneratorServiceTest {
         Assert.assertEquals(1, queries.getCoOccurrenceCountQueries().size());
     }
 
-    @Test //uncomment if need to run
+    //uncomment if need to run
+    //@Test
     public void howManyQueriesDoWeHave() throws CloneNotSupportedException {
     /*    howManyQueriesDoWeHave("http://dbpedia.org/ontology/nationality","Nationality","http://dbpedia.org/ontology/Person","http://dbpedia.org/ontology/Country",3);
 

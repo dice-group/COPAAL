@@ -1,4 +1,4 @@
-package org.dice.FactCheck.preprocess.model;
+package org.dice.factcheck.preprocess.model;
 
 import java.util.HashSet;
 import java.util.Set;

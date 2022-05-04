@@ -15,8 +15,6 @@ import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
 public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriever {
 
   private static final Logger LOGGER =

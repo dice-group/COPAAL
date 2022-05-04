@@ -55,8 +55,6 @@ import org.dice_research.fc.sparql.path.IPathClauseGenerator;
 import org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttp;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttpTimeout;
-import org.dice_research.fc.sparql.restrict.BGPBasedVirtualTypeRestriction;
-import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
 import org.dice_research.fc.sum.AdaptedRootMeanSquareSummarist;
 import org.dice_research.fc.sum.CubicMeanSummarist;

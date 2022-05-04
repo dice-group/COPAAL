@@ -1,7 +1,5 @@
 package org.dice_research.fc.sparql.restrict;
 
-import org.apache.xpath.operations.Bool;
-
 /**
  * This restriction enforces that the give variable has to occur in a certain position in at least
  * one triple. For the object position, it can be further restricted to be a resource.

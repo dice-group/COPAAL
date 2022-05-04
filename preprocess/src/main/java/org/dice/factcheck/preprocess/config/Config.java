@@ -1,4 +1,4 @@
-package org.dice.FactCheck.preprocess.config;
+package org.dice.factcheck.preprocess.config;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttp;

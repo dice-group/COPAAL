@@ -1,7 +1,7 @@
-package org.dice.FactCheck.preprocess.service;
+package org.dice.factcheck.preprocess.service;
 
-import org.dice.FactCheck.preprocess.model.CountQueries;
-import org.dice.FactCheck.preprocess.model.Path;
+import org.dice.factcheck.preprocess.model.CountQueries;
+import org.dice.factcheck.preprocess.model.Path;
 import org.dice_research.fc.data.Predicate;
 
 import java.util.Collection;

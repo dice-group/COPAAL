@@ -1,8 +1,8 @@
-package org.dice.FactCheck.preprocess.service;
+package org.dice.factcheck.preprocess.service;
 
 import org.apache.commons.math3.util.Pair;
-import org.dice.FactCheck.preprocess.model.CountQueries;
-import org.dice.FactCheck.preprocess.model.Path;
+import org.dice.factcheck.preprocess.model.CountQueries;
+import org.dice.factcheck.preprocess.model.Path;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import java.io.InputStream;
@@ -33,11 +33,6 @@ public class CounterQueryGeneratorService implements ICounterQueryGenerator {
             System.out.println("Error in read map of ancestors"+ex.getStackTrace() + ex.getMessage());
         }
     }
-
-    /**
-     * The variable name of counts in SPARQL queries.
-     */
-    protected final String COUNT_VARIABLE_NAME = "sum";
 
     /*
     * this method generate all queries

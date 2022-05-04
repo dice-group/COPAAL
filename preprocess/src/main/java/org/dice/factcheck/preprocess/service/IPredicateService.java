@@ -1,4 +1,4 @@
-package org.dice.FactCheck.preprocess.service;
+package org.dice.factcheck.preprocess.service;
 
 import java.util.Collection;
 

@@ -1,4 +1,4 @@
-package org.dice.FactCheck.preprocess;
+package org.dice.factcheck.preprocess;
 
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;

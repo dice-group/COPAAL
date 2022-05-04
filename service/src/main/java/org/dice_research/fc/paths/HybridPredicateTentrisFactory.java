@@ -18,7 +18,6 @@ import java.util.Set;
 
 @Component
 public class HybridPredicateTentrisFactory implements FactPreprocessor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PredicateFactory.class);
 
     Map<String, Predicate> allPredicatesMap;
 

@@ -1,12 +1,12 @@
-package org.dice.FactCheck.preprocess.service;
+package org.dice.factcheck.preprocess.service;
 
 import org.apache.commons.math3.util.Pair;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
-import org.dice.FactCheck.preprocess.PreprocessApplication;
+import org.dice.factcheck.preprocess.PreprocessApplication;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
-import org.dice.FactCheck.preprocess.model.Path;
+import org.dice.factcheck.preprocess.model.Path;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
 import org.junit.Assert;

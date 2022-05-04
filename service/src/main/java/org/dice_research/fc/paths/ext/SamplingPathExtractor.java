@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class SamplingPathExtractor implements IPathExtractor {
-  private static final Logger LOGGER = LoggerFactory.getLogger(SamplingPathExtractor.class);
   /**
    * A class that is used to retrieve triples with a given property.
    */

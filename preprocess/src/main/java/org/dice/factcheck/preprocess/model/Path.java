@@ -1,4 +1,4 @@
-package org.dice.FactCheck.preprocess.model;
+package org.dice.factcheck.preprocess.model;
 
 import org.apache.commons.math3.util.Pair;
 import java.util.LinkedList;

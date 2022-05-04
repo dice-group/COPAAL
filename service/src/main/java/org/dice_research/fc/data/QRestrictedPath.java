@@ -220,7 +220,6 @@ public class QRestrictedPath implements IPieceOfEvidence {
       parts[i] = parts[i].replace("<","");
       if(parts[i].charAt(0) == '^'){
         parts[i] = parts[i].replace("^","");
-        Property p;
         temp.pathElements.add(new Pair<>(ResourceFactory.createProperty(parts[i]) , true));
       }else{
         temp.pathElements.add(new Pair<>(ResourceFactory.createProperty(parts[i]), false));

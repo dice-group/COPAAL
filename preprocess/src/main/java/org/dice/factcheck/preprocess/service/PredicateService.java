@@ -1,4 +1,4 @@
-package org.dice.FactCheck.preprocess.service;
+package org.dice.factcheck.preprocess.service;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.jena.arq.querybuilder.SelectBuilder;

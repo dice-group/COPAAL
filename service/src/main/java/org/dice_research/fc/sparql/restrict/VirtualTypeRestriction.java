@@ -76,11 +76,11 @@ public class VirtualTypeRestriction implements ITypeRestriction {
     if (propertyIri == null) {
       if (other.propertyIri != null)
         return false;
-    } else if (!propertyIri.equals(other.propertyIri))
+    } else if (!propertyIri.equals(other.propertyIri)) {
       return false;
-    if (variableIsSubject != other.variableIsSubject)
-      return false;
-    return true;
+    }
+
+    return (variableIsSubject == other.variableIsSubject);
   }
 
 }
