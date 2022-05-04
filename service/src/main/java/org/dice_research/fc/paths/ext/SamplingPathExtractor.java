@@ -17,6 +17,8 @@ import org.dice_research.fc.paths.filter.AlwaysTruePathFilter;
 import org.dice_research.fc.paths.filter.AlwaysTrueScoreFilter;
 import org.dice_research.fc.paths.filter.IPathFilter;
 import org.dice_research.fc.paths.filter.IScoreFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of the {@link IPathExtractor} interface.
@@ -25,7 +27,6 @@ import org.dice_research.fc.paths.filter.IScoreFilter;
  *
  */
 public class SamplingPathExtractor implements IPathExtractor {
-
   /**
    * A class that is used to retrieve triples with a given property.
    */

@@ -10,18 +10,16 @@
                            [ngClass]="getItemClass(info.id)" [attr.id]="'detcard-'+ info.id">
         <mat-expansion-panel-header style="margin: 10px;">
           <mat-panel-title>
-            <span><b>Path Score:</b> {{info.pathScore | number:'0.8-8'}}</span>
+            <span><b>Path Score:</b> {{info.score | number:'0.8-8'}}</span>
 
           </mat-panel-title>
 
         </mat-expansion-panel-header>
         <div fxLayout="column wrap" fxLayoutGap="5px">
-                <span *ngIf="info.pathText && info.pathText.length > 0 && info.pathText !=='Not available'"><b>Path Text:</b>  {{info.pathText}}</span>
-                <span *ngFor="let path of info.path; let i = index">
-                  <b>Triple {{i+1}} : </b>
-                  <span><a [href]="path.subject" target="_blank">{{getUriStr(path.subject)}}</a></span>&nbsp;
-                  <span><a [href]="path.property" target="_blank">{{getUriStr(path.property)}}</a></span>&nbsp;
-                  <span><a [href]="path.object" target="_blank">{{getUriStr(path.object)}}</a> .</span>&nbsp;
+                <span *ngIf="info.verbalization && info.verbalization.length > 0 && info.verbalization !=='Not available'"><b>Path Text:</b>  {{info.verbalization}}</span>
+          <span *ngFor="let property of info.evidence.replace('<','').split('>/'); let i = index">
+                  <b>Predicate {{i+1}} : </b>
+            <span><a [href]="property" target="_blank"> <span *ngIf="property.charAt(0)==='^'"> <b>^</b></span> {{getUriStr(property.replace('>',''))}}</a></span>&nbsp;&nbsp;
                 </span>
         </div>
       </mat-expansion-panel>

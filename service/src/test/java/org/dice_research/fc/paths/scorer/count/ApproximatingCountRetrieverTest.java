@@ -19,7 +19,7 @@ import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CountRetrieverTest {
+public class ApproximatingCountRetrieverTest {
 
   @Test
   public void test() {
@@ -47,7 +47,7 @@ public class CountRetrieverTest {
     long pathCount = appCountRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     long predPathCount = appCountRetriever.countCooccurrences(predicate, path);
 
-    ICountRetriever propPathRetriever = new PropPathBasedPairCountRetriever(qef, new DefaultMaxCounter(qef));
+    ICountRetriever propPathRetriever = new PairCountRetriever(qef, new DefaultMaxCounter(qef));
     long pathCount2 = propPathRetriever.countPathInstances(path, predicate.getDomain(), predicate.getRange());
     long predPathCount2 = propPathRetriever.countCooccurrences(predicate, path);
     

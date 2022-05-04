@@ -57,12 +57,12 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     // sort graphData
-    this.graphData.pathList.sort(this.pathSorter);
+    this.graphData.piecesOfEvidence.sort(this.pathSorter);
   }
 
   pathSorter(path1: CgPath, path2: CgPath) {
-    const len1 = path1.path.length;
-    const len2 = path2.path.length;
+    const len1 = path1.evidence.length;
+    const len2 = path2.evidence.length;
     return ((len1 < len2) ? -1 : ((len1 > len2) ? 1 : 0));
   }
 
@@ -92,10 +92,10 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
     const eleMap = { };
     this.sNodeY = height / 2;
     this.sNodeX = width / 2;
-    this.getDefaultPath(this.graphData.inputTriple);
-    this.getAllPaths(this.graphData.pathList);
+    this.getDefaultPath(CgTriple.map(this.graphData.fact));
+    this.getAllPaths(this.graphData.piecesOfEvidence, CgTriple.map(this.graphData.fact));
     // Sending pathlist to details view (with id added)
-    this.sendDetails(this.graphData.pathList);
+    this.sendDetails(this.graphData.piecesOfEvidence);
 
     this.drawEdges(this.edgeArr);
     this.drawCircles(this.nodeArr);
@@ -148,8 +148,8 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
 
   getMaxDist(data: CgData) {
     let maxLen = 1;
-    for (const x in this.graphData.pathList) {
-      const curLen = this.graphData.pathList[x].path.length;
+    for (const x in this.graphData.piecesOfEvidence) {
+      const curLen = this.graphData.piecesOfEvidence[x].evidence.split('>/', 5).length;
       if (curLen > maxLen) {
         maxLen = curLen;
       }
@@ -179,7 +179,7 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
     labelEnter.attr('x', function(d) { if (d.cx === curScope.sNodeX) { return d.cx - curScope.nodeRad - 10; } else if (d.cx === curScope.eNode.cx) { return d.cx + curScope.nodeRad + 10; } else { return d.cx; } });
     labelEnter.attr('y', function(d) { if (d.cy < curScope.sNodeY) {return d.cy - curScope.nodeRad - 8; } else if (d.cy > curScope.sNodeY) {return d.cy + curScope.nodeRad + 2 + fontSz; } else {return d.cy + fontSz / 2; }});
     labelEnter.attr('text-anchor', function(d) { if (d.cx === curScope.sNodeX) { return 'end'; } else if (d.cx === curScope.eNode.cx) { return 'start'; } else { return 'middle'; }});
-    labelEnter.text( function(d) {return GraphViewComponent.getUriName(d.uri); });
+    //labelEnter.text( function(d) {return GraphViewComponent.getUriName(d.uri); });
     labelEnter.attr('font-size', fontSz);
     labelEnter.attr('class', 'node-lbl');
   }
@@ -329,26 +329,39 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
     this.evntService.sendDetailEvent.emit(cgPaths);
   }
 
-  getAllPaths(cgPaths: CgPath[]) {
+  getAllPaths(cgPaths: CgPath[], factForCheck: CgTriple) {
     let yDelta = this.minYDist;
     // Loop through all the paths
     for (let i = 0; i < cgPaths.length; i++) {
       const pathId = i;
       const curPath = cgPaths[i];
+      const evidences = curPath.evidence.split('>/', 4);
       curPath.id = pathId;
       let prevNode = this.sNode;
-      const xDelta = this.maxXDist / curPath.path.length;
-      const pathScore = curPath.pathScore;
+      const xDelta = this.maxXDist / evidences.length;
+      const pathScore = curPath.score;
       // Loop through each triple in a path
-      for (let j = 0; j < curPath.path.length; j++) {
-        const curTriple = curPath.path[j];
-        const curSub = curTriple.subject;
-        const curProp = curTriple.property;
-        const curObj = curTriple.object;
+      for (let j = 0; j < evidences.length; j++) {
+
+        let curSub = factForCheck.subject;
+        if (j > 0) {
+          curSub = 'a' + j;
+        }
+        let curObj = factForCheck.object;
+        if (j + 1 !== evidences.length) {
+          const tempJ = j + 1;
+          curObj = 'a' + tempJ;
+        }
+        let isReverse = false;
+        if (evidences[j][0] === '^' ) {
+          isReverse = true;
+        }
+        const curProp = evidences[j].replace('<', '').replace('>', '').replace('^','');
         const nextNode: CgNodeItem = new CgNodeItem(prevNode.cx + xDelta, this.sNode.cy + yDelta, '');
         const edge: CgLineItem = new CgLineItem(0, 0, 0, 0, curProp, pathScore, this.uip.getUniqueId(), pathId);
         let fromNode: CgNodeItem;
         let toNode: CgNodeItem;
+        let tempNode: CgNodeItem;
         if (curSub === prevNode.uri) {
           nextNode.uri = curObj;
           fromNode = prevNode;
@@ -358,6 +371,13 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
           fromNode = nextNode;
           toNode = prevNode;
         }
+
+        if ( isReverse ) {
+          tempNode = fromNode;
+          fromNode = toNode;
+          toNode = tempNode;
+        }
+
         if (nextNode.uri === this.eNode.uri) {
           if (prevNode.uri === this.sNode.uri) {
             edge.isCurved = true;

@@ -17,7 +17,7 @@ public class NamespaceFilter implements IRIFilter {
   /**
    * The name space that will be used to filter.
    */
-  protected String namespace;
+  protected String namespaces[];
 
   /**
    * Constructor that assumes that IRIs with the given name space should be excluded.
@@ -25,7 +25,16 @@ public class NamespaceFilter implements IRIFilter {
    * @param namespace the name space that will be used to filter
    */
   public NamespaceFilter(String namespace) {
-    this(namespace, true);
+    this(new String[] {namespace}, true);
+  }
+
+  /**
+   * Constructor that assumes that IRIs with the given name spaces should be excluded.
+   * 
+   * @param namespace the name space that will be used to filter
+   */
+  public NamespaceFilter(String[] namespaces) {
+    this(namespaces, true);
   }
 
   /**
@@ -36,30 +45,51 @@ public class NamespaceFilter implements IRIFilter {
    *        given name space. Else, it will exclude all other IRIs.
    */
   public NamespaceFilter(String namespace, boolean excludeMatch) {
+    this(new String[] {namespace}, excludeMatch);
+  }
+
+  /**
+   * Constructor.
+   * 
+   * @param namespaces the name spaces that will be used to filter
+   * @param excludeMatch if this flag is {@code true} the filter will exclude IRIs that match the
+   *        given name space. Else, it will exclude all other IRIs.
+   */
+  public NamespaceFilter(String[] namespaces, boolean excludeMatch) {
     super();
     this.excludeMatch = excludeMatch;
-    this.namespace = namespace;
+    this.namespaces = namespaces;
   }
 
   @Override
   public void addFilter(String variableName, StringBuilder queryBuilder) {
     if (excludeMatch) {
-      queryBuilder.append(" FILTER(!strstarts(str(?");
+      queryBuilder.append(" FILTER(!");
     } else {
-      queryBuilder.append(" FILTER(strstarts(str(?");
+      queryBuilder.append(" FILTER(");
     }
-    queryBuilder.append(variableName);
-    queryBuilder.append("),\"");
-    queryBuilder.append(namespace);
-    queryBuilder.append("\")) \n");
+    boolean first = true;
+    for (int i = 0; i < namespaces.length; ++i) {
+      if(first) {
+        first = false;
+      } else {
+        queryBuilder.append(excludeMatch ? " && " : " || "); // TODO!!!!
+      }
+      queryBuilder.append("strstarts(str(?");
+      queryBuilder.append(variableName);
+      queryBuilder.append("),\"");
+      queryBuilder.append(namespaces[i]);
+      queryBuilder.append("\")");
+    }
+    queryBuilder.append(") \n");
   }
 
   public boolean isExcludeMatch() {
     return excludeMatch;
   }
 
-  public String getNamespace() {
-    return namespace;
+  public String[] getNamespaces() {
+    return namespaces;
   }
   
 }
