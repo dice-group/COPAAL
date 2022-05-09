@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.dice.factcheck</groupId>
 	<artifactId>preprocess</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0</version>
 	<name>preprocess</name>
 	<description>pre process the KG</description>
 	<properties>
