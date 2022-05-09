@@ -25,7 +25,6 @@ export class DetailViewComponent implements OnInit {
       this.infoArr.sort(this.pathScoreSorter);
       this.setAllItemHovDef();
       });
-
     });
 
     evntService.pathClickEvent.subscribe((id: number) => {
@@ -34,8 +33,8 @@ export class DetailViewComponent implements OnInit {
   }
 
   pathScoreSorter(path1: CgPath, path2: CgPath) {
-    const scr1 = path1.pathScore;
-    const scr2 = path2.pathScore;
+    const scr1 = path1.score;
+    const scr2 = path2.score;
     return ((scr2 < scr1) ? -1 : ((scr2 > scr1) ? 1 : 0));
   }
 

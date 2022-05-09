@@ -1,13 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>org.dice.FactCheck</groupId>
+	<groupId>org.dice.factcheck</groupId>
 	<artifactId>Corraborative</artifactId>
-	<version>0.3.0-SNAPSHOT</version>
+	<version>0.2.2</version>
 	<packaging>jar</packaging>
 
-	<name>Corraborative</name>
+	<name>COPAAL Service</name>
 	<url>http://maven.apache.org</url>
 
 	<parent>
@@ -18,9 +19,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<java.version>1.8</java.version>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
 	</properties>
 
 	<repositories>
@@ -60,7 +60,13 @@
 			<artifactId>opencsv</artifactId>
 			<version>4.0</version>
 		</dependency>
-        
+		<!-- https://mvnrepository.com/artifact/com.beust/jcommander -->
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.78</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.apache.jena/jena-core -->
 		<dependency>
 			<groupId>org.apache.jena</groupId>
@@ -79,7 +85,6 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
-			<version>4.4.11</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.jena/jena -->
@@ -102,6 +107,10 @@
 			<artifactId>BENGAL</artifactId>
 			<version>1.0-SNAPSHOT</version>
 			<exclusions>
+				<exclusion>
+					<groupId>com.github.sharispe</groupId>
+					<artifactId>slib-sml</artifactId>
+				</exclusion>
 				<exclusion>
 					<groupId>edu.berkeley.compbio</groupId>
 					<artifactId>jlibsvm</artifactId>
@@ -136,6 +145,31 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Logging dependencies -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -145,6 +179,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<executable>true</executable>
+					<mainClass>org.dice_research.fc.run.Application</mainClass>
 				</configuration>
 				<executions>
 					<execution>
@@ -158,37 +193,30 @@
 					</execution>
 				</executions>
 			</plugin>
-            <!-- Surefire plugin for JUnit tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <!-- connect with JaCoCo -->
-                    <systemPropertyVariables>
-                        <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
-            <!-- JaCoCo plugin for test coverage reports -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.7</version>
-                <executions>
-                    <execution>
-                        <id>default-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-		</plugins>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.8</version>
+			</plugin>
+        </plugins>
 	</build>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>1.2.17</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>2.0.0-alpha1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>2.0.0-alpha1</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>

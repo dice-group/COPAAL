@@ -33,7 +33,7 @@ jobs:
       run: mvn clean install -DskipTests=true -Dmaven.javadoc.skip=true --batch-mode --update-snapshots --show-version
       working-directory: service
     - name: Run tests with Maven
-      run: mvn jacoco:prepare-agent verify -Dmaven.javadoc.skip=true -B jacoco:report
+      run: mvn jacoco:prepare-agent verify -Dmaven.javadoc.skip=true -B -X jacoco:report
       working-directory: service
     - name: Upload test results to Codacy
       run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r service/target/site/jacoco/jacoco.xml

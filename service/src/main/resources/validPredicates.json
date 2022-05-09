@@ -1,0 +1,32 @@
+[
+  {
+  "Domain": ["http://dbpedia.org/ontology/Animal"],
+  "Range": ["http://dbpedia.org/ontology/Place"],
+  "Predicate": "http://dbpedia.org/ontology/birthPlace"
+  },
+  {
+    "Domain": ["http://dbpedia.org/ontology/Animal"],
+    "Range": ["http://dbpedia.org/ontology/Place"],
+    "Predicate": "http://dbpedia.org/ontology/deathPlace"
+  },
+  {
+    "Domain": ["http://dbpedia.org/ontology/Organisation"],
+    "Range": ["http://dbpedia.org/ontology/City"],
+    "Predicate": "http://dbpedia.org/ontology/foundationPlace"
+  },
+  {
+    "Domain": ["http://dbpedia.org/ontology/Person"],
+    "Range": ["http://dbpedia.org/ontology/Person"],
+    "Predicate": "http://dbpedia.org/ontology/spouse"
+  },
+  {
+    "Domain": ["http://dbpedia.org/ontology/Work"],
+    "Range": ["http://dbpedia.org/ontology/Actor"],
+    "Predicate": "http://dbpedia.org/ontology/starring"
+  },
+  {
+    "Domain": ["http://dbpedia.org/ontology/Company"],
+    "Range": ["http://dbpedia.org/ontology/Company"],
+    "Predicate": "http://dbpedia.org/ontology/subsidiary"
+  }
+]

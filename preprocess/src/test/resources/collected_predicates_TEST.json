@@ -1,0 +1,17 @@
+[
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerClub"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/ground"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FictionalCharacter"],
+        "Range": ["http://dbpedia.org/ontology/Novel"],
+        "Predicate": "http://dbpedia.org/ontology/novel"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Actor"],
+        "Predicate": "http://dbpedia.org/ontology/starring"
+    }
+]

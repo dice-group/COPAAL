@@ -1,0 +1,3512 @@
+[
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerClub"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/ground"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FictionalCharacter"],
+        "Range": ["http://dbpedia.org/ontology/Novel"],
+        "Predicate": "http://dbpedia.org/ontology/novel"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Actor"],
+        "Predicate": "http://dbpedia.org/ontology/starring"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/generalManager"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/land"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Artist"],
+        "Predicate": "http://dbpedia.org/ontology/disciple"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FictionalCharacter"],
+        "Range": ["http://dbpedia.org/ontology/Drama"],
+        "Predicate": "http://dbpedia.org/ontology/drama"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/northWestPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/Athlete"],
+        "Predicate": "http://dbpedia.org/ontology/championInSingleFemale"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PublicTransitSystem"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/destination"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/Sport"],
+        "Predicate": "http://dbpedia.org/ontology/sportSpecialty"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/TelevisionShow"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/coExecutiveProducer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/TermOfOffice"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/presidentRegionalCouncil"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Range": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Predicate": "http://dbpedia.org/ontology/landingVehicle"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete,_CareerStation"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/leadTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/WrittenWork"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/illustrator"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/largestCity"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Range": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Predicate": "http://dbpedia.org/ontology/branchFrom"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/residence"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerClub"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/clubsRecordGoalscorer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Department"],
+        "Predicate": "http://dbpedia.org/ontology/department"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/goldenGlobeAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Family"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/lastFamilyMember"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/PersonFunction"],
+        "Predicate": "http://dbpedia.org/ontology/leaderFunction"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/RecordLabel"],
+        "Range": ["http://dbpedia.org/ontology/Company"],
+        "Predicate": "http://dbpedia.org/ontology/distributingCompany"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Population"],
+        "Predicate": "http://dbpedia.org/ontology/agglomerationPopulation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/sibling"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Plant"],
+        "Range": ["http://dbpedia.org/ontology/CultivatedVariety"],
+        "Predicate": "http://dbpedia.org/ontology/cultivatedVariety"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Restaurant"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/headChef"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/Island"],
+        "Predicate": "http://dbpedia.org/ontology/leftChild"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FictionalCharacter"],
+        "Range": ["http://dbpedia.org/ontology/Species"],
+        "Predicate": "http://dbpedia.org/ontology/enemy"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FormulaOneRacer"],
+        "Range": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Predicate": "http://dbpedia.org/ontology/firstRace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Actor"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/arielAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Infrastructure"],
+        "Range": ["http://dbpedia.org/ontology/Infrastructure"],
+        "Predicate": "http://dbpedia.org/ontology/previousInfrastructure"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/thirdCommander"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Saint"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/beatifiedPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Mountain"],
+        "Range": ["http://dbpedia.org/ontology/MountainRange"],
+        "Predicate": "http://dbpedia.org/ontology/alpsGroup"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Scientist"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/doctoralAdvisor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/Mountain"],
+        "Predicate": "http://dbpedia.org/ontology/governmentMountain"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/trustee"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/RoadJunction"],
+        "Range": ["http://dbpedia.org/ontology/Road"],
+        "Predicate": "http://dbpedia.org/ontology/meetingRoad"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Intercommunality"],
+        "Range": ["http://dbpedia.org/ontology/Community"],
+        "Predicate": "http://dbpedia.org/ontology/shape"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Mountain"],
+        "Range": ["http://dbpedia.org/ontology/MountainRange"],
+        "Predicate": "http://dbpedia.org/ontology/mountainRange"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Species"],
+        "Range": ["http://dbpedia.org/ontology/Taxon"],
+        "Predicate": "http://dbpedia.org/ontology/subFamily"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/administrativeCollectivity"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/firstDriverCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/secondTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Legislature"],
+        "Range": ["http://dbpedia.org/ontology/PoliticalParty"],
+        "Predicate": "http://dbpedia.org/ontology/politicalPartyOfLeader"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftHelicopter"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Artist"],
+        "Predicate": "http://dbpedia.org/ontology/mentor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/managementRegion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/ceo"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/playerInTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Agent"],
+        "Range": ["http://dbpedia.org/ontology/Artist"],
+        "Predicate": "http://dbpedia.org/ontology/artPatron"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/University"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/officerInCharge"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Spacecraft"],
+        "Range": ["http://dbpedia.org/ontology/SpaceStation"],
+        "Predicate": "http://dbpedia.org/ontology/targetSpaceStation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/TelevisionShow"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/presenter"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/Athlete"],
+        "Predicate": "http://dbpedia.org/ontology/championInDouble"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftTransport"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/secondCommander"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/currentTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Range": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Predicate": "http://dbpedia.org/ontology/previousMission"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Species"],
+        "Range": ["http://dbpedia.org/ontology/Species"],
+        "Predicate": "http://dbpedia.org/ontology/subTribus"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Agent"],
+        "Range": ["http://dbpedia.org/ontology/Settlement"],
+        "Predicate": "http://dbpedia.org/ontology/hometown"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Airline"],
+        "Range": ["http://dbpedia.org/ontology/Airport"],
+        "Predicate": "http://dbpedia.org/ontology/hubAirport"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/IceHockeyPlayer"],
+        "Range": ["http://dbpedia.org/ontology/HockeyTeam"],
+        "Predicate": "http://dbpedia.org/ontology/khlDraftTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/Sport"],
+        "Predicate": "http://dbpedia.org/ontology/horseRidingDiscipline"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftPatrol"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Tournament"],
+        "Predicate": "http://dbpedia.org/ontology/worldTournament"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/BodyOfWater"],
+        "Range": ["http://dbpedia.org/ontology/Island"],
+        "Predicate": "http://dbpedia.org/ontology/island"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/BodyOfWater"],
+        "Predicate": "http://dbpedia.org/ontology/lake"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/Athlete"],
+        "Predicate": "http://dbpedia.org/ontology/championInMixedDouble"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/tonyAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artwork"],
+        "Range": ["http://dbpedia.org/ontology/Museum"],
+        "Predicate": "http://dbpedia.org/ontology/museum"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/GrossDomesticProductPerCapita"],
+        "Predicate": "http://dbpedia.org/ontology/grossDomesticProductNominalPerCapita"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/administrator"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Sport"],
+        "Range": ["http://dbpedia.org/ontology/Agent"],
+        "Predicate": "http://dbpedia.org/ontology/currentWorldChampion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/oldDistrict"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/University"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/provost"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ChemicalSubstance"],
+        "Range": ["http://dbpedia.org/ontology/ChemicalSubstance"],
+        "Predicate": "http://dbpedia.org/ontology/solventWithGoodSolubility"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerTournament"],
+        "Range": ["http://dbpedia.org/ontology/SoccerPlayer"],
+        "Predicate": "http://dbpedia.org/ontology/soccerTournamentTopScorer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MusicGenre"],
+        "Range": ["http://dbpedia.org/ontology/MusicGenre"],
+        "Predicate": "http://dbpedia.org/ontology/derivative"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Canal"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/originalEndPoint"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Event"],
+        "Range": ["http://dbpedia.org/ontology/Event"],
+        "Predicate": "http://dbpedia.org/ontology/nextEvent"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Film"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/makeupArtist"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/lowestRegion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/reffBourgmestre"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PoliticalParty"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/spokesperson"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Mountain"],
+        "Range": ["http://dbpedia.org/ontology/MountainRange"],
+        "Predicate": "http://dbpedia.org/ontology/alpsSupergroup"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/LegalCase"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/solicitorGeneral"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Comedian"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/britishComedyAwards"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsLeague"],
+        "Predicate": "http://dbpedia.org/ontology/currentLeague"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/collaboration"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftBomber"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/Mountain"],
+        "Predicate": "http://dbpedia.org/ontology/sourceConfluenceMountain"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Language"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/spokenIn"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PublicTransitSystem"],
+        "Range": ["http://dbpedia.org/ontology/Station"],
+        "Predicate": "http://dbpedia.org/ontology/importantStation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Magazine"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/previousEditor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MusicalWork"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/lyrics"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/Organisation"],
+        "Predicate": "http://dbpedia.org/ontology/parentOrganisation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Mountain"],
+        "Range": ["http://dbpedia.org/ontology/MountainRange"],
+        "Predicate": "http://dbpedia.org/ontology/alpsSubsection"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/RouteStop"],
+        "Predicate": "http://dbpedia.org/ontology/isRouteStop"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Monastry"],
+        "Range": ["http://dbpedia.org/ontology/ClericalOrder"],
+        "Predicate": "http://dbpedia.org/ontology/religiousOrder"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Automobile"],
+        "Range": ["http://dbpedia.org/ontology/AutomobileEngine"],
+        "Predicate": "http://dbpedia.org/ontology/engine"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Comedian"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/olivierAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/managementCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Sport"],
+        "Predicate": "http://dbpedia.org/ontology/sportDiscipline"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerTournament"],
+        "Range": ["http://dbpedia.org/ontology/SoccerClub"],
+        "Predicate": "http://dbpedia.org/ontology/soccerTournamentMostSteady"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/district"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Musical"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/musicBy"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/usurper"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artwork"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/painter"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Newspaper"],
+        "Range": ["http://dbpedia.org/ontology/Newspaper"],
+        "Predicate": "http://dbpedia.org/ontology/sisterNewspaper"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/dubber"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Depth"],
+        "Predicate": "http://dbpedia.org/ontology/depths"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/partner"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/nflTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/lowestState"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Newspaper"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/associateEditor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/EducationalInstitution"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/head"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/currentTeamManager"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ReligiousBuilding"],
+        "Range": ["http://dbpedia.org/ontology/Cemetery"],
+        "Predicate": "http://dbpedia.org/ontology/cemetery"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Range": ["http://dbpedia.org/ontology/LaunchPad"],
+        "Predicate": "http://dbpedia.org/ontology/launchPad"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artery"],
+        "Range": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Predicate": "http://dbpedia.org/ontology/supplies"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Newspaper"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/managingEditor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/YearInSpaceflight"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/countryWithFirstAstronaut"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/teamCoached"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/Building"],
+        "Predicate": "http://dbpedia.org/ontology/building"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Range": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Predicate": "http://dbpedia.org/ontology/nextMission"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/geolocDepartment"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/RouteOfTransportation"],
+        "Range": ["http://dbpedia.org/ontology/Station"],
+        "Predicate": "http://dbpedia.org/ontology/routeStart"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/delegateMayor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/MusicalArtist"],
+        "Predicate": "http://dbpedia.org/ontology/musicComposer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/Organisation"],
+        "Predicate": "http://dbpedia.org/ontology/mergedWith"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Infrastructure"],
+        "Range": ["http://dbpedia.org/ontology/Infrastructure"],
+        "Predicate": "http://dbpedia.org/ontology/subsequentInfrastructure"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Rocket"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/countryOrigin"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Infrastructure"],
+        "Range": ["http://dbpedia.org/ontology/Caterer"],
+        "Predicate": "http://dbpedia.org/ontology/caterer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Monarch"],
+        "Range": ["http://dbpedia.org/ontology/Monarch"],
+        "Predicate": "http://dbpedia.org/ontology/coemperor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/borough"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Work"],
+        "Predicate": "http://dbpedia.org/ontology/subsequentWork"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/managerClub"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Film"],
+        "Predicate": "http://dbpedia.org/ontology/movie"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Rocket"],
+        "Range": ["http://dbpedia.org/ontology/Rocket"],
+        "Predicate": "http://dbpedia.org/ontology/comparable"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/fastestDriverTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/leaderName"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Altitude"],
+        "Predicate": "http://dbpedia.org/ontology/altitude"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Diploma"],
+        "Predicate": "http://dbpedia.org/ontology/diploma"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerLeagueSeason"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/soccerLeagueRelegated"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/educationPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Legislature"],
+        "Predicate": "http://dbpedia.org/ontology/legislature"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Brain"],
+        "Range": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Predicate": "http://dbpedia.org/ontology/component"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/highestState"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/gaudiAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Document"],
+        "Range": ["http://dbpedia.org/ontology/Annotation"],
+        "Predicate": "http://dbpedia.org/ontology/hasAnnotation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/EducationalInstitution"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/dean"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/garrison"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/capitalCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/oldProvince"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/neighboringMunicipality"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ResearchProject"],
+        "Range": ["http://dbpedia.org/ontology/Organisation"],
+        "Predicate": "http://dbpedia.org/ontology/fundedBy"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/River"],
+        "Predicate": "http://dbpedia.org/ontology/riverBranch"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/spouse"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/southWestPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Film"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/editing"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/formerTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/associationOfLocalGovernment"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/cesarAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/unesco"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/currentMember"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/nearestCity"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Agent"],
+        "Range": ["http://dbpedia.org/ontology/Ideology"],
+        "Predicate": "http://dbpedia.org/ontology/ideology"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Event"],
+        "Range": ["http://dbpedia.org/ontology/Currency"],
+        "Predicate": "http://dbpedia.org/ontology/damage"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/regionServed"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/namedByLanguage"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Actor"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/naacpImageAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/chairperson"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Species"],
+        "Range": ["http://dbpedia.org/ontology/Species"],
+        "Predicate": "http://dbpedia.org/ontology/family"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Album"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/compiler"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/OlympicResult"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/flagBearer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Film"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/cinematography"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/sovereignCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ArchitecturalStructure"],
+        "Range": ["http://dbpedia.org/ontology/Company"],
+        "Predicate": "http://dbpedia.org/ontology/architectualBureau"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/RecordLabel"],
+        "Range": ["http://dbpedia.org/ontology/RecordLabel"],
+        "Predicate": "http://dbpedia.org/ontology/distributingLabel"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/BodyOfWater"],
+        "Range": ["http://dbpedia.org/ontology/BodyOfWater"],
+        "Predicate": "http://dbpedia.org/ontology/inflow"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/settlementAttached"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryPerson"],
+        "Range": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Predicate": "http://dbpedia.org/ontology/militaryBranch"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Film"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/specialEffects"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Actor"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/screenActorsGuildAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/fourthCommander"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Organisation"],
+        "Predicate": "http://dbpedia.org/ontology/employer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Species"],
+        "Range": ["http://dbpedia.org/ontology/Species"],
+        "Predicate": "http://dbpedia.org/ontology/tribus"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryConflict_,_Attack"],
+        "Range": ["http://dbpedia.org/ontology/Weapon"],
+        "Predicate": "http://dbpedia.org/ontology/weapon"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Animal"],
+        "Range": ["http://dbpedia.org/ontology/Animal"],
+        "Predicate": "http://dbpedia.org/ontology/dam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftFighter"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Weapon"],
+        "Range": ["http://dbpedia.org/ontology/MilitaryConflict"],
+        "Predicate": "http://dbpedia.org/ontology/usedInWar"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/mainCharacter"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Company"],
+        "Predicate": "http://dbpedia.org/ontology/productionCompany"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Artist"],
+        "Predicate": "http://dbpedia.org/ontology/associatedAct"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/Athlete"],
+        "Predicate": "http://dbpedia.org/ontology/championInSingle"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/southPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/principalArea"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Film"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/director"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Skyscraper"],
+        "Range": ["http://dbpedia.org/ontology/Company"],
+        "Predicate": "http://dbpedia.org/ontology/contractor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ReligiousBuilding"],
+        "Range": ["http://dbpedia.org/ontology/Organ"],
+        "Predicate": "http://dbpedia.org/ontology/organ"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerPlayer"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/trainerClub"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/relative"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Monarch"],
+        "Range": ["http://dbpedia.org/ontology/Monarch"],
+        "Predicate": "http://dbpedia.org/ontology/regentOf"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerLeagueSeason"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/soccerLeaguePromoted"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Animal"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/deathPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Restaurant"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/chef"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftHelicopterMultirole"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/Island"],
+        "Predicate": "http://dbpedia.org/ontology/majorIsland"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/IceHockeyPlayer"],
+        "Range": ["http://dbpedia.org/ontology/HockeyTeam"],
+        "Predicate": "http://dbpedia.org/ontology/prospectTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/LaunchPad"],
+        "Range": ["http://dbpedia.org/ontology/Rocket"],
+        "Predicate": "http://dbpedia.org/ontology/firstLaunchRocket"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/detractor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Attack"],
+        "Range": ["http://dbpedia.org/ontology/Agent"],
+        "Predicate": "http://dbpedia.org/ontology/perpetrator"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerTournament"],
+        "Range": ["http://dbpedia.org/ontology/SoccerClub"],
+        "Predicate": "http://dbpedia.org/ontology/soccerTournamentLastChampion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/firstDriver"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/Athletics"],
+        "Predicate": "http://dbpedia.org/ontology/athleticsDiscipline"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryConflict,_AdministrativeRegion"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/territory"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/mouthPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Range": ["http://dbpedia.org/ontology/SpaceShuttle"],
+        "Predicate": "http://dbpedia.org/ontology/shuttle"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/subdivisionName"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Group"],
+        "Predicate": "http://dbpedia.org/ontology/minority"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/PersonFunction"],
+        "Predicate": "http://dbpedia.org/ontology/personFunction"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/capitalRegion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FigureSkater"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/formerCoach"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Actor"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/goldenCalfAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/Mountain"],
+        "Predicate": "http://dbpedia.org/ontology/mouthMountain"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Animal"],
+        "Range": ["http://dbpedia.org/ontology/Animal"],
+        "Predicate": "http://dbpedia.org/ontology/damsire"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Broadcaster"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/broadcastArea"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/TelevisionShow"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/storyEditor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/Mountain"],
+        "Predicate": "http://dbpedia.org/ontology/capitalMountain"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/YearInSpaceflight"],
+        "Range": ["http://dbpedia.org/ontology/Rocket"],
+        "Predicate": "http://dbpedia.org/ontology/maidenFlightRocket"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Legislature"],
+        "Range": ["http://dbpedia.org/ontology/Settlement"],
+        "Predicate": "http://dbpedia.org/ontology/meetingCity"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/unitaryAuthority"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/OfficeHolder"],
+        "Range": ["http://dbpedia.org/ontology/PoliticalParty"],
+        "Predicate": "http://dbpedia.org/ontology/otherParty"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FormulaOneRacer"],
+        "Range": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Predicate": "http://dbpedia.org/ontology/lastRace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FictionalCharacter"],
+        "Range": ["http://dbpedia.org/ontology/Comic"],
+        "Predicate": "http://dbpedia.org/ontology/comic"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/ncaaTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/northPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/author"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Altitude"],
+        "Predicate": "http://dbpedia.org/ontology/lowestAltitude"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/School"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/vicePrincipal"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Bridge"],
+        "Range": ["http://dbpedia.org/ontology/River"],
+        "Predicate": "http://dbpedia.org/ontology/crosses"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/WrittenWork"],
+        "Range": ["http://dbpedia.org/ontology/Magazine"],
+        "Predicate": "http://dbpedia.org/ontology/magazine"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/NorwaySettlement"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/mostDownPoint"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/EducationalInstitution"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/actingHeadteacher"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/IceHockeyPlayer"],
+        "Range": ["http://dbpedia.org/ontology/HockeyTeam"],
+        "Predicate": "http://dbpedia.org/ontology/lchfDraftTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/bourgmestre"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Single"],
+        "Range": ["http://dbpedia.org/ontology/Band"],
+        "Predicate": "http://dbpedia.org/ontology/musicalBand"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/placeOfBurial"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Animal"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/breeder"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Range": ["http://dbpedia.org/ontology/SpaceStation"],
+        "Predicate": "http://dbpedia.org/ontology/spacestation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Province"],
+        "Predicate": "http://dbpedia.org/ontology/province"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerTournament"],
+        "Range": ["http://dbpedia.org/ontology/SoccerClub"],
+        "Predicate": "http://dbpedia.org/ontology/soccerTournamentMostSuccesfull"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/OlympicResult"],
+        "Range": ["http://dbpedia.org/ontology/OlympicResult"],
+        "Predicate": "http://dbpedia.org/ontology/otherAppearances"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Actor"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/geminiAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/medalist"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Train"],
+        "Range": ["http://dbpedia.org/ontology/TrainCarriage"],
+        "Predicate": "http://dbpedia.org/ontology/wagon"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Architect"],
+        "Range": ["http://dbpedia.org/ontology/Building"],
+        "Predicate": "http://dbpedia.org/ontology/significantBuilding"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ClericalAdministrativeRegion"],
+        "Range": ["http://dbpedia.org/ontology/ReligiousBuilding"],
+        "Predicate": "http://dbpedia.org/ontology/placeOfWorship"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Tournament"],
+        "Predicate": "http://dbpedia.org/ontology/nationalTournament"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Gene"],
+        "Range": ["http://dbpedia.org/ontology/Gene"],
+        "Predicate": "http://dbpedia.org/ontology/orthologousGene"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/BodyOfWater"],
+        "Predicate": "http://dbpedia.org/ontology/riverMouth"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/firstDriverTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SpaceShuttle"],
+        "Range": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Predicate": "http://dbpedia.org/ontology/firstFlight"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Range": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Predicate": "http://dbpedia.org/ontology/drainsFrom"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftHelicopterTransport"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/coverArtist"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Tournament"],
+        "Predicate": "http://dbpedia.org/ontology/olympicGames"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerLeagueSeason"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/soccerLeagueWinner"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FictionalCharacter"],
+        "Range": ["http://dbpedia.org/ontology/Species"],
+        "Predicate": "http://dbpedia.org/ontology/entourage"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Work"],
+        "Predicate": "http://dbpedia.org/ontology/basedOn"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Canal"],
+        "Range": ["http://dbpedia.org/ontology/Canal"],
+        "Predicate": "http://dbpedia.org/ontology/hasJunctionWith"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/governmentPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/club"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/WineRegion"],
+        "Range": ["http://dbpedia.org/ontology/Grape"],
+        "Predicate": "http://dbpedia.org/ontology/growingGrape"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/parish"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/OlympicResult"],
+        "Range": ["http://dbpedia.org/ontology/OlympicResult"],
+        "Predicate": "http://dbpedia.org/ontology/summerAppearances"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/trainer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/School"],
+        "Range": ["http://dbpedia.org/ontology/School"],
+        "Predicate": "http://dbpedia.org/ontology/rivalSchool"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete,_CareerStation"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/amateurTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Boxer"],
+        "Range": ["http://dbpedia.org/ontology/Sport"],
+        "Predicate": "http://dbpedia.org/ontology/boxerStyle"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerLeagueSeason"],
+        "Range": ["http://dbpedia.org/ontology/SoccerLeagueSeason"],
+        "Predicate": "http://dbpedia.org/ontology/soccerLeagueSeason"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/sourceConfluenceState"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Range": ["http://dbpedia.org/ontology/Embryology"],
+        "Predicate": "http://dbpedia.org/ontology/precursor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/bronzeMedalist"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/sourceConfluenceCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/EthnicGroup"],
+        "Predicate": "http://dbpedia.org/ontology/ethnicity"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/goldMedalist"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Species"],
+        "Range": ["http://dbpedia.org/ontology/Species"],
+        "Predicate": "http://dbpedia.org/ontology/fossil"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/RouteOfTransportation"],
+        "Range": ["http://dbpedia.org/ontology/Station"],
+        "Predicate": "http://dbpedia.org/ontology/routeJunction"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Event"],
+        "Range": ["http://dbpedia.org/ontology/Event"],
+        "Predicate": "http://dbpedia.org/ontology/previousEvent"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FigureSkater"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/formerPartner"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Language"],
+        "Predicate": "http://dbpedia.org/ontology/originalLanguage"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/poleDriverTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/TelevisionShow"],
+        "Range": ["http://dbpedia.org/ontology/Work"],
+        "Predicate": "http://dbpedia.org/ontology/openingTheme"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/student"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Saint"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/canonizedBy"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/closeTo"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Range": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Predicate": "http://dbpedia.org/ontology/drainsTo"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/LaunchPad"],
+        "Range": ["http://dbpedia.org/ontology/Rocket"],
+        "Predicate": "http://dbpedia.org/ontology/lastLaunchRocket"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Agent"],
+        "Range": ["http://dbpedia.org/ontology/Event"],
+        "Predicate": "http://dbpedia.org/ontology/roleInEvent"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FilmFestival"],
+        "Range": ["http://dbpedia.org/ontology/Film"],
+        "Predicate": "http://dbpedia.org/ontology/closingFilm"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Olympics"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/officialOpenedBy"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/secretaryGeneral"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/City"],
+        "Predicate": "http://dbpedia.org/ontology/locationCity"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/EducationalInstitution"],
+        "Predicate": "http://dbpedia.org/ontology/training"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Range": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Predicate": "http://dbpedia.org/ontology/organSystem"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/composer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/IceHockeyPlayer"],
+        "Range": ["http://dbpedia.org/ontology/HockeyTeam"],
+        "Predicate": "http://dbpedia.org/ontology/whaDraftTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Organisation"],
+        "Predicate": "http://dbpedia.org/ontology/governingBody"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Olympics"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/olympicOathSwornByJudge"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/largestSettlement"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/metropolitanBorough"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Plant"],
+        "Range": ["http://dbpedia.org/ontology/Plant"],
+        "Predicate": "http://dbpedia.org/ontology/hybrid"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ResearchProject"],
+        "Range": ["http://dbpedia.org/ontology/Organisation"],
+        "Predicate": "http://dbpedia.org/ontology/projectCoordinator"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Predicate": "http://dbpedia.org/ontology/competitionTitle"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftHelicopterCargo"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/highestPoint"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Man"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/father"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/hasOutsidePlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Area"],
+        "Predicate": "http://dbpedia.org/ontology/agglomerationArea"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/relation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/westPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Mountain"],
+        "Range": ["http://dbpedia.org/ontology/MountainRange"],
+        "Predicate": "http://dbpedia.org/ontology/alpsSection"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Broadcaster"],
+        "Range": ["http://dbpedia.org/ontology/Broadcaster"],
+        "Predicate": "http://dbpedia.org/ontology/sisterStation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/poleDriver"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Film"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/setDesigner"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Altitude"],
+        "Predicate": "http://dbpedia.org/ontology/highestAltitude"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Race"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/firstWinner"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MusicalWork"],
+        "Predicate": "http://dbpedia.org/ontology/march"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/relatedMeanOfTransportation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Man"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/uncle"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/College"],
+        "Range": ["http://dbpedia.org/ontology/College"],
+        "Predicate": "http://dbpedia.org/ontology/sisterCollege"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftRecon"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Legislature"],
+        "Range": ["http://dbpedia.org/ontology/Building"],
+        "Predicate": "http://dbpedia.org/ontology/meetingBuilding"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/RaceTrack"],
+        "Predicate": "http://dbpedia.org/ontology/raceTrack"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/EducationalInstitution"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/custodian"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Band"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/bandMember"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Municipality"],
+        "Range": ["http://dbpedia.org/ontology/FormerMunicipality"],
+        "Predicate": "http://dbpedia.org/ontology/hasAbsorbedMunicipality"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/LaunchPad"],
+        "Range": ["http://dbpedia.org/ontology/Rocket"],
+        "Predicate": "http://dbpedia.org/ontology/associatedRocket"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/Athlete"],
+        "Predicate": "http://dbpedia.org/ontology/championInDoubleFemale"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Demographics"],
+        "Predicate": "http://dbpedia.org/ontology/demographics"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/TelevisionShow"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/coProducer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/afiAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/highestRegion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/LegalCase"],
+        "Range": ["http://dbpedia.org/ontology/SystemOfLaw"],
+        "Predicate": "http://dbpedia.org/ontology/systemOfLaw"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Currency"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/usingCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Broadcaster"],
+        "Range": ["http://dbpedia.org/ontology/Broadcaster"],
+        "Predicate": "http://dbpedia.org/ontology/network"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/nationality"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Species"],
+        "Predicate": "http://dbpedia.org/ontology/tree"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/debutTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/List"],
+        "Predicate": "http://dbpedia.org/ontology/relatedPlaces"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Range": ["http://dbpedia.org/ontology/Lymph"],
+        "Predicate": "http://dbpedia.org/ontology/lymph"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/School"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/nobelLaureates"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/thirdDriverCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/EducationalInstitution"],
+        "Predicate": "http://dbpedia.org/ontology/school"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MultiVolumePublication"],
+        "Range": ["http://dbpedia.org/ontology/WrittenWork"],
+        "Predicate": "http://dbpedia.org/ontology/volumes"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Disease"],
+        "Range": ["http://dbpedia.org/ontology/Vaccine"],
+        "Predicate": "http://dbpedia.org/ontology/vaccination"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Race"],
+        "Range": ["http://dbpedia.org/ontology/SportCompetitionResult"],
+        "Predicate": "http://dbpedia.org/ontology/raceResult"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/River"],
+        "Predicate": "http://dbpedia.org/ontology/river"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Comedian"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/americanComedyAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PoliticalFunction"],
+        "Range": ["http://dbpedia.org/ontology/Politician"],
+        "Predicate": "http://dbpedia.org/ontology/politician"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Range": ["http://dbpedia.org/ontology/TeamMember"],
+        "Predicate": "http://dbpedia.org/ontology/currentTeamMember"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Brain"],
+        "Range": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Predicate": "http://dbpedia.org/ontology/isPartOfAnatomicalStructure"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MusicalArtist"],
+        "Range": ["http://dbpedia.org/ontology/Band"],
+        "Predicate": "http://dbpedia.org/ontology/musicBand"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Range": ["http://dbpedia.org/ontology/Astronaut"],
+        "Predicate": "http://dbpedia.org/ontology/crewMember"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/LegalCase"],
+        "Range": ["http://dbpedia.org/ontology/Judge"],
+        "Predicate": "http://dbpedia.org/ontology/judge"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Band"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/formerBandMember"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/startPoint"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/coachClub"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Olympics"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/olympicOathSwornByAthlete"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SkiResort"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/massif"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/chaplain"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Monarch"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/heir"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ArchitecturalStructure"],
+        "Range": ["http://dbpedia.org/ontology/Organisation"],
+        "Predicate": "http://dbpedia.org/ontology/tenant"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Comedian"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/peabodyAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Mountain"],
+        "Range": ["http://dbpedia.org/ontology/MountainRange"],
+        "Predicate": "http://dbpedia.org/ontology/alpsMainPart"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/announcedFrom"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/TermOfOffice"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/presidentGeneralCouncil"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/PersonFunction"],
+        "Predicate": "http://dbpedia.org/ontology/politicalLeader"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/daira"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Woman"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/aunt"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/mouthDistrict"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/emmyAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/YearInSpaceflight"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/countryWithFirstSatelliteLaunched"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Broadcaster"],
+        "Range": ["http://dbpedia.org/ontology/BroadcastNetwork"],
+        "Predicate": "http://dbpedia.org/ontology/broadcastNetwork"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/lowestPoint"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/northEastPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Work"],
+        "Predicate": "http://dbpedia.org/ontology/previousWork"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/AdministrativeRegion"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/administrativeCenter"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Saint"],
+        "Predicate": "http://dbpedia.org/ontology/saint"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/NobleFamily"],
+        "Range": ["http://dbpedia.org/ontology/Family"],
+        "Predicate": "http://dbpedia.org/ontology/otherFamilyBranch"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FictionalCharacter"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/performer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Work"],
+        "Predicate": "http://dbpedia.org/ontology/debutWork"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/fastestDriverCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Demographics"],
+        "Predicate": "http://dbpedia.org/ontology/previousDemographics"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Politician"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/prefect"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/superintendent"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/River"],
+        "Predicate": "http://dbpedia.org/ontology/riverBranchOf"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Country"],
+        "Range": ["http://dbpedia.org/ontology/Continent"],
+        "Predicate": "http://dbpedia.org/ontology/continent"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftAttack"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/RouteOfTransportation"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/routeStartLocation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MusicalWork"],
+        "Range": ["http://dbpedia.org/ontology/Agent"],
+        "Predicate": "http://dbpedia.org/ontology/artist"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Mountain"],
+        "Range": ["http://dbpedia.org/ontology/Mountain"],
+        "Predicate": "http://dbpedia.org/ontology/parentMountainPeak"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Range": ["http://dbpedia.org/ontology/Vein"],
+        "Predicate": "http://dbpedia.org/ontology/vein"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Actor"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/goldenRaspberryAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Animal"],
+        "Range": ["http://dbpedia.org/ontology/Animal"],
+        "Predicate": "http://dbpedia.org/ontology/grandsire"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/capitalDistrict"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Gene"],
+        "Range": ["http://dbpedia.org/ontology/GeneLocation"],
+        "Predicate": "http://dbpedia.org/ontology/geneLocation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Country"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/twinCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/Athlete"],
+        "Predicate": "http://dbpedia.org/ontology/championInSingleMale"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/largestMetro"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/List"],
+        "Predicate": "http://dbpedia.org/ontology/relatedFunctions"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Range": ["http://dbpedia.org/ontology/Building"],
+        "Predicate": "http://dbpedia.org/ontology/launchSite"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Canal"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/principalEngineer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Plant"],
+        "Predicate": "http://dbpedia.org/ontology/plant"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Department"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/prefecture"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftHelicopterObservation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/releaseLocation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/regency"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/administrativeDistrict"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/hasInsidePlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Instrument"],
+        "Range": ["http://dbpedia.org/ontology/MusicalArtist"],
+        "Predicate": "http://dbpedia.org/ontology/musicians"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Family"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/familyMember"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MusicGenre"],
+        "Range": ["http://dbpedia.org/ontology/MusicGenre"],
+        "Predicate": "http://dbpedia.org/ontology/musicSubgenre"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Document"],
+        "Range": ["http://dbpedia.org/ontology/File"],
+        "Predicate": "http://dbpedia.org/ontology/galleryItem"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/endPoint"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FormerMunicipality"],
+        "Range": ["http://dbpedia.org/ontology/Municipality"],
+        "Predicate": "http://dbpedia.org/ontology/presentMunicipality"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/supply"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Horse"],
+        "Range": ["http://dbpedia.org/ontology/Jockey"],
+        "Predicate": "http://dbpedia.org/ontology/jockey"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/capitalPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/poleDriverCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerTournament"],
+        "Range": ["http://dbpedia.org/ontology/SoccerTournament"],
+        "Predicate": "http://dbpedia.org/ontology/soccerTournamentOpeningSeason"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FilmFestival"],
+        "Range": ["http://dbpedia.org/ontology/Film"],
+        "Predicate": "http://dbpedia.org/ontology/openingFilm"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Legislature"],
+        "Range": ["http://dbpedia.org/ontology/Legislature"],
+        "Predicate": "http://dbpedia.org/ontology/house"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PoliticalParty"],
+        "Predicate": "http://dbpedia.org/ontology/viceLeaderParty"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MusicGenre"],
+        "Range": ["http://dbpedia.org/ontology/MusicGenre"],
+        "Predicate": "http://dbpedia.org/ontology/musicFusionGenre"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/RouteStop"],
+        "Range": ["http://dbpedia.org/ontology/RouteStop"],
+        "Predicate": "http://dbpedia.org/ontology/routeNext"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/ceremonialCounty"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/Athlete"],
+        "Predicate": "http://dbpedia.org/ontology/champion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Actor"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/nationalFilmAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/TelevisionShow"],
+        "Range": ["http://dbpedia.org/ontology/Work"],
+        "Predicate": "http://dbpedia.org/ontology/endingTheme"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Settlement"],
+        "Predicate": "http://dbpedia.org/ontology/twinTown"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/RadioStation"],
+        "Predicate": "http://dbpedia.org/ontology/radio"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/secondDriver"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MemberResistanceMovement"],
+        "Range": ["http://dbpedia.org/ontology/SocietalEvent"],
+        "Predicate": "http://dbpedia.org/ontology/participatingIn"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Film"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/costumeDesigner"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ResearchProject"],
+        "Range": ["http://dbpedia.org/ontology/Organisation"],
+        "Predicate": "http://dbpedia.org/ontology/projectParticipant"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FilmFestival"],
+        "Range": ["http://dbpedia.org/ontology/Film"],
+        "Predicate": "http://dbpedia.org/ontology/film"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/LegalCase"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/attorneyGeneral"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/bodyDiscovered"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/narrator"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/TelevisionShow"],
+        "Predicate": "http://dbpedia.org/ontology/tvShow"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/WrittenWork"],
+        "Range": ["http://dbpedia.org/ontology/Agent"],
+        "Predicate": "http://dbpedia.org/ontology/firstPublisher"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/lieutenancyArea"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/oldTeamCoached"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Stream"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/sourceCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/CareerStation"],
+        "Predicate": "http://dbpedia.org/ontology/careerStation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/MilitaryService"],
+        "Predicate": "http://dbpedia.org/ontology/militaryService"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FormerMunicipality"],
+        "Range": ["http://dbpedia.org/ontology/Municipality"],
+        "Predicate": "http://dbpedia.org/ontology/municipalityAbsorbedBy"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/City"],
+        "Predicate": "http://dbpedia.org/ontology/foundationPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Mountain"],
+        "Range": ["http://dbpedia.org/ontology/MountainRange"],
+        "Predicate": "http://dbpedia.org/ontology/alpsSubgroup"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Olympics"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/olympicOathSwornBy"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FigureSkater"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/currentPartner"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/thirdTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Nerve"],
+        "Range": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Predicate": "http://dbpedia.org/ontology/innervates"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Scientist"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/academicAdvisor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportCompetitionResult"],
+        "Range": ["http://dbpedia.org/ontology/Event"],
+        "Predicate": "http://dbpedia.org/ontology/competition"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/opponent"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Country"],
+        "Range": ["http://dbpedia.org/ontology/TopLevelDomain"],
+        "Predicate": "http://dbpedia.org/ontology/topLevelDomain"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/chiefEditor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Range": ["http://dbpedia.org/ontology/Nerve"],
+        "Predicate": "http://dbpedia.org/ontology/nerve"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryConflict"],
+        "Range": ["http://dbpedia.org/ontology/MilitaryConflict"],
+        "Predicate": "http://dbpedia.org/ontology/isPartOfMilitaryConflict"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/Organisation"],
+        "Predicate": "http://dbpedia.org/ontology/childOrganisation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/OlympicResult"],
+        "Range": ["http://dbpedia.org/ontology/OlympicResult"],
+        "Predicate": "http://dbpedia.org/ontology/winterAppearances"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/friend"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/child"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MountainRange"],
+        "Range": ["http://dbpedia.org/ontology/Mountain"],
+        "Predicate": "http://dbpedia.org/ontology/highest"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/mouthRegion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Organisation"],
+        "Predicate": "http://dbpedia.org/ontology/federation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/subregion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Man"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/brother"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Agent"],
+        "Predicate": "http://dbpedia.org/ontology/producer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/HistoricBuilding"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/pastor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Woman"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/daughter"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MusicalWork"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/recordedIn"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Mountain"],
+        "Predicate": "http://dbpedia.org/ontology/lowestMountain"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/settlement"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Airline"],
+        "Range": ["http://dbpedia.org/ontology/Airport"],
+        "Predicate": "http://dbpedia.org/ontology/targetAirport"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Road"],
+        "Range": ["http://dbpedia.org/ontology/Road"],
+        "Predicate": "http://dbpedia.org/ontology/spurOf"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Sport"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/footedness"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Language"],
+        "Predicate": "http://dbpedia.org/ontology/officialLanguage"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Population"],
+        "Predicate": "http://dbpedia.org/ontology/previousPopulation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/viceLeader"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/mouthCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/VideoGame"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/gameArtist"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/thirdDriver"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/wilaya"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Woman"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/mother"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/secondDriverCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/TelevisionEpisode"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/guest"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Agent"],
+        "Range": ["http://dbpedia.org/ontology/TermOfOffice"],
+        "Predicate": "http://dbpedia.org/ontology/generalCouncil"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Species"],
+        "Range": ["http://dbpedia.org/ontology/Taxon"],
+        "Predicate": "http://dbpedia.org/ontology/superFamily"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Species"],
+        "Predicate": "http://dbpedia.org/ontology/bird"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/EducationalInstitution"],
+        "Predicate": "http://dbpedia.org/ontology/almaMater"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/RouteOfTransportation"],
+        "Range": ["http://dbpedia.org/ontology/Station"],
+        "Predicate": "http://dbpedia.org/ontology/routeEnd"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Spacecraft"],
+        "Range": ["http://dbpedia.org/ontology/Rocket"],
+        "Predicate": "http://dbpedia.org/ontology/rocket"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Agent"],
+        "Range": ["http://dbpedia.org/ontology/TermOfOffice"],
+        "Predicate": "http://dbpedia.org/ontology/regionalCouncil"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/IceHockeyPlayer"],
+        "Range": ["http://dbpedia.org/ontology/SportsLeague"],
+        "Predicate": "http://dbpedia.org/ontology/prospectLeague"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/EthnicGroup"],
+        "Predicate": "http://dbpedia.org/ontology/ethnicGroup"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/TelevisionEpisode"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/photographer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/WineRegion"],
+        "Range": ["http://dbpedia.org/ontology/WineRegion"],
+        "Predicate": "http://dbpedia.org/ontology/isPartOfWineRegion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/livingPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Company"],
+        "Range": ["http://dbpedia.org/ontology/Company"],
+        "Predicate": "http://dbpedia.org/ontology/subsidiary"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ChemicalSubstance"],
+        "Range": ["http://dbpedia.org/ontology/ChemicalSubstance"],
+        "Predicate": "http://dbpedia.org/ontology/solventWithBadSolubility"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/patron"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/WrittenWork"],
+        "Range": ["http://dbpedia.org/ontology/Film"],
+        "Predicate": "http://dbpedia.org/ontology/filmVersion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/governmentRegion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ChemicalSubstance"],
+        "Range": ["http://dbpedia.org/ontology/ChemicalSubstance"],
+        "Predicate": "http://dbpedia.org/ontology/notSolubleIn"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Settlement"],
+        "Predicate": "http://dbpedia.org/ontology/canton"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/sheading"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Muscle"],
+        "Range": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Predicate": "http://dbpedia.org/ontology/origo"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerTournament"],
+        "Range": ["http://dbpedia.org/ontology/SoccerTournament"],
+        "Predicate": "http://dbpedia.org/ontology/soccerTournamentThisSeason"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Demographics"],
+        "Predicate": "http://dbpedia.org/ontology/agglomerationDemographics"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Actor"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/iftaAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Sport"],
+        "Range": ["http://dbpedia.org/ontology/OlympicEvent"],
+        "Predicate": "http://dbpedia.org/ontology/firstOlympicEvent"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Species"],
+        "Range": ["http://dbpedia.org/ontology/Species"],
+        "Predicate": "http://dbpedia.org/ontology/superTribus"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/YearInSpaceflight"],
+        "Range": ["http://dbpedia.org/ontology/Rocket"],
+        "Predicate": "http://dbpedia.org/ontology/retiredRocket"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Mountain"],
+        "Range": ["http://dbpedia.org/ontology/MountainRange"],
+        "Predicate": "http://dbpedia.org/ontology/alpsMajorSector"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/lunarRover"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Aircraft"],
+        "Range": ["http://dbpedia.org/ontology/Organisation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftUser"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Scientist"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/notableStudent"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/School"],
+        "Range": ["http://dbpedia.org/ontology/Agent"],
+        "Predicate": "http://dbpedia.org/ontology/schoolPatron"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Species"],
+        "Predicate": "http://dbpedia.org/ontology/flower"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Contest"],
+        "Predicate": "http://dbpedia.org/ontology/contest"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/eastPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Broadcaster"],
+        "Range": ["http://dbpedia.org/ontology/BroadcastNetwork"],
+        "Predicate": "http://dbpedia.org/ontology/formerBroadcastNetwork"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Road"],
+        "Range": ["http://dbpedia.org/ontology/City"],
+        "Predicate": "http://dbpedia.org/ontology/beltwayCity"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Saint"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/canonizedPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/stateOfOriginTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Canal"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/originalStartPoint"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Infrastructure"],
+        "Range": ["http://dbpedia.org/ontology/Road"],
+        "Predicate": "http://dbpedia.org/ontology/road"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FigureSkater"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/formerChoreographer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/silverMedalist"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/governmentCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/EducationalInstitution"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/principal"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Diocese,_Parish"],
+        "Range": ["http://dbpedia.org/ontology/Deanery"],
+        "Predicate": "http://dbpedia.org/ontology/deanery"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/File"],
+        "Range": ["http://dbpedia.org/ontology/File"],
+        "Predicate": "http://dbpedia.org/ontology/fileURL"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/biggestCity"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Animal"],
+        "Range": ["http://dbpedia.org/ontology/Animal"],
+        "Predicate": "http://dbpedia.org/ontology/sire"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/River"],
+        "Predicate": "http://dbpedia.org/ontology/rightTributary"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/filmFareAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/previousEntity"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/EthnicGroup"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/populationPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete,_CareerStation"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/proTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/mouthState"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/PeriodicalLiterature"],
+        "Predicate": "http://dbpedia.org/ontology/otherMedia"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/City"],
+        "Predicate": "http://dbpedia.org/ontology/administrativeHeadCity"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Project"],
+        "Predicate": "http://dbpedia.org/ontology/project"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Cleric"],
+        "Range": ["http://dbpedia.org/ontology/Pope"],
+        "Predicate": "http://dbpedia.org/ontology/reigningPope"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/goyaAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/seiyu"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Agent"],
+        "Predicate": "http://dbpedia.org/ontology/publisher"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/TelevisionShow"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/creativeDirector"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/arrondissement"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/School"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/executiveHeadteacher"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Island"],
+        "Range": ["http://dbpedia.org/ontology/Island"],
+        "Predicate": "http://dbpedia.org/ontology/rightChild"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/councilArea"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Train"],
+        "Range": ["http://dbpedia.org/ontology/Locomotive"],
+        "Predicate": "http://dbpedia.org/ontology/locomotive"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/EducationalInstitution"],
+        "Predicate": "http://dbpedia.org/ontology/college"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/notableCommander"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftHelicopterAttack"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Tournament"],
+        "Predicate": "http://dbpedia.org/ontology/continentalTournament"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/federalState"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Area"],
+        "Predicate": "http://dbpedia.org/ontology/wholeArea"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Actor"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/laurenceOlivierAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Agent"],
+        "Range": ["http://dbpedia.org/ontology/Thing"],
+        "Predicate": "http://dbpedia.org/ontology/owns"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GraveMonument"],
+        "Range": ["http://dbpedia.org/ontology/Cemetery"],
+        "Predicate": "http://dbpedia.org/ontology/inCemetery"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/OrganisationMember"],
+        "Predicate": "http://dbpedia.org/ontology/organisationMember"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/WrittenWork"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/prefaceBy"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Food"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/creatorOfDish"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/nextEntity"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Species"],
+        "Range": ["http://dbpedia.org/ontology/Taxon"],
+        "Predicate": "http://dbpedia.org/ontology/taxon"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Province"],
+        "Predicate": "http://dbpedia.org/ontology/provinceLink"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/teamManager"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Organisation"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/headquarter"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/PersonFunction"],
+        "Predicate": "http://dbpedia.org/ontology/otherOccupation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/YearInSpaceflight"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/countryWithFirstSatellite"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/mainIsland"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Woman"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/sister"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Language"],
+        "Predicate": "http://dbpedia.org/ontology/regionalLanguage"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/NationalCollegiateAthleticAssociationAthlete"],
+        "Range": ["http://dbpedia.org/ontology/EducationalInstitution"],
+        "Predicate": "http://dbpedia.org/ontology/formerHighschool"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Man"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/son"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Scientist"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/doctoralStudent"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Shrine"],
+        "Range": ["http://dbpedia.org/ontology/Deity"],
+        "Predicate": "http://dbpedia.org/ontology/enshrinedDeity"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/City"],
+        "Predicate": "http://dbpedia.org/ontology/capital"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Museum"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/curator"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryPerson"],
+        "Range": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Predicate": "http://dbpedia.org/ontology/militaryUnit"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/PoliticalParty"],
+        "Predicate": "http://dbpedia.org/ontology/politicalMajority"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/lowestPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftHelicopterUtility"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Automobile"],
+        "Range": ["http://dbpedia.org/ontology/Automobile"],
+        "Predicate": "http://dbpedia.org/ontology/automobilePlatform"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/fastestDriver"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/nationalTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/GrossDomesticProductPerCapita"],
+        "Predicate": "http://dbpedia.org/ontology/grossDomesticProductPurchasingPowerParityPerCapita"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/stateOfOrigin"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PoliticalParty"],
+        "Range": ["http://dbpedia.org/ontology/PoliticalParty"],
+        "Predicate": "http://dbpedia.org/ontology/splitFromParty"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Species"],
+        "Range": ["http://dbpedia.org/ontology/Species"],
+        "Predicate": "http://dbpedia.org/ontology/species"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FormulaOneRacer"],
+        "Range": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Predicate": "http://dbpedia.org/ontology/lastWin"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/AdministrativeRegion"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/landeshauptmann"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Mountain"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/firstAscentPerson"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/academyAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/draftTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PersonFunction"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/person"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/southEastPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Range": ["http://dbpedia.org/ontology/Rocket"],
+        "Predicate": "http://dbpedia.org/ontology/booster"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/translator"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Saint"],
+        "Range": ["http://dbpedia.org/ontology/Organisation"],
+        "Predicate": "http://dbpedia.org/ontology/veneratedIn"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Department"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/subprefecture"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Range": ["http://dbpedia.org/ontology/Spacecraft"],
+        "Predicate": "http://dbpedia.org/ontology/spacecraft"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Spacecraft"],
+        "Range": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Predicate": "http://dbpedia.org/ontology/crew"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/copilote"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Saint"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/beatifiedBy"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/touristicSite"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Work"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/writer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Disease"],
+        "Range": ["http://dbpedia.org/ontology/MedicalSpecialty"],
+        "Predicate": "http://dbpedia.org/ontology/medicalSpecialty"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Ship"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/shipCrew"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/RouteStop"],
+        "Range": ["http://dbpedia.org/ontology/RouteStop"],
+        "Predicate": "http://dbpedia.org/ontology/routePrevious"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/locatedInArea"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Single"],
+        "Range": ["http://dbpedia.org/ontology/MusicalArtist"],
+        "Predicate": "http://dbpedia.org/ontology/musicalArtist"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FigureSkater"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/choreographer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Film"],
+        "Range": ["http://dbpedia.org/ontology/Company"],
+        "Predicate": "http://dbpedia.org/ontology/producedBy"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftInterceptor"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Wrestler"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/billed"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Settlement"],
+        "Predicate": "http://dbpedia.org/ontology/commune"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/colleague"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/cousurper"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/EducationalInstitution"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/alumni"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Settlement"],
+        "Predicate": "http://dbpedia.org/ontology/adjacentSettlement"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Animal"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/birthPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Range": ["http://dbpedia.org/ontology/Artery"],
+        "Predicate": "http://dbpedia.org/ontology/artery"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/TelevisionShow"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/showJudge"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Ship"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/homeport"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftTrainer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Road"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/ruralMunicipality"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/NobleFamily"],
+        "Range": ["http://dbpedia.org/ontology/Family"],
+        "Predicate": "http://dbpedia.org/ontology/mainFamilyBranch"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/juniorTeam"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/parent"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/aircraftElectronic"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Cartoon"],
+        "Range": ["http://dbpedia.org/ontology/Agent"],
+        "Predicate": "http://dbpedia.org/ontology/animator"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Grape"],
+        "Range": ["http://dbpedia.org/ontology/WineRegion"],
+        "Predicate": "http://dbpedia.org/ontology/wineRegion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Range": ["http://dbpedia.org/ontology/MilitaryUnit"],
+        "Predicate": "http://dbpedia.org/ontology/commandStructure"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/manager"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Race"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/recentWinner"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Olympics"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/torchBearer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SoccerTournament"],
+        "Range": ["http://dbpedia.org/ontology/SoccerTournament"],
+        "Predicate": "http://dbpedia.org/ontology/soccerTournamentClosingSeason"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Range": ["http://dbpedia.org/ontology/AnatomicalStructure"],
+        "Predicate": "http://dbpedia.org/ontology/branchTo"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/SportsTeam"],
+        "Predicate": "http://dbpedia.org/ontology/youthClub"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/EducationalInstitution"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/rector"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ChemicalSubstance"],
+        "Range": ["http://dbpedia.org/ontology/ChemicalSubstance"],
+        "Predicate": "http://dbpedia.org/ontology/solvent"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/SportsLeague"],
+        "Predicate": "http://dbpedia.org/ontology/leagueManager"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Place"],
+        "Range": ["http://dbpedia.org/ontology/Sea"],
+        "Predicate": "http://dbpedia.org/ontology/sea"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Agglomeration"],
+        "Predicate": "http://dbpedia.org/ontology/agglomeration"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/WrestlingEvent"],
+        "Range": ["http://dbpedia.org/ontology/TelevisionShow"],
+        "Predicate": "http://dbpedia.org/ontology/brand"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SiteOfSpecialScientificInterest"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/areaOfSearch"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Legislature"],
+        "Range": ["http://dbpedia.org/ontology/PoliticalParty"],
+        "Predicate": "http://dbpedia.org/ontology/politicalPartyInLegislature"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ArchitecturalStructure"],
+        "Range": ["http://dbpedia.org/ontology/Work"],
+        "Predicate": "http://dbpedia.org/ontology/features"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/YearInSpaceflight"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/countryWithFirstSpaceflight"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/Country"],
+        "Predicate": "http://dbpedia.org/ontology/sportCountry"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/Athlete"],
+        "Predicate": "http://dbpedia.org/ontology/championInDoubleMale"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Work"],
+        "Predicate": "http://dbpedia.org/ontology/created"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Family"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/headOfFamily"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SkiResort"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/linkedTo"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/polishFilmAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/jointCommunity"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Range": ["http://dbpedia.org/ontology/Population"],
+        "Predicate": "http://dbpedia.org/ontology/population"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Event"],
+        "Range": ["http://dbpedia.org/ontology/Event"],
+        "Predicate": "http://dbpedia.org/ontology/followingEvent"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/RestArea"],
+        "Range": ["http://dbpedia.org/ontology/FillingStation"],
+        "Predicate": "http://dbpedia.org/ontology/fillingStation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/PublicTransitSystem"],
+        "Range": ["http://dbpedia.org/ontology/MeanOfTransportation"],
+        "Predicate": "http://dbpedia.org/ontology/vehiclesInFleet"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ArchitecturalStructure"],
+        "Range": ["http://dbpedia.org/ontology/Architect"],
+        "Predicate": "http://dbpedia.org/ontology/architect"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Person"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/restingPlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/grammyAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/ChemicalSubstance"],
+        "Range": ["http://dbpedia.org/ontology/ChemicalSubstance"],
+        "Predicate": "http://dbpedia.org/ontology/solventWithMediocreSolubility"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SportsEvent"],
+        "Range": ["http://dbpedia.org/ontology/Athlete"],
+        "Predicate": "http://dbpedia.org/ontology/mostSuccessfulPlayer"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Instrument"],
+        "Predicate": "http://dbpedia.org/ontology/instrument"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/River"],
+        "Predicate": "http://dbpedia.org/ontology/leftTributary"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/sourceConfluencePlace"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/FormulaOneRacer"],
+        "Range": ["http://dbpedia.org/ontology/GrandPrix"],
+        "Predicate": "http://dbpedia.org/ontology/firstWin"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/BodyOfWater"],
+        "Range": ["http://dbpedia.org/ontology/River"],
+        "Predicate": "http://dbpedia.org/ontology/outflow"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Artist"],
+        "Range": ["http://dbpedia.org/ontology/Award"],
+        "Predicate": "http://dbpedia.org/ontology/baftaAward"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/MusicGenre"],
+        "Range": ["http://dbpedia.org/ontology/MusicGenre"],
+        "Predicate": "http://dbpedia.org/ontology/stylisticOrigin"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/River"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/sourceConfluenceRegion"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/School"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/headteacher"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/RouteOfTransportation"],
+        "Range": ["http://dbpedia.org/ontology/Place"],
+        "Predicate": "http://dbpedia.org/ontology/routeEndLocation"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/PopulatedPlace"],
+        "Predicate": "http://dbpedia.org/ontology/frazioni"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Athlete"],
+        "Range": ["http://dbpedia.org/ontology/Athletics"],
+        "Predicate": "http://dbpedia.org/ontology/otherSportsExperience"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Settlement"],
+        "Range": ["http://dbpedia.org/ontology/Settlement"],
+        "Predicate": "http://dbpedia.org/ontology/mergedSettlement"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/SpaceShuttle"],
+        "Range": ["http://dbpedia.org/ontology/SpaceMission"],
+        "Predicate": "http://dbpedia.org/ontology/lastFlight"
+    },
+    {
+        "Domain": ["http://dbpedia.org/ontology/Family"],
+        "Range": ["http://dbpedia.org/ontology/Person"],
+        "Predicate": "http://dbpedia.org/ontology/primogenitor"
+    }
+]
