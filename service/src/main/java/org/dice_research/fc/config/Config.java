@@ -539,6 +539,7 @@ public class Config {
     File maxCountFile = new File(addressOfMaxCountFile);*/
     List<Predicate> validPredicates = allValidPredicates();
     //return new PreProcessProvider(pathInstancesCountFile, predicateInstancesCountFile, coOccurrenceCountFile, maxCountFile, preProcessPathNPMIThreshold, validPredicates);
+    System.out.println("serviceURL is :"+serviceURL);
     return new PreProcessProvider(addressOfPathInstancesCountFile, addressOfPredicateInstancesCountFile, addressOfCoOccurrenceCountFile, addressOfMaxCountFile, preProcessPathNPMIThreshold, validPredicates);
   }
 
