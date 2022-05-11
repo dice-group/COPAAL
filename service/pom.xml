@@ -4,8 +4,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.dice.factcheck</groupId>
-	<artifactId>Corraborative</artifactId>
-	<version>0.2.2</version>
+	<artifactId>corraborative</artifactId>
+	<version>2.2.2</version>
 	<packaging>jar</packaging>
 
 	<name>COPAAL Service</name>

@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    # The official  Traefik docker image
+    image: traefik:1.7.7
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - "--docker"
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+  api:
+    image: "dicegroup/copaal-demo-service:2.2.2"
+    restart: always
+    labels:
+      - traefik.frontend.rule=Host:frockg.cs.uni-paderborn.de;PathPrefixStrip:/service
+    environment:
+      #url for sparql endpoint
+      - info.service.url.default=https://dbpedia.org/sparql
+      - copaal.tentris.endpoint=http://synthg-fact-leapfrog.cs.upb.de:8080
+      - dataset.scorer.summarist.type=FixedSummarist
+      - dataset.filter.properties=http://www.w3.org/1999/02/22-rdf-syntax-ns#type, http://dbpedia.org/ontology/wikiPageExternalLink, http://dbpedia.org/ontology/wikiPageWikiLink
+      - dataset.filter.namespace=http://dbpedia.org/ontology/
+      - dataset.max.length=3
+      - dataset.scorer.type=NPMI
+      - dataset.file.metapaths=true
+      - dataset.file.metapaths.processor=EstherPathProcessor
+      #predicatefactory,virtualtypepredicatefactory,hybridpredicatefactory,hybridpredicatetentrisfactory
+      - copaal.factpreprocessor.type=hybridpredicatetentrisfactory
+      - copaal.factpreprocessor.ShouldUseBGPVirtualTypeRestriction=true
+      #PropPathBasedPathClauseGenerator,BGPBasedPathClauseGenerator
+      - copaal.pathclausegenerator.type=BGPBasedPathClauseGenerator
+      - cache=false
+      ### here you can chose between preprocess or normal copaal
+      #default,loadSaveDecorator,preprocess
+      - dataset.pathsearcher.type=loadSaveDecorator
+      #ApproximatingCountRetriever,PairCountRetriever,preProcess
+      - dataset.sparql.counter=PairCountRetriever
+      #xml , json
+      - copaal.query.typeOfQueryResult=xml
+      - copaal.query.timeout=0
+      #Get , Post
+      - copaal.http.query.type=Post
+      - copaal.preprocess.NPMIthreshold=0.8
+    volumes:
+    - /home/farshad/repos/CopaalPreProcessFiles/2/PathInstance/:/home/PathInstance/
+    - /home/farshad/repos/CopaalPreProcessFiles/2/PredicateInstance/:/home/PredicateInstance/
+    - /home/farshad/repos/CopaalPreProcessFiles/2/CoOccurrence/:/home/CoOccurrence/
+    - /home/farshad/repos/CopaalPreProcessFiles/2/MaxCount/:/home/MaxCount/
+  ui:
+    image: "dicegroup/copaal-demo-ui:0.3.0"
+    restart: always
+    labels:
+      - traefik.frontend.rule=Host:frockg.cs.uni-paderborn.de;PathPrefixStrip:/
