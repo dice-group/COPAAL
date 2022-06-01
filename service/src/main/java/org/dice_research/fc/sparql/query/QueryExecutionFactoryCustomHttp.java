@@ -7,6 +7,11 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryFactory;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 
 /**
  * This class is factory for custom http query execution .
@@ -63,7 +68,26 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
     this.isPostRequest = isPostRequest;
     this.typeOfQueryResult = typeOfQueryResult;
 
+    //Create an object of credentialsProvider
+    //CredentialsProvider credentialsPovider = new BasicCredentialsProvider();
+
+    //Set the credentials
+    //AuthScope scope = new AuthScope("https://frockg.ontotext.com/repositories/COPAAL", 80);
+
+    //Credentials credentials = new UsernamePasswordCredentials("unipaderborn", "Semantics123");
+
+    CredentialsProvider provider = new BasicCredentialsProvider();
+    UsernamePasswordCredentials credentials
+            = new UsernamePasswordCredentials("unipaderborn", "Semantics123");
+    provider.setCredentials(AuthScope.ANY, credentials);
+
+    //credentialsPovider.setCredentials(scope,credentials);
+
     HttpClientBuilder builder = HttpClientBuilder.create();
+
+    //Setting the credentials
+    builder = builder.setDefaultCredentialsProvider(provider);
+
     if (timeout > 0) {
       RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout)
           .setConnectionRequestTimeout(timeout).setSocketTimeout(timeout).build();
