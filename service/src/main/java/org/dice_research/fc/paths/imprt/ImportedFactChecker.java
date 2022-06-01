@@ -47,10 +47,15 @@ public class ImportedFactChecker extends PathBasedFactChecker {
 
   @Override
   public FactCheckingResult check(Resource subject, Property predicate, Resource object) {
-      LOGGER.trace(" -------------  START OF FACT CHECKING @ ImportedFactChecker-------------");
-      LOGGER.trace(" -------------  Start to preprocess the data  -------------");
+      LOGGER.info(" -------------  START OF FACT CHECKING @ ImportedFactChecker-------------");
+      LOGGER.info(" -------------  Start to preprocess the data  -------------");
+      LOGGER.info("subject is " + subject);
+      LOGGER.info("predicate is " +  predicate);
+      LOGGER.info("object is "+object);
       Statement fact = ResourceFactory.createStatement(subject, predicate, object);
+      LOGGER.info("fact is"+fact);
       Predicate preparedPredicate = factPreprocessor.generatePredicate(fact);
+      LOGGER.info("preparedPredicate"+preparedPredicate);
       LOGGER.trace(" -------------  Preprocess the data Done   -------------");
 
       // pre-process paths in file

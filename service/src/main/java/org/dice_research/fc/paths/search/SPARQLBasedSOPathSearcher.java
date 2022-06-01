@@ -94,6 +94,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
   @Override
   public Collection<QRestrictedPath> search(Resource subject, Predicate predicate,
       Resource object) {
+    LOGGER.debug("Start the search");
     LOGGER.debug("Search for paths with this triple ({} {} {} )",subject.getURI() ,predicate.getProperty().getURI(),object.getURI());
     // Generate queries
     List<SearchQuery> queries = generateSearchQueries(subject, predicate, object);

@@ -8,6 +8,7 @@ import java.util.*;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
 import org.apache.commons.math3.util.Pair;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
@@ -36,11 +37,9 @@ import org.dice_research.fc.paths.scorer.PNPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.PreCalculationScorer;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.PairCountRetriever;
+import org.dice_research.fc.paths.scorer.count.TentrisBasedCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
-import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
-import org.dice_research.fc.paths.scorer.count.max.HybridMaxCounter;
-import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
-import org.dice_research.fc.paths.scorer.count.max.VirtualTypesMaxCounter;
+import org.dice_research.fc.paths.scorer.count.max.*;
 import org.dice_research.fc.paths.search.PreProcessPathSearcher;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.paths.search.CachingPathSearcherDecorator;
@@ -309,6 +308,11 @@ public class Config {
         break;
       case "preprocess":
         countRetriever = new PreCalculationScorer(preProcessProvider);
+        break;
+      case "tentris":
+        TentrisAdapter tentris = new TentrisAdapter(HttpClients.createDefault(), tentrisURL);
+        countRetriever = new TentrisBasedCountRetriever(tentris, new TentrisBasedMaxCounter(tentris),
+                new BGPBasedPathClauseGenerator());
         break;
       default:
         countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
