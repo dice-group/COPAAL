@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.commons.math3.util.Pair;
 import org.apache.jena.query.QueryExecution;
@@ -301,11 +303,12 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
    */
   protected List<QRestrictedPath> searchPaths(List<SearchQuery> queries) {
     List<QRestrictedPath> paths = new ArrayList<QRestrictedPath>();
-    QuerySolution qs;
+    /*QuerySolution qs;
     ResultSet rs;
-    BitSet directions;
+    BitSet directions;*/
     List<Pair<Property, Boolean>> pathElements;
-    for (SearchQuery query : queries) {
+    paths = queries.stream().parallel().map(q -> doSearch(q)).flatMap(l->l.stream()).collect(Collectors.toList());
+    /*for (SearchQuery query : queries) {
       long time = System.currentTimeMillis();
       LOGGER.info("Executing query \"{}\"", query.getQuery());
       LOGGER.trace("details of query direction:{}, length:{}",query.getDirections() ,query.getLength());
@@ -335,8 +338,45 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
         LOGGER.error("Got an exception while executing query \"" + query.getQuery()
             + "\". The query will be ignored.", e);
       }
-    }
+    }*/
     return paths;
   }
 
+  protected List<QRestrictedPath> doSearch(SearchQuery query){
+    List<QRestrictedPath> paths = new ArrayList<QRestrictedPath>();
+    QuerySolution qs;
+    ResultSet rs;
+    BitSet directions;
+    List<Pair<Property, Boolean>> pathElements;
+    long time = System.currentTimeMillis();
+    LOGGER.info("Executing query \"{}\"", query.getQuery());
+    LOGGER.trace("details of query direction:{}, length:{}",query.getDirections() ,query.getLength());
+    try (QueryExecution qe = qef.createQueryExecution(query.getQuery())) {
+      LOGGER.trace("QueryExecution timeout:{} ,",qe.getTimeout1());
+      directions = query.getDirections();
+      rs = qe.execSelect();
+      int count = 0;
+      while (rs.hasNext()) {
+        qs = rs.next();
+        // collect the properties of the path and their direction
+        pathElements = new ArrayList<>(query.getLength());
+        LOGGER.trace("list of path elements");
+        for (int i = 0; i < query.getLength(); ++i) {
+          pathElements.add(new Pair<Property, Boolean>(
+                  ResourceFactory.createProperty(qs.getResource(propertyVariables[i]).getURI()),
+                  directions.get(i)));
+          LOGGER.trace("direction is {} and property is {}",directions.get(i),qs.getResource(propertyVariables[i]).getURI());
+        }
+        LOGGER.trace("end of list of path elements");
+        paths.add(new QRestrictedPath(pathElements));
+        ++count;
+      }
+      LOGGER.info("Got {} paths from the query", count);
+      LOGGER.debug("Got a query result  after {}ms.", System.currentTimeMillis() - time);
+    } catch (Exception e) {
+      LOGGER.error("Got an exception while executing query \"" + query.getQuery()
+              + "\". The query will be ignored.", e);
+    }
+    return paths;
+  }
 }

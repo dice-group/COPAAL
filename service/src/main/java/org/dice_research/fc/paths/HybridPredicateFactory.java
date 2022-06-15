@@ -53,7 +53,7 @@ public class HybridPredicateFactory implements FactPreprocessor {
         LOGGER.trace("Found the following classes for the domain: {}", dTypes);
         if(dTypes.size() == 0){
             // use Virtual type
-            if(useBGPVirtualTypeRestriction){
+            if(!useBGPVirtualTypeRestriction){
                 domain = new VirtualTypeRestriction(true, triple.getPredicate().getURI());
             }else{
                 domain = new BGPBasedVirtualTypeRestriction(true, triple.getPredicate().getURI());
@@ -68,7 +68,7 @@ public class HybridPredicateFactory implements FactPreprocessor {
         LOGGER.trace("Found the following classes for the range: {}", rTypes);
         if(rTypes.size() == 0){
             // use Virtual type
-            if(useBGPVirtualTypeRestriction){
+            if(!useBGPVirtualTypeRestriction){
                 range = new VirtualTypeRestriction(false, triple.getPredicate().getURI());
             }else{
                 range = new BGPBasedVirtualTypeRestriction(false, triple.getPredicate().getURI());
