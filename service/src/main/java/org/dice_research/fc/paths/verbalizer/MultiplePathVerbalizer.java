@@ -76,10 +76,16 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
 
   private static final String OTHERS = "Other";
   private static final String SAME = "with the same";
+  private static final String WELL_AS = "as well as";
   private static final String PLURAL_IS = " are";
   private static final String SING_IS = " is";
   private static final String PLURAL = "s";
   private static final String SPACE = " ";
+
+  /**
+   * Maps the Regex pattern to the corresponding variant
+   */
+  private static Map<String, String> variantMap; 
 
   /**
    * Constructor.
@@ -88,13 +94,15 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
    */
   public MultiplePathVerbalizer(QueryExecutionFactory qef) {
     super(qef);
-
     Lexicon lexicon = Lexicon.getDefaultLexicon();
     String cache = System.getProperty("java.io.tmpdir");
     converter = new TripleConverter(qef, cache + "/triple2nl-cache", lexicon);
     nlgFactory = new NLGFactory(lexicon);
     realiser = new Realiser(lexicon);
+    buildVariantMap();
   }
+
+
 
   @Override
   public String parseResults(String queryStr, int size) {
@@ -163,7 +171,7 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
           if (++j < predicates.size() - 1) {
             verbalizedOps.append(",");
           } else if (j < predicates.size()) {
-            verbalizedOps.append(" as well as ");
+            verbalizedOps.append(SPACE).append(WELL_AS).append(SPACE);
           }
         }
         if (!isSubject && isPlural) {
@@ -492,44 +500,6 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
    * @return Variant it identified
    */
   private String identifyVariant(String query) {
-    Map<String, String> variantMap = new HashMap<String, String>();
-    variantMap.put(
-        "(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x\\d)\\s+\\.\\s+(\\?x\\d)\\s(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.",
-        L2_1);
-    variantMap.put(
-        "(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x\\d)\\s+\\.\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x\\d)\\s+\\.",
-        L2_2);
-    variantMap.put(
-        "(\\?x\\d)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.\\s+(\\?x\\d)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.",
-        L2_3);
-    variantMap.put(
-        "(\\?x\\d)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x\\d)\\s+\\.",
-        L2_4);
-    variantMap.put(
-        "(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(\\?x0)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.",
-        L3_1);
-    variantMap.put(
-        "(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.",
-        L3_2);
-    variantMap.put(
-        "(\\?x0)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.\\s+(\\?x0)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.",
-        L3_3);
-    variantMap.put(
-        "(\\?x0)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.",
-        L3_4);
-    variantMap.put(
-        "(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(\\?x0)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.",
-        L3_5);
-    variantMap.put(
-        "(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.",
-        L3_6);
-    variantMap.put(
-        "(\\?x0)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.\\s+(\\?x0)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.",
-        L3_7);
-    variantMap.put(
-        "(\\?x0)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.",
-        L3_8);
-
     // identify variant
     String variant = "";
     for (String pattern : variantMap.keySet()) {
@@ -620,4 +590,45 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
     }
     return variableSet;
   }
+
+  private void buildVariantMap() {
+    variantMap = new HashMap<String, String>();
+    variantMap.put(
+        "(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x\\d)\\s+\\.\\s+(\\?x\\d)\\s(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.",
+        L2_1);
+    variantMap.put(
+        "(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x\\d)\\s+\\.\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x\\d)\\s+\\.",
+        L2_2);
+    variantMap.put(
+        "(\\?x\\d)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.\\s+(\\?x\\d)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.",
+        L2_3);
+    variantMap.put(
+        "(\\?x\\d)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x\\d)\\s+\\.",
+        L2_4);
+    variantMap.put(
+        "(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(\\?x0)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.",
+        L3_1);
+    variantMap.put(
+        "(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.",
+        L3_2);
+    variantMap.put(
+        "(\\?x0)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.\\s+(\\?x0)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.",
+        L3_3);
+    variantMap.put(
+        "(\\?x0)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.",
+        L3_4);
+    variantMap.put(
+        "(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(\\?x0)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.",
+        L3_5);
+    variantMap.put(
+        "(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.",
+        L3_6);
+    variantMap.put(
+        "(\\?x0)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.\\s+(\\?x0)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.",
+        L3_7);
+    variantMap.put(
+        "(\\?x0)\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+\\.\\s+(\\?x1)\\s+(<[^<>]+?>)\\s+(\\?x0)\\s+\\.\\s+(<[^<>]+?>)\\s+(<[^<>]+?>)\\s+(\\?x1)\\s+\\.",
+        L3_8);
+  }
+
 }
