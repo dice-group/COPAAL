@@ -25,8 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Default path verbalizer implementation.
  * <p>
- * Retrieves the intermediate nodes from a path between two nodes and the verbalized
- * output.
+ * Retrieves the intermediate nodes from a path between two nodes and the verbalized output.
  * 
  * @author Alexandra Silva
  *
@@ -44,29 +43,23 @@ public class DefaultPathVerbalizer implements IPathVerbalizer {
   public DefaultPathVerbalizer(QueryExecutionFactory qef) {
     this.qef = qef;
   }
-  
+
   @Override
   public String verbalizePaths(Resource subject, Resource object, IPieceOfEvidence path) {
-    List<Statement> stmts = getStmtsFromPath(subject, object, path);
-    Document doc =
-        verbalizer.generateDocument(stmts, Paraphrasing.prop.getProperty("surfaceForms"));
-    String output = doc.getText();
+    String output = verbalizeMetaPath(subject, object, path);
     path.setVerbalizedOutput(output);
     return output;
   }
 
   /**
-   * Retrieves a path's equivalent list of statements with the intermediate nodes.
-   * <p>
-   * Note: If there are multiple occurrences of the path, this method might return a {@link List}
-   * with more {@link Statement}s.
+   * Verbalizes the instances of a path
    * 
    * @param subject The given fact's subject
    * @param object The given fact's object
    * @param path A path found
-   * @return The path's equivalent list of statements with the intermediate nodes
+   * @return The verbalized paths
    */
-  public List<Statement> getStmtsFromPath(Resource subject, Resource object, IPieceOfEvidence path) {
+  public String verbalizeMetaPath(Resource subject, Resource object, IPieceOfEvidence path) {
     StringBuilder builder = new StringBuilder();
 
     // initialize as if there was a previous path stretch
@@ -75,7 +68,7 @@ public class DefaultPathVerbalizer implements IPathVerbalizer {
 
     List<Pair<Property, Boolean>> pathElements =
         QRestrictedPath.create(path.getEvidence(), path.getScore()).getPathElements();
-    
+
     for (int i = 0; i < pathElements.size(); i++) {
       Pair<Property, Boolean> pathStretch = pathElements.get(i);
 
@@ -98,27 +91,45 @@ public class DefaultPathVerbalizer implements IPathVerbalizer {
         builder.append(stretchStart);
       }
       builder.append(" . ");
-      
+
     }
-    return returnIntermediateNodes(builder.toString());
+    return parseResults(builder.toString(), pathElements.size());
   }
 
   /**
-   * Builds the path as a list of statements.
+   * Builds the path as a list of statements and verbalizes it.
    * <p>
    * Note: If there are multiple occurrences of the path, this method might return a {@link List}
    * with more {@link Statement}s.
    * 
-   * @param query SPARQL query to retrieve the intermediate nodes
+   * @param queryStr SPARQL query to retrieve the intermediate nodes
+   * @param size the path's length
    * @return The path's equivalent list of statements with the intermediate nodes
    */
-  public List<Statement> returnIntermediateNodes(String queryStr) {
+  public String parseResults(String queryStr, int size) {
+    StringBuilder result = getIntermediateNodesResult(queryStr, size);
+
+    // build statements
+    List<Statement> stmts = new ArrayList<>();
+    String[] items = result.toString().trim().split("\\s+[.]\\s+");
+    for (String curStmt : items) {
+      if (curStmt.isEmpty()) {
+        continue;
+      }
+      stmts.add(RDFUtil.getStatementFromString(curStmt));
+    }
+
+    Document doc =
+        verbalizer.generateDocument(stmts, Paraphrasing.prop.getProperty("surfaceForms"));
+    return doc.getText();
+  }
+
+  protected StringBuilder getIntermediateNodesResult(String queryStr, int size) {
     StringBuilder builder = new StringBuilder();
     builder.append("SELECT * WHERE {");
     builder.append(queryStr);
     builder.append("}");
 
-    List<Statement> stmts = new ArrayList<>();
     Query query = QueryFactory.create(builder.toString());
     StringBuilder result = new StringBuilder();
     try (QueryExecution queryExecution = qef.createQueryExecution(query)) {
@@ -126,26 +137,17 @@ public class DefaultPathVerbalizer implements IPathVerbalizer {
       String localResult = queryStr.replace("?", "");
       while (resultSet.hasNext()) {
         QuerySolution curSol = resultSet.next();
-        
+
         String temp = localResult;
         Iterator<String> varNames = curSol.varNames();
-        while(varNames.hasNext()) {
+        while (varNames.hasNext()) {
           String curVarName = varNames.next();
           temp = temp.replace(curVarName, curSol.get(curVarName).toString());
         }
         result.append(temp);
       }
     }
-
-    // build statements
-    String[] items = result.toString().trim().split("\\s+[.]\\s+");
-    for (String curStmt : items) {
-      if(curStmt.isEmpty()) {
-        continue;
-      }
-      stmts.add(RDFUtil.getStatementFromString(curStmt));
-    }
-    return stmts;
+    return result;
   }
 
 }

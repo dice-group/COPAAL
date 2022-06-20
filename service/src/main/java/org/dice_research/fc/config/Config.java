@@ -46,6 +46,7 @@ import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.paths.search.CachingPathSearcherDecorator;
 import org.dice_research.fc.paths.verbalizer.DefaultPathVerbalizer;
 import org.dice_research.fc.paths.verbalizer.IPathVerbalizer;
+import org.dice_research.fc.paths.verbalizer.MultiplePathVerbalizer;
 import org.dice_research.fc.paths.verbalizer.NoopVerbalizer;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.IRIFilter;
@@ -555,7 +556,7 @@ public class Config {
   @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
   public IPathVerbalizer getVerbalizer(QueryExecutionFactory qef, RequestParameters details) {
     if (details.isVerbalize()) {
-      return new DefaultPathVerbalizer(qef);
+      return new MultiplePathVerbalizer(qef);
     } else {
       return new NoopVerbalizer();
     }
