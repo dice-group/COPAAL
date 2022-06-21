@@ -119,6 +119,7 @@ public class VerbalizerTest {
     String almaMajorMovement =
         "^<http://dbpedia.org/property/training>/^<http://dbpedia.org/property/majorfigures>/^<http://dbpedia.org/property/movement>";    
     String backBackBirth = "<http://dbpedia.org/ontology/background>/^<http://dbpedia.org/ontology/background>/<http://dbpedia.org/ontology/birthPlace>";
+    String starStarBirth = "^<http://dbpedia.org/ontology/starring>/<http://dbpedia.org/ontology/starring>/<http://dbpedia.org/ontology/birthPlace>";
     
     QRestrictedPath birthCountryPath = QRestrictedPath.create(birthCountry, 0);
     QRestrictedPath almaPathPath = QRestrictedPath.create(almaPath, 0);
@@ -136,6 +137,7 @@ public class VerbalizerTest {
     QRestrictedPath almaBirthBirthPath = QRestrictedPath.create(almaBirthBirth, 0);
     QRestrictedPath almaMajorMovementPath = QRestrictedPath.create(almaMajorMovement, 0);
     QRestrictedPath backBackBirthPath = QRestrictedPath.create(backBackBirth, 0);
+    QRestrictedPath starStarBirthPath = QRestrictedPath.create(starStarBirth, 0);
 
     // paths of length 1
     testConfigs.add(new Object[] {niaGill, bachelorArts, almaPathPath,
@@ -152,12 +154,12 @@ public class VerbalizerTest {
         "Ward Forrest's birth place as well as Bill Gates' birth place is Seattle."});
     // L2_3 -> ?x1 ?p1 ?s . ?x1 ?p2 ?o .
     testConfigs.add(new Object[] {harvardUni, journalist, eduOccupationPath,
-        "Komla Dumor's education is Harvard University and its occupation is Journalist.\n"
-            + "Others with the same education as well as occupation are David Frum, John Reed, Neil Sheehan, Melissa Block, Richard Bernstein, Michael Luo, Jacob Landau, Matthew Yglesias, Irin Carmon, Wilbur Schramm, William Dietrich, John Jay Chapman, Mary Louise Kelly, Harold L. Humes, Hendrik Hertzberg, Fareed Zakaria, Ian Johnson, John Fox Jr., David Ignatius, Judith Matloff, Tangeni Amupadhi, Josh Barro, Paula Broadwell, Eugene Robinson, David Binder, Ravi Agrawal, Kristen Welker and Jeff Wise  Jeff Wise  1."});
+        "Wilbur Schramm's education is Harvard University and his occupation is Journalist.\n"
+        + "Others with the same education as well as occupation are Eugene Robinson, Harold L. Humes, Hendrik Hertzberg, Neil Sheehan, Ravi Agrawal, Stephanie Flanders, Jeff Wise  Jeff Wise  1, David Binder, David Frum, David Ignatius, Jean- Daniel Flaysakier, John Fox Jr., John Jay Chapman, John Reed, Josh Barro, Komla Dumor, Kristen Welker, William Dietrich, Irin Carmon, Judith Matloff, Jacob Landau, Fareed Zakaria, Mary Louise Kelly, Ian Johnson, Richard Bernstein, Tangeni Amupadhi, Matthew Yglesias, Melissa Block, Michael Luo and Paula Broadwell."});
     // L2_4 -> ?x1 ?p1 ?s . ?o ?p2 ?x1 .
     testConfigs.add(new Object[] {obama, annDunham, childSpousePath,
-        "Barack Obama Sr.'s child is Barack Obama and Ann Dunham's spouse is Barack Obama Sr.\n"
-            + "Other with the same child is Lolo Soetoro."});
+        "Lolo Soetoro's child is Barack Obama and Ann Dunham's spouse is Lolo Soetoro.\n"
+        + "Other with the same child is Barack Obama Sr.."});
 
     // paths of length 3
     // L3_1 -> ?s ?p1 ?x1 . ?x1 ?p2 ?x2 . ?x2 ?p3 ?o .
@@ -165,8 +167,8 @@ public class VerbalizerTest {
         "Barack Obama's spouse is Michelle Obama and her education is Harvard University. Harvard University's city is Massachusetts."});
     // L3_2 -> ?s ?p1 ?x1 . ?x2 ?p2 ?x1 . ?x2 ?p3 ?o .
     testConfigs.add(new Object[] {obama, oregonUni, birthAlmaPath,
-        "Steve Alm's birth place as well as Barack Obama's birth place is Honolulu. Steve Alm's alma mater is University of Oregon.\n"
-            + "Other with the same alma mater as well as birth place is David Cass."});
+        "David Cass' birth place as well as Barack Obama's birth place is Honolulu. David Cass' alma mater is University of Oregon.\n"
+        + "Other with the same alma mater as well as birth place is Steve Alm."});
     testConfigs.add(new Object[] {tayZonday, minneapolis, birthDeathResidPath,
         "Martin Olav Sabo's death place as well as Tay Zonday's birth place is Minneapolis. Martin Olav Sabo's residence is Minneapolis.\n"
             + "Others with the same death place as well as residence are Mabeth Hurd Paige, Diane Loeffler, Edward J. Gearty, Arnold Fredrickson and Howard Davis."});
@@ -185,18 +187,19 @@ public class VerbalizerTest {
             + "Other with the same genre is Mutemath."});
     // L3_7 -> ?x1 ?p1 ?s . ?x1 ?p2 ?x2 . ?o ?p3 ?x2 .
     testConfigs.add(new Object[] {harvardUni, barbara, almaBirthBirthPath,
-        "A.B.C. Whipple's alma mater is Harvard University and its birth place is New York. Barbara Corday's birth place is New York.\n"
-            + "Others with the same alma mater as well as birth place are Walter Licht, Walter Tuckerman, Erez Lieberman Aiden, Eric Schneiderman, Alexander Morgan Hamilton, Alicia Munnell, Allan Lichtman, August Heckscher II, Austen George Fox, Divya Narendra, Donald J. Newman, Donald Kennedy, Schuyler Cammann, Scott Weinger, Peter Tufano, Abbot Low Moffat, Edward Asahel Birge, Edwin Vernon Morgan, Elaine Ostrander, Ellery Sedgwick, Elliott Shepard, Harry M. Rubin, Harry Wilson, Lee S. Wolosky, Leo Hurwitz, Leonard Parker, Lincoln Gordon, Lisa Randall, Stuart Beck, Gideon Dreyfuss, Blair Clark, Henry Harpending, Herbert Pell, Phillip Steck, Stanley G. Mortimer Jr., Stephen E. Levinson, Stephen Joel Trachtenberg, Ed Redlich, Anson Burlingame, Arthur A. Houghton Jr., Arthur R. Miller, Stephen Cook  Stephen Cook  1, Brooks Hansen, C. Suydam Cutting, Clifford Taubes, Cornelius V. S. Roosevelt, David Bragdon, David Harbater, Jeffrey A. Hoffman, John Austin Stevens, John C. Cort, John C. Harkness, John D. Boice Jr., John J. Emery, Brian, Lathrop Brown, Lawrence Fuchs, William Bayard Cutting Jr., William Melvin Kelley, William Starr Miller II, George Emlen Roosevelt, Robert Hessen, Roger Mac Bride, Roland L. Redmond, Hayley Barna, Allegra Goodman, Amory Houghton, Amy S. Bruckman, Benjamin Barber, Benjamin Boss, Bill Drayton, Charles Bradford Isham, Charles Pence Slichter, Charles S. Maier, Chris Terrio, Francine D. Blau, Francis Skiddy von Stade Sr., Franco Mormando, Frederic M. Richards, Junius Spencer Morgan III, Barbara Engel, J. Griswold Webb, James M. Poterba, James Roosevelt, Janellen Huttenlocher, Sheila Greibach, Sheldon Glashow, Theodore Douglas Robinson, Theodore Roosevelt III, Thomas Perkins, Faye- Ellen Silverman, Marshall Rosenbluth, Marvin Minsky, Mary Bowman, Hugh David Politzer, Ian Heath Gershengorn, Marc Postman, Richard Arnowitt, Richard Lewontin, Richard M. Friedberg, Richard Pan, Richard Stallman, Richard Wilbur, Robert E. Simon, Robert Livingston Gerry Sr., Robert Solow, Robert Walton Goelet, Simon Rich, Randy Haykin, Erinn Westbrook, Kamala Shirin Lakhdhir, Orme Wilson Jr., Otto Maass, Victor Niederhoffer, Leslie T. Chang  Leslie T. Chang  1, Glenn Slater, Irwin I. Shapiro, Kenward Elmslie, Moses Abramovitz, Warren Delano Robbins, Erich Segal, Alfred H. Conrad, Max Cantor, Melissa Lee, Melvin Hochster, Paul Dana, Paul Sweezy, Jonathan Kaufman, George Bergman, Abraham Klein, Edwin Chesley Estes Lord, Harvey P. Greenspan, Leo Goldberg, Leon Wieseltier, Herbert E. Kaufman, Heywood Broun, Lucy Ozarin, Nelson Horatio Darton, Stanley Hart White, Stephen Barnett, Stephen Lichtenbaum, Arnold Zellner, Vanessa Lann, Jeff Cheeger, Jeffrey P. Buzen, John Robert Cobb, Jon Caramanica, Lawrence Spivak, William Earl Dodge Scott, William J. Clench, Mark E. Kingdon, Bertrand Halperin, James J. Wynne, Jane Gerber, Marilyn French, Robert Metcalfe, Robert P. Goldberg, Robin Lakoff, Ira M. Lapidus, Maxwell Rosenlicht, Mildred Dresselhaus, Paul Bender and Paul Goodman. \n"
-            + "Other birth place is Brooklyn."});
+        "Benjamin Boss' alma mater is Harvard University and his birth place is New York. Barbara Corday's birth place is New York.\n"
+        + "Others with the same alma mater as well as birth place are Henry Harpending, Harry M. Rubin, Maxwell Rosenlicht, Divya Narendra, Junius Spencer Morgan III, Robert Walton Goelet, Francis Skiddy von Stade Sr., Hugh David Politzer, Robert Hessen, Mark E. Kingdon, Anson Burlingame, Robert Metcalfe, Robert Solow, Roger Mac Bride, Paul Sweezy, Richard Lewontin, Robert Caro, Sheldon Lee Glashow, Thomas Perkins, Jeff Cheeger, Kenward Elmslie, Lathrop Brown, Lawrence Spivak, Francine D. Blau, John Robert Cobb, Leo Hurwitz, Otto Maass, Abraham Klein, Stanley Hart White, Ed Redlich, Herbert Pell, Jeffrey A. Hoffman, Lisa Randall, Scott Weinger, Sheila Greibach, Bertrand Halperin, Bill Drayton, Jerome Karle, Lee S. Wolosky, Mildred Dresselhaus, Robert E. Simon, Theodore Roosevelt III, Arthur R. Miller, Glenn Slater, Nelson Horatio Darton, Robin Lakoff, Victor Niederhoffer, Henry H. Straight, Lucy Ozarin, Janellen Huttenlocher, Austen George Fox, Charles Bradford Isham, G. Hermann Kinnicutt, Stanley G. Mortimer Jr., Marvin Minsky, Ellery Sedgwick, Jeffrey P. Buzen, Peggy Mc Intosh, Stephen Joel Trachtenberg, Harry Wilson, John Austin Stevens, James J. Wynne, Jon Caramanica, Paul Goodman, Richard Wilbur, Benjamin Barber, Erich Segal, James Roosevelt, Allegra Goodman, Arnold Zellner, Chris Terrio, Leonard Parker, Warren Delano Robbins, William Starr Miller II, Anne Fadiman, Clifford Taubes, Cornelius V. S. Roosevelt, Eric Schneiderman, Frederic M. Richards, Faye- Ellen Silverman, Robert Livingston Gerry Sr., Walter Licht, Gideon Dreyfuss, Allan Lichtman, Heywood Broun, John C. Harkness, Marilyn French, George Emlen Roosevelt, Stephen Cook  Stephen Cook  1, Donald Kennedy, Leon Wieseltier, Amory Houghton, Edward Asahel Birge, Paul Dana, Ira M. Lapidus, Richard Pan, Schuyler Cammann, Hayley Barna, Vanessa Lann, David Harbater, Marshall Rosenbluth, Max Cantor, Melvin Hochster, Richard Stallman, Elliott Shepard, Edwin Vernon Morgan, William Earl Dodge Scott, Elaine Ostrander, Harvey P. Greenspan, Paul Bender, Barbara Engel, Mary Bowman, Stephen E. Levinson, William Bayard Cutting Jr., Orme Wilson Jr., Richard M. Friedberg, Arthur A. Houghton Jr., C. Suydam Cutting, Roland L. Redmond, Peter Tufano, Randy Haykin, Donald J. Newman, Irwin I. Shapiro, John C. Cort, Moses Abramovitz, Richard Arnowitt, Simon Rich, Theodore Douglas Robinson, Alicia Munnell, Charles Pence Slichter, Erez Lieberman Aiden, Melissa Lee, William Melvin Kelley, Charles S. Maier, Stephen Lichtenbaum, Edwin Chesley Estes Lord, Lawrence Fuchs, Phillip Steck, Brian, Alfred H. Conrad, Leo Goldberg, Stephen Barnett, William J. Clench, Jane Gerber, Kamala Shirin Lakhdhir, John D. Boice Jr., Robert P. Goldberg, George Bergman, Herbert E. Kaufman, A.B.C. Whipple, Blair Clark, David Bragdon, Ian Heath Gershengorn, Bowdoin B. Crowninshield, Marc Postman, Lincoln Gordon, Amy S. Bruckman, James M. Poterba, John J. Emery, Jonathan Kaufman, Brooks Hansen, Alexander Morgan Hamilton, Erinn Westbrook, Franco Mormando, J. Griswold Webb, Walter Tuckerman and Leslie T. Chang  Leslie T. Chang  1. \n"
+        + "Other birth place is Brooklyn."});
     // L3_8 -> ?x1 ?p1 ?s . ?x2 ?p2 ?x1 . ?o ?p3 ?x2 .
     testConfigs.add(new Object[] {harvardUni, julius, almaMajorMovementPath,
         "Jack Levine trains Harvard University and American Figurative Expressionism's majorfigure is Jack Levine. Julius Hatofsky's movement is American Figurative Expressionism.\n"
-            + "Others with the same training are Robert Motherwell and Hyman Bloom. \n"
-            + "Other with the same majorfigures is Abstract expressionism."});
+        + "Others with the same training are Hyman Bloom and Robert Motherwell. \n"
+        + "Other with the same majorfigures is Abstract expressionism."});
     // example with literal intermediate nodes
-    testConfigs.add(new Object[] {tayZonday, minneapolis, backBackBirthPath,"Susie Allanson's background as well as Tay Zonday's background is solo_singer. Susie Allanson's birth place is Minneapolis.\n"
-        + "Others with the same background as well as birth place are RMR, John Wozniak, Larry Verne, Tommy Stinson, Shannon Selberg, Mark Naftalin, Mark Olson, Sims, P.O.S, Paul Peterson, Paul Westerberg and Tay Zonday."});
-
+    testConfigs.add(new Object[] {tayZonday, minneapolis, backBackBirthPath,"Mark Olson's background as well as Tay Zonday's background is solo_singer. Mark Olson's birth place is Minneapolis.\n"
+        + "Others with the same background as well as birth place are Mark Naftalin, P.O.S, Susie Allanson, John Wozniak, Paul Peterson, Sims, Paul Westerberg, Tommy Stinson, Shannon Selberg and Larry Verne."});
+    testConfigs.add(new Object[] {tayZonday, minneapolis, starStarBirthPath,"Hamlet A.D.D. stars Tay Zonday and he stars Trace Beaulieu. Trace Beaulieu's birth place is Minneapolis."});
+    
     return testConfigs;
   }
 

@@ -88,6 +88,10 @@ public class Variable {
   public void setObject() {
     this.isSubject = false;
   }
+  
+  public boolean containsPredicate(Node predicate) {
+    return predicates.contains(predicate);
+  }
 
   @Override
   public int hashCode() {

@@ -104,8 +104,6 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
     buildVariantMap();
   }
 
-
-
   @Override
   public String parseResults(String queryStr, int size) {
 
@@ -139,9 +137,13 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
         boolean isPlural = false;
 
         // remove the representative from the set
-        Iterator<Node> iterator = values.iterator();
-        iterator.next();
-        iterator.remove();
+        values.removeIf(k -> {
+          if(curVar.isSubject()) {
+            return stmts.stream().anyMatch(n -> n.getMatchSubject().matches(k) && curVar.containsPredicate(n.getPredicate()));
+          } else {
+            return stmts.stream().anyMatch(n -> n.getMatchObject().matches(k) && curVar.containsPredicate(n.getPredicate()));
+          }
+        });
         if (values.size() == 0) {
           continue;
         }
@@ -277,10 +279,10 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
    * @param vars The variables present in the paths
    * @return The verbalization output
    */
-  private String processVariant(String variant, List<Triple> stmts, Set<Variable> vars) {
+  private String processVariant(String variant, List<Triple> triples, Set<Variable> vars) {
 
     // return default behaviour for unsupported path lengths
-    List<Triple> triples = new ArrayList<>(stmts);
+    //List<Triple> triples = new ArrayList<>(stmts);
     int pathLength = triples.size();
     if (pathLength < 2 || pathLength > 3) {
       return converter.convert(triples);
