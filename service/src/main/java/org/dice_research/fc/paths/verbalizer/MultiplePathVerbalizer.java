@@ -98,6 +98,7 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
     Lexicon lexicon = Lexicon.getDefaultLexicon();
     String cache = System.getProperty("java.io.tmpdir");
     converter = new TripleConverter(qef, cache + "/triple2nl-cache", lexicon);
+    converter.setEncapsulateStringLiterals(false);
     nlgFactory = new NLGFactory(lexicon);
     realiser = new Realiser(lexicon);
     buildVariantMap();

@@ -117,7 +117,8 @@ public class VerbalizerTest {
     String almaBirthBirth =
         "^<http://dbpedia.org/ontology/almaMater>/<http://dbpedia.org/ontology/birthPlace>/^<http://dbpedia.org/ontology/birthPlace>";
     String almaMajorMovement =
-        "^<http://dbpedia.org/property/training>/^<http://dbpedia.org/property/majorfigures>/^<http://dbpedia.org/property/movement>";
+        "^<http://dbpedia.org/property/training>/^<http://dbpedia.org/property/majorfigures>/^<http://dbpedia.org/property/movement>";    
+    String backBackBirth = "<http://dbpedia.org/ontology/background>/^<http://dbpedia.org/ontology/background>/<http://dbpedia.org/ontology/birthPlace>";
     
     QRestrictedPath birthCountryPath = QRestrictedPath.create(birthCountry, 0);
     QRestrictedPath almaPathPath = QRestrictedPath.create(almaPath, 0);
@@ -134,6 +135,7 @@ public class VerbalizerTest {
     QRestrictedPath genreGenreAssociatePath = QRestrictedPath.create(genreGenreAssociate, 0);
     QRestrictedPath almaBirthBirthPath = QRestrictedPath.create(almaBirthBirth, 0);
     QRestrictedPath almaMajorMovementPath = QRestrictedPath.create(almaMajorMovement, 0);
+    QRestrictedPath backBackBirthPath = QRestrictedPath.create(backBackBirth, 0);
 
     // paths of length 1
     testConfigs.add(new Object[] {niaGill, bachelorArts, almaPathPath,
@@ -191,6 +193,9 @@ public class VerbalizerTest {
         "Jack Levine trains Harvard University and American Figurative Expressionism's majorfigure is Jack Levine. Julius Hatofsky's movement is American Figurative Expressionism.\n"
             + "Others with the same training are Robert Motherwell and Hyman Bloom. \n"
             + "Other with the same majorfigures is Abstract expressionism."});
+    // example with literal intermediate nodes
+    testConfigs.add(new Object[] {tayZonday, minneapolis, backBackBirthPath,"Susie Allanson's background as well as Tay Zonday's background is solo_singer. Susie Allanson's birth place is Minneapolis.\n"
+        + "Others with the same background as well as birth place are RMR, John Wozniak, Larry Verne, Tommy Stinson, Shannon Selberg, Mark Naftalin, Mark Olson, Sims, P.O.S, Paul Peterson, Paul Westerberg and Tay Zonday."});
 
     return testConfigs;
   }
