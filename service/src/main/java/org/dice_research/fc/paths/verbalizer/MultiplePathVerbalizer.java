@@ -132,12 +132,12 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
 
       // iterate variable names and build sentence
       for (Variable curVar : vars) {
-        LinkedHashSet<String> values = curVar.getValues();
+        LinkedHashSet<Node> values = curVar.getValues();
         Set<Node> predicates = curVar.getPredicates();
         boolean isPlural = false;
 
         // remove the representative from the set
-        Iterator<String> iterator = values.iterator();
+        Iterator<Node> iterator = values.iterator();
         iterator.next();
         iterator.remove();
         if (values.size() == 0) {
@@ -187,8 +187,8 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
 
         // concatenate resources
         int count = 0;
-        for (String curVal : values) {
-          NLGElement t = converter.processNode(NodeFactory.createURI(curVal));
+        for (Node curVal : values) {
+          NLGElement t = converter.processNode(curVal);
           String word = ((WordElement) t.getFeature("head")).getBaseForm();
           verbalizedOps.append(SPACE).append(word);
           if (++count < values.size() - 1) {
@@ -302,9 +302,9 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
       // replace variables in all triples
       for (Variable key : vars) {
         String varName = key.getName();
-        LinkedHashSet<String> values = key.getValues();
+        LinkedHashSet<Node> values = key.getValues();
         if (values != null && !values.isEmpty()) {
-          Node interNode = NodeFactory.createURI(values.iterator().next());
+          Node interNode = values.iterator().next();
           // replace subject if variable is there
           if (isSubjVar && curTriple.getSubject().getName().equals(varName)) {
             triples.set(i, new Triple(interNode, curTriple.getPredicate(), curTriple.getObject()));
@@ -576,7 +576,7 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
             continue;
           }
           Variable newVar = new Variable(curVarName);
-          newVar.addValue(curSol.get(curVarName).toString());
+          newVar.addValue(curSol.get(curVarName).asNode());
           if (!variableSet.add(newVar)) {
             variableSet.forEach(k -> {
               if (k.equals(newVar)) {

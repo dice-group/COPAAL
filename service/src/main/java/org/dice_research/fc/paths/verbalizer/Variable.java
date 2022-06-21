@@ -20,7 +20,7 @@ public class Variable {
   /**
    * Possible values the variable represents
    */
-  private LinkedHashSet<String> values;
+  private LinkedHashSet<Node> values;
   /**
    * Subset of predicates that can generate the set of values
    */
@@ -49,11 +49,11 @@ public class Variable {
     this.name = name;
   }
 
-  public LinkedHashSet<String> getValues() {
+  public LinkedHashSet<Node> getValues() {
     return values;
   }
 
-  public void addValue(String value) {
+  public void addValue(Node value) {
     values.add(value);
   }
 
@@ -61,7 +61,7 @@ public class Variable {
     values.addAll(var.getValues());
   }
 
-  public void setValues(LinkedHashSet<String> values) {
+  public void setValues(LinkedHashSet<Node> values) {
     this.values = values;
   }
 
