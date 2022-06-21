@@ -81,6 +81,7 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
   private static final String SING_IS = " is";
   private static final String PLURAL = "s";
   private static final String SPACE = " ";
+ 
 
   /**
    * Maps the Regex pattern to the corresponding variant
@@ -166,7 +167,7 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
         int j = 0;
         for (Node curPred : predicates) {
           NLGElement t = converter.processNode(curPred);
-          String verbPred = ((WordElement) t.getFeature("head")).getBaseForm();
+          String verbPred = ((WordElement) t.getFeature("head")).getBaseForm().toLowerCase();
           verbalizedOps.append(verbPred);
           if (++j < predicates.size() - 1) {
             verbalizedOps.append(",");
