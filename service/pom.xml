@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.dice.factcheck</groupId>
 	<artifactId>corraborative</artifactId>
-	<version>2.2.2</version>
+	<version>2.4.0</version>
 	<packaging>jar</packaging>
 
 	<name>COPAAL Service</name>

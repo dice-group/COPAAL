@@ -39,6 +39,7 @@ import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.PairCountRetriever;
 import org.dice_research.fc.paths.scorer.count.TentrisBasedCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
+import org.dice_research.fc.paths.scorer.count.decorate.SaveInDBCountDecorator;
 import org.dice_research.fc.paths.scorer.count.max.*;
 import org.dice_research.fc.paths.search.PreProcessPathSearcher;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
@@ -221,6 +222,9 @@ public class Config {
   @Value("${copaal.preprocess.addressOfMaxCountFile:}")
   private String addressOfMaxCountFile;
 
+  @Value("${copaal.graphName:}")
+  private String graphName;
+
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
     return new PropertySourcesPlaceholderConfigurer();
@@ -313,6 +317,15 @@ public class Config {
         TentrisAdapter tentris = new TentrisAdapter(HttpClients.createDefault(), tentrisURL);
         countRetriever = new TentrisBasedCountRetriever(tentris, new TentrisBasedMaxCounter(tentris),
                 new BGPBasedPathClauseGenerator());
+        break;
+      case "tentriswithdb":
+        System.out.println("for tentris chaching");
+        TentrisAdapter tentris2 = new TentrisAdapter(HttpClients.createDefault(), tentrisURL);
+        countRetriever = new TentrisBasedCountRetriever(tentris2, new TentrisBasedMaxCounter(tentris2),
+                new BGPBasedPathClauseGenerator());
+        System.out.println("counter retriver is :"+countRetriever.getClass());
+        countRetriever  = new SaveInDBCountDecorator(countRetriever,graphName);
+        System.out.println("and then is counter retriver is :"+countRetriever.getClass());
         break;
       default:
         countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
