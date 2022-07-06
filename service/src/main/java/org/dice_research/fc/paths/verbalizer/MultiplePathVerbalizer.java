@@ -300,7 +300,7 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
       boolean isObjVar = curTriple.getObject().isVariable();
 
       if (!isSubjVar && !isObjVar) {
-        LOGGER.error("On of the nodes must be a variable");
+        LOGGER.error("One of the nodes must be a variable");
       }
 
       // replace variables in all triples
@@ -309,6 +309,7 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
         LinkedHashSet<Node> values = key.getValues();
         if (values != null && !values.isEmpty()) {
           Node interNode = values.iterator().next();
+          
           // replace subject if variable is there
           if (isSubjVar && curTriple.getSubject().getName().equals(varName)) {
             triples.set(i, new Triple(interNode, curTriple.getPredicate(), curTriple.getObject()));
@@ -456,6 +457,8 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
     String realisation = realiser.realise(paragraph).getRealisation().trim();
     return realisation;
   }
+  
+  
 
   /**
    * 

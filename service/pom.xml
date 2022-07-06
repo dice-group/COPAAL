@@ -74,6 +74,7 @@
 			<version>3.6.0</version>
 		</dependency>
 
+		
 		<!-- https://mvnrepository.com/artifact/org.apache.jena/jena-querybuilder -->
 		<dependency>
 			<groupId>org.apache.jena</groupId>
@@ -115,8 +116,36 @@
 					<groupId>edu.berkeley.compbio</groupId>
 					<artifactId>jlibsvm</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.aksw.semweb2nl</groupId>
+					<artifactId>triple2nl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.dice-research</groupId>
+			<artifactId>triple2nl</artifactId>
+			<version>0.4.2-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>javax.servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -198,7 +227,7 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.8</version>
 			</plugin>
-        </plugins>
+		</plugins>
 	</build>
 	<dependencyManagement>
 		<dependencies>
