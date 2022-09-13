@@ -40,18 +40,29 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
    * this flag show is it should use Post or Get
    */
   private boolean isPostRequest;
+
+  /**
+   * this flag show is it should use authentication for using the api or not
+   */
+  private boolean needAuthentication;
+
+
+  private String username;
+  private String password;
+
+
   /**
    * Constructor.
    * 
    * @param service The URL of the SPARQL endpoint.
    */
 
-  public QueryExecutionFactoryCustomHttp(String service,boolean isPostRequest, String typeOfQueryResult) {
-    this(service, 0, isPostRequest, typeOfQueryResult);
+  public QueryExecutionFactoryCustomHttp(String service,boolean isPostRequest, String typeOfQueryResult, boolean needAuthentication, String username, String password) {
+    this(service, 0, isPostRequest, typeOfQueryResult, needAuthentication, username, password);
   }
 
   public QueryExecutionFactoryCustomHttp(String service) {
-    this(service, 0,false, "xml");
+    this(service, 0,false, "xml",false,"","");
   }
 
 
@@ -63,10 +74,13 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
    * @param timeout The time out for running a query.
    * @param isPostRequest this flag show is it should use Post or Get
    */
-  public QueryExecutionFactoryCustomHttp(String service, int timeout, boolean isPostRequest, String typeOfQueryResult) {
+  public QueryExecutionFactoryCustomHttp(String service, int timeout, boolean isPostRequest, String typeOfQueryResult, boolean needAuthentication, String username, String password) {
     this.service = service;
     this.isPostRequest = isPostRequest;
     this.typeOfQueryResult = typeOfQueryResult;
+    this.needAuthentication = needAuthentication;
+    this.username = username;
+    this.password = password;
 
     //Create an object of credentialsProvider
     //CredentialsProvider credentialsPovider = new BasicCredentialsProvider();
@@ -77,9 +91,11 @@ public class QueryExecutionFactoryCustomHttp extends QueryExecutionFactoryBase {
     //Credentials credentials = new UsernamePasswordCredentials("unipaderborn", "Semantics123");
 
     CredentialsProvider provider = new BasicCredentialsProvider();
-    UsernamePasswordCredentials credentials
-            = new UsernamePasswordCredentials("unipaderborn", "Semantics123");
-    provider.setCredentials(AuthScope.ANY, credentials);
+    if(needAuthentication) {
+      UsernamePasswordCredentials credentials
+              = new UsernamePasswordCredentials(username, password);
+      provider.setCredentials(AuthScope.ANY, credentials);
+    }
 
     //credentialsPovider.setCredentials(scope,credentials);
 

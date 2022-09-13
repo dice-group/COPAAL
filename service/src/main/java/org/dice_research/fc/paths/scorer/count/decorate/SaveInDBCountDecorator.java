@@ -69,19 +69,6 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
             LOGGER.info("range is null");
             return -1;}
 
-        if(repositoryForTest == null){
-            LOGGER.info("repositoryForTest is null!!");
-        }else{
-            LOGGER.info("repositoryForTest has value");
-        }
-
-        if(countPathInstancesRepository == null){
-            LOGGER.info("countPathInstancesRepository is null !");
-        }else{
-            LOGGER.info("countPathInstancesRepository has value !");
-        }
-        LOGGER.info("countPathInstancesRepository :"+countPathInstancesRepository.getClass().toString());
-
         List<CountPathInstances> foundInstances = countPathInstancesRepository.findByPathAndGraphNameAndDomainAndRange(pathStr, graphName, domainStr, rangeStr);
         if(foundInstances.size()>0){
             CountPathInstances item = foundInstances.get(0);

@@ -92,6 +92,24 @@ public class Config {
   private String serviceURL;
 
   /**
+   * show if sparql endpoint needs an authentication (true) or not (false)
+   */
+  @Value("${info.service.url.needAuthentication:}")
+  private boolean isSparqlEndpointNeedAuthentication;
+
+  /**
+   *
+   */
+  @Value("${info.service.url.username:}")
+  private String sparqlEndpointUsername;
+
+  /**
+   * The SPARQL endpoint URL
+   */
+  @Value("${info.service.url.password:}")
+  private String sparqlEndpointPassword;
+
+  /**
    * The SPARQL endpoint URL
    */
   @Value("${copaal.tentris.endpoint:}")
@@ -237,7 +255,7 @@ public class Config {
    */
   @Bean
   public MetaPathsProcessor getMetaPathsProcessor(QueryExecutionFactory qef) {
-    switch (metaPaths.toLowerCase()) {
+    switch (metaPaths.toLowerCase().trim()) {
       case "estherpathprocessor":
         return new EstherPathProcessor(preprocessedPaths, qef);
       default:
@@ -275,7 +293,7 @@ public class Config {
   public IPathSearcher getPathSearcher(QueryExecutionFactory qef, Collection<IRIFilter> filter,IMapper<Path, QRestrictedPath> mapper,
                                        IMapper<Pair<Property, Boolean>, PathElement> propertyElementMapper,ICountRetriever counterRetrieverClass,
                                        FactPreprocessor factPreprocessorClass, IPathScorer pathScorerClass, IPreProcessProvider preProcessProvider, TentrisAdapter adapter) {
-    switch (pathSearcher.toLowerCase()){
+    switch (pathSearcher.toLowerCase().trim()){
       case "loadsavedecorator" :
         String counterRetriever = counterRetrieverClass.getClass().getName();
         String factPreprocessor = factPreprocessorClass.getClass().getName();
@@ -303,7 +321,7 @@ public class Config {
   @Bean
   public ICountRetriever getCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IPathClauseGenerator pathClauseGenerator,IPreProcessProvider preProcessProvider) {
     ICountRetriever countRetriever;
-    switch (counter.toLowerCase()) {
+    switch (counter.toLowerCase().trim()) {
       case "approximatingcountretriever":
         countRetriever = new ApproximatingCountRetriever(qef, maxCounter);
         break;
@@ -346,7 +364,7 @@ public class Config {
   public MaxCounter getMaxCounter(QueryExecutionFactory qef) {
     MaxCounter maxCounter;
 
-    switch (factPreprocessorType.toLowerCase()) {
+    switch (factPreprocessorType.toLowerCase().trim()) {
       case ("predicatefactory"):
         return new DefaultMaxCounter(qef);
       case ("virtualtypepredicatefactory"):
@@ -364,7 +382,7 @@ public class Config {
    */
   @Bean
   public IPathScorer getPathScorer(ICountRetriever countRetriever) {
-    switch (scorer.toLowerCase()) {
+    switch (scorer.toLowerCase().trim()) {
       case "npmi":
         return new NPMIBasedScorer(countRetriever);
       case "pnpmi":
@@ -398,9 +416,9 @@ public class Config {
     QueryExecutionFactory qef;
     if (filePath == null || filePath.isEmpty()) {
       if(isPostRequest.equalsIgnoreCase("post")) {
-        qef = new QueryExecutionFactoryCustomHttp(serviceURL, true, typeOfQueryResult);
+          qef = new QueryExecutionFactoryCustomHttp(serviceURL, true, typeOfQueryResult, isSparqlEndpointNeedAuthentication, sparqlEndpointUsername, sparqlEndpointPassword);
       }else{
-        qef = new QueryExecutionFactoryCustomHttp(serviceURL, false, typeOfQueryResult);
+        qef = new QueryExecutionFactoryCustomHttp(serviceURL, false, typeOfQueryResult, isSparqlEndpointNeedAuthentication, sparqlEndpointUsername, sparqlEndpointPassword);
       }
     } else {
       Model model = ModelFactory.createDefaultModel();
@@ -415,14 +433,14 @@ public class Config {
    * @return The {@link FactPreprocessor} object dependent on whether we want virtual types or not
    */
   @Bean
-  public FactPreprocessor getPreprocessor(QueryExecutionFactory qef) {
-    switch (factPreprocessorType.toLowerCase()) {
+  public FactPreprocessor getPreprocessor(QueryExecutionFactory qef,Collection<IRIFilter> filters) {
+    switch (factPreprocessorType.toLowerCase().trim()) {
       case ("predicatefactory"):
         return new PredicateFactory(qef);
       case ("virtualtypepredicatefactory"):
         return new VirtualTypePredicateFactory();
       case ("hybridpredicatefactory"):
-        return new HybridPredicateFactory(qef,ShouldUseBGPVirtualTypeRestriction);
+        return new HybridPredicateFactory(qef,ShouldUseBGPVirtualTypeRestriction,filters);
       case ("hybridpredicatetentrisfactory"):
         return new HybridPredicateTentrisFactory(allPredicates("collected_predicates.json"));
       default:
@@ -476,7 +494,7 @@ public class Config {
    */
   @Bean
   public ScoreSummarist getSummarist() {
-    switch (summaristType.toLowerCase()) {
+    switch (summaristType.toLowerCase().trim()) {
       case "adaptedrootmeansquaresummarist":
         return new AdaptedRootMeanSquareSummarist();
       case "cubicmeansummarist":
@@ -537,7 +555,7 @@ public class Config {
    */
   @Bean
   IPathClauseGenerator getPathClauseGenerator(){
-    switch (pathClauseGeneratorType.toLowerCase()){
+    switch (pathClauseGeneratorType.toLowerCase().trim()){
       case("proppathbasedpathclausegenerator"):
         return new PropPathBasedPathClauseGenerator();
       case ("bgpbasedpathclausegenerator"):
