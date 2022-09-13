@@ -50,9 +50,6 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MultiplePathVerbalizer.class);
 
-  private static final String NOT_FOUND =
-      "Verbalization not found as no intermediate nodes were found for the meta-path.";
-
   private static TripleConverter converter;
   private NLGFactory nlgFactory;
   private Realiser realiser;
@@ -81,12 +78,12 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
   private static final String SING_IS = " is";
   private static final String PLURAL = "s";
   private static final String SPACE = " ";
- 
+
 
   /**
    * Maps the Regex pattern to the corresponding variant
    */
-  private static Map<String, String> variantMap; 
+  private static Map<String, String> variantMap;
 
   /**
    * Constructor.
@@ -123,7 +120,13 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
     // 2. identify path variant and process accordingly
     String variant = identifyVariant(queryStr);
     vars.forEach(k -> assignPredicate(k, stmts));
-    String parsedOutput = processVariant(variant, stmts, vars);
+    String parsedOutput;
+    try {
+      parsedOutput = processVariant(variant, stmts, vars);
+    } catch (VerbalizerException e) {
+      e.printStackTrace();
+      return null;
+    }
     StringBuilder resultBuilder = new StringBuilder();
     resultBuilder.append(parsedOutput).append("\n");
 
@@ -138,10 +141,12 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
 
         // remove the representative from the set
         values.removeIf(k -> {
-          if(curVar.isSubject()) {
-            return stmts.stream().anyMatch(n -> n.getMatchSubject().matches(k) && curVar.containsPredicate(n.getPredicate()));
+          if (curVar.isSubject()) {
+            return stmts.stream().anyMatch(
+                n -> n.getMatchSubject().matches(k) && curVar.containsPredicate(n.getPredicate()));
           } else {
-            return stmts.stream().anyMatch(n -> n.getMatchObject().matches(k) && curVar.containsPredicate(n.getPredicate()));
+            return stmts.stream().anyMatch(
+                n -> n.getMatchObject().matches(k) && curVar.containsPredicate(n.getPredicate()));
           }
         });
         if (values.size() == 0) {
@@ -278,11 +283,12 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
    * @param stmts The path statements
    * @param vars The variables present in the paths
    * @return The verbalization output
+   * @throws VerbalizerException 
    */
-  private String processVariant(String variant, List<Triple> triples, Set<Variable> vars) {
+  private String processVariant(String variant, List<Triple> triples, Set<Variable> vars) throws VerbalizerException {
 
     // return default behaviour for unsupported path lengths
-    //List<Triple> triples = new ArrayList<>(stmts);
+    // List<Triple> triples = new ArrayList<>(stmts);
     int pathLength = triples.size();
     if (pathLength < 2 || pathLength > 3) {
       return converter.convert(triples);
@@ -290,7 +296,8 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
 
     // if there's no variable mapping, verbalization cannot be processed
     if (vars.isEmpty()) {
-      return NOT_FOUND;
+      throw new VerbalizerException(
+          "Verbalization not found as no intermediate nodes were found for the meta-path.");
     }
 
     // replace with first intermediate node found
@@ -300,7 +307,7 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
       boolean isObjVar = curTriple.getObject().isVariable();
 
       if (!isSubjVar && !isObjVar) {
-        LOGGER.error("One of the nodes must be a variable");
+        throw new VerbalizerException("One of the nodes must be a variable.");
       }
 
       // replace variables in all triples
@@ -309,7 +316,7 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
         LinkedHashSet<Node> values = key.getValues();
         if (values != null && !values.isEmpty()) {
           Node interNode = values.iterator().next();
-          
+
           // replace subject if variable is there
           if (isSubjVar && curTriple.getSubject().getName().equals(varName)) {
             triples.set(i, new Triple(interNode, curTriple.getPredicate(), curTriple.getObject()));
@@ -324,7 +331,7 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
           isSubjVar = curTriple.getSubject().isVariable();
           isObjVar = curTriple.getObject().isVariable();
         } else {
-          return NOT_FOUND;
+          throw new VerbalizerException("Could not identify variables in the query.");
         }
       }
     }
@@ -457,8 +464,8 @@ public class MultiplePathVerbalizer extends DefaultPathVerbalizer {
     String realisation = realiser.realise(paragraph).getRealisation().trim();
     return realisation;
   }
-  
-  
+
+
 
   /**
    * 
