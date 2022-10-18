@@ -5,6 +5,7 @@ import org.apache.jena.arq.querybuilder.SelectBuilder;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
@@ -12,6 +13,7 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.dice_research.fc.data.Predicate;
+import org.dice_research.fc.sparql.filter.IRIFilter;
 import org.dice_research.fc.sparql.restrict.BGPBasedVirtualTypeRestriction;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
@@ -21,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 /**
@@ -35,15 +38,18 @@ public class HybridPredicateFactory implements FactPreprocessor {
 
     private boolean useBGPVirtualTypeRestriction = true;
 
+    private Collection<IRIFilter> filters;
+
     @Autowired
     public HybridPredicateFactory(QueryExecutionFactory qef) {
         this.executioner = qef;
     }
 
     @Autowired
-    public HybridPredicateFactory(QueryExecutionFactory qef, boolean useBGPVirtualTypeRestriction) {
+    public HybridPredicateFactory(QueryExecutionFactory qef, boolean useBGPVirtualTypeRestriction,Collection<IRIFilter> filters) {
         this.executioner = qef;
         this.useBGPVirtualTypeRestriction = useBGPVirtualTypeRestriction;
+        this.filters = filters;
     }
 
     @Override
@@ -53,7 +59,7 @@ public class HybridPredicateFactory implements FactPreprocessor {
         LOGGER.trace("Found the following classes for the domain: {}", dTypes);
         if(dTypes.size() == 0){
             // use Virtual type
-            if(useBGPVirtualTypeRestriction){
+            if(!useBGPVirtualTypeRestriction){
                 domain = new VirtualTypeRestriction(true, triple.getPredicate().getURI());
             }else{
                 domain = new BGPBasedVirtualTypeRestriction(true, triple.getPredicate().getURI());
@@ -68,7 +74,7 @@ public class HybridPredicateFactory implements FactPreprocessor {
         LOGGER.trace("Found the following classes for the range: {}", rTypes);
         if(rTypes.size() == 0){
             // use Virtual type
-            if(useBGPVirtualTypeRestriction){
+            if(!useBGPVirtualTypeRestriction){
                 range = new VirtualTypeRestriction(false, triple.getPredicate().getURI());
             }else{
                 range = new BGPBasedVirtualTypeRestriction(false, triple.getPredicate().getURI());
@@ -117,10 +123,17 @@ public class HybridPredicateFactory implements FactPreprocessor {
      */
     public Set<String> getObjects(Resource subject, Property predicate) {
         Set<String> types = new HashSet<String>();
-        SelectBuilder selectBuilder = new SelectBuilder();
-        selectBuilder.addWhere(subject, predicate, NodeFactory.createVariable("x"));
+        StringBuilder selectBuilder = new StringBuilder();
+        selectBuilder.append("SELECT  *\n");
+        selectBuilder.append("WHERE\n");
+        selectBuilder.append("{ <"+subject+">\n");
+        selectBuilder.append("<"+predicate+">  ?x.\n");
+        for (IRIFilter f:filters) {
+            f.addFilter("x", selectBuilder);
+        }
+        selectBuilder.append("}");
 
-        Query query = selectBuilder.build();
+        Query query = QueryFactory.create(selectBuilder.toString());
         try (QueryExecution queryExecution = executioner.createQueryExecution(query)) {
             ResultSet resultSet = queryExecution.execSelect();
             while (resultSet.hasNext()) {

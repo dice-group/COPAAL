@@ -679,4 +679,82 @@ public class BGPBasedPathClauseGeneratorTest {
         String expected = "?in1 <http://example.org/property1> ?s . ?in1 <http://example.org/property2> ?in2 . ?o <http://example.org/property3> ?in2 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
+
+    @Test
+    public void pathLen2NoInvertedNoLoopsShouldReturnExpectedResult(){
+
+        List<Pair<Property, Boolean>> pathElements = new ArrayList<>();
+
+        Model model = ModelFactory.createDefaultModel();
+
+        // The First Property
+        //Property
+        Property property1 = model.createProperty("http://example.org/property1");
+        boolean property1Inverted = true;
+
+        // The second Property
+        //Property
+        Property property2 = model.createProperty("http://example.org/property2");
+        boolean property2Inverted = true;
+
+        pathElements.add(new Pair<>(property1,property1Inverted));
+        pathElements.add(new Pair<>(property2,property2Inverted));
+
+        double score = 0.5;
+
+        QRestrictedPath path = new QRestrictedPath(pathElements,score);
+
+        StringBuilder queryBuilder = new StringBuilder();
+        String subjectVariable = "s";
+        String objectVariable = "o";
+        String intermediateName = "x";
+
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator(true);
+        generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
+
+        System.out.println(queryBuilder.toString());
+        String expected = "?s <http://example.org/property1> ?x1 . ?x1 <http://example.org/property2> ?o . FILTER(?s != ?x1 && ?x1 != ?o)";
+        Assert.assertEquals(expected,queryBuilder.toString());
+    }
+
+    @Test
+    public void pathLen3FirstAndThirdPropertiesWithInvertedNoIntermediateNodeNoLoopsShouldReturnExpectedResult(){
+        List<Pair<Property, Boolean>> pathElements = new ArrayList<>();
+
+        Model model = ModelFactory.createDefaultModel();
+
+        // The First Property
+        //Property
+        Property property1 = model.createProperty("http://example.org/property1");
+        boolean property1Inverted = false;
+
+        // The second Property
+        //Property
+        Property property2 = model.createProperty("http://example.org/property2");
+        boolean property2Inverted = true;
+
+        // The third Property
+        //Property
+        Property property3 = model.createProperty("http://example.org/property3");
+        boolean property3Inverted = false;
+
+        pathElements.add(new Pair<>(property1,property1Inverted));
+        pathElements.add(new Pair<>(property2,property2Inverted));
+        pathElements.add(new Pair<>(property3,property3Inverted));
+
+        double score = 0.5;
+
+        QRestrictedPath path = new QRestrictedPath(pathElements,score);
+
+        StringBuilder queryBuilder = new StringBuilder();
+        String subjectVariable = "s";
+        String objectVariable = "o";
+
+        IPathClauseGenerator generator = new BGPBasedPathClauseGenerator(true);
+        generator.addPath(path, queryBuilder, subjectVariable,objectVariable);
+
+        System.out.println(queryBuilder.toString());
+        String expected = "?in1 <http://example.org/property1> ?s . ?in1 <http://example.org/property2> ?in2 . ?o <http://example.org/property3> ?in2 . FILTER(?s != ?in1 && ?s != ?in2 && ?in1 != ?in2 && ?in1 != ?o && ?in2 != ?o)";
+        Assert.assertEquals(expected,queryBuilder.toString());
+    }
 }

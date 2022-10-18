@@ -11,6 +11,8 @@ import org.dice_research.fc.data.FactCheckingResult;
 import org.dice_research.fc.paths.verbalizer.IPathVerbalizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +28,8 @@ public class RESTController {
   ApplicationContext ctx;
 
   @GetMapping("/test")
-  public String ping(){
-    return "OK!";
+  public ResponseEntity<String> ping(){
+    return ResponseEntity.status(HttpStatus.OK).body("OK!");
   }
 
   @GetMapping("/validate")

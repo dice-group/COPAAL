@@ -28,6 +28,7 @@ public class PredicateFactory implements FactPreprocessor {
   
   private QueryExecutionFactory executioner;
 
+
   @Autowired
   public PredicateFactory(QueryExecutionFactory qef) {
     this.executioner = qef;

@@ -28,11 +28,11 @@ public class NPMIBasedScorer implements IPropertyBasedPathScorer {
   /**
    * The score if a path does not exist in the reference knowledge graph.
    */
-  protected double pathDoesNotExistResult = 0;
+  protected double pathDoesNotExistResult = 0.0;
   /**
    * The score if a property does not exist in the reference knowledge graph.
    */
-  protected double propertyDoesNotExistResult = 0;
+  protected double propertyDoesNotExistResult = 0.0;
   /**
    * The score if a path and a property do not co-occur in the reference knowledge graph.
    */
@@ -89,7 +89,7 @@ public class NPMIBasedScorer implements IPropertyBasedPathScorer {
     // PMI (without log) = P(p,path) / P(p)*P(path)
     // = (c(p,path)/c(max)) / (c(p)/c(max))*(c(path)/c(max))
     // = c(p,path)*c(max) / c(p)*(c(path)
-    LOGGER.trace("npmi calculated with this  = Math.log(({} * {}) / ({} * {})) / -Math.log({} / {})",cooccurrenceCounts,deriveMaxCount,predicateCounts,pathCounts,cooccurrenceCounts,deriveMaxCount);
+    LOGGER.debug("npmi calculated with this  = Math.log(({} * {}) / ({} * {})) / -Math.log({} / {})",cooccurrenceCounts,deriveMaxCount,predicateCounts,pathCounts,cooccurrenceCounts,deriveMaxCount);
     double npmi = Math.log((cooccurrenceCounts * deriveMaxCount) / (predicateCounts * pathCounts))
         / -Math.log(cooccurrenceCounts / deriveMaxCount);
     LOGGER.debug("calculated npmi is : {}",npmi);
