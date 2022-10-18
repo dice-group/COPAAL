@@ -1,5 +1,8 @@
 package org.dice_research.fc.util;
 
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
@@ -59,5 +62,34 @@ public class RDFUtil {
     return ResourceFactory.createStatement(subject, property, object);
 
   }
+
+
+  public static Triple getTripleFromString(String stmtString) {
+    // remove <>, ", trim and split by white space
+    String trimmedStr = stmtString.replaceAll("<*>*\"*", "").replaceAll("\\.$", "").trim();
+    String[] resources = trimmedStr.split("\\s+");
+
+    if (resources.length != 3) {
+      throw new IllegalArgumentException(
+          "The Statement string doesn't have the expected 3 elements of a triple.");
+    }
+
+    Node subject = getResourceOrVar(resources[0]);
+    Node property = getResourceOrVar(resources[1]);
+    Node object = getResourceOrVar(resources[2]);
+
+    return Triple.create(subject, property, object);
+  }
+  
+  public static Node getResourceOrVar(String str) {
+    Node node;
+    if (str.contains("?")) {
+      node = NodeFactory.createVariable(str.replace("?", ""));
+    } else {
+      node = NodeFactory.createURI(str);
+    }
+    return node;
+  }
+
 
 }
