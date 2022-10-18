@@ -7,6 +7,7 @@ import java.util.*;
 
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.aksw.jena_sparql_api.model.QueryExecutionFactoryModel;
+import org.aksw.jena_sparql_api.pagination.core.QueryExecutionFactoryPaginated;
 import org.apache.commons.math3.util.Pair;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.jena.rdf.model.Model;
@@ -37,6 +38,7 @@ import org.dice_research.fc.paths.scorer.PNPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.PreCalculationScorer;
 import org.dice_research.fc.paths.scorer.count.ApproximatingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.PairCountRetriever;
+import org.dice_research.fc.paths.scorer.count.SPARQLBasedResultStreamingCountRetriever;
 import org.dice_research.fc.paths.scorer.count.TentrisBasedCountRetriever;
 import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDecorator;
 import org.dice_research.fc.paths.scorer.count.decorate.SaveInDBCountDecorator;
@@ -75,6 +77,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.aksw.jena_sparql_api.core.QueryExecutionFactoryBackQuery;
+import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 
 /**
  * Configuration class containing the variables present in the applications.properties file and the
@@ -95,7 +100,7 @@ public class Config {
    * show if sparql endpoint needs an authentication (true) or not (false)
    */
   @Value("${info.service.url.needAuthentication:}")
-  private boolean isSparqlEndpointNeedAuthentication;
+  private String sparqlEndpointNeedAuthentication;
 
   /**
    *
@@ -150,6 +155,11 @@ public class Config {
   @Value("${copaal.factpreprocessor.ShouldUseBGPVirtualTypeRestriction}")
   private boolean ShouldUseBGPVirtualTypeRestriction;
 
+  /**
+   * This flag indicate that use BGPVirtualTypeRestriction if it is true
+   */
+  @Value("${dataset.sparql.foorbidLoop}")
+  private boolean foorbidLoop;
 
   /**
    * Path's maximum length
@@ -259,6 +269,7 @@ public class Config {
       case "estherpathprocessor":
         return new EstherPathProcessor(preprocessedPaths, qef);
       default:
+        System.out.println("Warning : it use default MetaPathProcessor");
         return new NoopPathProcessor(preprocessedPaths, qef);
     }
   }
@@ -302,6 +313,7 @@ public class Config {
       case "preprocess":
         return new PreProcessPathSearcher(preProcessProvider, adapter);
       default:
+        System.out.println("Warning : it use default Pathsearcher");
         return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
     }
   }
@@ -345,7 +357,12 @@ public class Config {
         countRetriever  = new SaveInDBCountDecorator(countRetriever,graphName);
         System.out.println("and then is counter retriver is :"+countRetriever.getClass());
         break;
+      case "streamingcountretriever":
+        qef = new QueryExecutionFactoryPaginated(qef);
+        countRetriever = new SPARQLBasedResultStreamingCountRetriever(qef, maxCounter);
+          break;
       default:
+        System.out.println("Warning : it use default count retriever");
         countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
         break;
     }
@@ -372,6 +389,7 @@ public class Config {
       case ("hybridpredicatefactory"):
         return new HybridMaxCounter(qef);
       default:
+        System.out.println("Warning : it use default Maxcounter");
         return new DefaultMaxCounter(qef);
     }
   }
@@ -388,6 +406,7 @@ public class Config {
       case "pnpmi":
         return new PNPMIBasedScorer(countRetriever);
       default:
+        System.out.println("Warning : it use default path scorer");
         return new NPMIBasedScorer(countRetriever);
     }
   }
@@ -415,6 +434,10 @@ public class Config {
   public QueryExecutionFactory getQueryExecutionFactory() {
     QueryExecutionFactory qef;
     if (filePath == null || filePath.isEmpty()) {
+      boolean isSparqlEndpointNeedAuthentication = false;
+      if(sparqlEndpointNeedAuthentication.trim().equals("true")){
+        isSparqlEndpointNeedAuthentication = true;
+      }
       if(isPostRequest.equalsIgnoreCase("post")) {
           qef = new QueryExecutionFactoryCustomHttp(serviceURL, true, typeOfQueryResult, isSparqlEndpointNeedAuthentication, sparqlEndpointUsername, sparqlEndpointPassword);
       }else{
@@ -444,6 +467,7 @@ public class Config {
       case ("hybridpredicatetentrisfactory"):
         return new HybridPredicateTentrisFactory(allPredicates("collected_predicates.json"));
       default:
+        System.out.println("Warning : it use default preprocessor");
         return new PredicateFactory(qef);
     }
   }
@@ -510,6 +534,7 @@ public class Config {
       case "squaredaveragesummarist":
         return new SquaredAverageSummarist();
       default:
+        System.out.println("Warning : it use default score summarist");
         return new OriginalSummarist();
     }
   }
@@ -559,8 +584,10 @@ public class Config {
       case("proppathbasedpathclausegenerator"):
         return new PropPathBasedPathClauseGenerator();
       case ("bgpbasedpathclausegenerator"):
-        return new BGPBasedPathClauseGenerator();
+        return new BGPBasedPathClauseGenerator(foorbidLoop);
+        // TODO add with no loop
       default:
+        System.out.println("Warning : it use default path generator");
         return new PropPathBasedPathClauseGenerator();
     }
   }

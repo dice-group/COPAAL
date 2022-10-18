@@ -93,11 +93,22 @@ public class SimpleShortcutAdder {
     String endpoint = "https://frockg.ontotext.com/repositories/COPAAL";
     // List the property paths and the property IRIs which should be inserted for this path here as
     // pair ([0]=path,[1]=property)
-    String[][] path2Property = new String[][] {{
-        "<http://linkedlifedata.com/resource/drugcentral/synonym>/^<http://www.w3.org/2004/02/skos/core#prefLabel>",
-        "http://frockg.eu/similarLabel"},
-        {"<http://linkedlifedata.com/resource/drugcentral/fdaLabels>/^<http://linkedlifedata.com/resource/clinicaltrials/ontology#subjectsAtRisk>",
-            "http://frockg.eu/mentionedAsRisk"}};
+    String[][] path2Property = new String[][] {
+            {"<http://linkedlifedata.com/resource/drugcentral/synonym>/^<http://www.w3.org/2004/02/skos/core#prefLabel>",
+                    "http://frockg.eu/similarLabel"},
+            {"<http://linkedlifedata.com/resource/drugcentral/synonym>/^<http://www.w3.org/2004/02/skos/core#altLabel>",
+                    "http://frockg.eu/similarLabel"},
+            {"<http://linkedlifedata.com/resource/drugcentral/structName>/^<http://www.w3.org/2004/02/skos/core#prefLabel>",
+                    "http://frockg.eu/similarLabel"},
+            {"<http://linkedlifedata.com/resource/drugcentral/structName>/^<http://www.w3.org/2004/02/skos/core#altLabel>",
+                    "http://frockg.eu/similarLabel"},
+            {"<http://linkedlifedata.com/resource/drugcentral/synonym_lower>/^<http://www.w3.org/2004/02/skos/core#prefLabel>",
+                    "http://frockg.eu/similarLabel"},
+            {"<http://linkedlifedata.com/resource/drugcentral/synonym_lower>/^<http://www.w3.org/2004/02/skos/core#altLabel>",
+                    "http://frockg.eu/similarLabel"},
+            {"<http://linkedlifedata.com/resource/drugcentral/definition>/^<http://www.w3.org/2004/02/skos/core#definition>",
+                    "http://frockg.eu/similarDefinition"}
+        };
 
     File outputDir = new File("addedTriples");
     if (!outputDir.exists()) {

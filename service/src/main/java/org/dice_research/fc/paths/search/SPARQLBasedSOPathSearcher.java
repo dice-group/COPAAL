@@ -307,7 +307,15 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
     ResultSet rs;
     BitSet directions;*/
     List<Pair<Property, Boolean>> pathElements;
-    paths = queries.stream().parallel().map(q -> doSearch(q)).flatMap(l->l.stream()).collect(Collectors.toList());
+    //paths = queries.stream().parallel().map(q -> doSearch(q)).flatMap(l->l.stream()).collect(Collectors.toList());
+
+    for(int j = 0 ; j < queries.size() ; j++){
+      LOGGER.info("j is : "+j+" Start calculate for query :"+queries.get(j));
+      List<QRestrictedPath> lp = doSearch(queries.get(j));
+      LOGGER.info("it returns"+lp.size()+" to add");
+      paths.addAll(lp);
+    }
+    LOGGER.info("end off search path total number is "+paths.size());
     /*for (SearchQuery query : queries) {
       long time = System.currentTimeMillis();
       LOGGER.info("Executing query \"{}\"", query.getQuery());
@@ -350,33 +358,36 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
     List<Pair<Property, Boolean>> pathElements;
     long time = System.currentTimeMillis();
     LOGGER.info("Executing query \"{}\"", query.getQuery());
-    LOGGER.trace("details of query direction:{}, length:{}",query.getDirections() ,query.getLength());
+    LOGGER.info("details of query direction:{}, length:{}",query.getDirections() ,query.getLength());
     try (QueryExecution qe = qef.createQueryExecution(query.getQuery())) {
-      LOGGER.trace("QueryExecution timeout:{} ,",qe.getTimeout1());
+      LOGGER.info("QueryExecution timeout:{} , the query is {}",qe.getTimeout1(),query.getQuery());
       directions = query.getDirections();
       rs = qe.execSelect();
+      LOGGER.info("lets count the results for the query is {}",query.getQuery());
       int count = 0;
       while (rs.hasNext()) {
+        LOGGER.info("it has more"+count);
         qs = rs.next();
         // collect the properties of the path and their direction
         pathElements = new ArrayList<>(query.getLength());
-        LOGGER.trace("list of path elements");
+        LOGGER.info("list of path elements: "+query.getLength());
         for (int i = 0; i < query.getLength(); ++i) {
+          LOGGER.info("path elements: "+i);
           pathElements.add(new Pair<Property, Boolean>(
                   ResourceFactory.createProperty(qs.getResource(propertyVariables[i]).getURI()),
                   directions.get(i)));
-          LOGGER.trace("direction is {} and property is {}",directions.get(i),qs.getResource(propertyVariables[i]).getURI());
+          LOGGER.info("direction is {} and property is {}",directions.get(i),qs.getResource(propertyVariables[i]).getURI());
         }
-        LOGGER.trace("end of list of path elements");
         paths.add(new QRestrictedPath(pathElements));
         ++count;
       }
       LOGGER.info("Got {} paths from the query", count);
-      LOGGER.debug("Got a query result  after {}ms.", System.currentTimeMillis() - time);
+      LOGGER.info("Got a query result  after {}ms from this query{}", System.currentTimeMillis() - time, query.getQuery());
     } catch (Exception e) {
       LOGGER.error("Got an exception while executing query \"" + query.getQuery()
               + "\". The query will be ignored.", e);
     }
+    LOGGER.info("Return the paths : "+ paths.size());
     return paths;
   }
 }

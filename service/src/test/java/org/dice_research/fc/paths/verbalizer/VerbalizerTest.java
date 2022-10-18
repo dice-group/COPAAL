@@ -1,3 +1,4 @@
+/*
 package org.dice_research.fc.paths.verbalizer;
 
 import java.util.ArrayList;
@@ -14,27 +15,37 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+*/
 /**
  * Tests the verbalization feature.
  *
- */
+ *//*
+
 @RunWith(Parameterized.class)
 public class VerbalizerTest {
-  /**
+  */
+/**
    * The path
-   */
+   *//*
+
   private QRestrictedPath path;
-  /**
+  */
+/**
    * The fact's subject
-   */
+   *//*
+
   private Resource subject;
-  /**
+  */
+/**
    * The fact's object
-   */
+   *//*
+
   private Resource object;
-  /**
+  */
+/**
    * True if we expect an empty result
-   */
+   *//*
+
   private boolean isEmptyExpected;
 
   private final QueryExecutionFactory qef =
@@ -48,13 +59,15 @@ public class VerbalizerTest {
     this.isEmptyExpected = isEmptyExpected;
   }
 
-  @Test
+*/
+/*  @Test
   public void testVerbalization() {
     IPathVerbalizer verbalizer = new DefaultPathVerbalizer(qef);
     String output = verbalizer.verbalizePaths(subject, object, path);
     System.out.println(output);
     Assert.assertEquals(isEmptyExpected, output.isEmpty());
-  }
+  }*//*
+
 
   @Parameters
   public static Collection<Object[]> data() {
@@ -87,3 +100,4 @@ public class VerbalizerTest {
   }
 
 }
+*/

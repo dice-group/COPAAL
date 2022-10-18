@@ -99,7 +99,7 @@ public class SPARQLBasedResultStreamingCountRetriever extends AbstractSPARQLBase
         result.next();
         ++count;
       }
-      LOGGER.debug("Got a query result ({}) after {}ms.", count, System.currentTimeMillis() - time);
+      LOGGER.info("Got a query result ({}) after {}ms.", count, System.currentTimeMillis() - time);
       return count;
     } catch (Exception e) {
       LOGGER.error("Got an exception while running count query \"" + query + "\". Returning 0.", e);

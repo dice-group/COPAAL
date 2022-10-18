@@ -78,8 +78,13 @@ public class ImportedFactChecker extends PathBasedFactChecker {
       }
 
       // calculate scores and verbalize if needed only
-      LOGGER.trace(" -------------  Start to filter and Score  -------------");
-      LOGGER.debug("number of paths before filtering is {}",paths.size());
+      LOGGER.info(" -------------  Start to filter and Score  -------------");
+      LOGGER.info("number of paths before filtering is {}",paths.size());
+
+      paths.parallelStream().forEach(p->{
+          LOGGER.info(p.toStringWithTag());
+      });
+
       paths = paths.parallelStream().filter(pathFilter).map(p -> {
         if (Double.isNaN(p.getScore())) {
           LOGGER.warn("Couldn't find scores for paths of predicate {}. Executing path scoring.",
@@ -89,8 +94,8 @@ public class ImportedFactChecker extends PathBasedFactChecker {
           return p;
         }
       }).filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());
-      LOGGER.debug("number of paths after filtering is {}",paths.size());
-      LOGGER.trace(" -------------  Filter and Score Done  -------------");
+      LOGGER.info("number of paths after filtering is {}",paths.size());
+      LOGGER.info(" -------------  Filter and Score Done  -------------");
 
       // Get the scores
       LOGGER.trace(" -------------  Start to get the scores  -------------");
