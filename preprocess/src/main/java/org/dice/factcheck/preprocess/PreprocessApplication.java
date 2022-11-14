@@ -279,9 +279,9 @@ public class PreprocessApplication implements CommandLineRunner {
 			if(parts[i].charAt(0)=='^'){
 				// is inverted
 				parts[i] = parts[i].replace("^","");
-				path.addPart(makePredicateFromTextGerDomainAndRangeFromFile(parts[i], predicatesMap),true);
-			}else{
 				path.addPart(makePredicateFromTextGerDomainAndRangeFromFile(parts[i], predicatesMap),false);
+			}else{
+				path.addPart(makePredicateFromTextGerDomainAndRangeFromFile(parts[i], predicatesMap),true);
 			}
 		}
 		return path;
