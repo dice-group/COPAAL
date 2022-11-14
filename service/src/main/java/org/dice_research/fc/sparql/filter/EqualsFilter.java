@@ -25,18 +25,19 @@ public class EqualsFilter implements IRIFilter {
 
   @Override
   public void addFilter(String variableName, StringBuilder queryBuilder) {
-    queryBuilder.append(" FILTER( ");
-    for (int i = 0; i < excludedIRIs.length; ++i) {
-      if (i > 0) {
-        queryBuilder.append("&&");
+    if (excludedIRIs.length > 0) {
+      queryBuilder.append(" FILTER( ");
+      for (int i = 0; i < excludedIRIs.length; ++i) {
+        if (i > 0) {
+          queryBuilder.append("&&");
+        }
+        queryBuilder.append(" ?");
+        queryBuilder.append(variableName);
+        queryBuilder.append(" != <");
+        queryBuilder.append(excludedIRIs[i]);
+        queryBuilder.append("> ");
       }
-      queryBuilder.append(" ?");
-      queryBuilder.append(variableName);
-      queryBuilder.append(" != <");
-      queryBuilder.append(excludedIRIs[i]);
-      queryBuilder.append("> ");
+      queryBuilder.append(")\n");
     }
-    queryBuilder.append(")\n");
   }
-
 }

@@ -3,6 +3,10 @@ package org.dice_research.fc.paths.imprt;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
+
+import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.ResultSet;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -30,19 +34,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class ImportedFactChecker extends PathBasedFactChecker {
 
+    private boolean printTheExampleOfEachFoundedPath;
   private static final Logger LOGGER = LoggerFactory.getLogger(ImportedFactChecker.class);
 
   /**
    * The imported facts processor
    */
   protected MetaPathsProcessor metaPreprocessor;
-
+    protected QueryExecutionFactory qef;
 
   @Autowired
   public ImportedFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
-      IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaPreprocessor) {
+                             IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaPreprocessor, QueryExecutionFactory qef, boolean printTheExampleOfEachFoundedPath) {
     super(factPreprocessor, pathSearcher, pathScorer, summarist);
     this.metaPreprocessor = metaPreprocessor;
+    this.qef = qef;
+    this.printTheExampleOfEachFoundedPath = printTheExampleOfEachFoundedPath;
   }
 
   @Override
@@ -81,9 +88,28 @@ public class ImportedFactChecker extends PathBasedFactChecker {
       LOGGER.info(" -------------  Start to filter and Score  -------------");
       LOGGER.info("number of paths before filtering is {}",paths.size());
 
-      paths.parallelStream().forEach(p->{
-          LOGGER.info(p.toStringWithTag());
-      });
+
+          for (QRestrictedPath p : paths) {
+              LOGGER.info(p.toStringWithTag());
+              if(printTheExampleOfEachFoundedPath) {
+                  String qfge = p.queryForGetAnExample();
+                  try (QueryExecution qe = qef.createQueryExecution(qfge)) {
+                      ResultSet rs = qe.execSelect();
+                      if (rs != null) {
+                          if (rs.hasNext()) {
+                              LOGGER.info(rs.next().toString());
+                          }
+                      } else {
+                          LOGGER.error("rs is null for this query :" + qfge);
+                      }
+                  } catch (Exception ex) {
+                      LOGGER.error(ex.getMessage());
+                      ex.printStackTrace();
+                  }
+              }
+              LOGGER.info("-_-_-_-_-_-_-");
+          }
+
 
       paths = paths.parallelStream().filter(pathFilter).map(p -> {
         if (Double.isNaN(p.getScore())) {

@@ -51,14 +51,18 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
     public long countPathInstances(QRestrictedPath path, ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction) {
         long count = getPathInstancesCountFromDB(path, domainRestriction, rangeRestriction);
         if(count<0){
+            LOGGER.info(" nothing was in the db then try run query");
             count = decorated.countPathInstances(path, domainRestriction, rangeRestriction);
+            LOGGER.info(" after query result is : "+ count + " it will save in the db");
             updatePathInstancesInDB(path, domainRestriction, rangeRestriction, count);
         }
         return count;
     }
 
     private long getPathInstancesCountFromDB(QRestrictedPath path, ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction) {
+        LOGGER.info("get path instances from db");
         String pathStr = path.toStringWithTag();
+        LOGGER.info("path string is : "+ pathStr);
         String domainStr = getDomainOrRangeFromObject(domainRestriction.getRestriction());
         if(domainStr == null) {
             LOGGER.info("domain is null");
@@ -71,14 +75,17 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
 
         List<CountPathInstances> foundInstances = countPathInstancesRepository.findByPathAndGraphNameAndDomainAndRange(pathStr, graphName, domainStr, rangeStr);
         if(foundInstances.size()>0){
+            LOGGER.info("found in db : "+foundInstances.size());
             CountPathInstances item = foundInstances.get(0);
             return item.getcCount();
+        }else {
+            LOGGER.info("found nothing db ");
+            return -1;
         }
-        return -1;
     }
 
     private void updatePathInstancesInDB(QRestrictedPath path, ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction, long count) {
-        if(count>0) {
+
             String pathStr = path.toStringWithTag();
 
             String domainStr = getDomainOrRangeFromObject(domainRestriction.getRestriction());
@@ -91,9 +98,11 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
                 LOGGER.info("range is null");
                 return ;}
             //String path, String graphName, String domain, String range, Long count
+            LOGGER.info("save this in the DB pathStr: "+pathStr+" graphName: "+ graphName+" domainStr: "+domainStr+" rangeStr: "+rangeStr+" count: "+count);
             CountPathInstances item = new CountPathInstances(pathStr, graphName, domainStr, rangeStr, count);
-            countPathInstancesRepository.save(item);
-        }
+            CountPathInstances saved  = countPathInstancesRepository.save(item);
+            LOGGER.info("saved: path "+saved.getPath()+" graphName: "+ saved.getGraphName()+" domainStr: "+saved.getDomain()+" rangeStr: "+saved.getRange()+" count: "+saved.getcCount());
+
     }
 
     @Override
@@ -117,12 +126,14 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
     }
 
     private void updatePredicateInstancesInDB(Predicate predicate, long count) {
-        if(count>0) {
+
             String predicateStr = predicate.getProperty().getURI();
             //String predicate, String graphName, Long count
+            LOGGER.info("save this predicate instances predicateStr: "+predicateStr+ " graphName: "+graphName+" count: "+count);
             CountPredicate item = new CountPredicate(predicateStr, graphName, count);
-            countPredicateRepository.save(item);
-        }
+            CountPredicate savedItem = countPredicateRepository.save(item);
+            LOGGER.info("saved this predicateStr: "+ savedItem.getPredicate() + " graphName: "+savedItem.getGraphName()+ " count "+ savedItem.getcCount());
+
     }
 
     @Override
@@ -158,7 +169,7 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
     }
 
     private void updateCooccurrencesInDB(Predicate predicate, QRestrictedPath path, long count) {
-        if(count>0) {
+
             String pathStr = path.toStringWithTag();
             String domainStr = getDomainOrRangeFromObject(predicate.getDomain().getRestriction());
             if(domainStr == null) {
@@ -174,8 +185,9 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
             String predicateStr = predicate.getProperty().getURI();
             //String predicate, String domain, String range, String path, String graphName, long count
             CountCooccurrences item = new CountCooccurrences(predicateStr, domainStr, rangeStr, pathStr, graphName, count);
-            countCooccurrencesRepository.save(item);
-        }
+            CountCooccurrences saveditem = countCooccurrencesRepository.save(item);
+            LOGGER.info("saved predicateStr:"+saveditem.getPredicate() +"domainStr: "+saveditem.getDomain()+" rangeStr: "+saveditem.getRange()+" pathStr: "+saveditem.getPath()+" graphName: "+saveditem.getGraphName()+" count: "+saveditem.getcCount());
+
     }
 
     @Override
@@ -210,7 +222,7 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
     }
 
     private void updateMaxCountInDB(Predicate predicate, long count) {
-        if(count>0) {
+
             String predicateStr = predicate.getProperty().getURI();
             String domainStr = getDomainOrRangeFromObject(predicate.getDomain().getRestriction());
             if(domainStr == null) {
@@ -226,7 +238,7 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
             //String predicate, String domain, String range, String graphName, long count
             CountMaxPredicate item = new CountMaxPredicate(predicateStr, domainStr, rangeStr, graphName, count);
             countMaxPredicateRepository.save(item);
-        }
+
     }
 
     private String getDomainOrRangeFromObject(Object restriction) {

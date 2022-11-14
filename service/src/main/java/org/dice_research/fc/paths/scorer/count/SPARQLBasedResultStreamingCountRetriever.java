@@ -92,6 +92,11 @@ public class SPARQLBasedResultStreamingCountRetriever extends AbstractSPARQLBase
     String query = queryBuilder.toString();
     long time = System.currentTimeMillis();
     LOGGER.debug("Starting count query {}", query);
+    if(query.contains("FILTER()")||query.contains("FILTER( )")){
+      query = query.replace("FILTER()","");
+      query = query.replace("FILTER( )","");
+      LOGGER.info("replace empty Filter");
+    }
     try (QueryExecution qe = qef.createQueryExecution(query)) {
       ResultSet result = qe.execSelect();
       long count = 0;

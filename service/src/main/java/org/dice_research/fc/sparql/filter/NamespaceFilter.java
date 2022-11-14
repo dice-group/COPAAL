@@ -63,25 +63,27 @@ public class NamespaceFilter implements IRIFilter {
 
   @Override
   public void addFilter(String variableName, StringBuilder queryBuilder) {
-    if (excludeMatch) {
-      queryBuilder.append(" FILTER(!");
-    } else {
-      queryBuilder.append(" FILTER(");
-    }
-    boolean first = true;
-    for (int i = 0; i < namespaces.length; ++i) {
-      if(first) {
-        first = false;
+    if(namespaces.length>0) {
+      if (excludeMatch) {
+        queryBuilder.append(" FILTER(!");
       } else {
-        queryBuilder.append(excludeMatch ? " && " : " || "); // TODO!!!!
+        queryBuilder.append(" FILTER(");
       }
-      queryBuilder.append("strstarts(str(?");
-      queryBuilder.append(variableName);
-      queryBuilder.append("),\"");
-      queryBuilder.append(namespaces[i]);
-      queryBuilder.append("\")");
+      boolean first = true;
+      for (int i = 0; i < namespaces.length; ++i) {
+        if (first) {
+          first = false;
+        } else {
+          queryBuilder.append(excludeMatch ? " && " : " || "); // TODO!!!!
+        }
+        queryBuilder.append("strstarts(str(?");
+        queryBuilder.append(variableName);
+        queryBuilder.append("),\"");
+        queryBuilder.append(namespaces[i]);
+        queryBuilder.append("\")");
+      }
+      queryBuilder.append(") \n");
     }
-    queryBuilder.append(") \n");
   }
 
   public boolean isExcludeMatch() {

@@ -95,11 +95,16 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
   protected long executeCountQuery(StringBuilder queryBuilder) {
     String query = queryBuilder.toString();
     long time = System.currentTimeMillis();
-    LOGGER.debug("Starting count query {}", query);
+    LOGGER.info("Starting count query {}", query);
+    if(query.contains("FILTER()")||query.contains("FILTER( )")){
+      query = query.replace("FILTER()","");
+      query = query.replace("FILTER( )","");
+      LOGGER.info("replace empty Filter");
+    }
     try (QueryExecution qe = qef.createQueryExecution(query)) {
       ResultSet result = qe.execSelect();
       if (!result.hasNext()) {
-        LOGGER.warn("Got a query without a single result line (\"{}\"). Returning 0.", query);
+        LOGGER.info("Got a query without a single result line (\"{}\"). Returning 0.", query);
         return 0L;
       }
       QuerySolution qs = result.next();
@@ -110,7 +115,7 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
                 query);
       }
       long n = count.getLong();
-      LOGGER.debug("Got a query result ({}) after {}ms.", n, System.currentTimeMillis() - time);
+      LOGGER.info("Got a query result ({}) after {}ms.", n, System.currentTimeMillis() - time);
       return n;
     } catch (Exception e) {
       LOGGER.error("Got an exception while running count query \"" + query + "\". Returning 0.", e);

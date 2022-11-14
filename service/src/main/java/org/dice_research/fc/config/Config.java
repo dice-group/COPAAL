@@ -71,6 +71,8 @@ import org.dice_research.fc.tentris.TentrisAdapter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
@@ -90,7 +92,7 @@ import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 @Configuration
 @PropertySource(value = "classpath:application.properties")
 public class Config {
-
+  private static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
   /**
    * The SPARQL endpoint URL
    */
@@ -254,6 +256,10 @@ public class Config {
   @Value("${copaal.graphName:}")
   private String graphName;
 
+  @Value("${copaal.printTheExampleOfEachFoundedPath:}")
+  private String printTheExampleOfEachFoundedPath;
+
+
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
     return new PropertySourcesPlaceholderConfigurer();
@@ -270,7 +276,7 @@ public class Config {
       case "estherpathprocessor":
         return new EstherPathProcessor(preprocessedPaths, qef);
       default:
-        System.out.println("Warning : it use default MetaPathProcessor");
+        LOGGER.info("Warning : it use default MetaPathProcessor");
         return new NoopPathProcessor(preprocessedPaths, qef);
     }
   }
@@ -286,10 +292,14 @@ public class Config {
    */
   @Bean
   public IFactChecker getFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
-      IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaProcessor) {
+      IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaProcessor, QueryExecutionFactory qef) {
+    boolean LogThePaths = false;
+    if(this.printTheExampleOfEachFoundedPath.toLowerCase().equals("true")){
+      LogThePaths = true;
+    }
     if (isPathsLoad) {
       return new ImportedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist,
-          metaProcessor);
+          metaProcessor, qef, LogThePaths);
     } else {
       return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist);
     }
@@ -314,7 +324,7 @@ public class Config {
       case "preprocess":
         return new PreProcessPathSearcher(preProcessProvider, adapter);
       default:
-        System.out.println("Warning : it use default Pathsearcher");
+        LOGGER.info("Warning : it use default Pathsearcher");
         return new SPARQLBasedSOPathSearcher(qef, maxLength, filter);
     }
   }
@@ -341,29 +351,38 @@ public class Config {
       case "paircountretriever":
         countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
         break;
+      case "paircountretrieverwithdb":
+        LOGGER.info("use caching for paircountretriever with this graphname"+graphName);
+        countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
+        countRetriever = new SaveInDBCountDecorator(countRetriever, graphName);
+        break;
       case "preprocess":
         countRetriever = new PreCalculationScorer(preProcessProvider);
         break;
       case "tentris":
-        TentrisAdapter tentris = new TentrisAdapter(HttpClients.createDefault(), tentrisURL);
-        countRetriever = new TentrisBasedCountRetriever(tentris, new TentrisBasedMaxCounter(tentris),
-                new BGPBasedPathClauseGenerator());
+        //TentrisAdapter tentris = new TentrisAdapter(HttpClients.createDefault(), tentrisURL);
+        //countRetriever = new TentrisBasedCountRetriever(tentris, new TentrisBasedMaxCounter(tentris),
+                //new BGPBasedPathClauseGenerator());
+
+        QueryExecutionFactory qef2 = new QueryExecutionFactoryCustomHttp(tentrisURL, false, typeOfQueryResult, false, sparqlEndpointUsername, sparqlEndpointPassword);
+        MaxCounter maxCounter2 = new HybridMaxCounter(qef2);
+        countRetriever = new PairCountRetriever(qef2, maxCounter2, pathClauseGenerator);
         break;
       case "tentriswithdb":
-        System.out.println("for tentris chaching");
+        LOGGER.info("for tentris chaching");
         TentrisAdapter tentris2 = new TentrisAdapter(HttpClients.createDefault(), tentrisURL);
         countRetriever = new TentrisBasedCountRetriever(tentris2, new TentrisBasedMaxCounter(tentris2),
                 new BGPBasedPathClauseGenerator());
-        System.out.println("counter retriver is :"+countRetriever.getClass());
+        LOGGER.info("counter retriver is :"+countRetriever.getClass());
         countRetriever  = new SaveInDBCountDecorator(countRetriever,graphName);
-        System.out.println("and then is counter retriver is :"+countRetriever.getClass());
+        LOGGER.info("and then is counter retriver is :"+countRetriever.getClass());
         break;
       case "streamingcountretriever":
         qef = new QueryExecutionFactoryPaginated(qef);
         countRetriever = new SPARQLBasedResultStreamingCountRetriever(qef, maxCounter);
           break;
       default:
-        System.out.println("Warning : it use default count retriever");
+        LOGGER.info("Warning : it use default count retriever");
         countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
         break;
     }
@@ -390,7 +409,7 @@ public class Config {
       case ("hybridpredicatefactory"):
         return new HybridMaxCounter(qef);
       default:
-        System.out.println("Warning : it use default Maxcounter");
+        LOGGER.info("Warning : it use default Maxcounter");
         return new DefaultMaxCounter(qef);
     }
   }
@@ -407,7 +426,7 @@ public class Config {
       case "pnpmi":
         return new PNPMIBasedScorer(countRetriever);
       default:
-        System.out.println("Warning : it use default path scorer");
+        LOGGER.info("Warning : it use default path scorer");
         return new NPMIBasedScorer(countRetriever);
     }
   }
@@ -468,7 +487,7 @@ public class Config {
       case ("hybridpredicatetentrisfactory"):
         return new HybridPredicateTentrisFactory(allPredicates("collected_predicates.json"));
       default:
-        System.out.println("Warning : it use default preprocessor");
+        LOGGER.info("Warning : it use default preprocessor");
         return new PredicateFactory(qef);
     }
   }
@@ -535,7 +554,7 @@ public class Config {
       case "squaredaveragesummarist":
         return new SquaredAverageSummarist();
       default:
-        System.out.println("Warning : it use default score summarist");
+        LOGGER.info("Warning : it use default score summarist");
         return new OriginalSummarist();
     }
   }
@@ -588,7 +607,7 @@ public class Config {
         return new BGPBasedPathClauseGenerator(foorbidLoop);
         // TODO add with no loop
       default:
-        System.out.println("Warning : it use default path generator");
+        LOGGER.info("Warning : it use default path generator");
         return new PropPathBasedPathClauseGenerator();
     }
   }
@@ -602,7 +621,7 @@ public class Config {
     File maxCountFile = new File(addressOfMaxCountFile);*/
     List<Predicate> validPredicates = allValidPredicates();
     //return new PreProcessProvider(pathInstancesCountFile, predicateInstancesCountFile, coOccurrenceCountFile, maxCountFile, preProcessPathNPMIThreshold, validPredicates);
-    System.out.println("serviceURL is :"+serviceURL);
+    LOGGER.info("serviceURL is :"+serviceURL);
     return new PreProcessProvider(addressOfPathInstancesCountFile, addressOfPredicateInstancesCountFile, addressOfCoOccurrenceCountFile, addressOfMaxCountFile, preProcessPathNPMIThreshold, validPredicates);
   }
 

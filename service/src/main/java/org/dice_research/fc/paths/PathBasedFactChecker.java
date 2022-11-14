@@ -13,10 +13,7 @@ import org.dice_research.fc.IFactChecker;
 import org.dice_research.fc.data.FactCheckingResult;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
-import org.dice_research.fc.paths.filter.AlwaysTruePathFilter;
-import org.dice_research.fc.paths.filter.AlwaysTrueScoreFilter;
-import org.dice_research.fc.paths.filter.IPathFilter;
-import org.dice_research.fc.paths.filter.IScoreFilter;
+import org.dice_research.fc.paths.filter.*;
 import org.dice_research.fc.sum.ScoreSummarist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +49,7 @@ public class PathBasedFactChecker implements IFactChecker {
   /**
    * A class that can be used to filter path scores.
    */
-  protected IScoreFilter scoreFilter = new AlwaysTrueScoreFilter();
+  protected IScoreFilter scoreFilter = new ZeroScoreFilter();
   /**
    * The class that is used to summarize the scores of the single paths to create a final score.
    */
@@ -113,11 +110,11 @@ public class PathBasedFactChecker implements IFactChecker {
       // Filter paths, score the paths with respect to the given triple and filter them again based on
       // the score
       LOGGER.trace(" -------------  Start to filter and Score  -------------");
-      LOGGER.debug("number of paths before filtering is {}",paths.size());
+      LOGGER.info("number of paths before filtering is {}",paths.size());
       paths = paths.parallelStream().filter(pathFilter)
               .map(p -> pathScorer.score(subject, preparedPredicate, object, p))
               .filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());
-      LOGGER.debug("number of paths after filtering is {}",paths.size());
+      LOGGER.info("number of paths after filtering is {}",paths.size());
       LOGGER.trace(" -------------  Filter and Score Done  -------------");
 
       // Get the scores

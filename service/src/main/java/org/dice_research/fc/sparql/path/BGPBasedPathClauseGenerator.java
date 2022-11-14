@@ -18,7 +18,7 @@ public class BGPBasedPathClauseGenerator implements IPathClauseGenerator {
   /**
    * If this flag is {@code true}, the clause generator may add additional filters to avoid loops.
    */
-  private boolean forbidLoops = false;
+  private boolean forbidLoops;
 
   public BGPBasedPathClauseGenerator() {
     super();
@@ -72,31 +72,33 @@ public class BGPBasedPathClauseGenerator implements IPathClauseGenerator {
     }
 
     if (forbidLoops) {
-      queryBuilder.append(" FILTER(");
-      boolean first = true;
-      // All intermediate nodes do not equal the subject (the object could equal)
-      for (int i = 0; i < (objVariables.size() - 1); ++i) {
-        if (first) {
-          first = false;
-        } else {
-          queryBuilder.append(" && ");
-        }
-        queryBuilder.append('?');
-        queryBuilder.append(subjectVariable);
-        queryBuilder.append(" != ?");
-        queryBuilder.append(objVariables.get(i));
-      }
-
-      // All intermediate nodes do not equal each other and do not equal the object variable
-      for (int i = 0; i < objVariables.size(); ++i) {
-        for (int j = i + 1; j < objVariables.size(); ++j) {
-          queryBuilder.append(" && ?");
-          queryBuilder.append(objVariables.get(i));
+      if((objVariables.size())>0) {
+        queryBuilder.append(" FILTER(");
+        boolean first = true;
+        // All intermediate nodes do not equal the subject (the object could equal)
+        for (int i = 0; i < (objVariables.size() - 1); ++i) {
+          if (first) {
+            first = false;
+          } else {
+            queryBuilder.append(" && ");
+          }
+          queryBuilder.append('?');
+          queryBuilder.append(subjectVariable);
           queryBuilder.append(" != ?");
-          queryBuilder.append(objVariables.get(j));
+          queryBuilder.append(objVariables.get(i));
         }
+
+        // All intermediate nodes do not equal each other and do not equal the object variable
+        for (int i = 0; i < objVariables.size(); ++i) {
+          for (int j = i + 1; j < objVariables.size(); ++j) {
+            queryBuilder.append(" && ?");
+            queryBuilder.append(objVariables.get(i));
+            queryBuilder.append(" != ?");
+            queryBuilder.append(objVariables.get(j));
+          }
+        }
+        queryBuilder.append(")");
       }
-      queryBuilder.append(")");
     }
   }
 
