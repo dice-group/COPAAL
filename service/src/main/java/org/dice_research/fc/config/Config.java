@@ -56,6 +56,8 @@ import org.dice_research.fc.sparql.filter.NamespaceFilter;
 import org.dice_research.fc.sparql.path.BGPBasedPathClauseGenerator;
 import org.dice_research.fc.sparql.path.IPathClauseGenerator;
 import org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator;
+import org.dice_research.fc.sparql.query.IQueryValidator;
+import org.dice_research.fc.sparql.query.ListBaseQueryValidator;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttp;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttpTimeout;
 import org.dice_research.fc.sparql.restrict.TypeBasedRestriction;
@@ -259,6 +261,8 @@ public class Config {
   @Value("${copaal.printTheExampleOfEachFoundedPath:}")
   private String printTheExampleOfEachFoundedPath;
 
+  @Value("${copaal.invalidQueries:}")
+  private String invalidQueries;
 
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -342,31 +346,30 @@ public class Config {
    * @return The desired {@link ICountRetriever} implementation.
    */
   @Bean
-  public ICountRetriever getCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IPathClauseGenerator pathClauseGenerator,IPreProcessProvider preProcessProvider) {
+  public ICountRetriever getCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IPathClauseGenerator pathClauseGenerator,IPreProcessProvider preProcessProvider, IQueryValidator queryValidator) {
     ICountRetriever countRetriever;
     switch (counter.toLowerCase().trim()) {
       case "approximatingcountretriever":
-        countRetriever = new ApproximatingCountRetriever(qef, maxCounter);
+        countRetriever = new ApproximatingCountRetriever(qef, maxCounter, queryValidator);
         break;
       case "paircountretriever":
-        countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
+        countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator, queryValidator);
         break;
       case "paircountretrieverwithdb":
         LOGGER.info("use caching for paircountretriever with this graphname"+graphName);
-        countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
+        countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator, queryValidator);
         countRetriever = new SaveInDBCountDecorator(countRetriever, graphName);
         break;
       case "preprocess":
         countRetriever = new PreCalculationScorer(preProcessProvider);
         break;
       case "tentris":
-        //TentrisAdapter tentris = new TentrisAdapter(HttpClients.createDefault(), tentrisURL);
-        //countRetriever = new TentrisBasedCountRetriever(tentris, new TentrisBasedMaxCounter(tentris),
-                //new BGPBasedPathClauseGenerator());
+        TentrisAdapter tentris = new TentrisAdapter(HttpClients.createDefault(), tentrisURL);
+        countRetriever = new TentrisBasedCountRetriever(tentris, new TentrisBasedMaxCounter(tentris), new BGPBasedPathClauseGenerator());
 
-        QueryExecutionFactory qef2 = new QueryExecutionFactoryCustomHttp(tentrisURL, false, typeOfQueryResult, false, sparqlEndpointUsername, sparqlEndpointPassword);
+/*        QueryExecutionFactory qef2 = new QueryExecutionFactoryCustomHttp(tentrisURL, false, typeOfQueryResult, false, sparqlEndpointUsername, sparqlEndpointPassword);
         MaxCounter maxCounter2 = new HybridMaxCounter(qef2);
-        countRetriever = new PairCountRetriever(qef2, maxCounter2, pathClauseGenerator);
+        countRetriever = new PairCountRetriever(qef2, maxCounter2, pathClauseGenerator, queryValidator);*/
         break;
       case "tentriswithdb":
         LOGGER.info("for tentris chaching");
@@ -379,11 +382,11 @@ public class Config {
         break;
       case "streamingcountretriever":
         qef = new QueryExecutionFactoryPaginated(qef);
-        countRetriever = new SPARQLBasedResultStreamingCountRetriever(qef, maxCounter);
+        countRetriever = new SPARQLBasedResultStreamingCountRetriever(qef, maxCounter, queryValidator);
           break;
       default:
         LOGGER.info("Warning : it use default count retriever");
-        countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator);
+        countRetriever = new PairCountRetriever(qef, maxCounter, pathClauseGenerator, queryValidator);
         break;
     }
     if (isCache) {
@@ -623,6 +626,24 @@ public class Config {
     //return new PreProcessProvider(pathInstancesCountFile, predicateInstancesCountFile, coOccurrenceCountFile, maxCountFile, preProcessPathNPMIThreshold, validPredicates);
     LOGGER.info("serviceURL is :"+serviceURL);
     return new PreProcessProvider(addressOfPathInstancesCountFile, addressOfPredicateInstancesCountFile, addressOfCoOccurrenceCountFile, addressOfMaxCountFile, preProcessPathNPMIThreshold, validPredicates);
+  }
+
+  @Bean
+  IQueryValidator getQueryValidator(){
+    List<String> invalidQueries = extractInvalidQueries();
+    IQueryValidator validator = new ListBaseQueryValidator(invalidQueries);
+    return validator;
+  }
+
+  private List<String> extractInvalidQueries() {
+    List<String> invalidQ = new ArrayList<>();
+    String[] qq = invalidQueries.split(",");
+    for (String q:qq) {
+      invalidQ.add(q);
+      LOGGER.info(q);
+    }
+    LOGGER.info("loads "+ invalidQ.size()+" invalid queries");
+    return invalidQ;
   }
 
   private List<Predicate> allValidPredicates() {

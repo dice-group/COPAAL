@@ -1,6 +1,7 @@
 package org.dice_research.fc.run;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -22,6 +23,7 @@ import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
+import org.dice_research.fc.sparql.query.ListBaseQueryValidator;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttp;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttpTimeout;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -52,7 +54,7 @@ public class PathSearchPreprocessing {
                 Arrays.asList(filter,
                     new EqualsFilter(FILTERED_PROPERTIES))),
             new NPMIBasedScorer(
-                new CachingCountRetrieverDecorator(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef)))));
+                new CachingCountRetrieverDecorator(new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef), new ListBaseQueryValidator(new ArrayList<>())))));
 
     // gets one of the most frequent predicates in the graph
     String property = "http://dbpedia.org/ontology/birthPlace";

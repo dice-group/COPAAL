@@ -1,5 +1,6 @@
 package org.dice_research.fc.run;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -14,6 +15,7 @@ import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.sparql.filter.EqualsFilter;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
+import org.dice_research.fc.sparql.query.ListBaseQueryValidator;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttp;
 import org.dice_research.fc.sparql.query.QueryExecutionFactoryCustomHttpTimeout;
 import org.dice_research.fc.sum.FixedSummarist;
@@ -40,7 +42,7 @@ public class LoadPreprocessedPaths {
             Arrays.asList(new NamespaceFilter("http://dbpedia.org/ontology", false),
                 new EqualsFilter(FILTERED_PROPERTIES))),
         new NPMIBasedScorer(new CachingCountRetrieverDecorator(
-            new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef)))),
+            new ApproximatingCountRetriever(qef, new DefaultMaxCounter(qef), new ListBaseQueryValidator(new ArrayList<>())))),
         new FixedSummarist(), new EstherPathProcessor("./paths/", qef), qef, false);
 
     FactCheckingResult result =

@@ -6,6 +6,7 @@ import org.apache.jena.rdf.model.Property;
 import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
+import org.dice_research.fc.sparql.query.IQueryValidator;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,8 +21,8 @@ public class ApproximatingCountRetriever extends AbstractSPARQLBasedCountRetriev
   protected static final String OBJECT_VARIABLE_NAME = "o";
 
   @Autowired
-  public ApproximatingCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
-    super(qef, maxCounter);
+  public ApproximatingCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IQueryValidator queryValidator) {
+    super(qef, maxCounter,queryValidator);
   }
 
   @Override

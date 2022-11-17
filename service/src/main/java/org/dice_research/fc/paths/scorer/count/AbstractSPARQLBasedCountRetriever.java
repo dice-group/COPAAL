@@ -11,6 +11,7 @@ import org.dice_research.fc.data.Predicate;
 import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
+import org.dice_research.fc.sparql.query.IQueryValidator;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +25,17 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
 
   protected QueryExecutionFactory qef;
 
+  IQueryValidator queryValidator;
+
   /**
    * The max count retriever.
    */
   protected MaxCounter maxCounter;
 
-  public AbstractSPARQLBasedCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
+  public AbstractSPARQLBasedCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IQueryValidator queryValidator) {
     this.qef = qef;
     this.maxCounter = maxCounter;
+    this.queryValidator = queryValidator;
     LOGGER.trace("in AbstractSPARQLBasedCountRetriever QueryExecutionFactory is : {}",QueryExecutionFactory.class.getName());
     LOGGER.trace("in AbstractSPARQLBasedCountRetriever MaxCounter is : {}",maxCounter.getClass().getName());
   }
@@ -101,24 +105,30 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
       query = query.replace("FILTER( )","");
       LOGGER.info("replace empty Filter");
     }
-    try (QueryExecution qe = qef.createQueryExecution(query)) {
-      ResultSet result = qe.execSelect();
-      if (!result.hasNext()) {
-        LOGGER.info("Got a query without a single result line (\"{}\"). Returning 0.", query);
+    if(queryValidator.validate(query)) {
+      try (QueryExecution qe = qef.createQueryExecution(query)) {
+        ResultSet result = qe.execSelect();
+        if (!result.hasNext()) {
+          LOGGER.info("Got a query without a single result line (\"{}\"). Returning 0.", query);
+          return 0L;
+        }
+        QuerySolution qs = result.next();
+        Literal count = qs.getLiteral(COUNT_VARIABLE_NAME);
+        if (result.hasNext()) {
+          LOGGER.info(
+                  "Got a query with more than 1 result line (\"{}\"). The remaining lines will be ignored.",
+                  query);
+        }
+        long n = count.getLong();
+        LOGGER.info("Got a query result ({}) after {}ms.", n, System.currentTimeMillis() - time);
+        return n;
+      } catch (Exception e) {
+        LOGGER.error("Got an exception while running count query \"" + query + "\". Returning 0.", e);
         return 0L;
       }
-      QuerySolution qs = result.next();
-      Literal count = qs.getLiteral(COUNT_VARIABLE_NAME);
-      if (result.hasNext()) {
-        LOGGER.info(
-                "Got a query with more than 1 result line (\"{}\"). The remaining lines will be ignored.",
-                query);
-      }
-      long n = count.getLong();
-      LOGGER.info("Got a query result ({}) after {}ms.", n, System.currentTimeMillis() - time);
-      return n;
-    } catch (Exception e) {
-      LOGGER.error("Got an exception while running count query \"" + query + "\". Returning 0.", e);
+    }else{
+      // not valid query
+      LOGGER.error("Query is not valid : "+ query+" | query validator is :"+queryValidator.getClass().getName());
       return 0L;
     }
   }

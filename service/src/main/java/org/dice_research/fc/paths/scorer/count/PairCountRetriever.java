@@ -6,6 +6,7 @@ import org.dice_research.fc.data.QRestrictedPath;
 import org.dice_research.fc.paths.scorer.count.max.MaxCounter;
 import org.dice_research.fc.sparql.path.IPathClauseGenerator;
 import org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator;
+import org.dice_research.fc.sparql.query.IQueryValidator;
 import org.dice_research.fc.sparql.restrict.ITypeRestriction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,13 +25,13 @@ public class PairCountRetriever extends AbstractSPARQLBasedCountRetriever {
   protected IPathClauseGenerator pathClauseGenerator;
 
   @Autowired
-  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter) {
-    this(qef, maxCounter, new PropPathBasedPathClauseGenerator());
+  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IQueryValidator queryValidator) {
+    this(qef, maxCounter, new PropPathBasedPathClauseGenerator(), queryValidator);
   }
 
   @Autowired
-  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter,IPathClauseGenerator pathClauseGenerator) {
-    super(qef, maxCounter);
+  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IPathClauseGenerator pathClauseGenerator, IQueryValidator queryValidator) {
+    super(qef, maxCounter, queryValidator);
     this.pathClauseGenerator = pathClauseGenerator;
   }
 

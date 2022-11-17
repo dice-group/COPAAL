@@ -1,5 +1,6 @@
 package org.dice_research.fc.run;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
@@ -16,6 +17,7 @@ import org.dice_research.fc.paths.scorer.count.decorate.CachingCountRetrieverDec
 import org.dice_research.fc.paths.scorer.count.max.DefaultMaxCounter;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.sparql.filter.NamespaceFilter;
+import org.dice_research.fc.sparql.query.ListBaseQueryValidator;
 import org.dice_research.fc.sum.FixedSummarist;
 
 /**
@@ -46,7 +48,7 @@ public class COPAAL {
                     "http://rdf.frockg.eu/frockg/ontology/"}, false)/*,
                 new EqualsFilter(FILTERED_PROPERTIES)*/)),
             new NPMIBasedScorer(new CachingCountRetrieverDecorator(
-                new PairCountRetriever(qef, new DefaultMaxCounter(qef)))),
+                new PairCountRetriever(qef, new DefaultMaxCounter(qef), new ListBaseQueryValidator(new ArrayList<>())))),
             new FixedSummarist());
 
     FactCheckingResult result = checker.check(

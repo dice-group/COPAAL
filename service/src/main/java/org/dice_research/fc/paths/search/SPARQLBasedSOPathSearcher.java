@@ -307,9 +307,9 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
     ResultSet rs;
     BitSet directions;*/
     List<Pair<Property, Boolean>> pathElements;
-    //paths = queries.stream().parallel().map(q -> doSearch(q)).flatMap(l->l.stream()).collect(Collectors.toList());
+    paths = queries.stream().parallel().map(q -> doSearch(q)).flatMap(l->l.stream()).collect(Collectors.toList());
 
-    for(int j = 0 ; j < queries.size() ; j++){
+    /*for(int j = 0 ; j < queries.size() ; j++){
       LOGGER.info("j is : "+j+" Start calculate for query :"+queries.get(j));
       List<QRestrictedPath> lp = doSearch(queries.get(j));
       LOGGER.info("it returns"+lp.size()+" to add :");
@@ -318,7 +318,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
       });
       LOGGER.info("end of Paths");
       paths.addAll(lp);
-    }
+    }*/
     LOGGER.info("end off search path total number is "+paths.size());
     /*for (SearchQuery query : queries) {
       long time = System.currentTimeMillis();
