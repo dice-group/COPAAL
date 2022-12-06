@@ -46,10 +46,11 @@ public class PathBasedFactChecker implements IFactChecker {
    * The path scorer that is used to score the single paths.
    */
   protected IPathScorer pathScorer;
+  private double pathFilterThreshold;
   /**
    * A class that can be used to filter path scores.
    */
-  protected IScoreFilter scoreFilter = new ZeroScoreFilter();
+  protected IScoreFilter scoreFilter;
   /**
    * The class that is used to summarize the scores of the single paths to create a final score.
    */
@@ -71,12 +72,14 @@ public class PathBasedFactChecker implements IFactChecker {
    */
   @Autowired
   public PathBasedFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
-      IPathScorer pathScorer, ScoreSummarist summarist) {
+      IPathScorer pathScorer, ScoreSummarist summarist,double pathFilterThreshold) {
     super();
     this.factPreprocessor = factPreprocessor;
     this.pathSearcher = pathSearcher;
     this.pathScorer = pathScorer;
     this.summarist = summarist;
+    this.pathFilterThreshold = pathFilterThreshold;
+    scoreFilter = new ZeroScoreFilter(pathFilterThreshold);
   }
 
   /**

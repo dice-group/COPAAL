@@ -264,6 +264,9 @@ public class Config {
   @Value("${copaal.invalidQueries:}")
   private String invalidQueries;
 
+  @Value("${copaal.pathFilterThreshold}")
+  private double pathFilterThreshold;
+
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
     return new PropertySourcesPlaceholderConfigurer();
@@ -303,9 +306,9 @@ public class Config {
     }
     if (isPathsLoad) {
       return new ImportedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist,
-          metaProcessor, qef, LogThePaths);
+          metaProcessor, qef, LogThePaths, pathFilterThreshold);
     } else {
-      return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist);
+      return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist,pathFilterThreshold);
     }
   }
 
@@ -440,6 +443,7 @@ public class Config {
   @Bean
   public Collection<IRIFilter> getFilter() {
     List<IRIFilter> filters = new ArrayList<IRIFilter>();
+    LOGGER.info("there are "+ filteredProperties.length+" filtered properties");
     if(filteredProperties.length > 0) {
       filters.add(new EqualsFilter(filteredProperties));
     }

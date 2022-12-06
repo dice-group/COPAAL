@@ -45,8 +45,8 @@ public class ImportedFactChecker extends PathBasedFactChecker {
 
   @Autowired
   public ImportedFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
-                             IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaPreprocessor, QueryExecutionFactory qef, boolean printTheExampleOfEachFoundedPath) {
-    super(factPreprocessor, pathSearcher, pathScorer, summarist);
+                             IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaPreprocessor, QueryExecutionFactory qef, boolean printTheExampleOfEachFoundedPath, double pathFilterThreshold) {
+    super(factPreprocessor, pathSearcher, pathScorer, summarist,pathFilterThreshold);
     this.metaPreprocessor = metaPreprocessor;
     this.qef = qef;
     this.printTheExampleOfEachFoundedPath = printTheExampleOfEachFoundedPath;
@@ -63,18 +63,18 @@ public class ImportedFactChecker extends PathBasedFactChecker {
       LOGGER.info("fact is"+fact);
       Predicate preparedPredicate = factPreprocessor.generatePredicate(fact);
       LOGGER.info("preparedPredicate"+preparedPredicate);
-      LOGGER.trace(" -------------  Preprocess the data Done   -------------");
+      LOGGER.info(" -------------  Preprocess the data Done   -------------");
 
       // pre-process paths in file
       Collection<QRestrictedPath> paths = metaPreprocessor.processMetaPaths(fact);
 
       // search for paths if preprocessed paths can't be found
       if (paths == null) {
-        LOGGER.warn("Couldn't find the files for paths of {}. Switching to path search.",
+        LOGGER.info("Couldn't find the files for paths of {}. Switching to path search.",
                 predicate.getURI());
-        LOGGER.trace(" -------------  Start to get a list of potential paths  -------------");
+        LOGGER.info(" -------------  Start to get a list of potential paths  -------------");
         paths = pathSearcher.search(subject, preparedPredicate, object);
-        LOGGER.trace(" -------------  Get a list of potential paths Done  -------------");
+        LOGGER.info(" -------------  Get a list of potential paths Done  -------------");
       }
 
       // return default score if no paths are found

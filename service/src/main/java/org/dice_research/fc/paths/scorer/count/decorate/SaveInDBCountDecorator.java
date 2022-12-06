@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -59,25 +60,35 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
         return count;
     }
 
-    private long getPathInstancesCountFromDB(QRestrictedPath path, ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction) {
-        LOGGER.info("get path instances from db");
+    List<CountPathInstances> findPathInstancesCountFromDB(QRestrictedPath path, ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction){
+        List<CountPathInstances> foundInstances = new ArrayList<>();
+        LOGGER.info("find path instances from db");
         String pathStr = path.toStringWithTag();
         LOGGER.info("path string is : "+ pathStr);
         String domainStr = getDomainOrRangeFromObject(domainRestriction.getRestriction());
+        LOGGER.info("domain string is : "+ domainStr);
         if(domainStr == null) {
             LOGGER.info("domain is null");
-            return -1; }
+            return foundInstances; }
 
         String rangeStr = getDomainOrRangeFromObject(rangeRestriction.getRestriction());
+        LOGGER.info("range string is : "+ rangeStr);
         if(rangeStr == null) {
             LOGGER.info("range is null");
-            return -1;}
+            return foundInstances;}
 
-        List<CountPathInstances> foundInstances = countPathInstancesRepository.findByPathAndGraphNameAndDomainAndRange(pathStr, graphName, domainStr, rangeStr);
+        foundInstances = countPathInstancesRepository.findByPathAndGraphNameAndDomainAndRange(pathStr, graphName, domainStr, rangeStr);
+        return foundInstances;
+    }
+    private long getPathInstancesCountFromDB(QRestrictedPath path, ITypeRestriction domainRestriction, ITypeRestriction rangeRestriction) {
+        List<CountPathInstances> foundInstances = findPathInstancesCountFromDB(path,domainRestriction,rangeRestriction);
         if(foundInstances.size()>0){
+            long maxCount = 0;
             LOGGER.info("found in db : "+foundInstances.size());
-            CountPathInstances item = foundInstances.get(0);
-            return item.getcCount();
+            for (CountPathInstances cpi:foundInstances) {
+                if(cpi.getcCount()>maxCount){maxCount = cpi.getcCount();}
+            }
+            return maxCount;
         }else {
             LOGGER.info("found nothing db ");
             return -1;
@@ -100,8 +111,22 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
             //String path, String graphName, String domain, String range, Long count
             LOGGER.info("save this in the DB pathStr: "+pathStr+" graphName: "+ graphName+" domainStr: "+domainStr+" rangeStr: "+rangeStr+" count: "+count);
             CountPathInstances item = new CountPathInstances(pathStr, graphName, domainStr, rangeStr, count);
-            CountPathInstances saved  = countPathInstancesRepository.save(item);
-            LOGGER.info("saved: path "+saved.getPath()+" graphName: "+ saved.getGraphName()+" domainStr: "+saved.getDomain()+" rangeStr: "+saved.getRange()+" count: "+saved.getcCount());
+            //if there is an instance we should update it
+            List<CountPathInstances> foundInstances = findPathInstancesCountFromDB(path,domainRestriction,rangeRestriction);
+            if(foundInstances.size()>0){
+                CountPathInstances forUpdate = foundInstances.get(0);
+                if(forUpdate.getcCount() < count){
+                    forUpdate.setcCount(count);
+                    CountPathInstances saved  = countPathInstancesRepository.save(forUpdate);
+                    LOGGER.info("update: path "+forUpdate.getPath()+" graphName: "+ forUpdate.getGraphName()+" domainStr: "+forUpdate.getDomain()+" rangeStr: "+forUpdate.getRange()+" count: "+forUpdate.getcCount()+ " Id: "+ forUpdate.getId());
+                }else{
+                    LOGGER.info(" no need to update , dbcount is :"+forUpdate.getcCount()+" forsave count is :"+count);
+                }
+            }else{
+                // if not make new
+                CountPathInstances saved  = countPathInstancesRepository.save(item);
+                LOGGER.info("saved: path "+saved.getPath()+" graphName: "+ saved.getGraphName()+" domainStr: "+saved.getDomain()+" rangeStr: "+saved.getRange()+" count: "+saved.getcCount());
+            }
 
     }
 
@@ -119,8 +144,11 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
         String predicateStr = predicate.getProperty().getURI();
         List<CountPredicate> foundInstances = countPredicateRepository.findByGraphNameAndPredicate(graphName, predicateStr);
         if(foundInstances.size()>0){
-            CountPredicate item = foundInstances.get(0);
-            return item.getcCount();
+            long maxCount = 0;
+            for (CountPredicate cp:foundInstances) {
+                if(cp.getcCount() > maxCount){maxCount=cp.getcCount();}
+            }
+            return maxCount;
         }
         return -1;
     }
@@ -130,9 +158,23 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
             String predicateStr = predicate.getProperty().getURI();
             //String predicate, String graphName, Long count
             LOGGER.info("save this predicate instances predicateStr: "+predicateStr+ " graphName: "+graphName+" count: "+count);
-            CountPredicate item = new CountPredicate(predicateStr, graphName, count);
-            CountPredicate savedItem = countPredicateRepository.save(item);
-            LOGGER.info("saved this predicateStr: "+ savedItem.getPredicate() + " graphName: "+savedItem.getGraphName()+ " count "+ savedItem.getcCount());
+            List<CountPredicate> foundInstances = countPredicateRepository.findByGraphNameAndPredicate(graphName, predicateStr);
+            if(foundInstances.size()>0){
+            // update
+                CountPredicate forUpdate = foundInstances.get(0);
+                if(forUpdate.getcCount()<count){
+                    forUpdate.setcCount(count);
+                    countPredicateRepository.save(forUpdate);
+                    LOGGER.info("update this predicateStr: "+ forUpdate.getPredicate() + " graphName: "+forUpdate.getGraphName()+ " count "+ forUpdate.getcCount(), " ID :"+forUpdate.getId());
+                }else{
+                    LOGGER.info("no need for update db count is "+ forUpdate.getcCount()+" count is "+count);
+                }
+            }else{
+            // save new
+                CountPredicate item = new CountPredicate(predicateStr, graphName, count);
+                CountPredicate savedItem = countPredicateRepository.save(item);
+                LOGGER.info("saved this predicateStr: "+ savedItem.getPredicate() + " graphName: "+savedItem.getGraphName()+ " count "+ savedItem.getcCount());
+            }
 
     }
 
@@ -146,24 +188,40 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
         return count;
     }
 
-    private long getCooccurrencesFromDB(Predicate predicate, QRestrictedPath path) {
+    private List<CountCooccurrences> findCooccurrences(Predicate predicate, QRestrictedPath path) {
+        LOGGER.info("find Cooccurrences");
+        List<CountCooccurrences> foundInstances = new ArrayList<>();
         String pathStr = path.toStringWithTag();
+        LOGGER.info("path str is "+ pathStr);
         String domainStr = getDomainOrRangeFromObject(predicate.getDomain().getRestriction());
+        LOGGER.info("domainStr is "+ domainStr);
         if(domainStr == null) {
             LOGGER.info("domain is null");
-            return -1;
+            return foundInstances;
         }
 
         String rangeStr = getDomainOrRangeFromObject(predicate.getRange().getRestriction());
+        LOGGER.info("rangeStr is "+ rangeStr);
         if(rangeStr == null) {
             LOGGER.info("range is null");
-            return -1;}
+            return foundInstances;}
 
         String predicateStr = predicate.getProperty().getURI();
-        List<CountCooccurrences> foundInstances = countCooccurrencesRepository.findByPredicateAndDomainAndRangeAndPathAndGraphName(predicateStr, domainStr, rangeStr, pathStr, graphName);
+        LOGGER.info("predicateStr is "+predicateStr);
+
+        foundInstances = countCooccurrencesRepository.findByPredicateAndDomainAndRangeAndPathAndGraphName(predicateStr, domainStr, rangeStr, pathStr, graphName);
+        return foundInstances;
+    }
+    private long getCooccurrencesFromDB(Predicate predicate, QRestrictedPath path) {
+        LOGGER.info("getCooccurrencesFromDB");
+        List<CountCooccurrences> foundInstances = findCooccurrences(predicate, path);
         if(foundInstances.size()>0){
-            CountCooccurrences item = foundInstances.get(0);
-            return item.getcCount();
+            LOGGER.info("found "+foundInstances.size()+" instances");
+            long maxCount = 0;
+            for (CountCooccurrences cc: foundInstances) {
+                if(cc.getcCount()>maxCount){maxCount = cc.getcCount();}
+            }
+            return maxCount;
         }
         return -1;
     }
@@ -184,10 +242,26 @@ public class SaveInDBCountDecorator extends AbstractCountRetrieverDecorator{
 
             String predicateStr = predicate.getProperty().getURI();
             //String predicate, String domain, String range, String path, String graphName, long count
+        List<CountCooccurrences> foundInstances = findCooccurrences(predicate, path);
+        if(foundInstances.size()>0)
+        {
+            // update
+            CountCooccurrences forUpdate = foundInstances.get(0);
+            if(forUpdate.getcCount()<count){
+                forUpdate.setcCount(count);
+                countCooccurrencesRepository.save(forUpdate);
+                LOGGER.info("update predicateStr:"+forUpdate.getPredicate() +" domainStr: "+forUpdate.getDomain()+" rangeStr: "+forUpdate.getRange()+" pathStr: "+forUpdate.getPath()+" graphName: "+forUpdate.getGraphName()+" count: "+forUpdate.getcCount()+" Id:"+forUpdate.getId());
+            }else{
+                LOGGER.info("no need for update db count : "+forUpdate.getcCount()+" count is : "+count);
+            }
+        }
+        else
+        {
+            // save
             CountCooccurrences item = new CountCooccurrences(predicateStr, domainStr, rangeStr, pathStr, graphName, count);
             CountCooccurrences saveditem = countCooccurrencesRepository.save(item);
             LOGGER.info("saved predicateStr:"+saveditem.getPredicate() +"domainStr: "+saveditem.getDomain()+" rangeStr: "+saveditem.getRange()+" pathStr: "+saveditem.getPath()+" graphName: "+saveditem.getGraphName()+" count: "+saveditem.getcCount());
-
+        }
     }
 
     @Override

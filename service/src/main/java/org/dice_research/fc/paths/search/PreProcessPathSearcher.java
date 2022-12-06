@@ -30,6 +30,7 @@ public class PreProcessPathSearcher implements IPathSearcher {
 
     @Override
     public Collection<QRestrictedPath> search(Resource subject, Predicate predicate, Resource object) {
+        LOGGER.info("use PreProcessPathSearcher");
         Collection<QRestrictedPath> returnSet = new HashSet<>();
         Set<String> allAvailablePaths = preProcessProvider.allPathsForThePredicate(predicate);
         for(String path:allAvailablePaths){

@@ -82,12 +82,13 @@ public class CachingPathSearcherDecorator extends AbstractPathSearcherDecorator 
 
     @Override
     public Collection<QRestrictedPath> search(Resource subject, Predicate predicate, Resource object){
-
+        LOGGER.info("use CachingPathSearcherDecorator for path search");
         Collection<QRestrictedPath> paths = retrievePathsFromDB(subject,predicate.getProperty(),object,factPreprocessor,counterRetriever,pathSearcher,pathScorer);
-
+        LOGGER.info("there was "+paths.size()+" path in db");
         if(paths.size()==0){
             paths = decorator.search(subject,predicate,object);
             //save paths
+            LOGGER.info("found "+paths.size()+ " paths and save them in db");
             savePaths(paths,subject,predicate.getProperty(),object,factPreprocessor,counterRetriever,pathSearcher,pathScorer);
         }
 
