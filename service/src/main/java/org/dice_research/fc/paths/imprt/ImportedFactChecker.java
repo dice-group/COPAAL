@@ -45,8 +45,8 @@ public class ImportedFactChecker extends PathBasedFactChecker {
 
   @Autowired
   public ImportedFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
-                             IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaPreprocessor, QueryExecutionFactory qef, boolean printTheExampleOfEachFoundedPath, double pathFilterThreshold) {
-    super(factPreprocessor, pathSearcher, pathScorer, summarist,pathFilterThreshold);
+                             IPathScorer pathScorer, ScoreSummarist summarist, MetaPathsProcessor metaPreprocessor, QueryExecutionFactory qef, boolean printTheExampleOfEachFoundedPath, double pathFilterThreshold, String[] propertyFilter) {
+    super(factPreprocessor, pathSearcher, pathScorer, summarist,pathFilterThreshold, propertyFilter);
     this.metaPreprocessor = metaPreprocessor;
     this.qef = qef;
     this.printTheExampleOfEachFoundedPath = printTheExampleOfEachFoundedPath;
@@ -110,7 +110,7 @@ public class ImportedFactChecker extends PathBasedFactChecker {
               LOGGER.info("-_-_-_-_-_-_-");
           }
 
-
+          LOGGER.info("pathfilter is "+pathFilter.getClass().getName());
       paths = paths.parallelStream().filter(pathFilter).map(p -> {
         if (Double.isNaN(p.getScore())) {
           LOGGER.warn("Couldn't find scores for paths of predicate {}. Executing path scoring.",

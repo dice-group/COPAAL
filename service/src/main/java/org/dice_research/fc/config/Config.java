@@ -306,9 +306,9 @@ public class Config {
     }
     if (isPathsLoad) {
       return new ImportedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist,
-          metaProcessor, qef, LogThePaths, pathFilterThreshold);
+          metaProcessor, qef, LogThePaths, pathFilterThreshold, filteredProperties);
     } else {
-      return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist,pathFilterThreshold);
+      return new PathBasedFactChecker(factPreprocessor, pathSearcher, pathScorer, summarist, pathFilterThreshold, filteredProperties);
     }
   }
 
@@ -447,6 +447,7 @@ public class Config {
     if(filteredProperties.length > 0) {
       filters.add(new EqualsFilter(filteredProperties));
     }
+    LOGGER.info("there are "+ namespaceFilters.length+" namespace filter");
     for (int i = 0; i < namespaceFilters.length; i++) {
       filters.add(new NamespaceFilter(namespaceFilters[i], false));
     }

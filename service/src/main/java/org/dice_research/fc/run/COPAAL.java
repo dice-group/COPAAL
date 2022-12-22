@@ -49,7 +49,7 @@ public class COPAAL {
                 new EqualsFilter(FILTERED_PROPERTIES)*/)),
             new NPMIBasedScorer(new CachingCountRetrieverDecorator(
                 new PairCountRetriever(qef, new DefaultMaxCounter(qef), new ListBaseQueryValidator(new ArrayList<>())))),
-            new FixedSummarist(), 0.5);
+            new FixedSummarist(), 0.5,null);
 
     FactCheckingResult result = checker.check(
         ResourceFactory

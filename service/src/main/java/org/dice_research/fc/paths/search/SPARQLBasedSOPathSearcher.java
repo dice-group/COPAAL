@@ -89,6 +89,7 @@ public class SPARQLBasedSOPathSearcher implements IPathSearcher {
       }
     } else {
       // The filters are not needed
+      LOGGER.info("The filters are not needed");
       Arrays.fill(this.propertyFilter, "");
     }
   }

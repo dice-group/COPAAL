@@ -41,7 +41,7 @@ public class PathBasedFactChecker implements IFactChecker {
   /**
    * A class that can be used to filter paths.
    */
-  protected IPathFilter pathFilter = new AlwaysTruePathFilter();
+  protected IPathFilter pathFilter;
   /**
    * The path scorer that is used to score the single paths.
    */
@@ -72,7 +72,7 @@ public class PathBasedFactChecker implements IFactChecker {
    */
   @Autowired
   public PathBasedFactChecker(FactPreprocessor factPreprocessor, IPathSearcher pathSearcher,
-      IPathScorer pathScorer, ScoreSummarist summarist,double pathFilterThreshold) {
+      IPathScorer pathScorer, ScoreSummarist summarist,double pathFilterThreshold, String[] propertyFilter) {
     super();
     this.factPreprocessor = factPreprocessor;
     this.pathSearcher = pathSearcher;
@@ -80,6 +80,12 @@ public class PathBasedFactChecker implements IFactChecker {
     this.summarist = summarist;
     this.pathFilterThreshold = pathFilterThreshold;
     scoreFilter = new ZeroScoreFilter(pathFilterThreshold);
+    if(propertyFilter!=null) {
+      LOGGER.info("propertyFilter number is :" + propertyFilter.length);
+    }else{
+      LOGGER.info("propertyFilter is null :" );
+    }
+    pathFilter = new PropertiesFilter(propertyFilter);
   }
 
   /**
@@ -114,6 +120,7 @@ public class PathBasedFactChecker implements IFactChecker {
       // the score
       LOGGER.trace(" -------------  Start to filter and Score  -------------");
       LOGGER.info("number of paths before filtering is {}",paths.size());
+      LOGGER.info("pathfilter is "+pathFilter.getClass().getName());
       paths = paths.parallelStream().filter(pathFilter)
               .map(p -> pathScorer.score(subject, preparedPredicate, object, p))
               .filter(p -> scoreFilter.test(p.getScore())).collect(Collectors.toList());

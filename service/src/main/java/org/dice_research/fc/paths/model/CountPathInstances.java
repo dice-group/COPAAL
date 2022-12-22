@@ -24,10 +24,10 @@ public class CountPathInstances {
     @Column(name = "GraphName")
     private String graphName;
 
-    @Column(name = "Domain")
+    @Column(name = "Domain", length = 4000)
     private String domain;
 
-    @Column(name = "Range")
+    @Column(name = "Range", length = 4000)
     private String range;
 
     @Column(name = "ccount")
