@@ -40,6 +40,11 @@ public class QRestrictedPath implements IPieceOfEvidence {
   protected String verbalizedOutput;
 
   /**
+   * one path sample
+   */
+  protected String sample;
+
+  /**
    * Constructor.
    */
   public QRestrictedPath() {
@@ -106,6 +111,23 @@ public class QRestrictedPath implements IPieceOfEvidence {
   public void setVerbalizedOutput(String verbalizedOutput) {
     this.verbalizedOutput = verbalizedOutput;
   }
+
+  /**
+   * @return the sample
+   */
+  @Override
+  public String getSample() {
+    return sample;
+  }
+
+  /**
+   * @param sample the sample of a path
+   */
+  @Override
+  public void setSample(String sample) {
+    this.sample = sample;
+  }
+
 
   @Override
   public int hashCode() {

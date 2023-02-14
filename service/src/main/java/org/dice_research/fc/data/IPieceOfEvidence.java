@@ -49,4 +49,20 @@ public interface IPieceOfEvidence {
     // no-op
   };
 
+  /**
+   * a sample of a path
+   *
+   * @return a path's sample.
+   */
+  default String getSample() {
+    return NO_OUTPUT;
+  }
+
+  /**
+   * set a sample of a path
+   *
+   */
+  default void setSample(String sample) {
+   // no-op
+  }
 }

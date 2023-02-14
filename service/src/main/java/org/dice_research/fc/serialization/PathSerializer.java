@@ -32,6 +32,7 @@ public class PathSerializer extends StdSerializer<IPieceOfEvidence> {
     gen.writeNumberField("score", path.getScore());
     gen.writeStringField("evidence", path.getEvidence());
     gen.writeStringField("verbalization", path.getVerbalizedOutput());
+    gen.writeStringField("sample",path.getSample());
     gen.writeEndObject();
 
   }

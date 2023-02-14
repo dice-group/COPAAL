@@ -24,4 +24,15 @@ public class RequestParameters {
   public void setVerbalize(boolean verbalize) {
     this.verbalize = verbalize;
   }
+
+  // if true then for each path get a sample full path ( not only predicates)
+  private boolean pathWithSample;
+
+  public boolean isPathWithSample() {
+    return pathWithSample;
+  }
+
+  public void setPathWithSample(boolean pathWithSample) {
+    this.pathWithSample = pathWithSample;
+  }
 }

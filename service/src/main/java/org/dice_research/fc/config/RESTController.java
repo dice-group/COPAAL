@@ -8,6 +8,7 @@ import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.sparql.lang.sparql_11.ParseException;
 import org.dice_research.fc.IFactChecker;
 import org.dice_research.fc.data.FactCheckingResult;
+import org.dice_research.fc.paths.sampler.IPathSampler;
 import org.dice_research.fc.paths.verbalizer.IPathVerbalizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -51,6 +52,11 @@ public class RESTController {
     // verbalize result
     IPathVerbalizer verbalizer = ctx.getBean(IPathVerbalizer.class, ctx.getBean(QueryExecutionFactory.class), details);
     verbalizer.verbalizeResult(result);
+
+    if(details.isPathWithSample()){
+      IPathSampler sampler = ctx.getBean(IPathSampler.class, ctx.getBean(QueryExecutionFactory.class), details);
+      sampler.gatherSample(result);
+    }
     return result;
   }
 

@@ -32,6 +32,8 @@ import org.dice_research.fc.paths.map.PropertyMapper;
 import org.dice_research.fc.paths.model.Path;
 import org.dice_research.fc.paths.model.PathElement;
 
+import org.dice_research.fc.paths.sampler.IPathSampler;
+import org.dice_research.fc.paths.sampler.QRestrictedPathSampler;
 import org.dice_research.fc.paths.scorer.ICountRetriever;
 import org.dice_research.fc.paths.scorer.NPMIBasedScorer;
 import org.dice_research.fc.paths.scorer.PNPMIBasedScorer;
@@ -638,6 +640,11 @@ public class Config {
     List<String> invalidQueries = extractInvalidQueries();
     IQueryValidator validator = new ListBaseQueryValidator(invalidQueries);
     return validator;
+  }
+
+  @Bean
+  IPathSampler getPathSampler(QueryExecutionFactory qef){
+    return new QRestrictedPathSampler(qef);
   }
 
   private List<String> extractInvalidQueries() {
