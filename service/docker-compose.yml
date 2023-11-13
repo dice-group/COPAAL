@@ -1,60 +1,114 @@
-version: '3'
+version: "3.3"
 
 services:
   reverse-proxy:
     # The official  Traefik docker image
-    image: traefik:1.7.7
+    image: "traefik:v2.9.1"
     # Enables the web UI and tells Traefik to listen to docker
     command:
-      - "--docker"
+      #      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
     ports:
       # The HTTP port
       - "80:80"
       # The Web UI (enabled by --api.insecure=true)
-      - "8080:8080"
+    #      - "8080:8080"
     volumes:
       # So that Traefik can listen to the Docker events
-      - /var/run/docker.sock:/var/run/docker.sock
-  api:
-    image: "dicegroup/copaal-demo-service:2.2.2"
-    restart: always
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  ui:
+    image: "dicegroup/copaal-demo-ui:0.4.0-nebula"
     labels:
-      - traefik.frontend.rule=Host:frockg.cs.uni-paderborn.de;PathPrefixStrip:/service
+      - "traefik.enable=true"
+      - "traefik.http.routers.ui.rule=Host(`nebula-factchecking-vm.cs.upb.de`)"
+      - "traefik.http.routers.ui.entrypoints=web"
+  api:
+    image: "dicegroup/copaal-demo-service:2.6.3-nebula"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`nebula-factchecking-vm.cs.upb.de`) && PathPrefix(`/api/v1`)"
+      - "traefik.http.routers.api.entrypoints=web"
+      - "traefik.http.services.api.loadbalancer.server.port=8080"
+    volumes:
+      - /home/pathsDB/:/home/pathsDB/
     environment:
-      #url for sparql endpoint
-      - info.service.url.default=https://dbpedia.org/sparql
-      - copaal.tentris.endpoint=http://synthg-fact-leapfrog.cs.upb.de:8080
+      #- info.service.url.default = https://dbpedia.org/sparql
+      - info.service.url.default = https://synthg-fact.dice-research.org/sparql
+      - info.service.url.needAuthentication=false
+      - info.service.url.username=unipaderborn
+      - info.service.url.password=Semantics123
+      - copaal.graphName = demo1
+      ### this use only in preprocess
+      - copaal.tentris.endpoint =
+      ### COPAAL run options
       - dataset.scorer.summarist.type=FixedSummarist
-      - dataset.filter.properties=http://www.w3.org/1999/02/22-rdf-syntax-ns#type, http://dbpedia.org/ontology/wikiPageExternalLink, http://dbpedia.org/ontology/wikiPageWikiLink
+      - dataset.filter.properties=http://dbpedia.org/ontology/wikiPageWikiLink,http://www.w3.org/1999/02/22-rdf-syntax-ns#type,http://dbpedia.org/property/wikiPageUsesTemplate
       - dataset.filter.namespace=http://dbpedia.org/ontology/
+      - dataset.file.path=
       - dataset.max.length=3
-      - dataset.scorer.type=NPMI
+      - dataset.scorer.type=PNPMI
+      - dataset.file.preprocess.path=./paths/
       - dataset.file.metapaths=true
       - dataset.file.metapaths.processor=EstherPathProcessor
+      #
       #predicatefactory,virtualtypepredicatefactory,hybridpredicatefactory,hybridpredicatetentrisfactory
-      - copaal.factpreprocessor.type=hybridpredicatetentrisfactory
+      - copaal.factpreprocessor.type=hybridpredicatefactory
       - copaal.factpreprocessor.ShouldUseBGPVirtualTypeRestriction=true
       #PropPathBasedPathClauseGenerator,BGPBasedPathClauseGenerator
       - copaal.pathclausegenerator.type=BGPBasedPathClauseGenerator
       - cache=false
+      #
       ### here you can chose between preprocess or normal copaal
       #default,loadSaveDecorator,preprocess
       - dataset.pathsearcher.type=loadSaveDecorator
-      #ApproximatingCountRetriever,PairCountRetriever,preProcess
-      - dataset.sparql.counter=PairCountRetriever
+      #ApproximatingCountRetriever,PairCountRetriever,paircountretrieverwithdb,preProcess,tentris,tentrisWithDB
+      - dataset.sparql.counter=paircountretrieverwithdb
+      - dataset.sparql.foorbidLoop=false
+      #
+      - debug=true
+      #- spring.datasource.url=jdbc:h2:mem:testdb
+      - spring.datasource.url=jdbc:h2:file:/home/pathsDB/path1;DB_CLOSE_ON_EXIT=FALSE
+
+      #jdbc:h2:file:/data/paths
+      - spring.datasource.driverClassName=org.h2.Driver
+      - spring.datasource.username=sa
+      - spring.datasource.password=
+      - spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+      - spring.jpa.hibernate.ddl-auto=update
+      - spring.h2.console.enabled=true
+      - spring.h2.console.path=/h2
+      #persist the data
+      #server.port=8282
+      #info.service.url.wikidata = https://query.wikidata.org/bigdata/namespace/wdq/sparql
+
       #xml , json
-      - copaal.query.typeOfQueryResult=xml
+      - copaal.query.typeOfQueryResult=json
+
       - copaal.query.timeout=0
+
       #Get , Post
-      - copaal.http.query.type=Post
+      - copaal.http.query.type=get
+
+      #path of the preprocessed files - query results
+      ## This paths should be valid
+      #
+      #copaal.preprocess.addressOfPathInstancesCountFile=/home/syfact/preProcessFiles/1/PathInstance/
+      - copaal.preprocess.addressOfPathInstancesCountFile=/home/PathInstance/
+      #
+      #copaal.preprocess.addressOfPredicateInstancesCountFile=/home/syfact/preProcessFiles/1/PredicateInstance/
+      - copaal.preprocess.addressOfPredicateInstancesCountFile=/home/PredicateInstance/
+      #
+      #copaal.preprocess.addressOfCoOccurrenceCountFile=/home/syfact/preProcessFiles/1/CoOccurrence/
+      - copaal.preprocess.addressOfCoOccurrenceCountFile=/home/CoOccurrence/
+      #
+      #copaal.preprocess.addressOfMaxCountFile=/home/syfact/preProcessFiles/1/MaxCount/
+      - copaal.preprocess.addressOfMaxCountFile=/home/MaxCount/
+      #
       - copaal.preprocess.NPMIthreshold=0.8
-    volumes:
-    - /home/farshad/repos/CopaalPreProcessFiles/2/PathInstance/:/home/PathInstance/
-    - /home/farshad/repos/CopaalPreProcessFiles/2/PredicateInstance/:/home/PredicateInstance/
-    - /home/farshad/repos/CopaalPreProcessFiles/2/CoOccurrence/:/home/CoOccurrence/
-    - /home/farshad/repos/CopaalPreProcessFiles/2/MaxCount/:/home/MaxCount/
-  ui:
-    image: "dicegroup/copaal-demo-ui:0.3.0"
-    restart: always
-    labels:
-      - traefik.frontend.rule=Host:frockg.cs.uni-paderborn.de;PathPrefixStrip:/
+      - copaal.pathFilterThreshold=0.3
+
+      - copaal.printTheExampleOfEachFoundedPath=false
+      - copaal.invalidQueries=SELECT (count(DISTINCT *) AS ?sum) WHERE { ?s <http://rdf.frockg.eu/frockg/ontology/hasAdverseReaction> ?o .  ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://linkedlifedata.com/resource/drugcentral/Structure> .  ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://rdf.frockg.eu/resource/semanticnetwork/id/T184> . ?s <http://rdf.frockg.eu/frockg/ontology/hasAdverseReaction> ?in1 . ?in2 <http://www.w3.org/2004/02/skos/core#mentions> ?in1 . ?in2 <http://www.w3.org/2004/02/skos/core#mentions> ?o . },select * where {?s ?p ?o .} limit 100
