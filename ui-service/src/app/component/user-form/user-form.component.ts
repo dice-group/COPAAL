@@ -26,11 +26,20 @@ export class UserFormComponent implements OnInit {
 
   constructor(public eventService: EventProviderService, public restService: RestService, fb: FormBuilder, public dialog: MatDialog) {
     this.exampleArr = [];
-    let exObj: CgTriple = new CgTriple('http://rdf.frockg.eu/resource/fdaers/case/8779990',
+/*    let exObj: CgTriple = new CgTriple('http://rdf.frockg.eu/resource/fdaers/case/8779990',
       'http://rdf.frockg.eu/resource/fdaers/occupation', 'http://rdf.frockg.eu/resource/fdaers/occupation/Y');
     this.exampleArr.push(exObj);
     exObj = new CgTriple('http://rdf.frockg.eu/resource/snomed/id/2674479021',
-      'http://rdf.frockg.eu/resource/snomed/field/destination', 'http://rdf.frockg.eu/resource/snomed/id/955009');
+      'http://rdf.frockg.eu/resource/snomed/field/destination', 'http://rdf.frockg.eu/resource/snomed/id/955009');*/
+
+    let exObj: CgTriple = new CgTriple('http://dbpedia.org/resource/Barack_Obama',
+      'http://dbpedia.org/ontology/nationality', 'http://dbpedia.org/resource/United_States');
+    this.exampleArr.push(exObj);
+    exObj = new CgTriple('http://dbpedia.org/resource/Berkshire_Hathaway',
+      'http://dbpedia.org/ontology/keyPerson', 'http://dbpedia.org/resource/Warren_Buffett');
+    this.exampleArr.push(exObj);
+
+
     this.exampleArr.push(exObj);
 
     this.subjectFc = new FormControl(this.exampleArr[0].subject, Validators.required);

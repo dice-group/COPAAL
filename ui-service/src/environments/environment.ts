@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiBase: '/service/api/v1/'
+  apiBase: '/api/v1/'
+  /*apiBase: '/service/api/v1/'*/
 };
 
 /*
