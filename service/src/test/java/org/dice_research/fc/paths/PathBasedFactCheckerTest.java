@@ -54,6 +54,8 @@ public class PathBasedFactCheckerTest {
     Assert.assertEquals(expectedScore, result.getVeracityValue(), 0.001);
   }
 
+  // TODO : check why it is not correct
+  // maybe the ScoreSummarist !
   @Parameters
   public static Collection<Object[]> data() {
     List<Object[]> testConfigs = new ArrayList<Object[]>();
