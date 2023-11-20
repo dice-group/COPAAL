@@ -48,7 +48,6 @@ import org.dice_research.fc.paths.scorer.count.max.*;
 import org.dice_research.fc.paths.search.PreProcessPathSearcher;
 import org.dice_research.fc.paths.search.SPARQLBasedSOPathSearcher;
 import org.dice_research.fc.paths.search.CachingPathSearcherDecorator;
-import org.dice_research.fc.paths.verbalizer.DefaultPathVerbalizer;
 import org.dice_research.fc.paths.verbalizer.IPathVerbalizer;
 import org.dice_research.fc.paths.verbalizer.MultiplePathVerbalizer;
 import org.dice_research.fc.paths.verbalizer.NoopVerbalizer;
@@ -84,9 +83,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
-import org.aksw.jena_sparql_api.core.QueryExecutionFactoryBackQuery;
-import org.aksw.jena_sparql_api.http.QueryExecutionFactoryHttp;
 
 /**
  * Configuration class containing the variables present in the applications.properties file and the
@@ -494,8 +490,8 @@ public class Config {
         return new VirtualTypePredicateFactory();
       case ("hybridpredicatefactory"):
         return new HybridPredicateFactory(qef,ShouldUseBGPVirtualTypeRestriction,filters);
-      case ("hybridpredicatetentrisfactory"):
-        return new HybridPredicateTentrisFactory(allPredicates("collected_predicates.json"));
+      case ("hybridpredicatefilefactory"):
+        return new HybridPredicateFileFactory(allPredicates("collected_predicates.json"),ShouldUseBGPVirtualTypeRestriction);
       default:
         LOGGER.info("Warning : it use default preprocessor");
         return new PredicateFactory(qef);
