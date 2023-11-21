@@ -32,12 +32,15 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
    */
   protected MaxCounter maxCounter;
 
-  public AbstractSPARQLBasedCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IQueryValidator queryValidator) {
+  public AbstractSPARQLBasedCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter,
+      IQueryValidator queryValidator) {
     this.qef = qef;
     this.maxCounter = maxCounter;
     this.queryValidator = queryValidator;
-    LOGGER.trace("in AbstractSPARQLBasedCountRetriever QueryExecutionFactory is : {}",QueryExecutionFactory.class.getName());
-    LOGGER.trace("in AbstractSPARQLBasedCountRetriever MaxCounter is : {}",maxCounter.getClass().getName());
+    LOGGER.trace("in AbstractSPARQLBasedCountRetriever QueryExecutionFactory is : {}",
+        QueryExecutionFactory.class.getName());
+    LOGGER.trace("in AbstractSPARQLBasedCountRetriever MaxCounter is : {}",
+        maxCounter.getClass().getName());
   }
 
   public long deriveMaxCount(Predicate predicate) {
@@ -52,8 +55,14 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
     queryBuilder.append(") WHERE { ?s <");
     queryBuilder.append(predicate.getProperty().getURI());
     queryBuilder.append("> ?o . ");
-    predicate.getDomain().addRestrictionToQuery("s", queryBuilder);
-    predicate.getRange().addRestrictionToQuery("o", queryBuilder);
+    // The property-based restrictions are already represented with the triple pattern above. Hence,
+    // we do not need to have these restrictions again.
+    if (!predicate.getDomain().usesPropertyAsRestriction()) {
+      predicate.getDomain().addRestrictionToQuery("s", queryBuilder);
+    }
+    if (!predicate.getRange().usesPropertyAsRestriction()) {
+      predicate.getRange().addRestrictionToQuery("o", queryBuilder);
+    }
     queryBuilder.append(" }");
     return executeCountQuery(queryBuilder);
   }
@@ -66,7 +75,8 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
    * @param path the path that should be added to the query
    * @param queryBuilder the builder for the query to which the path should be added
    * 
-   * @deprecated Use a {@link org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator} instead.
+   * @deprecated Use a {@link org.dice_research.fc.sparql.path.PropPathBasedPathClauseGenerator}
+   *             instead.
    */
   @Deprecated
   protected void addAsPropertyPath(QRestrictedPath path, StringBuilder queryBuilder) {
@@ -100,12 +110,12 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
     String query = queryBuilder.toString();
     long time = System.currentTimeMillis();
     LOGGER.info("Starting count query {}", query);
-    if(query.contains("FILTER()")||query.contains("FILTER( )")){
-      query = query.replace("FILTER()","");
-      query = query.replace("FILTER( )","");
+    if (query.contains("FILTER()") || query.contains("FILTER( )")) {
+      query = query.replace("FILTER()", "");
+      query = query.replace("FILTER( )", "");
       LOGGER.info("replace empty Filter");
     }
-    if(queryValidator.validate(query)) {
+    if (queryValidator.validate(query)) {
       try (QueryExecution qe = qef.createQueryExecution(query)) {
         ResultSet result = qe.execSelect();
         if (!result.hasNext()) {
@@ -116,19 +126,21 @@ public abstract class AbstractSPARQLBasedCountRetriever implements ICountRetriev
         Literal count = qs.getLiteral(COUNT_VARIABLE_NAME);
         if (result.hasNext()) {
           LOGGER.info(
-                  "Got a query with more than 1 result line (\"{}\"). The remaining lines will be ignored.",
-                  query);
+              "Got a query with more than 1 result line (\"{}\"). The remaining lines will be ignored.",
+              query);
         }
         long n = count.getLong();
         LOGGER.info("Got a query result ({}) after {}ms.", n, System.currentTimeMillis() - time);
         return n;
       } catch (Exception e) {
-        LOGGER.error("Got an exception while running count query \"" + query + "\". Returning 0.", e);
+        LOGGER.error("Got an exception while running count query \"" + query + "\". Returning 0.",
+            e);
         return 0L;
       }
-    }else{
+    } else {
       // not valid query
-      LOGGER.error("Query is not valid : "+ query+" | query validator is :"+queryValidator.getClass().getName());
+      LOGGER.error("Query is not valid : " + query + " | query validator is :"
+          + queryValidator.getClass().getName());
       return 0L;
     }
   }

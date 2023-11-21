@@ -26,7 +26,7 @@ public class VirtualTypeRestriction implements ITypeRestriction {
       builder.append(" ?");
       builder.append(variable);
     } else {
-      builder.append(" ?");
+      builder.append(" _:");
       builder.append(VARIABLE_NAME);
       builder.append("s");
     }
@@ -34,7 +34,7 @@ public class VirtualTypeRestriction implements ITypeRestriction {
     builder.append(propertyIri);
     builder.append(">");
     if (variableIsSubject) {
-      builder.append(" ?");
+      builder.append(" _:");
       builder.append(VARIABLE_NAME);
       builder.append("o");
     } else {
@@ -81,6 +81,11 @@ public class VirtualTypeRestriction implements ITypeRestriction {
     }
 
     return (variableIsSubject == other.variableIsSubject);
+  }
+
+  @Override
+  public boolean usesPropertyAsRestriction() {
+    return true;
   }
 
 }
