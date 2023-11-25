@@ -6,6 +6,8 @@ import {CgTriple} from '../../model/cg-triple';
 import {GraphViewComponent} from '../graph-view/graph-view.component';
 import {MatDialog, MatSelectChange} from '@angular/material';
 import {HelpDescComponent} from '../help-desc/help-desc.component';
+import {AutocompleteService} from "../../service/autocomplete/autocomplete.service";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-user-form',
@@ -22,9 +24,10 @@ export class UserFormComponent implements OnInit {
   public showBar = false;
 
   public exampleArr: CgTriple[];
+  public searchResults: string[] = [];
 
 
-  constructor(public eventService: EventProviderService, public restService: RestService, fb: FormBuilder, public dialog: MatDialog) {
+  constructor(public eventService: EventProviderService, public restService: RestService, fb: FormBuilder, public dialog: MatDialog, private autoCompleteService: AutocompleteService) {
     this.exampleArr = [];
 /*    let exObj: CgTriple = new CgTriple('http://rdf.frockg.eu/resource/fdaers/case/8779990',
       'http://rdf.frockg.eu/resource/fdaers/occupation', 'http://rdf.frockg.eu/resource/fdaers/occupation/Y');
@@ -85,6 +88,26 @@ export class UserFormComponent implements OnInit {
 
   openHelpPopup() {
     this.dialog.open(HelpDescComponent);
+  }
+
+  onInputChange(input, query) {
+    // Call the autoCompleteService to search for options based on the input and query
+    this.autoCompleteService.search(input, query).subscribe(options => {
+      // Update the searchResults with the retrieved options
+      this.searchResults = options;
+    });
+  }
+
+  onSubjectSelected(option: any): void {
+    // add the selected option and convert it to the uri, also replace space with _
+    const uri = environment.dbpediaUrlBaseI + option.replace(/\s+/g, '_');
+    this.subjectFc.setValue(uri);
+  }
+
+  onObjectSelected(option: any): void {
+    // add the selected option and convert it to the uri, also replace space with _
+    const uri = environment.dbpediaUrlBaseI + option.replace(/\s+/g, '_');
+    this.objectFc.setValue(uri);
   }
 
 }

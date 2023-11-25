@@ -4,8 +4,13 @@
       <form fxLayout="column wrap" fxLayoutGap="10px" [formGroup]="complexForm" (ngSubmit)="complexForm.valid && submitForm(complexForm.value)">
         <div fxLayout="column wrap" fxLayoutGap="10px">
           <mat-form-field>
-            <input formControlName="subject" matInput required placeholder="Subject"/>
+            <input formControlName="subject" matInput required placeholder="Subject" [matAutocomplete]="autoSub" (input)="onInputChange('subject', $event.target.value)"/>
             <mat-error *ngIf="subjectFc.hasError('required')">Subject is required.</mat-error>
+            <mat-autocomplete #autoSub="matAutocomplete">
+              <mat-option *ngFor="let option of searchResults" [value]="option" (onSelectionChange)="onSubjectSelected(option)">
+                {{ option }}
+              </mat-option>
+            </mat-autocomplete>
           </mat-form-field>
 
           <mat-form-field>
@@ -13,8 +18,13 @@
             <mat-error *ngIf="propertyFc.hasError('required')">Property is required.</mat-error>
           </mat-form-field>
           <mat-form-field>
-            <input formControlName="object" matInput required placeholder="Object"/>
+            <input formControlName="object" matInput required placeholder="Object" [matAutocomplete]="autoObj"  (input)="onInputChange('object', $event.target.value)"/>
             <mat-error *ngIf="objectFc.hasError('required')">Object is required.</mat-error>
+            <mat-autocomplete #autoObj="matAutocomplete">
+              <mat-option *ngFor="let option of searchResults" [value]="option" (onSelectionChange)="onObjectSelected(option)">
+                {{ option }}
+              </mat-option>
+            </mat-autocomplete>
           </mat-form-field>
         </div>
         <div style="visibility: hidden">

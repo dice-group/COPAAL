@@ -10,7 +10,8 @@ import {
   MatFormFieldModule,
   MatIconModule,
   MatInputModule, MatListModule, MatProgressBarModule, MatProgressSpinnerModule, MatSelectModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatAutocompleteModule
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import { UserFormComponent } from './component/user-form/user-form.component';
@@ -49,7 +50,8 @@ import { GraphDescComponent } from './component/graph-desc/graph-desc.component'
     HttpClientModule,
     MatProgressBarModule,
     MatSelectModule,
-    MatDialogModule
+    MatDialogModule,
+    MatAutocompleteModule
   ],
   providers: [],
   bootstrap: [AppComponent],

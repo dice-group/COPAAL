@@ -4,8 +4,11 @@
 
 export const environment = {
   production: false,
-  apiBase: '/api/v1/'
+  apiBase: '/api/v1/',
   /*apiBase: '/service/api/v1/'*/
+  dbpediaUrlBaseAC: 'https://lookup.dbpedia.org/api/search/PrefixSearch', // dbpedia autocomplete uri
+  dbpediaUrlBaseI: 'http://dbpedia.org/resource/', // dbpedia uri for subject and object input
+  dbpediaUrlBaseObj: 'http://dbpedia.org/resource/Category:' // dbpedia uri to access the object on the category tag
 };
 
 /*
