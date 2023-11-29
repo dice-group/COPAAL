@@ -50,7 +50,8 @@ export class UserFormComponent implements OnInit {
       'subject' : this.subjectFc,
       'property': this.propertyFc,
       'object' : this.objectFc,
-      'verbalize' : this.verbalizeFc
+      'verbalize' : this.verbalizeFc,
+      'pathWithSample' : true
     });
   }
 
@@ -66,6 +67,7 @@ export class UserFormComponent implements OnInit {
   }
 
   submitForm(value: any): void {
+  console.log(value,'value');
     this.restService.getRequest('validate', value).subscribe((jsonVal) => {
       this.eventService.updateDataEvent.emit(jsonVal);
       this.eventService.viewChangeEvent.emit( true );

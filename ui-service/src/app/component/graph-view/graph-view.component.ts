@@ -9,6 +9,7 @@ import {CgPath} from '../../model/cg-path';
 import {NgControlStatusGroup} from '@angular/forms';
 import {UniqueIdProviderService} from '../../service/unique-id-provider.service';
 import {EventProviderService} from '../../service/event/event-provider.service';
+import {SparqlService} from '../../service/sparql/sparql.service';
 import {style} from 'd3';
 
 @Component({
@@ -38,6 +39,8 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
   private edgeArr: CgLineItem[] = [];
   private mouseOutTog = -2;
   myRegexp = /\/([^\/]+)$/g;
+  private sparqlData: string[];
+  private thumbnailsData: string[];
 
   static getUriName(uri: string) {
     const myRegexp = /\/([^\/]+)$/g;
@@ -51,13 +54,14 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
     return prefix + match[1];
   }
 
-  constructor(public uip: UniqueIdProviderService, public evntService: EventProviderService) {
+  constructor(public uip: UniqueIdProviderService, public evntService: EventProviderService, public sparqlService: SparqlService ) {
     this.evntService.detailClickEvent.subscribe((id) => { this.highlightPath(id); });
   }
 
   ngOnInit() {
     // sort graphData
     this.graphData.piecesOfEvidence.sort(this.pathSorter);
+    console.log(this.graphData)
   }
 
   pathSorter(path1: CgPath, path2: CgPath) {
@@ -101,6 +105,7 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
     this.drawCircles(this.nodeArr);
     this.drawNodeLabels(this.nodeArr);
     this.drawEdgeLables(this.edgeArr);
+    this.getAllThumbnail(); //test
     // arrows
     svg.append('svg:defs').append('svg:marker')
       .attr('id', 'arrow').attr('viewBox', '0 0 10 10')
@@ -416,6 +421,38 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
       }
       return 'line-def';
     });
+  }
+
+//  getNodeThumbNail(){
+//    // Assuming nodeArr is an array of CgNodeItem instances
+//    if (this.nodeArr.length > 0) {
+//      const uriOfFirstNode = this.nodeArr[0].uri;
+//      const uriOfLastNode = this.nodeArr[lastNodeIndex].uri;
+//    } else {
+//      console.error("The nodeArr is empty.");
+//    }
+//     var result = GraphViewComponent.getUriName(uriOfFirstNode)
+//     console.log(result, '#########')
+//  }
+
+//   getNodeThumbNail() {
+//     console.log('inside thumbnail method')
+//     this.sparqlService.executePathQuery().subscribe(data => {
+//       this.sparqlData = data;
+//       console.log(this.sparqlService)
+//     });
+//     this.sparqlService.executeThumbnailQueries(this.sparqlData).subscribe(data => {
+//     this.thumbnailsData = data;
+//     })
+//   }
+
+  getAllThumbnail(){
+     console.log(Object.keys(this.graphData));
+     console.log(this.graphData.piecesOfEvidence);
+
+//      this.sparqlService.executeThumbnailQueries().subscribe(data => {
+//       this.thumbnailsData = data;
+//      })
   }
 
 }
