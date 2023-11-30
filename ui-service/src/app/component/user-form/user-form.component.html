@@ -4,16 +4,23 @@
       <form fxLayout="column wrap" fxLayoutGap="10px" [formGroup]="complexForm" (ngSubmit)="complexForm.valid && submitForm(complexForm.value)">
         <div fxLayout="column wrap" fxLayoutGap="10px">
           <mat-form-field>
-            <input formControlName="subject" matInput required placeholder="Subject"/>
+            <!--<label for="subject" class="form-label">subject</label>-->
+            <input   formControlName="subject" matInput required placeholder="Subject"/>
             <mat-error *ngIf="subjectFc.hasError('required')">Subject is required.</mat-error>
           </mat-form-field>
 
-          <mat-form-field>
-            <input formControlName="property" matInput required placeholder="Property"/>
+
+
+            <select id="predicate" #predicateSelect class="form-control" formControlName="predicate" >
+              <option *ngFor="let p of predicates; let i = index" [value]="i">
+                {{p}}
+              </option>
+            </select>
             <mat-error *ngIf="propertyFc.hasError('required')">Property is required.</mat-error>
-          </mat-form-field>
+
           <mat-form-field>
-            <input formControlName="object" matInput required placeholder="Object"/>
+            <!--<label for="object" class="form-label">object</label>-->
+            <input  formControlName="object" matInput required placeholder="Object"/>
             <mat-error *ngIf="objectFc.hasError('required')">Object is required.</mat-error>
           </mat-form-field>
         </div>
@@ -32,7 +39,7 @@
       <span class="help-text" (click)="openHelpPopup()" matTooltip="Click to open instructions"><u>Help?</u></span>
       &nbsp;&nbsp;&nbsp;
     </div>
-    <div>
+<!--    <div>
       <mat-form-field fxFlexFill>
         <mat-label>Examples</mat-label>
         <mat-select (selectionChange)="selectChange($event)">
@@ -43,6 +50,15 @@
         <mat-hint>Select an example to auto-fill form</mat-hint>
       </mat-form-field>
     </div>
-  </div>
+  </div>-->
+    <hr/>
+    <div class="mb-3" style="margin-top: 25px;">
+      <label for="examples" class="form-label">examples</label>
+      <select id="examples" #mySelect class="form-control" (change)='onOptionsSelected(mySelect.value)' >
+        <option *ngFor="let exTrip of exampleArr; let i = index" [value]="i">
+          {{exTrip.subject + ' ' + exTrip.property + ' ' + exTrip.object + ' .'}}
+        </option>
+      </select>
+    </div>
 </div>
 
