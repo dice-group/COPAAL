@@ -6,9 +6,11 @@ package org.dice_research.fc.sparql.restrict;
  * 
  * @author Michael R&ouml;der (michael.roeder@uni-paderborn.de)
  *
+ * @deprecated This is marked deprecated until the two comments in the class are fixed
  */
+@Deprecated
 public class TriplePositionRestriction implements ITypeRestriction {
-  
+
   private static final String VARIABLE_NAME = "random";
 
   private boolean mustBeSubject;
@@ -30,9 +32,11 @@ public class TriplePositionRestriction implements ITypeRestriction {
       builder.append(" ?");
       builder.append(variable);
       builder.append(" ?");
-      builder.append(VARIABLE_NAME);
+      builder.append(VARIABLE_NAME); // FIXME this won't work since the variable has to be on both
+                                     // positions
       builder.append("P ?");
-      builder.append(VARIABLE_NAME);
+      builder.append(VARIABLE_NAME); // FIXME apart from that, this is a named variable that will be
+                                     // counted in the end
       builder.append("O .");
     }
     if (mustBePredicate) {
@@ -69,7 +73,8 @@ public class TriplePositionRestriction implements ITypeRestriction {
 
   @Override
   public Object getRestriction() {
-    boolean[] returnVal =new boolean[]{this.mustBeSubject, this.mustBePredicate, this.mustBeObject, this.mustBeResource};
+    boolean[] returnVal = new boolean[] {this.mustBeSubject, this.mustBePredicate,
+        this.mustBeObject, this.mustBeResource};
     return returnVal;
   }
 
@@ -95,6 +100,11 @@ public class TriplePositionRestriction implements ITypeRestriction {
     TriplePositionRestriction other = (TriplePositionRestriction) obj;
     return (mustBeSubject == other.mustBeSubject) && (mustBePredicate != other.mustBePredicate)
         && (mustBeObject == other.mustBeObject) && (mustBeResource != other.mustBeResource);
+  }
+
+  @Override
+  public boolean usesPropertyAsRestriction() {
+    return false;
   }
 
 }
