@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.math3.util.Pair;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -42,7 +44,7 @@ public class QRestrictedPath implements IPieceOfEvidence {
   /**
    * one path sample
    */
-  protected String sample;
+  protected JsonNode sample;
 
   /**
    * Constructor.
@@ -116,7 +118,7 @@ public class QRestrictedPath implements IPieceOfEvidence {
    * @return the sample
    */
   @Override
-  public String getSample() {
+  public JsonNode getSample() {
     return sample;
   }
 
@@ -124,7 +126,7 @@ public class QRestrictedPath implements IPieceOfEvidence {
    * @param sample the sample of a path
    */
   @Override
-  public void setSample(String sample) {
+  public void setSample(JsonNode sample) {
     this.sample = sample;
   }
 

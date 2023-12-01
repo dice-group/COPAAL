@@ -27,15 +27,15 @@ public class QRestrictedPathSampler implements IPathSampler{
     }
 
     @Override
-    public String getSample(Resource subject, Resource object, IPieceOfEvidence path) {
+    public JsonNode getSample(Resource subject, Resource object, IPieceOfEvidence path) {
         String output = getOneSample(subject, object, (QRestrictedPath)path);
-        String jsonOutput = convertToJSON(output);
+        JsonNode jsonOutput = convertToJSON(output);
         //String jsonOutput = output;
         path.setSample(jsonOutput);
         return jsonOutput;
     }
 
-    public static String convertToJSON(String input) {
+    public static JsonNode convertToJSON(String input) {
         Map<String, String> resultMap = new HashMap<>();
         input = input.replace(" = ","=");
 
@@ -79,13 +79,13 @@ public class QRestrictedPathSampler implements IPathSampler{
         for (int i = 0; i < tokens.length; i=i+1) {
             if (tokens[i].startsWith("x")) {
                 String key = tokens[i];
-                String value = tokens[i + 1];
+                String value = tokens[i + 1].replace(" ","");
                 resultMap.put(key, value);
             }
         }
 
         JsonNode jsonString = convertMapToJsonObject(resultMap);
-        return jsonString.toString();
+        return jsonString;
     }
 
     private static JsonNode convertMapToJsonObject(Map<String, String> map) {
