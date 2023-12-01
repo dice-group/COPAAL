@@ -1,5 +1,6 @@
 package org.dice_research.fc.paths.sampler;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.aksw.jena_sparql_api.core.QueryExecutionFactory;
 import org.apache.commons.math3.util.Pair;
 import org.apache.jena.query.Query;
@@ -15,7 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 public class QRestrictedPathSampler implements IPathSampler{
     private static final Logger LOGGER = LoggerFactory.getLogger(QRestrictedPathSampler.class);
     protected QueryExecutionFactory qef;
@@ -35,7 +37,7 @@ public class QRestrictedPathSampler implements IPathSampler{
 
     public static String convertToJSON(String input) {
         Map<String, String> resultMap = new HashMap<>();
-
+        input = input.replace(" = ","=");
 
 
         String[] mainTokens = input.split("\\) \\(");
@@ -45,7 +47,7 @@ public class QRestrictedPathSampler implements IPathSampler{
             mainTokens[0] = mainTokens[0].replace(" )","");
             mainTokens[0] = mainTokens[0].replace("<","");
             mainTokens[0] = mainTokens[0].replace(">","");
-            input = mainTokens[0];
+            input = mainTokens[0].replace(" ?x","?x");
         }else{
             if(mainTokens.length==2){
                 //x1 and x2
@@ -60,7 +62,7 @@ public class QRestrictedPathSampler implements IPathSampler{
                 mainTokens[1] = mainTokens[1].replace(">","");
 
                 // because we will split base d on =
-                input = mainTokens[0]+"="+mainTokens[1].replace(" ?x","?x");
+                input = mainTokens[0].replace(" ?x","?x")+"="+mainTokens[1].replace(" ?x","?x");
             }else{
                 LOGGER.error(mainTokens.length+"cn not parse this result "+ input);
             }
@@ -68,33 +70,36 @@ public class QRestrictedPathSampler implements IPathSampler{
 
         // Split the input string by spaces and parentheses
 
+        input = input.replace("?x","x");
         String[] tokens = input.split("=");
         if(tokens.length==3){
             String eeror = "eo";
         }
         // Process the tokens to extract key-value pairs
         for (int i = 0; i < tokens.length; i=i+1) {
-            if (tokens[i].startsWith("?x")) {
+            if (tokens[i].startsWith("x")) {
                 String key = tokens[i];
                 String value = tokens[i + 1];
                 resultMap.put(key, value);
             }
         }
 
-        // Convert the map to a JSON string
-        StringBuilder jsonBuilder = new StringBuilder("{ ");
-        for (Map.Entry<String, String> entry : resultMap.entrySet()) {
-            jsonBuilder.append("\"").append(entry.getKey()).append("\": \"").append(entry.getValue()).append("\", ");
+        JsonNode jsonString = convertMapToJsonObject(resultMap);
+        return jsonString.toString();
+    }
+
+    private static JsonNode convertMapToJsonObject(Map<String, String> map) {
+        try {
+            // Create ObjectMapper
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // Convert Map to JSON object
+            return objectMapper.valueToTree(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Handle exception or throw it as needed
+            return null;
         }
-
-        // Remove the trailing comma and space
-        if (jsonBuilder.length() > 2) {
-            jsonBuilder.setLength(jsonBuilder.length() - 2);
-        }
-
-        jsonBuilder.append(" }");
-
-        return jsonBuilder.toString();
     }
 
     private String getOneSample(Resource subject, Resource object, QRestrictedPath path) {
