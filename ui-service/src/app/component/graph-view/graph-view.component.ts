@@ -39,8 +39,6 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
   private edgeArr: CgLineItem[] = [];
   private mouseOutTog = -2;
   myRegexp = /\/([^\/]+)$/g;
-  private sparqlData: string[];
-  private thumbnailsData: string[];
 
   static getUriName(uri: string) {
     const myRegexp = /\/([^\/]+)$/g;
@@ -61,7 +59,6 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     // sort graphData
     this.graphData.piecesOfEvidence.sort(this.pathSorter);
-    console.log(this.graphData)
   }
 
   pathSorter(path1: CgPath, path2: CgPath) {
@@ -423,36 +420,30 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
     });
   }
 
-//  getNodeThumbNail(){
-//    // Assuming nodeArr is an array of CgNodeItem instances
-//    if (this.nodeArr.length > 0) {
-//      const uriOfFirstNode = this.nodeArr[0].uri;
-//      const uriOfLastNode = this.nodeArr[lastNodeIndex].uri;
-//    } else {
-//      console.error("The nodeArr is empty.");
-//    }
-//     var result = GraphViewComponent.getUriName(uriOfFirstNode)
-//     console.log(result, '#########')
-//  }
-
-//   getNodeThumbNail() {
-//     console.log('inside thumbnail method')
-//     this.sparqlService.executePathQuery().subscribe(data => {
-//       this.sparqlData = data;
-//       console.log(this.sparqlService)
-//     });
-//     this.sparqlService.executeThumbnailQueries(this.sparqlData).subscribe(data => {
-//     this.thumbnailsData = data;
-//     })
-//   }
-
-  getAllThumbnail(){
-     console.log(Object.keys(this.graphData));
-     console.log(this.graphData.piecesOfEvidence);
-
-//      this.sparqlService.executeThumbnailQueries().subscribe(data => {
-//       this.thumbnailsData = data;
-//      })
+  getAllThumbnail() {
+    const thumbnailObject = this.graphData.piecesOfEvidence.map(obj => obj.sample);
+    thumbnailObject.forEach(item => {
+      console.log('before parsing', item);
+      try {
+        const json_data = JSON.parse(item);
+        if (json_data && typeof json_data === 'object') {
+          const values: string[] = Object.values(json_data).map(value => String(value));
+          this.sparqlService.executeThumbnailQueries(values).subscribe(
+            data => {
+              console.log(data);
+            },
+            error => {
+              console.error('Error in thumbnail query:', error);
+            }
+          );
+        } else {
+          console.error('Invalid JSON format:', item);
+        }
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+      }
+    });
   }
 
 }
+
