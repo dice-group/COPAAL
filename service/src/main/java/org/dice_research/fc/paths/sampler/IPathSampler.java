@@ -1,5 +1,6 @@
 package org.dice_research.fc.paths.sampler;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.dice_research.fc.data.FactCheckingResult;
@@ -13,5 +14,5 @@ public interface IPathSampler {
         }
     };
 
-    String getSample(Resource subject, Resource object, IPieceOfEvidence path);
+    JsonNode getSample(Resource subject, Resource object, IPieceOfEvidence path);
 }

@@ -83,4 +83,9 @@ public class TypeBasedRestriction implements ITypeRestriction {
       return false;
     return true;
   }
+
+  @Override
+  public boolean usesPropertyAsRestriction() {
+    return false;
+  }
 }

@@ -78,4 +78,9 @@ public class OneOfRestriction implements ITypeRestriction {
     return true;
   }
 
+  @Override
+  public boolean usesPropertyAsRestriction() {
+    return false;
+  }
+
 }

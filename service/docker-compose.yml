@@ -54,8 +54,8 @@ services:
       - dataset.file.metapaths=true
       - dataset.file.metapaths.processor=EstherPathProcessor
       #
-      #predicatefactory,virtualtypepredicatefactory,hybridpredicatefactory,hybridpredicatetentrisfactory
-      - copaal.factpreprocessor.type=hybridpredicatefactory
+      #predicatefactory,virtualtypepredicatefactory,hybridpredicatefactory,hybridpredicatefilefactory
+      - copaal.factpreprocessor.type=hybridpredicatefilefactory
       - copaal.factpreprocessor.ShouldUseBGPVirtualTypeRestriction=true
       #PropPathBasedPathClauseGenerator,BGPBasedPathClauseGenerator
       - copaal.pathclausegenerator.type=BGPBasedPathClauseGenerator

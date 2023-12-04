@@ -1,5 +1,8 @@
 package org.dice_research.fc.data;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dice_research.fc.serialization.PathSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -54,15 +57,13 @@ public interface IPieceOfEvidence {
    *
    * @return a path's sample.
    */
-  default String getSample() {
-    return NO_OUTPUT;
-  }
+   JsonNode getSample() ;
 
   /**
    * set a sample of a path
    *
    */
-  default void setSample(String sample) {
+  default void setSample(JsonNode sample) {
    // no-op
   }
 }

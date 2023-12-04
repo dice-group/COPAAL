@@ -117,7 +117,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?x1 . ?x1 <http://example.org/property2> ?o .";
+        String expected = "?s <http://example.org/property1> _:x1 . _:x1 <http://example.org/property2> ?o .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -154,7 +154,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?x1 <http://example.org/property1> ?s . ?x1 <http://example.org/property2> ?o .";
+        String expected = "_:x1 <http://example.org/property1> ?s . _:x1 <http://example.org/property2> ?o .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -191,7 +191,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?x1 . ?o <http://example.org/property2> ?x1 .";
+        String expected = "?s <http://example.org/property1> _:x1 . ?o <http://example.org/property2> _:x1 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -228,7 +228,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?x1 <http://example.org/property1> ?s . ?o <http://example.org/property2> ?x1 .";
+        String expected = "_:x1 <http://example.org/property1> ?s . ?o <http://example.org/property2> _:x1 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -271,7 +271,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?x1 . ?x1 <http://example.org/property2> ?x2 . ?x2 <http://example.org/property3> ?o .";
+        String expected = "?s <http://example.org/property1> _:x1 . _:x1 <http://example.org/property2> _:x2 . _:x2 <http://example.org/property3> ?o .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -314,7 +314,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?x1 <http://example.org/property1> ?s . ?x1 <http://example.org/property2> ?x2 . ?x2 <http://example.org/property3> ?o .";
+        String expected = "_:x1 <http://example.org/property1> ?s . _:x1 <http://example.org/property2> _:x2 . _:x2 <http://example.org/property3> ?o .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -357,7 +357,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?x1 . ?x2 <http://example.org/property2> ?x1 . ?x2 <http://example.org/property3> ?o .";
+        String expected = "?s <http://example.org/property1> _:x1 . _:x2 <http://example.org/property2> _:x1 . _:x2 <http://example.org/property3> ?o .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -400,7 +400,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?x1 . ?x1 <http://example.org/property2> ?x2 . ?o <http://example.org/property3> ?x2 .";
+        String expected = "?s <http://example.org/property1> _:x1 . _:x1 <http://example.org/property2> _:x2 . ?o <http://example.org/property3> _:x2 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -442,7 +442,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?x1 <http://example.org/property1> ?s . ?x2 <http://example.org/property2> ?x1 . ?x2 <http://example.org/property3> ?o .";
+        String expected = "_:x1 <http://example.org/property1> ?s . _:x2 <http://example.org/property2> _:x1 . _:x2 <http://example.org/property3> ?o .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -484,7 +484,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?x1 <http://example.org/property1> ?s . ?x1 <http://example.org/property2> ?x2 . ?o <http://example.org/property3> ?x2 .";
+        String expected = "_:x1 <http://example.org/property1> ?s . _:x1 <http://example.org/property2> _:x2 . ?o <http://example.org/property3> _:x2 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -526,7 +526,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?x1 . ?x2 <http://example.org/property2> ?x1 . ?o <http://example.org/property3> ?x2 .";
+        String expected = "?s <http://example.org/property1> _:x1 . _:x2 <http://example.org/property2> _:x1 . ?o <http://example.org/property3> _:x2 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -568,7 +568,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?x1 <http://example.org/property1> ?s . ?x2 <http://example.org/property2> ?x1 . ?o <http://example.org/property3> ?x2 .";
+        String expected = "_:x1 <http://example.org/property1> ?s . _:x2 <http://example.org/property2> _:x1 . ?o <http://example.org/property3> _:x2 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -635,7 +635,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?in1 . ?o <http://example.org/property2> ?in1 .";
+        String expected = "?s <http://example.org/property1> _:in1 . ?o <http://example.org/property2> _:in1 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -676,7 +676,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?in1 <http://example.org/property1> ?s . ?in1 <http://example.org/property2> ?in2 . ?o <http://example.org/property3> ?in2 .";
+        String expected = "_:in1 <http://example.org/property1> ?s . _:in1 <http://example.org/property2> _:in2 . ?o <http://example.org/property3> _:in2 .";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -713,7 +713,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable,intermediateName);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?s <http://example.org/property1> ?x1 . ?x1 <http://example.org/property2> ?o . FILTER(?s != ?x1 && ?x1 != ?o)";
+        String expected = "?s <http://example.org/property1> _:x1 . _:x1 <http://example.org/property2> ?o . FILTER(?s != _:x1 && _:x1 != ?o)";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 
@@ -754,7 +754,7 @@ public class BGPBasedPathClauseGeneratorTest {
         generator.addPath(path, queryBuilder, subjectVariable,objectVariable);
 
         System.out.println(queryBuilder.toString());
-        String expected = "?in1 <http://example.org/property1> ?s . ?in1 <http://example.org/property2> ?in2 . ?o <http://example.org/property3> ?in2 . FILTER(?s != ?in1 && ?s != ?in2 && ?in1 != ?in2 && ?in1 != ?o && ?in2 != ?o)";
+        String expected = "_:in1 <http://example.org/property1> ?s . _:in1 <http://example.org/property2> _:in2 . ?o <http://example.org/property3> _:in2 . FILTER(?s != _:in1 && ?s != _:in2 && _:in1 != _:in2 && _:in1 != ?o && _:in2 != ?o)";
         Assert.assertEquals(expected,queryBuilder.toString());
     }
 }

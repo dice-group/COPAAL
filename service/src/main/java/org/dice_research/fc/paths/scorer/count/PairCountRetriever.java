@@ -25,12 +25,14 @@ public class PairCountRetriever extends AbstractSPARQLBasedCountRetriever {
   protected IPathClauseGenerator pathClauseGenerator;
 
   @Autowired
-  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IQueryValidator queryValidator) {
+  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter,
+      IQueryValidator queryValidator) {
     this(qef, maxCounter, new PropPathBasedPathClauseGenerator(), queryValidator);
   }
 
   @Autowired
-  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter, IPathClauseGenerator pathClauseGenerator, IQueryValidator queryValidator) {
+  public PairCountRetriever(QueryExecutionFactory qef, MaxCounter maxCounter,
+      IPathClauseGenerator pathClauseGenerator, IQueryValidator queryValidator) {
     super(qef, maxCounter, queryValidator);
     this.pathClauseGenerator = pathClauseGenerator;
   }
@@ -57,8 +59,14 @@ public class PairCountRetriever extends AbstractSPARQLBasedCountRetriever {
     queryBuilder.append(") WHERE { ?s <");
     queryBuilder.append(predicate.getProperty().getURI());
     queryBuilder.append("> ?o . ");
-    predicate.getDomain().addRestrictionToQuery("s", queryBuilder);
-    predicate.getRange().addRestrictionToQuery("o", queryBuilder);
+    // The property-based restrictions are already represented with the triple pattern above. Hence,
+    // we do not need to have these restrictions again.
+    if (!predicate.getDomain().usesPropertyAsRestriction()) {
+      predicate.getDomain().addRestrictionToQuery("s", queryBuilder);
+    }
+    if (!predicate.getRange().usesPropertyAsRestriction()) {
+      predicate.getRange().addRestrictionToQuery("o", queryBuilder);
+    }
     pathClauseGenerator.addPath(path, queryBuilder, "s", "o");
     queryBuilder.append(" }");
     return executeCountQuery(queryBuilder);

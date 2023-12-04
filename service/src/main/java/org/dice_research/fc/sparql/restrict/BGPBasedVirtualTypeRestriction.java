@@ -25,7 +25,7 @@ public class BGPBasedVirtualTypeRestriction implements ITypeRestriction {
       builder.append(" ?");
       builder.append(variable);
     } else {
-      builder.append(" ?");
+      builder.append(" _:");
       builder.append(VARIABLE_NAME);
       builder.append("s");
     }
@@ -33,7 +33,7 @@ public class BGPBasedVirtualTypeRestriction implements ITypeRestriction {
     builder.append(propertyIri);
     builder.append(">");
     if (variableIsSubject) {
-      builder.append(" ?");
+      builder.append(" _:");
       builder.append(VARIABLE_NAME);
       builder.append("o");
     } else {
@@ -79,5 +79,10 @@ public class BGPBasedVirtualTypeRestriction implements ITypeRestriction {
       return false;
     }
     return (variableIsSubject == other.variableIsSubject);
+  }
+
+  @Override
+  public boolean usesPropertyAsRestriction() {
+    return true;
   }
 }

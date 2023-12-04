@@ -11,7 +11,7 @@ export class SparqlService {
   constructor(private http: HttpClient) { }
 
   executeThumbnailQueries(resourceUris: string[]): Observable<string[]> {
-  console.log(resourceUris)
+  console.log(resourceUris);
     const sparqlEndpoint = 'https://dbpedia.org/sparql';
     return this.http.get<any[]>(sparqlEndpoint, {
       params: new HttpParams().set('query', this.buildSparqlQuery(resourceUris)),
@@ -23,7 +23,7 @@ export class SparqlService {
   }
 
   private extractResults(data: any): any[] {
-  return data
+  return data;
 //    if (data.results && data.results.bindings && Array.isArray(data.results.bindings)) {
 //         console.log('Valid JSON structure found.', data);
 //         return data.results.bindings;

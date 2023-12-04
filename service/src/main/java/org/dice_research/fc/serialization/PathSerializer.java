@@ -1,6 +1,8 @@
 package org.dice_research.fc.serialization;
 
 import java.io.IOException;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import org.dice_research.fc.data.IPieceOfEvidence;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -32,7 +34,13 @@ public class PathSerializer extends StdSerializer<IPieceOfEvidence> {
     gen.writeNumberField("score", path.getScore());
     gen.writeStringField("evidence", path.getEvidence());
     gen.writeStringField("verbalization", path.getVerbalizedOutput());
-    gen.writeStringField("sample",path.getSample());
+    JsonNode sampleNode = path.getSample();
+
+    // Check if sampleNode is not null before writing it
+    if (sampleNode != null) {
+      gen.writeFieldName("sample");
+      gen.writeTree(sampleNode);
+    }
     gen.writeEndObject();
 
   }
