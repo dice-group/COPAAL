@@ -6,6 +6,8 @@ import {CgTriple} from '../../model/cg-triple';
 import {GraphViewComponent} from '../graph-view/graph-view.component';
 import {MatDialog, MatSelectChange} from '@angular/material';
 import {HelpDescComponent} from '../help-desc/help-desc.component';
+import {AutocompleteService} from "../../service/autocomplete/autocomplete.service";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-user-form',
@@ -22,29 +24,31 @@ export class UserFormComponent implements OnInit {
   public showBar = false;
 
   public exampleArr: CgTriple[];
+  public searchResults: string[] = [];
 
-  public predicates: String[];
-  constructor(public eventService: EventProviderService, public restService: RestService, fb: FormBuilder, public dialog: MatDialog) {
-    this.predicates = [];
-    this.predicates.push('starring');
-    this.predicates.push('birthPlace');
-    this.predicates.push('award');
-    this.predicates.push('deathPlace');
-    this.predicates.push('subsidiary');
-    this.predicates.push('publication');
-    this.predicates.push('spouse');
-    this.predicates.push('foundation');
-    this.predicates.push('affiliation');
-    this.predicates.push('chancellor');
-    this.predicates.push('city');
-    this.predicates.push('director');
-    this.predicates.push('producer');
-    this.predicates.push('productionCompany');
-    this.predicates.push('academicDiscipline');
-    this.predicates.push('writer');
-    this.predicates.push('nationality');
 
-    this.exampleArr = this.insertSamples();
+      public predicates: String[];
+      constructor(public eventService: EventProviderService, public restService: RestService, fb: FormBuilder, public dialog: MatDialog, private autoCompleteService: AutocompleteService) {
+        this.predicates = [];
+        this.predicates.push('starring');
+        this.predicates.push('birthPlace');
+        this.predicates.push('award');
+        this.predicates.push('deathPlace');
+        this.predicates.push('subsidiary');
+        this.predicates.push('publication');
+        this.predicates.push('spouse');
+        this.predicates.push('foundation');
+        this.predicates.push('affiliation');
+        this.predicates.push('chancellor');
+        this.predicates.push('city');
+        this.predicates.push('director');
+        this.predicates.push('producer');
+        this.predicates.push('productionCompany');
+        this.predicates.push('academicDiscipline');
+        this.predicates.push('writer');
+        this.predicates.push('nationality');
+
+      this.exampleArr = this.insertSamples();
 
     this.subjectFc = new FormControl(this.exampleArr[0].subject, Validators.required);
     this.propertyFc = new FormControl(this.exampleArr[0].property, Validators.required);
@@ -57,7 +61,7 @@ export class UserFormComponent implements OnInit {
       'verbalize' : this.verbalizeFc
     });
 
-    this.complexForm.patchValue({'subject': this.exampleArr[0].subject , 'predicate': 0 , 'object': this.exampleArr[0].object});
+        this.complexForm.patchValue({'subject': this.exampleArr[0].subject , 'predicate': 16 , 'object': this.exampleArr[0].object});
   }
 
   ngOnInit() {
@@ -73,8 +77,8 @@ export class UserFormComponent implements OnInit {
 
   insertSamples() {
     let temp: CgTriple[] = [];
-    let exObj: CgTriple = new CgTriple('Kill_Bill',
-      'starring', 'David_Carradine');
+    let exObj: CgTriple = new CgTriple('Barack_Obama',
+      'nationality', 'United_States');
     temp.push(exObj);
 
     exObj = new CgTriple('Predator_(film)',
@@ -145,7 +149,30 @@ export class UserFormComponent implements OnInit {
     this.propertyFc.setValue(curSel.property);
     this.objectFc.setValue(curSel.object);
     // tslint:disable-next-line:max-line-length
-    this.complexForm.patchValue({'subject': curSel.subject , 'predicate': this.predicates.findIndex(p => p==curSel.property) , 'object': curSel.object});
+    this.complexForm.patchValue({
+      'subject': curSel.subject,
+      'predicate': this.predicates.findIndex(p => p == curSel.property),
+      'object': curSel.object
+    });
   }
+  onInputChange(input, query) {
+    // Call the autoCompleteService to search for options based on the input and query
+    this.autoCompleteService.search(input, query).subscribe(options => {
+      // Update the searchResults with the retrieved options
+      this.searchResults = options;
+    });
+  }
+
+/*  onSubjectSelected(option: any): void {
+    // add the selected option and convert it to the uri, also replace space with _
+    const uri = environment.dbpediaUrlBaseI + option.replace(/\s+/g, '_');
+    this.subjectFc.setValue(uri);
+  }*/
+
+/*  onObjectSelected(option: any): void {
+    // add the selected option and convert it to the uri, also replace space with _
+    const uri = environment.dbpediaUrlBaseI + option.replace(/\s+/g, '_');
+    this.objectFc.setValue(uri);
+  }*/
 
 }
