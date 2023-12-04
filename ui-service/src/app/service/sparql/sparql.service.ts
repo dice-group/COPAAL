@@ -10,53 +10,61 @@ export class SparqlService {
 
   constructor(private http: HttpClient) { }
 
-  executeThumbnailQueries(resourceUris: string[]): Observable<any[]> {
+  executeThumbnailQueries(resourceUris: string[]): Observable<string[]> {
+  console.log(resourceUris)
     const sparqlEndpoint = 'https://dbpedia.org/sparql';
-//     const httpOptions = {
-//       headers: new HttpHeaders({
-//         'Accept': 'application/json',
-//         'Content-Type': 'application/x-www-form-urlencoded'
-//       }),
-//       responseType: 'text'
-//     };
-
     return this.http.get<any[]>(sparqlEndpoint, {
       params: new HttpParams().set('query', this.buildSparqlQuery(resourceUris)),
 //        ...httpOptions
     }).pipe(
-      map(data =>{
-      try{
-            console.log(data);
-            }
-            catch(e){
-              console.log(e,'error');
-            }
-            return data;
+      map(data =>{ this.extractResults(data)
       })
     );
   }
 
   private extractResults(data: any): any[] {
-   if (data.results && data.results.bindings && Array.isArray(data.results.bindings)) {
-        console.log('Valid JSON structure found.', data);
-        return data.results.bindings;
-      } else {
-        console.error(' in the response:', data);
-      }
+  return data
+//    if (data.results && data.results.bindings && Array.isArray(data.results.bindings)) {
+//         console.log('Valid JSON structure found.', data);
+//         return data.results.bindings;
+//       } else {
+//         console.error(' in the response:', data);
+//       }
   }
 
   buildSparqlQuery(resourceUris: string[]): string {
-    const trimmedUri = resourceUris[0].trim();
-    const formattedUri = `<${trimmedUri}>`;
-
-    return `
-      SELECT ?f ?l
-      WHERE {
-        ${formattedUri} <http://dbpedia.org/ontology/thumbnail> ?f .
-        ${formattedUri} <http://www.w3.org/2000/01/rdf-schema#label> ?l .
-        FILTER(LANG(?l)="en")
-      }
-      LIMIT 1
-    `;
+    if (resourceUris.length === 0) {
+      return '';
+    }
+    if (resourceUris.length === 1) {
+      return `
+        SELECT ?f ?l
+        WHERE {
+          <${resourceUris[0].trim()}> <http://dbpedia.org/ontology/thumbnail> ?f .
+          <${resourceUris[0].trim()}> <http://www.w3.org/2000/01/rdf-schema#label> ?l .
+          FILTER(LANG(?l)="en")
+        }
+        LIMIT 1
+      `;
+    } else {
+      return `
+        SELECT ?f ?l
+        WHERE {
+          {
+            <${resourceUris[0].trim()}> <http://dbpedia.org/ontology/thumbnail> ?f .
+            <${resourceUris[0].trim()}> <http://www.w3.org/2000/01/rdf-schema#label> ?l .
+            FILTER(LANG(?l)="en")
+          }
+          UNION
+          {
+            <${resourceUris[1].trim()}> <http://dbpedia.org/ontology/thumbnail> ?f .
+            <${resourceUris[1].trim()}> <http://www.w3.org/2000/01/rdf-schema#label> ?l .
+            FILTER(LANG(?l)="en")
+          }
+        }
+        LIMIT 1
+      `;
+    }
   }
+
 }

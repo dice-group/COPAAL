@@ -422,10 +422,8 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
 
   getAllThumbnail() {
     const thumbnailObject = this.graphData.piecesOfEvidence.map(obj => obj.sample);
-    thumbnailObject.forEach(item => {
-      console.log('before parsing', item);
+    thumbnailObject.forEach(json_data => {
       try {
-        const json_data = JSON.parse(item);
         if (json_data && typeof json_data === 'object') {
           const values: string[] = Object.values(json_data).map(value => String(value));
           this.sparqlService.executeThumbnailQueries(values).subscribe(
@@ -437,7 +435,7 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
             }
           );
         } else {
-          console.error('Invalid JSON format:', item);
+          console.error('Invalid JSON format:', json_data);
         }
       } catch (error) {
         console.error('Error parsing JSON:', error);
