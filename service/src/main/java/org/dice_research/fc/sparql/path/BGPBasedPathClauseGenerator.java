@@ -36,15 +36,15 @@ public class BGPBasedPathClauseGenerator implements IPathClauseGenerator {
     for (int i = 0; i < path.getPathElements().size(); i++) {
       Pair<Property, Boolean> pair = path.getPathElements().get(i);
 
-      String tempSubject = intermediateName.concat(String.valueOf(i));
-      String tempObject = intermediateName.concat(String.valueOf(i + 1));
+      String tempSubject = "_:" + intermediateName + String.valueOf(i);
+      String tempObject = "_:" + intermediateName + String.valueOf(i + 1);
 
       if (i == 0) {
-        tempSubject = subjectVariable;
+        tempSubject = "?" + subjectVariable;
       }
 
       if (i + 1 == path.getPathElements().size()) {
-        tempObject = objectVariable;
+        tempObject = "?" + objectVariable;
       }
       objVariables.add(tempObject);
 
@@ -53,14 +53,12 @@ public class BGPBasedPathClauseGenerator implements IPathClauseGenerator {
         tempSubject = tempObject;
         tempObject = temp;
       }
-      queryBuilder.append('?');
       queryBuilder.append(tempSubject);
       queryBuilder.append(' ');
       queryBuilder.append('<');
       queryBuilder.append(pair.getFirst().getURI());
       queryBuilder.append('>');
       queryBuilder.append(' ');
-      queryBuilder.append('?');
       queryBuilder.append(tempObject);
       queryBuilder.append(' ');
       queryBuilder.append('.');
@@ -72,7 +70,7 @@ public class BGPBasedPathClauseGenerator implements IPathClauseGenerator {
     }
 
     if (forbidLoops) {
-      if((objVariables.size())>0) {
+      if ((objVariables.size()) > 0) {
         queryBuilder.append(" FILTER(");
         boolean first = true;
         // All intermediate nodes do not equal the subject (the object could equal)
@@ -82,18 +80,18 @@ public class BGPBasedPathClauseGenerator implements IPathClauseGenerator {
           } else {
             queryBuilder.append(" && ");
           }
-          queryBuilder.append('?');
+          queryBuilder.append('?'); // Only the subject needs the question mark
           queryBuilder.append(subjectVariable);
-          queryBuilder.append(" != ?");
+          queryBuilder.append(" != ");
           queryBuilder.append(objVariables.get(i));
         }
 
         // All intermediate nodes do not equal each other and do not equal the object variable
         for (int i = 0; i < objVariables.size(); ++i) {
           for (int j = i + 1; j < objVariables.size(); ++j) {
-            queryBuilder.append(" && ?");
+            queryBuilder.append(" && ");
             queryBuilder.append(objVariables.get(i));
-            queryBuilder.append(" != ?");
+            queryBuilder.append(" != ");
             queryBuilder.append(objVariables.get(j));
           }
         }

@@ -23,24 +23,28 @@ export class UserFormComponent implements OnInit {
 
   public exampleArr: CgTriple[];
 
-
+  public predicates: String[];
   constructor(public eventService: EventProviderService, public restService: RestService, fb: FormBuilder, public dialog: MatDialog) {
-    this.exampleArr = [];
-/*    let exObj: CgTriple = new CgTriple('http://rdf.frockg.eu/resource/fdaers/case/8779990',
-      'http://rdf.frockg.eu/resource/fdaers/occupation', 'http://rdf.frockg.eu/resource/fdaers/occupation/Y');
-    this.exampleArr.push(exObj);
-    exObj = new CgTriple('http://rdf.frockg.eu/resource/snomed/id/2674479021',
-      'http://rdf.frockg.eu/resource/snomed/field/destination', 'http://rdf.frockg.eu/resource/snomed/id/955009');*/
+    this.predicates = [];
+    this.predicates.push('starring');
+    this.predicates.push('birthPlace');
+    this.predicates.push('award');
+    this.predicates.push('deathPlace');
+    this.predicates.push('subsidiary');
+    this.predicates.push('publication');
+    this.predicates.push('spouse');
+    this.predicates.push('foundation');
+    this.predicates.push('affiliation');
+    this.predicates.push('chancellor');
+    this.predicates.push('city');
+    this.predicates.push('director');
+    this.predicates.push('producer');
+    this.predicates.push('productionCompany');
+    this.predicates.push('academicDiscipline');
+    this.predicates.push('writer');
+    this.predicates.push('nationality');
 
-    let exObj: CgTriple = new CgTriple('http://dbpedia.org/resource/Barack_Obama',
-      'http://dbpedia.org/ontology/nationality', 'http://dbpedia.org/resource/United_States');
-    this.exampleArr.push(exObj);
-    exObj = new CgTriple('http://dbpedia.org/resource/Berkshire_Hathaway',
-      'http://dbpedia.org/ontology/keyPerson', 'http://dbpedia.org/resource/Warren_Buffett');
-    this.exampleArr.push(exObj);
-
-
-    this.exampleArr.push(exObj);
+    this.exampleArr = this.insertSamples();
 
     this.subjectFc = new FormControl(this.exampleArr[0].subject, Validators.required);
     this.propertyFc = new FormControl(this.exampleArr[0].property, Validators.required);
@@ -48,10 +52,12 @@ export class UserFormComponent implements OnInit {
     this.verbalizeFc =  new FormControl(false);
     this.complexForm = fb.group({
       'subject' : this.subjectFc,
-      'property': this.propertyFc,
+      'predicate': this.propertyFc,
       'object' : this.objectFc,
       'verbalize' : this.verbalizeFc
     });
+
+    this.complexForm.patchValue({'subject': this.exampleArr[0].subject , 'predicate': 0 , 'object': this.exampleArr[0].object});
   }
 
   ngOnInit() {
@@ -65,7 +71,53 @@ export class UserFormComponent implements OnInit {
     this.eventService.viewChangeEvent.emit( true );
   }
 
+  insertSamples() {
+    let temp: CgTriple[] = [];
+    let exObj: CgTriple = new CgTriple('Kill_Bill',
+      'starring', 'David_Carradine');
+    temp.push(exObj);
+
+    exObj = new CgTriple('Predator_(film)',
+      'starring', 'Carl_Weathers');
+    temp.push(exObj);
+
+    exObj = new CgTriple('Frank_Zappa',
+      'birthPlace', 'Baltimore');
+    temp.push(exObj);
+
+    exObj = new CgTriple('Robert_Andrews_Millikan',
+      'award', 'Nobel_Prize_in_Physics');
+    temp.push(exObj);
+
+    exObj = new CgTriple('Richard_Rodgers',
+      'deathPlace', 'New_York_City');
+    temp.push(exObj);
+
+    exObj = new CgTriple('BGI_Group',
+      'subsidiary', 'Complete_Genomics');
+    temp.push(exObj);
+
+    exObj = new CgTriple('Krista_Allen',
+      'spouse', 'Mams_Taylor');
+    temp.push(exObj);
+
+    exObj = new CgTriple('University_of_Queensland',
+      'affiliation', 'Washington_University_in_St._Louis');
+    temp.push(exObj);
+
+
+    exObj = new CgTriple('Pori_(film)',
+      'writer', 'Subramaniam_Siva');
+    temp.push(exObj);
+
+    return temp;
+  }
+
   submitForm(value: any): void {
+    // tslint:disable-next-line:radix
+    value.subject = "http://dbpedia.org/resource/"+value.subject;
+    value.property = "http://dbpedia.org/ontology/"+this.predicates[parseInt(value.predicate)];
+    value.object = "http://dbpedia.org/resource/"+value.object;
     this.restService.getRequest('validate', value).subscribe((jsonVal) => {
       this.eventService.updateDataEvent.emit(jsonVal);
       this.eventService.viewChangeEvent.emit( true );
@@ -85,6 +137,15 @@ export class UserFormComponent implements OnInit {
 
   openHelpPopup() {
     this.dialog.open(HelpDescComponent);
+  }
+
+  onOptionsSelected(value: string) {
+    const curSel: CgTriple = this.exampleArr[value];
+    this.subjectFc.setValue(curSel.subject);
+    this.propertyFc.setValue(curSel.property);
+    this.objectFc.setValue(curSel.object);
+    // tslint:disable-next-line:max-line-length
+    this.complexForm.patchValue({'subject': curSel.subject , 'predicate': this.predicates.findIndex(p => p==curSel.property) , 'object': curSel.object});
   }
 
 }

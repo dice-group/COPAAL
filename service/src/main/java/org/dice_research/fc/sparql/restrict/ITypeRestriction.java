@@ -34,7 +34,17 @@ public interface ITypeRestriction {
 
   /**
    *
-   * @return this return the restriction as object while the restriction may has different type in different implementations
+   * @return this return the restriction as object while the restriction may has different type in
+   *         different implementations
    */
   public Object getRestriction();
+
+  /**
+   * This method should return true in case the restriction simply uses the property of the
+   * predicate as restriction, e.g., it adds a triple ?s <property> _:someNode. This method is used
+   * to speed up the SPARQL queries that already have this restriction within their other triples.
+   * 
+   * @return
+   */
+  boolean usesPropertyAsRestriction();
 }
