@@ -119,9 +119,9 @@ export class UserFormComponent implements OnInit {
 
   submitForm(value: any): void {
     // tslint:disable-next-line:radix
-    value.subject = "http://dbpedia.org/resource/"+value.subject;
+    value.subject = "http://dbpedia.org/resource/"+value.subject.replace(' ','_');
     value.property = "http://dbpedia.org/ontology/"+this.predicates[parseInt(value.predicate)];
-    value.object = "http://dbpedia.org/resource/"+value.object;
+    value.object = "http://dbpedia.org/resource/"+value.object.replace(' ','_');
     this.restService.getRequest('validate', value).subscribe((jsonVal) => {
       this.eventService.updateDataEvent.emit(jsonVal);
       this.eventService.viewChangeEvent.emit( true );
