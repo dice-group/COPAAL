@@ -421,7 +421,7 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
   }
 
   getAllThumbnail() {
-    const thumbnailObject = this.graphData.piecesOfEvidence.map(obj => obj.sample);
+    const thumbnailObject = this.graphData.piecesOfEvidence.map(obj => obj['sample']);
     thumbnailObject.forEach(json_data => {
       try {
         if (json_data && typeof json_data === 'object') {
@@ -429,18 +429,32 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
           this.sparqlService.executeThumbnailQueries(values).subscribe(
             data => {
               console.log(data);
+              this.processThumbnailData(data);
             },
             error => {
-              console.error('Error in thumbnail query:', error);
+              console.error('Error:', error);
             }
           );
         } else {
-          console.error('Invalid JSON format:', json_data);
+          console.error('Error:', json_data);
         }
       } catch (error) {
-        console.error('Error parsing JSON:', error);
+        console.error('Error:', error);
       }
     });
+  }
+
+  processThumbnailData(data: any) {
+    if (data && data.results && data.results.bindings && Array.isArray(data.results.bindings)) {
+      const bindings = data.results.bindings;
+      for (let i = 0; i < bindings.length; i++) {
+        const binding = bindings[i];
+        console.log(binding.l.value)
+        if (this.nodeArr[i]) {
+          this.nodeArr[i].imagePath = binding.f.value;
+        }
+      }
+    }
   }
 
 }
