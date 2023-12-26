@@ -206,23 +206,67 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
       .text(function(d) { return GraphViewComponent.getUriName(d.uri); })
       .attr('class', 'edge-lbl')
       ;
-
   }
 
+  /**
+   * Draws circles on the SVG based on the CgNodeItem array.
+   * If an item has an imagePath,
+   * it draws an image within the circle and sets up a clipPath.
+   * Handles mouseover and mouseout events for both the circle and image,
+   * triggering tooltips.
+   *
+   * @param {CgNodeItem[]} items - An array of CgNodeItem objects
+   * that represents the nodes to be drawn.
+   */
   drawCircles(items: CgNodeItem[]) {
+    // Set the default color for circles
     const nodeCol = 'orange';
-    // Define the div for the tooltip
+    // Reference to the current scope
     const curScope = this;
+    // Append a 'g' element to the SVG to contain the circles
     const circG = this.g.append('g').attr('id', 'circle-svg');
+    // Select all circle elements and bind data
     const circle = circG.selectAll('circle')
       .data(items);
+    // set the attributes of circle
     const circleEnter = circle.enter().append('circle');
     circleEnter.attr('cy', function(d) { return d.cy; });
     circleEnter.attr('cx', function(d) { return d.cx; });
     circleEnter.attr('r', this.nodeRad);
     circleEnter.attr('fill', nodeCol);
+    // For each circle, check if imagePath is present and add image with clipPath
+    circleEnter.each(function(d) {
+      if (d.imagePath) {
+        const imageSize = curScope.nodeRad * 2;
+        // Create a clipPath so that the image fits within the circle
+        const defs = d3.select(this.parentNode).append('defs');
+        defs.append('clipPath')
+          .attr('id', 'circle-clip-' + d.id)
+          .append('circle')
+          .attr('cx', d.cx)
+          .attr('cy', d.cy)
+          .attr('r', curScope.nodeRad);
+        // Add the image with the clipPath
+        const image = d3.select(this.parentNode).append('image')
+          .attr('xlink:href', d.imagePath)
+          .attr('x', d.cx - curScope.nodeRad)
+          .attr('y', d.cy - curScope.nodeRad)
+          .attr('width', imageSize)
+          .attr('height', imageSize)
+          .style('clip-path', 'url(#circle-clip-' + d.id + ')');
+
+        // Add the tooltip events to the images
+        image.on('mouseover', function() {
+          curScope.ttOnMouseOver(d, curScope);
+        })
+          .on('mouseout', function() {
+            curScope.ttOnMouseOut(d, curScope);
+          });
+      }
+    });
+    // Add mouseover and mouseout events to the circles
     circleEnter.on('mouseover', function(d) {
-      curScope.ttOnMouseOver(d, curScope);
+      curScope.ccOnMouseOver(d, curScope);
       d3.select(this).transition()
         .duration(300).style('fill', '#62a6ff');
     })
@@ -231,8 +275,22 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
         d3.select(this).transition()
           .duration(300).style('fill', nodeCol);
       });
-
   }
+
+  ccOnMouseOver(d, curScope) {
+    curScope.tooltipDiv.transition()
+      .duration(200)
+      .style('opacity', .7);
+    curScope.tooltipDiv
+      .style('left', (d3.event.pageX) + 'px')
+      .style('top', (d3.event.pageY - 28) + 'px');
+    if (d.imageLabel) {
+      curScope.ttSpan.html(d.imageLabel);
+    } else {
+      curScope.tooltipDiv.style('opacity', 0);
+    }
+  }
+
   ttOnMouseOver(d, curScope) {
     curScope.tooltipDiv.transition()
       .duration(200)
@@ -241,6 +299,11 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
       .style('left', (d3.event.pageX) + 'px')
       .style('top', (d3.event.pageY - 28) + 'px');
     curScope.ttSpan.html(d.uri);
+    if (d.imageLabel) {
+      curScope.ttSpan.html(d.imageLabel);
+    } else {
+      curScope.tooltipDiv.style('opacity', 0);
+    }
   }
 
   ttOnMouseOut(d, curScope) {
@@ -420,16 +483,23 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
     });
   }
 
+  /**
+   * Gets thumbnail data for each of the graph data.
+   * Executes SPARQL queries for each data.
+   * @throws {Error} Throws an error.
+   */
   getAllThumbnail() {
     const thumbnailObject = this.graphData.piecesOfEvidence.map(obj => obj['sample']);
-    thumbnailObject.forEach(json_data => {
+    // Iterate through each data and execute SPARQL queries
+    thumbnailObject.forEach((json_data, index) => {
       try {
+        // Check if the sample data is an object
         if (json_data && typeof json_data === 'object') {
           const values: string[] = Object.values(json_data).map(value => String(value));
           this.sparqlService.executeThumbnailQueries(values).subscribe(
             data => {
-              console.log(data);
-              this.processThumbnailData(data);
+              // Process the data for the specific index
+              this.processThumbnailData(data, index);
             },
             error => {
               console.error('Error:', error);
@@ -444,18 +514,49 @@ export class GraphViewComponent implements OnInit, AfterViewInit {
     });
   }
 
-  processThumbnailData(data: any) {
+  /**
+   * Processes the data received from SPARQL queries.
+   * Updates the imagePath and imageLabel properties of the corresponding node in nodeArr.
+   * imagePath consist of the path of the image and
+   * imageLabel consist of description text of the image.
+   * @param {any} data - thumbnail data received from SPARQL queries.
+   * @param {number} index - index of the node in nodeArr to update.
+   */
+  processThumbnailData(data: any, index: number) {
+    // Check if the data is present or not
     if (data && data.results && data.results.bindings && Array.isArray(data.results.bindings)) {
       const bindings = data.results.bindings;
-      for (let i = 0; i < bindings.length; i++) {
-        const binding = bindings[i];
-        console.log(binding.l.value)
-        if (this.nodeArr[i]) {
-          this.nodeArr[i].imagePath = binding.f.value;
+      // Check if the index is within the bounds of nodeArr
+      if (index < this.nodeArr.length) {
+        const binding = bindings[0];
+        if (binding && binding.f && binding.f.value) {
+          // Update imagePath and imageLabel properties of the corresponding node
+          this.nodeArr[index].imagePath = binding.f.value;
+          this.nodeArr[index].imageLabel = binding.l.value
+          // call the function after the data is updated
+          this.redrawCircles();
         }
       }
     }
   }
+
+  /**
+   * Redraws the circles on the graph with the updated nodeArr data.
+   * Clears the existing SVG content and calls the drawCircles function.
+   */
+  redrawCircles(){
+    // Clear existing SVG content within the 'circle-svg' element
+    d3.select('#circle-svg').selectAll('*').remove();
+    // Draw circles on the graph using the updated nodeArr data
+    this.drawCircles(this.nodeArr);
+  }
+
+  /**
+   * To-do: currently the graph is first loaded,
+   * then the data(imagePath and Label) is updated and
+   * the circle is redrawn. Needs to improve and think of
+   * way to replace this function.
+   */
 
 }
 
